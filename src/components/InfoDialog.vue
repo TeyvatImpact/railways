@@ -21,7 +21,7 @@ const html = computed(() => md.render(raw));
 @import 'github-markdown-css/github-markdown.css';
 
 .markdown-body {
-  background: var(--color-surface-container-low) !important;
+  background: transparent !important;
   color: var(--color-text) !important;
 }
 </style>
