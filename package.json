@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@chenglou/pretext": "^0.0.8",
+    "@types/node": "^26.1.0",
     "@varlet/ui": "^3.18.2",
     "github-markdown-css": "^5.9.0",
     "markdown-exit": "1.1.0-beta.2",
