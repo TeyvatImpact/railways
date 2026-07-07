@@ -8,12 +8,16 @@
       :viewBox="`0 0 ${svgWidth} ${svgHeight}`"
       font-family="sans-serif"
       font-size="12"
-      @mousedown.prevent="onMouseDown"
+      @mousedown.prevent="onSvgMouseDown"
       @mousemove="onSvgMouseMove"
       @mouseup="onMouseUp"
       @mouseleave="onSvgMouseLeave"
       style="cursor: grab; user-select: none">
-      <rect width="100%" height="100%" fill="var(--color-body, #f8f9fa)" />
+      <rect
+        width="100%"
+        height="100%"
+        fill="var(--color-body, #f8f9fa)"
+        @click="onBackgroundClick" />
 
       <g :transform="`translate(${panX}, ${panY}) scale(${scale})`">
         <g v-for="(gx, i) in gridX" :key="'gx' + i">
@@ -46,7 +50,9 @@
           :stroke-width="seg.width"
           :stroke-dasharray="seg.dasharray ?? undefined"
           :opacity="segOpacity(seg)"
-          stroke-linecap="round" />
+          stroke-linecap="round"
+          style="cursor: pointer"
+          @click.stop="onSegmentClick(seg.lineId)" />
 
         <g
           v-for="lb in segLabels"
@@ -86,7 +92,7 @@
         <g
           v-for="station in visibleStations"
           :key="station.id"
-          :opacity="routeStationIds.size && !routeStationIds.has(station.id) ? DIM_OPACITY : 1">
+          :opacity="stationOpacity(station.id)">
           <circle
             :cx="station.cx"
             :cy="station.cy"
@@ -199,6 +205,7 @@ import {
   markerTexts,
   minX,
   minY,
+  lines,
 } from '../composables/useMapData';
 import { useMapInteraction } from '../composables/useMapInteraction';
 import { useLabelPlacement } from '../composables/useLabelPlacement';
@@ -290,6 +297,9 @@ const sameStationSegIds = computed(() => {
 });
 
 function segOpacity(seg: { id: string; lineId: string }): number {
+  if (isHighlightActive()) {
+    return highlightedLineIds.value.has(seg.lineId) ? 1 : DIM_OPACITY;
+  }
   if (!props.routeResult) return 1;
   return traveledSegIds.value.has(seg.id) || sameStationSegIds.value.has(seg.id) ? 1 : DIM_OPACITY;
 }
@@ -305,11 +315,58 @@ function segStroke(seg: { id: string; lineId: string; color: string }): string {
 
 const DIM_OPACITY = 0.12;
 
+// --- highlight state ---
+const highlightedLineIds = ref<Set<string>>(new Set());
+
+const stationToLineIds = new Map<string, string[]>();
+for (const line of lines) {
+  for (const [sid] of line.stations) {
+    let arr = stationToLineIds.get(sid);
+    if (!arr) {
+      arr = [];
+      stationToLineIds.set(sid, arr);
+    }
+    arr.push(line.id);
+  }
+}
+
+const DRAG_THRESHOLD = 5;
+const mouseDownPos = { x: 0, y: 0 };
+
+function onSvgMouseDown(e: MouseEvent) {
+  mouseDownPos.x = e.clientX;
+  mouseDownPos.y = e.clientY;
+  onMouseDown(e);
+}
+
+function onSegmentClick(lineId: string) {
+  highlightedLineIds.value = new Set([lineId]);
+}
+
+function onBackgroundClick(e: MouseEvent) {
+  const dx = e.clientX - mouseDownPos.x;
+  const dy = e.clientY - mouseDownPos.y;
+  if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) return;
+  highlightedLineIds.value = new Set();
+}
+
+function isHighlightActive() {
+  return highlightedLineIds.value.size > 0;
+}
+
 function stationOpacity(id: string): number {
+  if (isHighlightActive()) {
+    const lineIds = stationToLineIds.get(id);
+    return lineIds && lineIds.some((lid) => highlightedLineIds.value.has(lid)) ? 1 : DIM_OPACITY;
+  }
   return !routeStationIds.value.size || routeStationIds.value.has(id) ? 1 : DIM_OPACITY;
 }
 
 function lineLabelOpacity(id: string): number {
+  if (isHighlightActive()) {
+    const m = id.match(/^line-label-(.+?)-/);
+    return m && highlightedLineIds.value.has(m[1]) ? 1 : DIM_OPACITY;
+  }
   if (!routeLineIds.value.size) return 1;
   const m = id.match(/^line-label-(.+?)-/);
   return m && routeLineIds.value.has(m[1]) ? 1 : DIM_OPACITY;
@@ -415,6 +472,8 @@ function onSvgMouseLeave() {
 }
 
 function onStationClick(stationId: string) {
+  const lineIds = stationToLineIds.get(stationId);
+  highlightedLineIds.value = lineIds ? new Set(lineIds) : new Set();
   emit('station-click', stationId);
 }
 </script>
