@@ -192,7 +192,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { BLOCK_SIZE, pad, textGap, FERRY_COLOR_HIGHLIGHT } from '../config/render.config';
 import {
   svgWidth,
@@ -211,6 +211,7 @@ import { useMapInteraction } from '../composables/useMapInteraction';
 import { useLabelPlacement } from '../composables/useLabelPlacement';
 import MapControls from './MapControls.vue';
 import type { RouteResult } from '../composables/useRouting';
+import { selectTarget } from '../composables/useRouting';
 
 const props = defineProps<{
   routeResult: RouteResult | null;
@@ -297,11 +298,15 @@ const sameStationSegIds = computed(() => {
 });
 
 function segOpacity(seg: { id: string; lineId: string }): number {
+  if (props.routeResult) {
+    return traveledSegIds.value.has(seg.id) || sameStationSegIds.value.has(seg.id)
+      ? 1
+      : DIM_OPACITY;
+  }
   if (isHighlightActive()) {
     return highlightedLineIds.value.has(seg.lineId) ? 1 : DIM_OPACITY;
   }
-  if (!props.routeResult) return 1;
-  return traveledSegIds.value.has(seg.id) || sameStationSegIds.value.has(seg.id) ? 1 : DIM_OPACITY;
+  return 1;
 }
 
 function segStroke(seg: { id: string; lineId: string; color: string }): string {
@@ -354,22 +359,35 @@ function isHighlightActive() {
   return highlightedLineIds.value.size > 0;
 }
 
+watch(
+  () => props.routeResult,
+  (val) => {
+    if (val) highlightedLineIds.value = new Set();
+  },
+);
+
 function stationOpacity(id: string): number {
+  if (props.routeResult) {
+    return !routeStationIds.value.size || routeStationIds.value.has(id) ? 1 : DIM_OPACITY;
+  }
   if (isHighlightActive()) {
     const lineIds = stationToLineIds.get(id);
     return lineIds && lineIds.some((lid) => highlightedLineIds.value.has(lid)) ? 1 : DIM_OPACITY;
   }
-  return !routeStationIds.value.size || routeStationIds.value.has(id) ? 1 : DIM_OPACITY;
+  return 1;
 }
 
 function lineLabelOpacity(id: string): number {
+  if (props.routeResult) {
+    if (!routeLineIds.value.size) return 1;
+    const m = id.match(/^line-label-(.+?)-/);
+    return m && routeLineIds.value.has(m[1]) ? 1 : DIM_OPACITY;
+  }
   if (isHighlightActive()) {
     const m = id.match(/^line-label-(.+?)-/);
     return m && highlightedLineIds.value.has(m[1]) ? 1 : DIM_OPACITY;
   }
-  if (!routeLineIds.value.size) return 1;
-  const m = id.match(/^line-label-(.+?)-/);
-  return m && routeLineIds.value.has(m[1]) ? 1 : DIM_OPACITY;
+  return 1;
 }
 
 const segLabels = computed(() => {
@@ -472,8 +490,10 @@ function onSvgMouseLeave() {
 }
 
 function onStationClick(stationId: string) {
-  const lineIds = stationToLineIds.get(stationId);
-  highlightedLineIds.value = lineIds ? new Set(lineIds) : new Set();
+  if (!selectTarget.value) {
+    const lineIds = stationToLineIds.get(stationId);
+    highlightedLineIds.value = lineIds ? new Set(lineIds) : new Set();
+  }
   emit('station-click', stationId);
 }
 </script>

@@ -121,9 +121,9 @@ for (const [, nodes] of stationNodeMap) {
   }
 }
 
-export function useRouting() {
-  const selectTarget = ref<'start' | 'end' | null>(null);
+export const selectTarget = ref<'start' | 'end' | null>(null);
 
+export function useRouting() {
   function searchStations(query: string): StationSuggestion[] {
     if (!query || query.trim().length === 0) return [];
     const q = query.toLowerCase().trim();
