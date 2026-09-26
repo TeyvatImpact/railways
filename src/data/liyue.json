@@ -182,15 +182,7 @@
         ["LYG", "RT"],
         ["HYG", "T"]
       ],
-      "stations": [
-        ["LYG", false],
-        ["HET", false],
-        ["FYP", false],
-        ["LYN", false],
-        ["PSC", false],
-        ["CHY", false],
-        ["HYG", false]
-      ],
+      "stations": [["LYG"], ["HET"], ["FYP"], ["LYN"], ["PSC"], ["CHY"], ["HYG"]],
       "costPreset": "liyue-metro"
     },
     {
@@ -201,16 +193,7 @@
         ["HYC", "LT"],
         ["LYB", "LB"]
       ],
-      "stations": [
-        ["HYC", false],
-        ["NCM", false],
-        ["PSC", false],
-        ["KYN", false],
-        ["KYB", false],
-        ["BCM", false],
-        ["YLQ", false],
-        ["LYB", false]
-      ],
+      "stations": [["HYC"], ["NCM"], ["PSC"], ["KYN"], ["KYB"], ["BCM"], ["YLQ"], ["LYB"]],
       "costPreset": "liyue-metro"
     },
     {
@@ -221,15 +204,7 @@
         ["YHT", "LT"],
         ["BCM", "RT"]
       ],
-      "stations": [
-        ["HJW", false],
-        ["NCM", false],
-        ["YJT", false],
-        ["YHT", false],
-        ["HET", false],
-        ["BCM", true],
-        ["YLY", false]
-      ],
+      "stations": [["HJW"], ["NCM"], ["YJT"], ["YHT"], ["HET"], ["BCM", [[2, -2]]], ["YLY"]],
       "costPreset": "liyue-metro"
     },
     {
@@ -240,13 +215,7 @@
         ["LHC", "LT"],
         ["GYG", "B"]
       ],
-      "stations": [
-        ["LHC", true],
-        ["LYB", false],
-        ["YLY", false],
-        ["GYX", false],
-        ["GYG", false]
-      ],
+      "stations": [["LHC", [[1, 1]]], ["LYB"], ["YLY"], ["GYX"], ["GYG"]],
       "costPreset": "liyue-metro"
     }
   ],

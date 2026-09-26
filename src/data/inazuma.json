@@ -313,15 +313,7 @@
         ["RTU", "T"],
         ["NIT", "B"]
       ],
-      "stations": [
-        ["NIT", false],
-        ["IZC", false],
-        ["HMZ", false],
-        ["BKP", false],
-        ["KDV", true],
-        ["RTU", false],
-        ["RTP", false]
-      ],
+      "stations": [["NIT"], ["IZC"], ["HMZ"], ["BKP"], ["KDV", [[-1, -1]]], ["RTU"], ["RTP"]],
       "costPreset": "inazuma"
     },
     {
@@ -331,13 +323,13 @@
       "nameEn": "IR East Mt. Yougou Loop Line",
       "lineLabels": [["AUM", "LT"]],
       "stations": [
-        ["BKP", false],
-        ["KDV", false],
-        ["AUM", false],
-        ["YGN", true],
-        ["KSE", false],
-        ["CJF", true],
-        ["BKP", false]
+        ["BKP"],
+        ["KDV", [[0, -2]]],
+        ["AUM"],
+        ["YGN", [[1, 1]]],
+        ["KSE"],
+        ["CJF", [[-1, 1]]],
+        ["BKP"]
       ],
       "costPreset": "inazuma"
     },
@@ -351,14 +343,14 @@
         ["NCB", "B"]
       ],
       "stations": [
-        ["IZC", false],
-        ["HMZ", false],
-        ["AKI", true],
-        ["KJE", false],
-        ["KNZ", false],
-        ["NCB", false],
-        ["MSG", false],
-        ["HGV", false]
+        ["IZC"],
+        ["HMZ"],
+        ["AKI", [[-1, 1]]],
+        ["KJE", [[-1, 0]]],
+        ["KNZ"],
+        ["NCB"],
+        ["MSG", [[-1, 0]]],
+        ["HGV"]
       ],
       "costPreset": "inazuma"
     },
@@ -368,13 +360,7 @@
       "nameZh": "IR 东稻妻·鸣神大社线",
       "nameEn": "IR East Shrine Line",
       "lineLabels": [["IZC", "LB"]],
-      "stations": [
-        ["NIT", false],
-        ["IZC", false],
-        ["HMZ", false],
-        ["BKP", false],
-        ["GNS", false]
-      ],
+      "stations": [["NIT"], ["IZC"], ["HMZ"], ["BKP", [[0, -1]]], ["GNS"]],
       "costPreset": "inazuma"
     },
     {
@@ -383,12 +369,7 @@
       "nameZh": "IR 东稻妻·八酝岛线",
       "nameEn": "IR East Yashiori Island Line",
       "lineLabels": [["SPH", "LB"]],
-      "stations": [
-        ["FFT", false],
-        ["HGV", false],
-        ["SPH", false],
-        ["JTM", false]
-      ],
+      "stations": [["FFT"], ["HGV"], ["SPH"], ["JTM"]],
       "costPreset": "inazuma"
     },
     {
@@ -397,12 +378,7 @@
       "nameZh": "IR 珊瑚宫·海祇岛线",
       "nameEn": "IR Sangonomiya Watatsumi Island Line",
       "lineLabels": [["WTE", "LB"]],
-      "stations": [
-        ["WTE", false],
-        ["BRV", false],
-        ["SGM", false],
-        ["MUS", false]
-      ],
+      "stations": [["WTE"], ["BRV"], ["SGM"], ["MUS"]],
       "costPreset": "inazuma"
     },
     {
@@ -411,12 +387,7 @@
       "nameZh": "IR 鹤观·一号线",
       "nameEn": "IR Tsurumi Line 1",
       "lineLabels": [["ATP", "LT"]],
-      "stations": [
-        ["TMP", false],
-        ["MCS", false],
-        ["MKN", false],
-        ["ATP", false]
-      ],
+      "stations": [["TMP", [[-1, 0]]], ["MCS"], ["MKN"], ["ATP"]],
       "costPreset": "inazuma"
     },
     {
@@ -425,13 +396,7 @@
       "nameZh": "IR 鹤观·二号线",
       "nameEn": "IR Tsurumi Line 2",
       "lineLabels": [["SKP", "LT"]],
-      "stations": [
-        ["SKP", false],
-        ["ONB", false],
-        ["CRS", false],
-        ["MCS", false],
-        ["WKS", false]
-      ],
+      "stations": [["SKP"], ["ONB"], ["CRS"], ["MCS"], ["WKS"]],
       "costPreset": "inazuma"
     },
     {
@@ -441,10 +406,7 @@
       "nameEn": "Higii Village ↔ Watatsumi East Ferry",
       "lineType": "ferry",
       "costPreset": "ferry",
-      "stations": [
-        ["HGV", false],
-        ["WTE", false]
-      ]
+      "stations": [["HGV"], ["WTE"]]
     },
     {
       "id": "ferry-izc-tmp",
@@ -453,10 +415,7 @@
       "nameEn": "Inazuma City ↔ Tsurumi Port Ferry",
       "lineType": "ferry",
       "costPreset": "ferry",
-      "stations": [
-        ["IZC", false],
-        ["TMP", false]
-      ]
+      "stations": [["IZC"], ["TMP"]]
     }
   ],
   "stationDistances": [

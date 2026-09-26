@@ -70,11 +70,11 @@
       "oneWay": true,
       "lineLabels": [],
       "stations": [
-        ["Snezhnaya", true],
-        ["Svetloledovka", false],
-        ["Sretomorozsk", true],
-        ["Zorya", false],
-        ["Snezhnaya", false]
+        ["Snezhnaya", [[1, 1]]],
+        ["Svetloledovka"],
+        ["Sretomorozsk", [[-1, -1]]],
+        ["Zorya", [[1, 0]]],
+        ["Snezhnaya"]
       ]
     },
     {
@@ -84,10 +84,10 @@
       "oneWay": true,
       "lineLabels": [],
       "stations": [
-        ["Snezhnaya", true],
-        ["Morepesok", true],
-        ["Zorya", false],
-        ["Snezhnaya", false]
+        ["Snezhnaya", [[-1, -1]]],
+        ["Morepesok", [[-1, 1]]],
+        ["Zorya", [[1, 0]]],
+        ["Snezhnaya"]
       ]
     },
     {
@@ -97,11 +97,11 @@
       "oneWay": true,
       "lineLabels": [],
       "stations": [
-        ["Snezhnaya", true],
-        ["Morepesok", false],
-        ["Flamefeather", false],
-        ["Zorya", false],
-        ["Snezhnaya", false]
+        ["Snezhnaya", [[-1, -1]]],
+        ["Morepesok", [[-1, 0]]],
+        ["Flamefeather", [[0, 1]]],
+        ["Zorya", [[1, 0]]],
+        ["Snezhnaya"]
       ]
     },
     {
@@ -109,10 +109,7 @@
       "name": "至冬列车白冕宫线",
       "nameEn": "Snezhnaya Pale Crown Palace Line",
       "lineLabels": [],
-      "stations": [
-        ["Snezhnaya", false],
-        ["PaleCrown", true]
-      ]
+      "stations": [["Snezhnaya", [[1, 0]]], ["PaleCrown"]]
     },
     {
       "id": "Trian-5",
@@ -120,10 +117,7 @@
       "nameEn": "Snezhnaya Railway Nod-Krai Connector",
       "costPreset": "standard",
       "lineLabels": [],
-      "stations": [
-        ["Sretomorozsk", true],
-        ["Teyvat-STR", false]
-      ]
+      "stations": [["Sretomorozsk", [[-3, 3]]], ["Teyvat-STR"]]
     }
   ],
   "stationDistances": [

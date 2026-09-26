@@ -5,10 +5,7 @@
       "name": "客运港北↔离岛港 轮渡",
       "nameEn": "Passenger Port North ↔ Ritou Port Ferry",
       "lineType": "ferry",
-      "stations": [
-        ["Liyue-KYB", false],
-        ["Inazuma-RTP", false]
-      ],
+      "stations": [["Liyue-KYB"], ["Inazuma-RTP"]],
       "costPreset": "ferry"
     },
     {
@@ -16,10 +13,7 @@
       "name": "客运港南↔曚雲神社 轮渡",
       "nameEn": "Passenger Port South ↔ Mouun Shrine Ferry",
       "lineType": "ferry",
-      "stations": [
-        ["Liyue-KYN", false],
-        ["Inazuma-MUS", false]
-      ],
+      "stations": [["Liyue-KYN"], ["Inazuma-MUS"]],
       "costPreset": "ferry"
     },
     {
@@ -27,10 +21,7 @@
       "name": "奥摩斯港↔曚雲神社 轮渡",
       "nameEn": "Port Ormos ↔ Mouun Shrine Ferry",
       "lineType": "ferry",
-      "stations": [
-        ["Teyvat-POM", false],
-        ["Inazuma-MUS", false]
-      ],
+      "stations": [["Teyvat-POM"], ["Inazuma-MUS"]],
       "costPreset": "ferry"
     },
     {
@@ -38,10 +29,7 @@
       "name": "拜达港↔海露港 轮渡",
       "nameEn": "Bayda Harbor ↔ Romaritime Harbor Ferry",
       "lineType": "ferry",
-      "stations": [
-        ["Teyvat-BDH", false],
-        ["Teyvat-RRH", false]
-      ],
+      "stations": [["Teyvat-BDH"], ["Teyvat-RRH"]],
       "costPreset": "ferry"
     },
     {
@@ -49,10 +37,7 @@
       "name": "甘露花海↔海露港 轮渡",
       "nameEn": "Vourukasha Oasis ↔ Romaritime Harbor Ferry",
       "lineType": "ferry",
-      "stations": [
-        ["Teyvat-VKO", false],
-        ["Teyvat-RRH", false]
-      ],
+      "stations": [["Teyvat-VKO"], ["Teyvat-RRH"]],
       "costPreset": "ferry"
     },
     {
@@ -60,10 +45,7 @@
       "name": "海露港↔那夏港 轮渡",
       "nameEn": "Romaritime Harbor ↔ Nasha Port Ferry",
       "lineType": "ferry",
-      "stations": [
-        ["Teyvat-RRH", false],
-        ["Teyvat-NSP", false]
-      ],
+      "stations": [["Teyvat-RRH"], ["Teyvat-NSP"]],
       "costPreset": "ferry"
     },
     {
@@ -71,10 +53,7 @@
       "name": "花羽会↔那夏港 轮渡",
       "nameEn": "Flower-Feather Clan ↔ Nasha Port Ferry",
       "lineType": "ferry",
-      "stations": [
-        ["Teyvat-FFC", false],
-        ["Teyvat-NSP", false]
-      ],
+      "stations": [["Teyvat-FFC"], ["Teyvat-NSP"]],
       "costPreset": "ferry"
     },
     {
@@ -82,10 +61,7 @@
       "name": "花羽会↔悠悠港 轮渡",
       "nameEn": "Flower-Feather Clan ↔ Easybreeze Port Ferry",
       "lineType": "ferry",
-      "stations": [
-        ["Teyvat-FFC", false],
-        ["Teyvat-EBP", false]
-      ],
+      "stations": [["Teyvat-FFC"], ["Teyvat-EBP"]],
       "costPreset": "ferry"
     },
     {
@@ -93,10 +69,7 @@
       "name": "遗珑埠↔柔灯港 轮渡",
       "nameEn": "Yilong Wharf ↔ Lumidouce Harbor Ferry",
       "lineType": "ferry",
-      "stations": [
-        ["Teyvat-YLW", false],
-        ["Teyvat-LDH", false]
-      ],
+      "stations": [["Teyvat-YLW"], ["Teyvat-LDH"]],
       "costPreset": "ferry"
     }
   ],

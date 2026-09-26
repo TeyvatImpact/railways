@@ -196,9 +196,9 @@ import {
   svgWidth,
   svgHeight,
   stations,
-  stationMap,
   transferStationIds,
   renderSegments,
+  pairSegmentIds,
   type RenderSegment,
   markerPaths,
   markerTexts,
@@ -245,32 +245,8 @@ const routeStationIds = computed(() => {
   return ids;
 });
 
-function normPathId(x1: number, y1: number, x2: number, y2: number): string {
-  if (x1 < x2 || (x1 === x2 && y1 < y2)) {
-    return `${x1},${y1}|${x2},${y2}`;
-  }
-  return `${x2},${y2}|${x1},${y1}`;
-}
-
-function addSubSegs(ids: Set<string>, ax: number, ay: number, bx: number, by: number) {
-  ids.add(normPathId(ax, ay, bx, by));
-  const dx = bx - ax,
-    dy = by - ay;
-  if (dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy)) return;
-  const sx = Math.sign(dx),
-    sy = Math.sign(dy);
-  const adx = Math.abs(dx),
-    ady = Math.abs(dy);
-  // diagFirst=true waypoint
-  const cx1 = adx > ady ? ax + sx * ady : bx;
-  const cy1 = adx > ady ? by : ay + sy * adx;
-  ids.add(normPathId(ax, ay, cx1, cy1));
-  ids.add(normPathId(cx1, cy1, bx, by));
-  // diagFirst=false waypoint
-  const cx2 = adx > ady ? bx - sx * ady : ax;
-  const cy2 = adx > ady ? ay : by - sy * adx;
-  ids.add(normPathId(ax, ay, cx2, cy2));
-  ids.add(normPathId(cx2, cy2, bx, by));
+function addPairSegs(ids: Set<string>, lineId: string, aId: string, bId: string) {
+  for (const id of pairSegmentIds.get(`${lineId}|${aId}|${bId}`) ?? []) ids.add(id);
 }
 
 const routeLineIds = computed(() => {
@@ -283,10 +259,7 @@ const traveledSegIds = computed(() => {
   if (!props.routeResult) return ids;
   for (const seg of props.routeResult.segments) {
     for (let i = 0; i < seg.nodes.length - 1; i++) {
-      const a = stationMap.get(seg.nodes[i].stationId);
-      const b = stationMap.get(seg.nodes[i + 1].stationId);
-      if (!a || !b) continue;
-      addSubSegs(ids, a.cx, a.cy, b.cx, b.cy);
+      addPairSegs(ids, seg.lineId, seg.nodes[i].stationId, seg.nodes[i + 1].stationId);
     }
   }
   return ids;

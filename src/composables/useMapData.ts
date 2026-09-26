@@ -51,6 +51,9 @@ export interface PresetConfig {
   minutesPerKm: number;
 }
 
+/** 途经点：链式增量，单位为数据坐标单位（与 station.x/y 同尺度）。第 1 个点相对区间起点站，之后每个点相对前一个点 */
+export type Waypoints = [number, number][];
+
 export interface LineData {
   id: string;
   name: string;
@@ -58,7 +61,7 @@ export interface LineData {
   nameEn: string;
   costPreset: string;
   lineLabels?: [string, string][];
-  stations: [string, boolean][];
+  stations: [string, Waypoints?][];
   /** true = 单向线路，只按 `stations` 的顺序开行 */
   oneWay?: boolean;
   fontFamily?: string;
@@ -88,7 +91,7 @@ export interface Line {
   color: string;
   costPreset: string;
   lineLabels?: [string, string][];
-  stations: [string, boolean][];
+  stations: [string, Waypoints?][];
   /** true = 单向线路，只按 `stations` 的顺序开行 */
   oneWay?: boolean;
   fontFamily?: string;
@@ -198,7 +201,10 @@ const parsedLinesL = dataL.lines as unknown as LineData[];
 const parsedLinesS = dataS.lines as unknown as LineData[];
 
 for (const line of parsedLinesR) {
-  line.stations = line.stations.map(([id, dir]) => [regionStationId(parsedR.prefix, id), dir]);
+  line.stations = line.stations.map(([id, waypoints]) => [
+    regionStationId(parsedR.prefix, id),
+    waypoints,
+  ]);
   if (line.lineLabels)
     line.lineLabels = line.lineLabels.map(([id, dir]) => [
       regionStationId(parsedR.prefix, id),
@@ -207,7 +213,10 @@ for (const line of parsedLinesR) {
   line.fontFamily = parsedR.fontFamily;
 }
 for (const line of parsedLinesI) {
-  line.stations = line.stations.map(([id, dir]) => [regionStationId(parsedI.prefix, id), dir]);
+  line.stations = line.stations.map(([id, waypoints]) => [
+    regionStationId(parsedI.prefix, id),
+    waypoints,
+  ]);
   if (line.lineLabels)
     line.lineLabels = line.lineLabels.map(([id, dir]) => [
       regionStationId(parsedI.prefix, id),
@@ -217,7 +226,10 @@ for (const line of parsedLinesI) {
   if (line.nameZh) line.fontFamilyZh = 'Noto Serif SC';
 }
 for (const line of parsedLinesL) {
-  line.stations = line.stations.map(([id, dir]) => [regionStationId(parsedL.prefix, id), dir]);
+  line.stations = line.stations.map(([id, waypoints]) => [
+    regionStationId(parsedL.prefix, id),
+    waypoints,
+  ]);
   if (line.lineLabels)
     line.lineLabels = line.lineLabels.map(([id, dir]) => [
       regionStationId(parsedL.prefix, id),
@@ -226,7 +238,10 @@ for (const line of parsedLinesL) {
   line.fontFamily = parsedL.fontFamily;
 }
 for (const line of parsedLinesS) {
-  line.stations = line.stations.map(([id, dir]) => [regionStationId(parsedS.prefix, id), dir]);
+  line.stations = line.stations.map(([id, waypoints]) => [
+    regionStationId(parsedS.prefix, id),
+    waypoints,
+  ]);
   if (line.lineLabels)
     line.lineLabels = line.lineLabels.map(([id, dir]) => [
       regionStationId(parsedS.prefix, id),
@@ -407,12 +422,34 @@ function pathId(x1: number, y1: number, x2: number, y2: number): string {
   return `${x2},${y2}|${x1},${y1}`;
 }
 
-function isAllowedSegment(dx: number, dy: number): boolean {
-  return dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy);
+/** 展开「站点 a →（链式增量途经点）→ 站点 b」为渲染坐标顶点序列；waypoints 省略/为空时只有 [a, b] */
+function pairVertices(a: Station, b: Station, waypoints?: Waypoints): { x: number; y: number }[] {
+  const pts: { x: number; y: number }[] = [{ x: a.cx, y: a.cy }];
+  for (const [dx, dy] of waypoints ?? []) {
+    const prev = pts[pts.length - 1];
+    pts.push({ x: prev.x + dx * BLOCK_SIZE, y: prev.y + dy * BLOCK_SIZE });
+  }
+  pts.push({ x: b.cx, y: b.cy });
+  return pts;
 }
+
+/** 折线几何签名（方向无关），用于平行轨道分组 */
+function polylineKey(pts: { x: number; y: number }[]): string {
+  const fwd = pts.map((p) => `${p.x},${p.y}`).join('|');
+  const rev = [...pts]
+    .reverse()
+    .map((p) => `${p.x},${p.y}`)
+    .join('|');
+  return fwd < rev ? fwd : rev;
+}
+
+/** `${lineId}|${stationA}|${stationB}` → 该站间区间各渲染段的 id（两个方向都登记）；用于线路高亮定位 */
+export const pairSegmentIds = new Map<string, string[]>();
 
 interface RawSegment {
   id: string;
+  /** 整条站间折线的几何签名，用于平行轨道分组 */
+  groupKey: string;
   lineId: string;
   pairIndex: number;
   partIndex: number;
@@ -430,6 +467,13 @@ interface RawSegment {
 
 const rawSegments: RawSegment[] = [];
 
+/** 一条站间折线（同一线路、同一区间）的全部渲染段，按 partIndex 升序 */
+interface RawPolyline {
+  lineId: string;
+  pairIndex: number;
+  parts: RawSegment[];
+}
+
 function lineWidth(line: LineData): number | undefined {
   return line.lineType === 'ferry'
     ? FERRY_LINE_WIDTH
@@ -438,13 +482,11 @@ function lineWidth(line: LineData): number | undefined {
       : undefined;
 }
 
-const specialLineTypes = new Set(['ferry', 'same-station']);
-
 for (const line of parsedLines) {
   const lw = lineWidth(line);
   const dash = line.lineType === 'ferry' ? FERRY_DASH : undefined;
   for (let i = 0; i < line.stations.length - 1; i++) {
-    const [aId, aDir] = line.stations[i];
+    const [aId, waypoints] = line.stations[i];
     const [bId] = line.stations[i + 1];
     const sa = stationMap.get(aId);
     const sb = stationMap.get(bId);
@@ -455,125 +497,87 @@ for (const line of parsedLines) {
     const fare = Math.round(dist * preset.farePerKm);
     const time = Math.round(dist * preset.minutesPerKm);
 
-    const ax = sa.cx,
-      ay = sa.cy;
-    const bx = sb.cx,
-      by = sb.cy;
-    const dx = bx - ax,
-      dy = by - ay;
-
-    if (specialLineTypes.has(line.lineType!) || isAllowedSegment(dx, dy)) {
+    const verts = pairVertices(sa, sb, waypoints);
+    const groupKey = polylineKey(verts);
+    const ids: string[] = [];
+    for (let k = 0; k < verts.length - 1; k++) {
+      const id = pathId(verts[k].x, verts[k].y, verts[k + 1].x, verts[k + 1].y);
+      ids.push(id);
       rawSegments.push({
-        id: pathId(ax, ay, bx, by),
+        id,
+        groupKey,
         lineId: line.id,
         pairIndex: i,
-        partIndex: 0,
-        x1: ax,
-        y1: ay,
-        x2: bx,
-        y2: by,
+        partIndex: k,
+        x1: verts[k].x,
+        y1: verts[k].y,
+        x2: verts[k + 1].x,
+        y2: verts[k + 1].y,
         width: lw,
         dasharray: dash,
         fare,
         time,
         distance: dist,
-        showLabel: true,
-      });
-    } else {
-      const diagFirst = aDir;
-      let cx: number, cy: number;
-      if (diagFirst) {
-        if (Math.abs(dx) > Math.abs(dy)) {
-          cx = ax + Math.sign(dx) * Math.abs(dy);
-          cy = by;
-        } else {
-          cx = bx;
-          cy = ay + Math.sign(dy) * Math.abs(dx);
-        }
-      } else {
-        if (Math.abs(dx) > Math.abs(dy)) {
-          cx = bx - Math.sign(dx) * Math.abs(dy);
-          cy = ay;
-        } else {
-          cx = ax;
-          cy = by - Math.sign(dy) * Math.abs(dx);
-        }
-      }
-
-      rawSegments.push({
-        id: pathId(ax, ay, cx, cy),
-        lineId: line.id,
-        pairIndex: i,
-        partIndex: 0,
-        x1: ax,
-        y1: ay,
-        x2: cx,
-        y2: cy,
-        fare,
-        time,
-        distance: dist,
-        showLabel: true,
-      });
-      rawSegments.push({
-        id: pathId(cx, cy, bx, by),
-        lineId: line.id,
-        pairIndex: i,
-        partIndex: 1,
-        x1: cx,
-        y1: cy,
-        x2: bx,
-        y2: by,
-        fare,
-        time,
-        distance: dist,
-        showLabel: false,
+        showLabel: k === 0,
       });
     }
+    pairSegmentIds.set(`${line.id}|${aId}|${bId}`, ids);
+    pairSegmentIds.set(`${line.id}|${bId}|${aId}`, ids);
   }
 }
-
-const segmentGroups = new Map<string, RawSegment[]>();
+const polylineGroups = new Map<string, RawPolyline[]>();
 for (const seg of rawSegments) {
-  let group = segmentGroups.get(seg.id);
+  let group = polylineGroups.get(seg.groupKey);
   if (!group) {
     group = [];
-    segmentGroups.set(seg.id, group);
+    polylineGroups.set(seg.groupKey, group);
   }
-  group.push(seg);
-}
-
-function offsetCoords(x1: number, y1: number, x2: number, y2: number, offset: number) {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const len = Math.sqrt(dx * dx + dy * dy);
-  if (len === 0) return { x1, y1, x2, y2 };
-  const ux = (-dy / len) * offset;
-  const uy = (dx / len) * offset;
-  return { x1: x1 + ux, y1: y1 + uy, x2: x2 + ux, y2: y2 + uy };
+  let polyline = group.find((p) => p.lineId === seg.lineId && p.pairIndex === seg.pairIndex);
+  if (!polyline) {
+    polyline = { lineId: seg.lineId, pairIndex: seg.pairIndex, parts: [] };
+    group.push(polyline);
+  }
+  polyline.parts.push(seg);
 }
 
 export const renderSegments: RenderSegment[] = [];
 
-for (const [, segments] of segmentGroups) {
-  segments.sort((a, b) => a.lineId.localeCompare(b.lineId));
-  const n = segments.length;
+// 每个分组 = 一组几何完全相同的站间折线（由不同线路/区间共用），组内按 lineId 决定平行轨道偏移次序
+const groups = [...polylineGroups.values()];
+for (const polylines of groups) polylines.sort((a, b) => a.lineId.localeCompare(b.lineId));
+
+for (const polylines of groups) {
+  const n = polylines.length;
   for (let i = 0; i < n; i++) {
-    const seg = segments[i];
+    const parts = polylines[i].parts.sort((a, b) => a.partIndex - b.partIndex);
     const offset = (i - (n - 1) / 2) * LINE_WIDTH;
-    const coords = offsetCoords(seg.x1, seg.y1, seg.x2, seg.y2, offset);
-    renderSegments.push({
-      id: seg.id,
-      lineId: seg.lineId,
-      color: lineColorMap.get(seg.lineId)!,
-      ...coords,
-      width: seg.width ?? LINE_WIDTH,
-      dasharray: seg.dasharray,
-      fare: seg.fare,
-      time: seg.time,
-      distance: seg.distance,
-      showLabel: seg.showLabel && i === 0,
-      pairIndex: seg.pairIndex,
-      partIndex: seg.partIndex,
-    });
+    const first = parts[0];
+    const last = parts[parts.length - 1];
+    // 整条区间沿「起点 → 终点」弦的法向平移，折角保持连续
+    const cdx = last.x2 - first.x1;
+    const cdy = last.y2 - first.y1;
+    const clen = Math.sqrt(cdx * cdx + cdy * cdy);
+    const ux = clen === 0 ? 0 : (-cdy / clen) * offset;
+    const uy = clen === 0 ? 0 : (cdx / clen) * offset;
+
+    for (const seg of parts) {
+      renderSegments.push({
+        id: seg.id,
+        lineId: seg.lineId,
+        color: lineColorMap.get(seg.lineId)!,
+        x1: seg.x1 + ux,
+        y1: seg.y1 + uy,
+        x2: seg.x2 + ux,
+        y2: seg.y2 + uy,
+        width: seg.width ?? LINE_WIDTH,
+        dasharray: seg.dasharray,
+        fare: seg.fare,
+        time: seg.time,
+        distance: seg.distance,
+        showLabel: seg.showLabel && i === 0,
+        pairIndex: seg.pairIndex,
+        partIndex: seg.partIndex,
+      });
+    }
   }
 }

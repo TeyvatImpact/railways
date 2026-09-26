@@ -955,30 +955,30 @@
         ["TMM", "L"]
       ],
       "stations": [
-        ["SAA", false],
-        ["MSC", false],
-        ["MSG", false],
-        ["SPV", true],
-        ["DWW", false],
-        ["STG", false],
-        ["DHM", false],
-        ["WSI", false],
-        ["GLP", false],
-        ["LYN", false],
-        ["LYH", false],
-        ["LSA", false],
-        ["CHM", false],
-        ["CBC", false],
-        ["GHV", true],
-        ["SMC", false],
-        ["PDD", false],
-        ["CVR", true],
-        ["ARV", false],
-        ["MKD", false],
-        ["DOM", false],
-        ["WSV", false],
-        ["TMM", true],
-        ["VKO", false]
+        ["SAA"],
+        ["MSC"],
+        ["MSG"],
+        ["SPV", [[-1, 1]]],
+        ["DWW", [[-1, 0]]],
+        ["STG"],
+        ["DHM"],
+        ["WSI"],
+        ["GLP"],
+        ["LYN"],
+        ["LYH"],
+        ["LSA"],
+        ["CHM"],
+        ["CBC"],
+        ["GHV", [[-1, -1]]],
+        ["SMC", [[-1, 0]]],
+        ["PDD"],
+        ["CVR", [[-2, 2]]],
+        ["ARV"],
+        ["MKD"],
+        ["DOM"],
+        ["WSV"],
+        ["TMM", [[1, -1]]],
+        ["VKO"]
       ],
       "costPreset": "standard"
     },
@@ -993,19 +993,19 @@
         ["DTM", "RB"]
       ],
       "stations": [
-        ["STL", true],
-        ["WLD", false],
-        ["DWW", true],
-        ["WRV", false],
-        ["MYV", true],
-        ["GLP", false],
-        ["CJS", false],
-        ["TQV", true],
-        ["LPV", false],
-        ["CHM", false],
-        ["TGG", false],
-        ["DTM", false],
-        ["POM", false]
+        ["STL", [[1, 1]]],
+        ["WLD"],
+        ["DWW", [[1, 1]]],
+        ["WRV", [[0, 1]]],
+        ["MYV", [[-2, 2]]],
+        ["GLP"],
+        ["CJS", [[-1, 0]]],
+        ["TQV", [[-1, 1]]],
+        ["LPV"],
+        ["CHM"],
+        ["TGG", [[-2, 0]]],
+        ["DTM"],
+        ["POM"]
       ],
       "costPreset": "standard"
     },
@@ -1017,15 +1017,7 @@
         ["SFL", "RT"],
         ["DSC", "LT"]
       ],
-      "stations": [
-        ["SFL", false],
-        ["WSW", false],
-        ["MSG", false],
-        ["WDR", false],
-        ["DSC", false],
-        ["SCP", false],
-        ["WRV", false]
-      ],
+      "stations": [["SFL"], ["WSW"], ["MSG"], ["WDR", [[0, 1]]], ["DSC"], ["SCP"], ["WRV"]],
       "costPreset": "standard"
     },
     {
@@ -1038,16 +1030,16 @@
         ["YLW", "RT"]
       ],
       "stations": [
-        ["LYS", false],
-        ["LYH", false],
-        ["DYR", false],
-        ["TQV", false],
-        ["NTM", false],
-        ["MIL", false],
-        ["MXL", false],
-        ["CZW", true],
-        ["JDM", false],
-        ["YLW", false]
+        ["LYS", [[-1, 0]]],
+        ["LYH"],
+        ["DYR"],
+        ["TQV"],
+        ["NTM"],
+        ["MIL"],
+        ["MXL"],
+        ["CZW", [[-1, -1]]],
+        ["JDM"],
+        ["YLW"]
       ],
       "costPreset": "standard"
     },
@@ -1061,13 +1053,13 @@
         ["WSI", "LT"]
       ],
       "stations": [
-        ["CWT", false],
-        ["MMY", false],
-        ["YLW", false],
-        ["QYV", true],
-        ["QCV", false],
-        ["DHM", false],
-        ["WSI", false]
+        ["CWT", [[0, -2]]],
+        ["MMY"],
+        ["YLW", [[2, 0]]],
+        ["QYV", [[1, 1]]],
+        ["QCV"],
+        ["DHM"],
+        ["WSI"]
       ],
       "costPreset": "standard"
     },
@@ -1079,13 +1071,7 @@
         ["BDH", "RT"],
         ["VMV", "LT"]
       ],
-      "stations": [
-        ["BDH", false],
-        ["CTC", false],
-        ["SMC", false],
-        ["VMV", false],
-        ["POM", false]
-      ],
+      "stations": [["BDH"], ["CTC"], ["SMC"], ["VMV"], ["POM"]],
       "costPreset": "standard"
     },
     {
@@ -1097,18 +1083,18 @@
         ["VNA", "RB"]
       ],
       "stations": [
-        ["CTC", false],
-        ["CHH", false],
-        ["GHV", false],
-        ["DTM", false],
-        ["POM", false],
-        ["APW", false],
-        ["ROD", false],
-        ["CVR", false],
-        ["YNM", false],
-        ["FOA", false],
-        ["VNA", false],
-        ["CTC", false]
+        ["CTC", [[1, 0]]],
+        ["CHH"],
+        ["GHV"],
+        ["DTM"],
+        ["POM"],
+        ["APW", [[-1, 0]]],
+        ["ROD"],
+        ["CVR"],
+        ["YNM"],
+        ["FOA", [[0, -1]]],
+        ["VNA"],
+        ["CTC"]
       ],
       "costPreset": "standard"
     },
@@ -1122,19 +1108,19 @@
         ["FCR", "L"]
       ],
       "stations": [
-        ["COF", false],
-        ["PLM", false],
-        ["FRI", false],
-        ["CLR", false],
-        ["LCU", false],
-        ["WWL", false],
-        ["FFP", false],
-        ["FCR", true],
-        ["MAE", false],
-        ["MAT", false],
-        ["POI", false],
-        ["ENS", false],
-        ["COF", false]
+        ["COF"],
+        ["PLM", [[0, -2]]],
+        ["FRI"],
+        ["CLR", [[2, 0]]],
+        ["LCU"],
+        ["WWL"],
+        ["FFP"],
+        ["FCR", [[-2, 2]]],
+        ["MAE"],
+        ["MAT"],
+        ["POI", [[-2, 0]]],
+        ["ENS"],
+        ["COF"]
       ],
       "costPreset": "aquabus"
     },
@@ -1146,13 +1132,7 @@
         ["MCT", "T"],
         ["LDH", "RT"]
       ],
-      "stations": [
-        ["COF", true],
-        ["MCT", false],
-        ["OPE", false],
-        ["FFP", false],
-        ["LDH", false]
-      ],
+      "stations": [["COF", [[2, -2]]], ["MCT", [[1, 0]]], ["OPE"], ["FFP", [[2, 0]]], ["LDH"]],
       "costPreset": "aquabus"
     },
     {
@@ -1163,13 +1143,7 @@
         ["RRH", "L"],
         ["MES", "L"]
       ],
-      "stations": [
-        ["RRH", false],
-        ["MAT", false],
-        ["COF", false],
-        ["PLM", true],
-        ["MES", false]
-      ],
+      "stations": [["RRH", [[0, -2]]], ["MAT", [[0, -1]]], ["COF"], ["PLM", [[-3, -3]]], ["MES"]],
       "costPreset": "aquabus"
     },
     {
@@ -1177,13 +1151,7 @@
       "name": "纳塔局·连接线",
       "nameEn": "Natlan Connection Line",
       "lineLabels": [["COE", "RB"]],
-      "stations": [
-        ["DOM", false],
-        ["COE", false],
-        ["SFV", false],
-        ["CWF", false],
-        ["SSF", false]
-      ],
+      "stations": [["DOM"], ["COE"], ["SFV", [[-2, 0]]], ["CWF"], ["SSF"]],
       "costPreset": "standard"
     },
     {
@@ -1195,12 +1163,12 @@
         ["FSF", "LT"]
       ],
       "stations": [
-        ["COE", false],
-        ["SFV", false],
-        ["CWF", false],
-        ["NWW", false],
-        ["COP", false],
-        ["FSF", false]
+        ["COE"],
+        ["SFV", [[-2, 0]]],
+        ["CWF", [[-1, 0]]],
+        ["NWW"],
+        ["COP", [[-1, 0]]],
+        ["FSF"]
       ],
       "costPreset": "natlan-resort"
     },
@@ -1214,17 +1182,17 @@
         ["TPR", "LT"]
       ],
       "stations": [
-        ["ONT", false],
-        ["FFC", false],
-        ["HZH", false],
-        ["CWF", false],
-        ["SSF", false],
-        ["POS", false],
-        ["AYW", true],
-        ["TPP", false],
-        ["AST", true],
-        ["TPR", false],
-        ["COE", false]
+        ["ONT", [[0, 1]]],
+        ["FFC", [[1, 0]]],
+        ["HZH"],
+        ["CWF"],
+        ["SSF"],
+        ["POS"],
+        ["AYW", [[1, -1]]],
+        ["TPP"],
+        ["AST", [[1, -1]]],
+        ["TPR", [[0, -1]]],
+        ["COE"]
       ],
       "costPreset": "standard"
     },
@@ -1236,14 +1204,7 @@
         ["SOC", "RT"],
         ["TPB", "B"]
       ],
-      "stations": [
-        ["TPP", false],
-        ["SOC", true],
-        ["SSF", false],
-        ["NWW", true],
-        ["MNW", false],
-        ["TPB", false]
-      ],
+      "stations": [["TPP"], ["SOC", [[-1, -1]]], ["SSF"], ["NWW", [[-1, -1]]], ["MNW"], ["TPB"]],
       "costPreset": "standard"
     },
     {
@@ -1251,13 +1212,7 @@
       "name": "纳塔局·悠悠度假村线",
       "nameEn": "Natlan Easybreeze Holiday Resort Line",
       "lineLabels": [["EBM", "LB"]],
-      "stations": [
-        ["EBP", false],
-        ["EBM", true],
-        ["CFC", false],
-        ["WVB", false],
-        ["TLI", false]
-      ],
+      "stations": [["EBP", [[0, -1]]], ["EBM", [[-1, -1]]], ["CFC"], ["WVB"], ["TLI"]],
       "costPreset": "standard"
     },
     {
@@ -1265,12 +1220,7 @@
       "name": "挪德卡莱局·希汐岛线",
       "nameEn": "Nod-Krai Hiisi Island Line",
       "lineLabels": [["NST", "LB"]],
-      "stations": [
-        ["NSP", false],
-        ["NST", true],
-        ["CKC", false],
-        ["FME", false]
-      ],
+      "stations": [["NSP"], ["NST", [[-1, -1]]], ["CKC", [[-1, 0]]], ["FME"]],
       "costPreset": "standard"
     },
     {
@@ -1281,15 +1231,7 @@
         ["NSP", "LB"],
         ["FNC", "LT"]
       ],
-      "stations": [
-        ["NSP", false],
-        ["NST", false],
-        ["BMB", false],
-        ["BAL", false],
-        ["NTP", false],
-        ["PHI", false],
-        ["FNC", false]
-      ],
+      "stations": [["NSP"], ["NST", [[0, -1]]], ["BMB"], ["BAL"], ["NTP"], ["PHI"], ["FNC"]],
       "costPreset": "standard"
     },
     {
@@ -1297,15 +1239,7 @@
       "name": "挪德卡莱局·帕哈岛支线",
       "nameEn": "Nod-Krai Paha Isle Branch Line",
       "lineLabels": [["KEW", "LB"]],
-      "stations": [
-        ["NSP", false],
-        ["NST", false],
-        ["BMB", false],
-        ["BAL", false],
-        ["NTP", false],
-        ["KEE", false],
-        ["KEW", false]
-      ],
+      "stations": [["NSP"], ["NST", [[0, -1]]], ["BMB"], ["BAL"], ["NTP"], ["KEE"], ["KEW"]],
       "costPreset": "standard"
     },
     {
@@ -1317,12 +1251,12 @@
         ["STR", "L"]
       ],
       "stations": [
-        ["VOP", false],
-        ["PRM", false],
-        ["DSM", false],
-        ["FNK", false],
-        ["AVT", true],
-        ["STR", false]
+        ["VOP"],
+        ["PRM"],
+        ["DSM", [[0, -1]]],
+        ["FNK", [[0, -1]]],
+        ["AVT", [[1, -1]]],
+        ["STR"]
       ],
       "costPreset": "standard"
     },
@@ -1331,14 +1265,7 @@
       "name": "挪德卡莱局·虚海望支线",
       "lineLabels": [["KMC", "L"]],
       "nameEn": "Nod-Krai Voidsea Outlook Branch Line",
-      "stations": [
-        ["VOP", false],
-        ["PRM", false],
-        ["DSM", false],
-        ["FNK", true],
-        ["CWC", false],
-        ["KMC", false]
-      ],
+      "stations": [["VOP"], ["PRM"], ["DSM", [[0, -1]]], ["FNK", [[-1, -1]]], ["CWC"], ["KMC"]],
       "costPreset": "standard"
     },
     {
@@ -1347,10 +1274,7 @@
       "nameEn": "Final Night Cemetery ↔ Voidsea Outlook Port Ferry",
       "lineType": "ferry",
       "costPreset": "ferry",
-      "stations": [
-        ["FNC", false],
-        ["VOP", false]
-      ]
+      "stations": [["FNC"], ["VOP"]]
     }
   ],
   "stationDistances": [
