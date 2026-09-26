@@ -1,9 +1,22 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { lines, stationMap, type Line, type Station } from '../../composables/useMapData';
+import { computed, reactive } from 'vue';
+import {
+  lines,
+  stationMap,
+  type Line,
+  type LineVariant,
+  type Station,
+} from '../../composables/useMapData';
 import { measureText } from '../../composables/useLabelPlacement';
-import { splitVariants } from './variantStrip';
+import { splitVariants, type DivergentBranch } from './variantStrip';
 import { buildStrip, EDGE, type MeasureFn, type StripInput, type StripModel } from './stripModel';
+import {
+  buildProgress,
+  EMPTY_PROGRESS,
+  type Direction,
+  type ProgressModel,
+  type RouteSpan,
+} from './dynamicStrip';
 
 /** 只画轨道交通线路：轮渡（ferry.json 9 条 + 区域文件内 3 条）与同站换乘（same.json 3 条）都不画 */
 const railLines = lines.filter((line) => !line.lineType);
@@ -38,9 +51,12 @@ function badgesFor(line: Line, stationId: string) {
     .map((other) => ({ label: shortName(other.name), fill: other.color }));
 }
 
-function buildInput(line: Line): StripInput {
-  const { primary, branches } = splitVariants(line.variants);
-  const stations = primary.variant.stations
+function buildInput(
+  line: Line,
+  variant: LineVariant,
+  branches: DivergentBranch<LineVariant>[],
+): StripInput {
+  const stations = variant.stations
     .map((sid) => stationMap.get(sid))
     .filter((station) => station !== undefined)
     .map((station) => ({ ...stationLabel(station), badges: badgesFor(line, station.id) }));
@@ -68,7 +84,107 @@ function buildInput(line: Line): StripInput {
   };
 }
 
-const strips = computed(() => railLines.map((line) => buildStrip(buildInput(line), measure)));
+interface VariantOption {
+  index: number;
+  label: string;
+  stations: string[];
+}
+
+/** 线路 id → 可选变体（含站序）与条带主线（= 站数最多的变体）序号 */
+const lineVariants = new Map<string, { options: VariantOption[]; primary: number }>();
+
+const strips = railLines.map((line) => {
+  const { primary, branches } = splitVariants(line.variants);
+  lineVariants.set(line.id, {
+    primary: primary.index,
+    options: line.variants.map((variant, index) => ({
+      index,
+      label: variant.name
+        ? `${variant.name}${variant.nameEn ? ` · ${variant.nameEn}` : ''}`
+        : '全线',
+      stations: variant.stations,
+    })),
+  });
+  return buildStrip(buildInput(line, primary.variant, branches), measure);
+});
+
+interface DynState {
+  on: boolean;
+  dir: Direction;
+  variant: number;
+  progress: number;
+}
+
+/** 每条线路的动态模式状态（内存态，不落 localStorage）；默认变体 = 条带主线变体，默认进度 = 起点站 */
+const dynState = reactive<Record<string, DynState>>(
+  Object.fromEntries(
+    strips.map((s): [string, DynState] => [
+      s.key,
+      { on: false, dir: 'up', variant: lineVariants.get(s.key)!.primary, progress: 0 },
+    ]),
+  ),
+);
+
+/** 每条线路的进度模型；关掉开关时给空模型（不下发任何灰 / 闪状态） */
+const dynViews = computed<Record<string, ProgressModel>>(() => {
+  const out: Record<string, ProgressModel> = {};
+  for (const s of strips) {
+    const state = dynState[s.key];
+    const variant = state.on ? lineVariants.get(s.key)?.options[state.variant] : undefined;
+    out[s.key] = variant
+      ? buildProgress(s, variant.stations, state.dir, state.progress)
+      : EMPTY_PROGRESS;
+  }
+  return out;
+});
+
+function dyn(key: string): ProgressModel {
+  return dynViews.value[key] ?? EMPTY_PROGRESS;
+}
+
+function variantOptions(key: string): VariantOption[] {
+  return lineVariants.get(key)?.options ?? [];
+}
+
+/** 方向下拉文案：上行 = 站序（图上从左到右），下行 = 逆序；环线（首末同站）注明顺行 / 逆行 */
+function dirLabel(s: StripModel, dir: Direction): string {
+  const head = dir === 'up' ? '上行' : '下行';
+  const stations = variantOptions(s.key)[dynState[s.key].variant]?.stations;
+  if (!stations?.length) return head;
+  const firstId = stations[0];
+  const lastId = stations[stations.length - 1];
+  if (firstId === lastId) return `${head}（${dir === 'up' ? '顺行' : '逆行'}）`;
+  const first = stationMap.get(firstId)?.name;
+  const last = stationMap.get(lastId)?.name;
+  if (!first || !last) return head;
+  return `${head}（${dir === 'up' ? `${first} → ${last}` : `${last} → ${first}`}）`;
+}
+
+/** 动态高亮段的 grid 位置：列线 = col + 2（第 1 列是左边距），行 = 7 + lane；diag 只占 1 列（不写结束线） */
+function spanStyle(sp: RouteSpan) {
+  return sp.kind === 'diag'
+    ? { gridRow: 7 + sp.lane, gridColumnStart: sp.fromCol + 2 }
+    : { gridRow: 7 + sp.lane, gridColumnStart: sp.fromCol + 2, gridColumnEnd: sp.toCol + 2 };
+}
+
+function onToggle(key: string, e: Event) {
+  dynState[key].on = (e.target as HTMLInputElement).checked;
+}
+
+/** 换方向 / 换变体都回到新行程的起点站 */
+function onDir(key: string, e: Event) {
+  dynState[key].dir = (e.target as HTMLSelectElement).value === 'down' ? 'down' : 'up';
+  dynState[key].progress = 0;
+}
+
+function onVariant(key: string, e: Event) {
+  dynState[key].variant = Number((e.target as HTMLSelectElement).value);
+  dynState[key].progress = 0;
+}
+
+function onProgress(key: string, e: Event) {
+  dynState[key].progress = Number((e.target as HTMLSelectElement).value);
+}
 
 /** `.strip` 的纵向骨架：页头 / 徽章两行（含上下间隔）/ 引线通道 / 主线 / 每条支线一段车道 / 站名（吃掉剩余高度） */
 const BASE_ROWS = ['52px', '4px', '20px', '6px', '20px', '12px', '18px'];
@@ -102,83 +218,169 @@ function cell(col: number) {
 <template>
   <div class="bg-white h-screen overflow-y-auto p-4">
     <div class="w-max mx-auto flex flex-col gap-6">
-      <div v-for="s in strips" :key="s.key" class="strip" :style="stripStyle(s)">
-        <!-- 页头：线路名称色块 → 运营公司 → 运营主体（只写名称本身） -->
-        <header class="head">
-          <div class="chip">
-            <span class="chip-name">{{ s.name }}</span>
-            <span v-if="s.nameZh" class="chip-zh">{{ s.nameZh }}</span>
-            <span class="chip-en">{{ s.nameEn }}</span>
-          </div>
-          <div v-if="s.operator?.name" class="block">
-            <span class="block-name">{{ s.operator.name }}</span>
-            <span v-if="s.operator.nameEn" class="block-en">{{ s.operator.nameEn }}</span>
-          </div>
-          <div v-if="s.authority?.name" class="block">
-            <span class="block-name auth-name">{{ s.authority.name }}</span>
-            <span v-if="s.authority.nameEn" class="block-en">{{ s.authority.nameEn }}</span>
-            <span v-if="s.authority.nameAlt" class="block-en">{{ s.authority.nameAlt }}</span>
-          </div>
-        </header>
-
-        <!-- 换乘徽章：每站一簇，水平居中在本站列上；行由模型决定 -->
-        <div
-          v-for="st in s.stations"
-          v-show="st.badges.length"
-          :key="'badges-' + st.id"
-          class="badges"
-          :class="st.badges[0]?.row === 1 ? 'badges-far' : 'badges-near'"
-          :style="{ ...cell(st.col), '--badge-shift': st.badgeShift + 'px' }">
-          <span
-            v-for="(b, k) in st.badges"
-            :key="k"
-            class="badge"
-            :style="{ background: b.fill, color: b.textFill, '--badge-color': b.fill }">
-            {{ b.label }}
-          </span>
+      <div v-for="s in strips" :key="s.key" class="flex flex-col gap-1.5">
+        <!-- 面板外的调试/配置栏：动态模式开关 + 展开后的三项配置 -->
+        <div class="dyn-bar">
+          <label class="dyn-switch">
+            <input
+              type="checkbox"
+              :checked="dynState[s.key].on"
+              @change="onToggle(s.key, $event)" />
+            <span class="dyn-switch-track"></span>
+            <span class="dyn-switch-text">动态模式</span>
+          </label>
+          <template v-if="dynState[s.key].on">
+            <label class="dyn-field">
+              <span class="dyn-field-label">线路方向</span>
+              <select
+                class="dyn-select dyn-select-dir"
+                :value="dynState[s.key].dir"
+                @change="onDir(s.key, $event)">
+                <option value="up">{{ dirLabel(s, 'up') }}</option>
+                <option value="down">{{ dirLabel(s, 'down') }}</option>
+              </select>
+            </label>
+            <label v-if="variantOptions(s.key).length > 1" class="dyn-field">
+              <span class="dyn-field-label">线路变体</span>
+              <select
+                class="dyn-select dyn-select-variant"
+                :value="dynState[s.key].variant"
+                @change="onVariant(s.key, $event)">
+                <option v-for="v in variantOptions(s.key)" :key="v.index" :value="v.index">
+                  {{ v.label }}
+                </option>
+              </select>
+            </label>
+            <div class="dyn-field">
+              <span class="dyn-field-label">进度</span>
+              <button
+                type="button"
+                class="dyn-btn"
+                :disabled="dyn(s.key).index <= 0"
+                @click="dynState[s.key].progress = dyn(s.key).index - 1">
+                ◀
+              </button>
+              <select
+                class="dyn-select dyn-select-progress"
+                :value="dyn(s.key).index"
+                @change="onProgress(s.key, $event)">
+                <option v-for="(step, i) in dyn(s.key).steps" :key="i" :value="i">
+                  {{ step.label }}
+                </option>
+              </select>
+              <button
+                type="button"
+                class="dyn-btn"
+                :disabled="dyn(s.key).index >= dyn(s.key).count - 1"
+                @click="dynState[s.key].progress = dyn(s.key).index + 1">
+                ▶
+              </button>
+            </div>
+          </template>
         </div>
 
-        <!-- 主线 -->
-        <div class="track" :style="{ gridColumnEnd: s.trunkEndCol + 2 }"></div>
+        <div class="strip" :class="{ 'strip-dyn': dynState[s.key].on }" :style="stripStyle(s)">
+          <!-- 页头：线路名称色块 → 运营公司 → 运营主体（只写名称本身） -->
+          <header class="head">
+            <div class="chip">
+              <span class="chip-name">{{ s.name }}</span>
+              <span v-if="s.nameZh" class="chip-zh">{{ s.nameZh }}</span>
+              <span class="chip-en">{{ s.nameEn }}</span>
+            </div>
+            <div v-if="s.operator?.name" class="block">
+              <span class="block-name">{{ s.operator.name }}</span>
+              <span v-if="s.operator.nameEn" class="block-en">{{ s.operator.nameEn }}</span>
+            </div>
+            <div v-if="s.authority?.name" class="block">
+              <span class="block-name auth-name">{{ s.authority.name }}</span>
+              <span v-if="s.authority.nameEn" class="block-en">{{ s.authority.nameEn }}</span>
+              <span v-if="s.authority.nameAlt" class="block-en">{{ s.authority.nameAlt }}</span>
+            </div>
+          </header>
 
-        <!-- 支线：45° 汇入引线 + 车道横线 + 末端支线名标签块（每条支线占主线下方一段） -->
-        <template v-for="ln in s.lanes" :key="'lane-' + ln.lane">
+          <!-- 换乘徽章：每站一簇，水平居中在本站列上；行由模型决定 -->
           <div
-            class="lane-diag"
-            :style="{ gridRow: 7 + ln.lane, gridColumn: ln.junctionCol + 2 }"></div>
-          <div
-            class="lane-track"
-            :style="{
-              gridRow: 7 + ln.lane,
-              gridColumn: ln.junctionCol + 2,
-              gridColumnEnd: ln.lastCol + 2,
-            }"></div>
-          <div
-            v-if="ln.tag"
-            class="lane-tag"
-            :style="{ gridRow: 7 + ln.lane, gridColumn: ln.tag.col + 2 }">
-            <span>{{ ln.tag.text }}</span>
-            <span class="lane-tag-en">{{ ln.tag.textEn }}</span>
+            v-for="st in s.stations"
+            v-show="st.badges.length"
+            :key="'badges-' + st.col"
+            class="badges"
+            :class="st.badges[0]?.row === 1 ? 'badges-far' : 'badges-near'"
+            :style="{ ...cell(st.col), '--badge-shift': st.badgeShift + 'px' }">
+            <span
+              v-for="(b, k) in st.badges"
+              :key="k"
+              class="badge"
+              :style="{ background: b.fill, color: b.textFill, '--badge-color': b.fill }">
+              {{ b.label }}
+            </span>
           </div>
-        </template>
 
-        <!-- 站点：白底圆圈 + 居中的序号 -->
-        <div
-          v-for="st in s.stations"
-          :key="'node-' + st.id"
-          class="node"
-          :style="{ ...cell(st.col), gridRow: 7 + st.lane }">
-          {{ st.index }}
-        </div>
+          <!-- 主线 -->
+          <div class="track" :style="{ gridColumnEnd: s.trunkEndCol + 2 }"></div>
 
-        <!-- 站名：整块 45° 斜排（绕左上角旋转），越靠右的车站按模型的左移量回缩 -->
-        <div
-          v-for="st in s.stations"
-          :key="'label-' + st.id"
-          class="st-label"
-          :class="{ 'st-label-branch': st.lane > 0 }"
-          :style="{ ...cell(st.col), '--label-shift': st.labelShift + 'px' }">
-          <div v-for="(l, k) in st.label" :key="k" :class="'st-' + l.kind">{{ l.text }}</div>
+          <!-- 支线：45° 汇入引线 + 车道横线 + 末端支线名标签块（每条支线占主线下方一段） -->
+          <template v-for="ln in s.lanes" :key="'lane-' + ln.lane">
+            <div
+              class="lane-diag"
+              :style="{ gridRow: 7 + ln.lane, gridColumn: ln.junctionCol + 2 }"></div>
+            <div
+              class="lane-track"
+              :style="{
+                gridRow: 7 + ln.lane,
+                gridColumn: ln.junctionCol + 2,
+                gridColumnEnd: ln.lastCol + 2,
+              }"></div>
+            <div
+              v-if="ln.tag"
+              class="lane-tag"
+              :class="{
+                'dyn-dim': dynState[s.key].on && !dyn(s.key).activeLanes.includes(ln.lane),
+              }"
+              :style="{ gridRow: 7 + ln.lane, gridColumn: ln.tag.col + 2 }">
+              <span>{{ ln.tag.text }}</span>
+              <span class="lane-tag-en">{{ ln.tag.textEn }}</span>
+            </div>
+          </template>
+
+          <!-- 动态模式：只点亮本趟行程还没走到的段（当前段闪烁）；其余线路段由 .strip-dyn 统一变灰 -->
+          <div
+            v-for="(sp, i) in dyn(s.key).litSpans"
+            :key="'dyn-lit-' + i"
+            class="dyn-span"
+            :class="{ 'dyn-span-diag': sp.kind === 'diag', 'dyn-span-lead': sp.lead }"
+            :style="spanStyle(sp)"></div>
+          <div
+            v-for="(sp, i) in dyn(s.key).currentSpans"
+            :key="'dyn-cur-' + i"
+            class="dyn-span dyn-span-cur"
+            :class="{ 'dyn-span-diag': sp.kind === 'diag', 'dyn-span-lead': sp.lead }"
+            :style="spanStyle(sp)"></div>
+
+          <!-- 站点：白底圆圈 + 居中的序号（不在本趟行程上 / 已经过的都是灰的） -->
+          <div
+            v-for="st in s.stations"
+            :key="'node-' + st.col"
+            class="node"
+            :class="{
+              'dyn-dim': dyn(s.key).states[st.col] === 'dim',
+              'dyn-cur': dyn(s.key).states[st.col] === 'current',
+            }"
+            :style="{ ...cell(st.col), gridRow: 7 + st.lane }">
+            {{ st.index }}
+          </div>
+
+          <!-- 站名：整块 45° 斜排（绕左上角旋转），越靠右的车站按模型的左移量回缩 -->
+          <div
+            v-for="st in s.stations"
+            :key="'label-' + st.col"
+            class="st-label"
+            :class="{
+              'st-label-branch': st.lane > 0,
+              'dyn-dim': dyn(s.key).states[st.col] === 'dim',
+            }"
+            :style="{ ...cell(st.col), '--label-shift': st.labelShift + 'px' }">
+            <div v-for="(l, k) in st.label" :key="k" :class="'st-' + l.kind">{{ l.text }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -197,6 +399,8 @@ function cell(col: number) {
   border-radius: 14px;
   background: #fff;
   overflow: hidden;
+  /* 动态模式里「已经过」的灰 */
+  --dyn-gray: #aab1bb;
 }
 
 /* ---- 页头 ---- */
@@ -406,5 +610,159 @@ function cell(col: number) {
     400 8px/1.35 Barlow,
     sans-serif;
   color: #333;
+}
+
+/* ---- 面板外的调试/配置栏 ---- */
+.dyn-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 1920px;
+  padding: 6px 10px;
+  border: 1px solid #d8dde3;
+  border-radius: 10px;
+  background: #f6f8fa;
+  color: #333;
+  font-size: 12px;
+}
+.dyn-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dyn-field-label {
+  color: #666;
+  white-space: nowrap;
+}
+.dyn-select {
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid #cfd6dd;
+  border-radius: 6px;
+  background: #fff;
+  color: #222;
+  font-size: 12px;
+}
+.dyn-select-dir {
+  width: 240px;
+}
+.dyn-select-variant {
+  width: 180px;
+}
+.dyn-select-progress {
+  width: 280px;
+}
+.dyn-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 24px;
+  border: 1px solid #cfd6dd;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+  cursor: pointer;
+}
+.dyn-btn:disabled {
+  color: #b6bcc4;
+  cursor: default;
+}
+.dyn-switch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.dyn-switch input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.dyn-switch-track {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  border-radius: 9px;
+  background: #c8ced6;
+  transition: background 0.15s;
+}
+.dyn-switch-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s;
+}
+.dyn-switch input:checked + .dyn-switch-track {
+  background: #4363d8;
+}
+.dyn-switch input:checked + .dyn-switch-track::after {
+  transform: translateX(16px);
+}
+
+/* ---- 动态模式：整条线路默认变灰，只点亮本趟行程还没走到的段 ---- */
+/* 打开动态模式后，线路几何（主线 / 支线 45° 引线 / 车道横线）一律以灰为底：
+   不在本趟变体行程上的段、以及已经走过的段，就一直保持这个灰 */
+.strip-dyn .track,
+.strip-dyn .lane-diag,
+.strip-dyn .lane-track {
+  background: var(--dyn-gray);
+}
+/* 点亮段（还没走到）：按原色盖在灰底上 */
+.dyn-span {
+  align-self: center;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--line-color);
+}
+/* 正在经过的段：原色与灰底之间闪烁 */
+.dyn-span-cur {
+  animation: dyn-blink 1.1s ease-in-out infinite;
+}
+/* 与 .lane-diag 同形：从分歧站圆圈中心 45° 汇入支线车道（写在 .dyn-span 之后才能覆盖 align-self） */
+.dyn-span-diag {
+  justify-self: start;
+  align-self: start;
+  margin-top: -9px;
+  width: calc((var(--lane-row) / 2 + 9px) * 1.4142136);
+  transform: rotate(45deg);
+  transform-origin: 0 0;
+}
+/* 车道段从引线落点起：与 .lane-track 的左缩进一致 */
+.dyn-span-lead {
+  margin-left: calc(var(--lane-row) / 2 + 9px);
+}
+.node.dyn-dim {
+  border-color: var(--dyn-gray);
+  color: var(--dyn-gray);
+}
+.node.dyn-cur {
+  animation: dyn-blink 1.1s ease-in-out infinite;
+}
+.st-label.dyn-dim .st-name,
+.st-label.dyn-dim .st-zh,
+.st-label.dyn-dim .st-en {
+  color: var(--dyn-gray);
+}
+/* 本趟行程用不到的车道，连末端的「支线」标签块一起变灰 */
+.lane-tag.dyn-dim {
+  background: var(--dyn-gray);
+}
+@keyframes dyn-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
 }
 </style>
