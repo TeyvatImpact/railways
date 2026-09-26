@@ -311,7 +311,7 @@ const highlightedLineIds = ref<Set<string>>(new Set());
 
 const stationToLineIds = new Map<string, string[]>();
 for (const line of lines) {
-  for (const [sid] of line.stations) {
+  for (const sid of line.stations) {
     let arr = stationToLineIds.get(sid);
     if (!arr) {
       arr = [];

@@ -955,30 +955,30 @@
         ["TMM", "L"]
       ],
       "stations": [
-        ["SAA"],
-        ["MSC"],
-        ["MSG"],
-        ["SPV", [[-1, 1]]],
-        ["DWW", [[-1, 0]]],
-        ["STG"],
-        ["DHM"],
-        ["WSI"],
-        ["GLP"],
-        ["LYN"],
-        ["LYH"],
-        ["LSA"],
-        ["CHM"],
-        ["CBC"],
-        ["GHV", [[-1, -1]]],
-        ["SMC", [[-1, 0]]],
-        ["PDD"],
-        ["CVR", [[-2, 2]]],
-        ["ARV"],
-        ["MKD"],
-        ["DOM"],
-        ["WSV"],
-        ["TMM", [[1, -1]]],
-        ["VKO"]
+        "Teyvat-SAA",
+        "Teyvat-MSC",
+        "Teyvat-MSG",
+        "Teyvat-SPV",
+        "Teyvat-DWW",
+        "Teyvat-STG",
+        "Teyvat-DHM",
+        "Teyvat-WSI",
+        "Teyvat-GLP",
+        "Teyvat-LYN",
+        "Teyvat-LYH",
+        "Teyvat-LSA",
+        "Teyvat-CHM",
+        "Teyvat-CBC",
+        "Teyvat-GHV",
+        "Teyvat-SMC",
+        "Teyvat-PDD",
+        "Teyvat-CVR",
+        "Teyvat-ARV",
+        "Teyvat-MKD",
+        "Teyvat-DOM",
+        "Teyvat-WSV",
+        "Teyvat-TMM",
+        "Teyvat-VKO"
       ],
       "costPreset": "standard"
     },
@@ -993,19 +993,19 @@
         ["DTM", "RB"]
       ],
       "stations": [
-        ["STL", [[1, 1]]],
-        ["WLD"],
-        ["DWW", [[1, 1]]],
-        ["WRV", [[0, 1]]],
-        ["MYV", [[-2, 2]]],
-        ["GLP"],
-        ["CJS", [[-1, 0]]],
-        ["TQV", [[-1, 1]]],
-        ["LPV"],
-        ["CHM"],
-        ["TGG", [[-2, 0]]],
-        ["DTM"],
-        ["POM"]
+        "Teyvat-STL",
+        "Teyvat-WLD",
+        "Teyvat-DWW",
+        "Teyvat-WRV",
+        "Teyvat-MYV",
+        "Teyvat-GLP",
+        "Teyvat-CJS",
+        "Teyvat-TQV",
+        "Teyvat-LPV",
+        "Teyvat-CHM",
+        "Teyvat-TGG",
+        "Teyvat-DTM",
+        "Teyvat-POM"
       ],
       "costPreset": "standard"
     },
@@ -1017,7 +1017,15 @@
         ["SFL", "RT"],
         ["DSC", "LT"]
       ],
-      "stations": [["SFL"], ["WSW"], ["MSG"], ["WDR", [[0, 1]]], ["DSC"], ["SCP"], ["WRV"]],
+      "stations": [
+        "Teyvat-SFL",
+        "Teyvat-WSW",
+        "Teyvat-MSG",
+        "Teyvat-WDR",
+        "Teyvat-DSC",
+        "Teyvat-SCP",
+        "Teyvat-WRV"
+      ],
       "costPreset": "standard"
     },
     {
@@ -1030,16 +1038,16 @@
         ["YLW", "RT"]
       ],
       "stations": [
-        ["LYS", [[-1, 0]]],
-        ["LYH"],
-        ["DYR"],
-        ["TQV"],
-        ["NTM"],
-        ["MIL"],
-        ["MXL"],
-        ["CZW", [[-1, -1]]],
-        ["JDM"],
-        ["YLW"]
+        "Teyvat-LYS",
+        "Teyvat-LYH",
+        "Teyvat-DYR",
+        "Teyvat-TQV",
+        "Teyvat-NTM",
+        "Teyvat-MIL",
+        "Teyvat-MXL",
+        "Teyvat-CZW",
+        "Teyvat-JDM",
+        "Teyvat-YLW"
       ],
       "costPreset": "standard"
     },
@@ -1053,13 +1061,13 @@
         ["WSI", "LT"]
       ],
       "stations": [
-        ["CWT", [[0, -2]]],
-        ["MMY"],
-        ["YLW", [[2, 0]]],
-        ["QYV", [[1, 1]]],
-        ["QCV"],
-        ["DHM"],
-        ["WSI"]
+        "Teyvat-CWT",
+        "Teyvat-MMY",
+        "Teyvat-YLW",
+        "Teyvat-QYV",
+        "Teyvat-QCV",
+        "Teyvat-DHM",
+        "Teyvat-WSI"
       ],
       "costPreset": "standard"
     },
@@ -1071,7 +1079,7 @@
         ["BDH", "RT"],
         ["VMV", "LT"]
       ],
-      "stations": [["BDH"], ["CTC"], ["SMC"], ["VMV"], ["POM"]],
+      "stations": ["Teyvat-BDH", "Teyvat-CTC", "Teyvat-SMC", "Teyvat-VMV", "Teyvat-POM"],
       "costPreset": "standard"
     },
     {
@@ -1083,18 +1091,18 @@
         ["VNA", "RB"]
       ],
       "stations": [
-        ["CTC", [[1, 0]]],
-        ["CHH"],
-        ["GHV"],
-        ["DTM"],
-        ["POM"],
-        ["APW", [[-1, 0]]],
-        ["ROD"],
-        ["CVR"],
-        ["YNM"],
-        ["FOA", [[0, -1]]],
-        ["VNA"],
-        ["CTC"]
+        "Teyvat-CTC",
+        "Teyvat-CHH",
+        "Teyvat-GHV",
+        "Teyvat-DTM",
+        "Teyvat-POM",
+        "Teyvat-APW",
+        "Teyvat-ROD",
+        "Teyvat-CVR",
+        "Teyvat-YNM",
+        "Teyvat-FOA",
+        "Teyvat-VNA",
+        "Teyvat-CTC"
       ],
       "costPreset": "standard"
     },
@@ -1108,19 +1116,19 @@
         ["FCR", "L"]
       ],
       "stations": [
-        ["COF"],
-        ["PLM", [[0, -2]]],
-        ["FRI"],
-        ["CLR", [[2, 0]]],
-        ["LCU"],
-        ["WWL"],
-        ["FFP"],
-        ["FCR", [[-2, 2]]],
-        ["MAE"],
-        ["MAT"],
-        ["POI", [[-2, 0]]],
-        ["ENS"],
-        ["COF"]
+        "Teyvat-COF",
+        "Teyvat-PLM",
+        "Teyvat-FRI",
+        "Teyvat-CLR",
+        "Teyvat-LCU",
+        "Teyvat-WWL",
+        "Teyvat-FFP",
+        "Teyvat-FCR",
+        "Teyvat-MAE",
+        "Teyvat-MAT",
+        "Teyvat-POI",
+        "Teyvat-ENS",
+        "Teyvat-COF"
       ],
       "costPreset": "aquabus"
     },
@@ -1132,7 +1140,7 @@
         ["MCT", "T"],
         ["LDH", "RT"]
       ],
-      "stations": [["COF", [[2, -2]]], ["MCT", [[1, 0]]], ["OPE"], ["FFP", [[2, 0]]], ["LDH"]],
+      "stations": ["Teyvat-COF", "Teyvat-MCT", "Teyvat-OPE", "Teyvat-FFP", "Teyvat-LDH"],
       "costPreset": "aquabus"
     },
     {
@@ -1143,7 +1151,7 @@
         ["RRH", "L"],
         ["MES", "L"]
       ],
-      "stations": [["RRH", [[0, -2]]], ["MAT", [[0, -1]]], ["COF"], ["PLM", [[-3, -3]]], ["MES"]],
+      "stations": ["Teyvat-RRH", "Teyvat-MAT", "Teyvat-COF", "Teyvat-PLM", "Teyvat-MES"],
       "costPreset": "aquabus"
     },
     {
@@ -1151,7 +1159,7 @@
       "name": "纳塔局·连接线",
       "nameEn": "Natlan Connection Line",
       "lineLabels": [["COE", "RB"]],
-      "stations": [["DOM"], ["COE"], ["SFV", [[-2, 0]]], ["CWF"], ["SSF"]],
+      "stations": ["Teyvat-DOM", "Teyvat-COE", "Teyvat-SFV", "Teyvat-CWF", "Teyvat-SSF"],
       "costPreset": "standard"
     },
     {
@@ -1163,12 +1171,12 @@
         ["FSF", "LT"]
       ],
       "stations": [
-        ["COE"],
-        ["SFV", [[-2, 0]]],
-        ["CWF", [[-1, 0]]],
-        ["NWW"],
-        ["COP", [[-1, 0]]],
-        ["FSF"]
+        "Teyvat-COE",
+        "Teyvat-SFV",
+        "Teyvat-CWF",
+        "Teyvat-NWW",
+        "Teyvat-COP",
+        "Teyvat-FSF"
       ],
       "costPreset": "natlan-resort"
     },
@@ -1182,17 +1190,17 @@
         ["TPR", "LT"]
       ],
       "stations": [
-        ["ONT", [[0, 1]]],
-        ["FFC", [[1, 0]]],
-        ["HZH"],
-        ["CWF"],
-        ["SSF"],
-        ["POS"],
-        ["AYW", [[1, -1]]],
-        ["TPP"],
-        ["AST", [[1, -1]]],
-        ["TPR", [[0, -1]]],
-        ["COE"]
+        "Teyvat-ONT",
+        "Teyvat-FFC",
+        "Teyvat-HZH",
+        "Teyvat-CWF",
+        "Teyvat-SSF",
+        "Teyvat-POS",
+        "Teyvat-AYW",
+        "Teyvat-TPP",
+        "Teyvat-AST",
+        "Teyvat-TPR",
+        "Teyvat-COE"
       ],
       "costPreset": "standard"
     },
@@ -1204,7 +1212,14 @@
         ["SOC", "RT"],
         ["TPB", "B"]
       ],
-      "stations": [["TPP"], ["SOC", [[-1, -1]]], ["SSF"], ["NWW", [[-1, -1]]], ["MNW"], ["TPB"]],
+      "stations": [
+        "Teyvat-TPP",
+        "Teyvat-SOC",
+        "Teyvat-SSF",
+        "Teyvat-NWW",
+        "Teyvat-MNW",
+        "Teyvat-TPB"
+      ],
       "costPreset": "standard"
     },
     {
@@ -1212,7 +1227,7 @@
       "name": "纳塔局·悠悠度假村线",
       "nameEn": "Natlan Easybreeze Holiday Resort Line",
       "lineLabels": [["EBM", "LB"]],
-      "stations": [["EBP", [[0, -1]]], ["EBM", [[-1, -1]]], ["CFC"], ["WVB"], ["TLI"]],
+      "stations": ["Teyvat-EBP", "Teyvat-EBM", "Teyvat-CFC", "Teyvat-WVB", "Teyvat-TLI"],
       "costPreset": "standard"
     },
     {
@@ -1220,7 +1235,7 @@
       "name": "挪德卡莱局·希汐岛线",
       "nameEn": "Nod-Krai Hiisi Island Line",
       "lineLabels": [["NST", "LB"]],
-      "stations": [["NSP"], ["NST", [[-1, -1]]], ["CKC", [[-1, 0]]], ["FME"]],
+      "stations": ["Teyvat-NSP", "Teyvat-NST", "Teyvat-CKC", "Teyvat-FME"],
       "costPreset": "standard"
     },
     {
@@ -1231,7 +1246,15 @@
         ["NSP", "LB"],
         ["FNC", "LT"]
       ],
-      "stations": [["NSP"], ["NST", [[0, -1]]], ["BMB"], ["BAL"], ["NTP"], ["PHI"], ["FNC"]],
+      "stations": [
+        "Teyvat-NSP",
+        "Teyvat-NST",
+        "Teyvat-BMB",
+        "Teyvat-BAL",
+        "Teyvat-NTP",
+        "Teyvat-PHI",
+        "Teyvat-FNC"
+      ],
       "costPreset": "standard"
     },
     {
@@ -1239,7 +1262,15 @@
       "name": "挪德卡莱局·帕哈岛支线",
       "nameEn": "Nod-Krai Paha Isle Branch Line",
       "lineLabels": [["KEW", "LB"]],
-      "stations": [["NSP"], ["NST", [[0, -1]]], ["BMB"], ["BAL"], ["NTP"], ["KEE"], ["KEW"]],
+      "stations": [
+        "Teyvat-NSP",
+        "Teyvat-NST",
+        "Teyvat-BMB",
+        "Teyvat-BAL",
+        "Teyvat-NTP",
+        "Teyvat-KEE",
+        "Teyvat-KEW"
+      ],
       "costPreset": "standard"
     },
     {
@@ -1251,12 +1282,12 @@
         ["STR", "L"]
       ],
       "stations": [
-        ["VOP"],
-        ["PRM"],
-        ["DSM", [[0, -1]]],
-        ["FNK", [[0, -1]]],
-        ["AVT", [[1, -1]]],
-        ["STR"]
+        "Teyvat-VOP",
+        "Teyvat-PRM",
+        "Teyvat-DSM",
+        "Teyvat-FNK",
+        "Teyvat-AVT",
+        "Teyvat-STR"
       ],
       "costPreset": "standard"
     },
@@ -1265,7 +1296,14 @@
       "name": "挪德卡莱局·虚海望支线",
       "lineLabels": [["KMC", "L"]],
       "nameEn": "Nod-Krai Voidsea Outlook Branch Line",
-      "stations": [["VOP"], ["PRM"], ["DSM", [[0, -1]]], ["FNK", [[-1, -1]]], ["CWC"], ["KMC"]],
+      "stations": [
+        "Teyvat-VOP",
+        "Teyvat-PRM",
+        "Teyvat-DSM",
+        "Teyvat-FNK",
+        "Teyvat-CWC",
+        "Teyvat-KMC"
+      ],
       "costPreset": "standard"
     },
     {
@@ -1274,664 +1312,7 @@
       "nameEn": "Final Night Cemetery ↔ Voidsea Outlook Port Ferry",
       "lineType": "ferry",
       "costPreset": "ferry",
-      "stations": [["FNC"], ["VOP"]]
-    }
-  ],
-  "stationDistances": [
-    {
-      "from": "APW",
-      "to": "POM",
-      "distance": 16
-    },
-    {
-      "from": "APW",
-      "to": "ROD",
-      "distance": 10
-    },
-    {
-      "from": "ARV",
-      "to": "CVR",
-      "distance": 12
-    },
-    {
-      "from": "ARV",
-      "to": "MKD",
-      "distance": 40
-    },
-    {
-      "from": "AST",
-      "to": "TPP",
-      "distance": 8
-    },
-    {
-      "from": "AST",
-      "to": "TPR",
-      "distance": 12
-    },
-    {
-      "from": "AVT",
-      "to": "FNK",
-      "distance": 5
-    },
-    {
-      "from": "AVT",
-      "to": "STR",
-      "distance": 5
-    },
-    {
-      "from": "AYW",
-      "to": "POS",
-      "distance": 9
-    },
-    {
-      "from": "AYW",
-      "to": "TPP",
-      "distance": 10
-    },
-    {
-      "from": "BAL",
-      "to": "BMB",
-      "distance": 7
-    },
-    {
-      "from": "BAL",
-      "to": "NTP",
-      "distance": 8
-    },
-    {
-      "from": "BDH",
-      "to": "CTC",
-      "distance": 12
-    },
-    {
-      "from": "BMB",
-      "to": "NST",
-      "distance": 7
-    },
-    {
-      "from": "CBC",
-      "to": "CHM",
-      "distance": 3
-    },
-    {
-      "from": "CBC",
-      "to": "GHV",
-      "distance": 10
-    },
-    {
-      "from": "CFC",
-      "to": "EBM",
-      "distance": 2
-    },
-    {
-      "from": "CFC",
-      "to": "WVB",
-      "distance": 2
-    },
-    {
-      "from": "CHH",
-      "to": "CTC",
-      "distance": 15
-    },
-    {
-      "from": "CHH",
-      "to": "GHV",
-      "distance": 12
-    },
-    {
-      "from": "CHM",
-      "to": "LPV",
-      "distance": 10
-    },
-    {
-      "from": "CHM",
-      "to": "LSA",
-      "distance": 20
-    },
-    {
-      "from": "CHM",
-      "to": "TGG",
-      "distance": 12
-    },
-    {
-      "from": "CJS",
-      "to": "GLP",
-      "distance": 15
-    },
-    {
-      "from": "CJS",
-      "to": "TQV",
-      "distance": 15
-    },
-    {
-      "from": "CKC",
-      "to": "FME",
-      "distance": 12
-    },
-    {
-      "from": "CKC",
-      "to": "NST",
-      "distance": 10
-    },
-    {
-      "from": "CLR",
-      "to": "FRI",
-      "distance": 8
-    },
-    {
-      "from": "CLR",
-      "to": "LCU",
-      "distance": 18
-    },
-    {
-      "from": "COE",
-      "to": "DOM",
-      "distance": 25
-    },
-    {
-      "from": "COE",
-      "to": "SFV",
-      "distance": 15
-    },
-    {
-      "from": "COE",
-      "to": "TPR",
-      "distance": 7
-    },
-    {
-      "from": "COF",
-      "to": "ENS",
-      "distance": 15
-    },
-    {
-      "from": "COF",
-      "to": "MAT",
-      "distance": 20
-    },
-    {
-      "from": "COF",
-      "to": "MCT",
-      "distance": 16
-    },
-    {
-      "from": "COF",
-      "to": "PLM",
-      "distance": 1
-    },
-    {
-      "from": "COP",
-      "to": "FSF",
-      "distance": 7
-    },
-    {
-      "from": "COP",
-      "to": "NWW",
-      "distance": 20
-    },
-    {
-      "from": "CTC",
-      "to": "SMC",
-      "distance": 6
-    },
-    {
-      "from": "CTC",
-      "to": "VNA",
-      "distance": 14
-    },
-    {
-      "from": "CVR",
-      "to": "PDD",
-      "distance": 20
-    },
-    {
-      "from": "CVR",
-      "to": "ROD",
-      "distance": 5
-    },
-    {
-      "from": "CVR",
-      "to": "YNM",
-      "distance": 12
-    },
-    {
-      "from": "CWC",
-      "to": "FNK",
-      "distance": 6
-    },
-    {
-      "from": "CWC",
-      "to": "KMC",
-      "distance": 4
-    },
-    {
-      "from": "CWF",
-      "to": "HZH",
-      "distance": 9
-    },
-    {
-      "from": "CWF",
-      "to": "NWW",
-      "distance": 8
-    },
-    {
-      "from": "CWF",
-      "to": "SFV",
-      "distance": 14
-    },
-    {
-      "from": "CWF",
-      "to": "SSF",
-      "distance": 0.5
-    },
-    {
-      "from": "CWT",
-      "to": "MMY",
-      "distance": 16
-    },
-    {
-      "from": "CZW",
-      "to": "JDM",
-      "distance": 11
-    },
-    {
-      "from": "CZW",
-      "to": "MXL",
-      "distance": 8
-    },
-    {
-      "from": "DHM",
-      "to": "QCV",
-      "distance": 11
-    },
-    {
-      "from": "DHM",
-      "to": "STG",
-      "distance": 7
-    },
-    {
-      "from": "DHM",
-      "to": "WSI",
-      "distance": 8
-    },
-    {
-      "from": "DOM",
-      "to": "MKD",
-      "distance": 30
-    },
-    {
-      "from": "DOM",
-      "to": "WSV",
-      "distance": 10
-    },
-    {
-      "from": "DSC",
-      "to": "SCP",
-      "distance": 4
-    },
-    {
-      "from": "DSC",
-      "to": "WDR",
-      "distance": 12
-    },
-    {
-      "from": "DSM",
-      "to": "FNK",
-      "distance": 8
-    },
-    {
-      "from": "DSM",
-      "to": "PRM",
-      "distance": 6
-    },
-    {
-      "from": "DTM",
-      "to": "GHV",
-      "distance": 10
-    },
-    {
-      "from": "DTM",
-      "to": "POM",
-      "distance": 15
-    },
-    {
-      "from": "DTM",
-      "to": "TGG",
-      "distance": 20
-    },
-    {
-      "from": "DWW",
-      "to": "SPV",
-      "distance": 12
-    },
-    {
-      "from": "DWW",
-      "to": "STG",
-      "distance": 20
-    },
-    {
-      "from": "DWW",
-      "to": "WLD",
-      "distance": 10
-    },
-    {
-      "from": "DWW",
-      "to": "WRV",
-      "distance": 15
-    },
-    {
-      "from": "DYR",
-      "to": "LYH",
-      "distance": 8
-    },
-    {
-      "from": "DYR",
-      "to": "TQV",
-      "distance": 10
-    },
-    {
-      "from": "EBM",
-      "to": "EBP",
-      "distance": 2
-    },
-    {
-      "from": "ENS",
-      "to": "POI",
-      "distance": 15
-    },
-    {
-      "from": "FCR",
-      "to": "FFP",
-      "distance": 12
-    },
-    {
-      "from": "FCR",
-      "to": "MAE",
-      "distance": 15
-    },
-    {
-      "from": "FFC",
-      "to": "HZH",
-      "distance": 10
-    },
-    {
-      "from": "FFC",
-      "to": "ONT",
-      "distance": 25
-    },
-    {
-      "from": "FFP",
-      "to": "LDH",
-      "distance": 10
-    },
-    {
-      "from": "FFP",
-      "to": "OPE",
-      "distance": 10
-    },
-    {
-      "from": "FFP",
-      "to": "WWL",
-      "distance": 7
-    },
-    {
-      "from": "FNC",
-      "to": "PHI",
-      "distance": 8
-    },
-    {
-      "from": "FNC",
-      "to": "VOP",
-      "distance": 10
-    },
-    {
-      "from": "FOA",
-      "to": "VNA",
-      "distance": 8
-    },
-    {
-      "from": "FOA",
-      "to": "YNM",
-      "distance": 9
-    },
-    {
-      "from": "FRI",
-      "to": "PLM",
-      "distance": 25
-    },
-    {
-      "from": "GHV",
-      "to": "SMC",
-      "distance": 15
-    },
-    {
-      "from": "GLP",
-      "to": "LYN",
-      "distance": 15
-    },
-    {
-      "from": "GLP",
-      "to": "MYV",
-      "distance": 18
-    },
-    {
-      "from": "GLP",
-      "to": "WSI",
-      "distance": 11
-    },
-    {
-      "from": "JDM",
-      "to": "YLW",
-      "distance": 10
-    },
-    {
-      "from": "KEE",
-      "to": "KEW",
-      "distance": 2
-    },
-    {
-      "from": "KEE",
-      "to": "NTP",
-      "distance": 6
-    },
-    {
-      "from": "LCU",
-      "to": "WWL",
-      "distance": 6
-    },
-    {
-      "from": "LPV",
-      "to": "TQV",
-      "distance": 15
-    },
-    {
-      "from": "LSA",
-      "to": "LYH",
-      "distance": 14
-    },
-    {
-      "from": "LYH",
-      "to": "LYN",
-      "distance": 5
-    },
-    {
-      "from": "LYH",
-      "to": "LYS",
-      "distance": 3
-    },
-    {
-      "from": "MAE",
-      "to": "MAT",
-      "distance": 6
-    },
-    {
-      "from": "MAT",
-      "to": "POI",
-      "distance": 3
-    },
-    {
-      "from": "MAT",
-      "to": "RRH",
-      "distance": 20
-    },
-    {
-      "from": "MCT",
-      "to": "OPE",
-      "distance": 10
-    },
-    {
-      "from": "MES",
-      "to": "PLM",
-      "distance": 20
-    },
-    {
-      "from": "MIL",
-      "to": "MXL",
-      "distance": 10
-    },
-    {
-      "from": "MIL",
-      "to": "NTM",
-      "distance": 7
-    },
-    {
-      "from": "MMY",
-      "to": "YLW",
-      "distance": 5
-    },
-    {
-      "from": "MNW",
-      "to": "NWW",
-      "distance": 9
-    },
-    {
-      "from": "MNW",
-      "to": "TPB",
-      "distance": 15
-    },
-    {
-      "from": "MSC",
-      "to": "MSG",
-      "distance": 0.5
-    },
-    {
-      "from": "MSC",
-      "to": "SAA",
-      "distance": 1
-    },
-    {
-      "from": "MSG",
-      "to": "SPV",
-      "distance": 8
-    },
-    {
-      "from": "MSG",
-      "to": "WDR",
-      "distance": 9
-    },
-    {
-      "from": "MSG",
-      "to": "WSW",
-      "distance": 7
-    },
-    {
-      "from": "MYV",
-      "to": "WRV",
-      "distance": 18
-    },
-    {
-      "from": "NSP",
-      "to": "NST",
-      "distance": 1
-    },
-    {
-      "from": "NTM",
-      "to": "TQV",
-      "distance": 11
-    },
-    {
-      "from": "NTP",
-      "to": "PHI",
-      "distance": 14
-    },
-    {
-      "from": "NWW",
-      "to": "SSF",
-      "distance": 8
-    },
-    {
-      "from": "PDD",
-      "to": "SMC",
-      "distance": 20
-    },
-    {
-      "from": "POM",
-      "to": "VMV",
-      "distance": 16
-    },
-    {
-      "from": "POS",
-      "to": "SSF",
-      "distance": 16
-    },
-    {
-      "from": "PRM",
-      "to": "VOP",
-      "distance": 8
-    },
-    {
-      "from": "QCV",
-      "to": "QYV",
-      "distance": 25
-    },
-    {
-      "from": "QYV",
-      "to": "YLW",
-      "distance": 18
-    },
-    {
-      "from": "SCP",
-      "to": "WRV",
-      "distance": 10
-    },
-    {
-      "from": "SFL",
-      "to": "WSW",
-      "distance": 7
-    },
-    {
-      "from": "SMC",
-      "to": "VMV",
-      "distance": 14
-    },
-    {
-      "from": "SOC",
-      "to": "SSF",
-      "distance": 11
-    },
-    {
-      "from": "SOC",
-      "to": "TPP",
-      "distance": 6
-    },
-    {
-      "from": "STL",
-      "to": "WLD",
-      "distance": 20
-    },
-    {
-      "from": "TLI",
-      "to": "WVB",
-      "distance": 4
-    },
-    {
-      "from": "TMM",
-      "to": "VKO",
-      "distance": 20
-    },
-    {
-      "from": "TMM",
-      "to": "WSV",
-      "distance": 30
+      "stations": ["Teyvat-FNC", "Teyvat-VOP"]
     }
   ]
 }

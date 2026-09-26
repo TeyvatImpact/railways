@@ -5,6 +5,7 @@ import dataS from '../data/snezhnaya.json';
 import markersData from '../data/mark.json';
 import ferryData from '../data/ferry.json';
 import sameData from '../data/same.json';
+import connectionsData from '../data/connections.json';
 import {
   BLOCK_SIZE,
   margin,
@@ -37,10 +38,14 @@ export interface StationData {
   fontFamilyZh?: string;
 }
 
-export interface StationDistanceEntry {
+/** connections.json 的一条：两个站点之间如何连接。from/to 为完整站点 id；waypoints 按 from → to 方向链式给出 */
+export interface ConnectionEntry {
   from: string;
   to: string;
-  distance: number;
+  /** 公里；缺省 = DEFAULT_CONNECTION_DISTANCE */
+  distance?: number;
+  /** 链式增量途经点（数据单位）；缺省或空 = 两站之间直线 */
+  waypoints?: Waypoints;
 }
 
 export interface PresetConfig {
@@ -61,7 +66,7 @@ export interface LineData {
   nameEn: string;
   costPreset: string;
   lineLabels?: [string, string][];
-  stations: [string, Waypoints?][];
+  stations: string[];
   /** true = 单向线路，只按 `stations` 的顺序开行 */
   oneWay?: boolean;
   fontFamily?: string;
@@ -91,7 +96,7 @@ export interface Line {
   color: string;
   costPreset: string;
   lineLabels?: [string, string][];
-  stations: [string, Waypoints?][];
+  stations: string[];
   /** true = 单向线路，只按 `stations` 的顺序开行 */
   oneWay?: boolean;
   fontFamily?: string;
@@ -148,7 +153,10 @@ interface RegionFile {
     labelDir?: string;
   }[];
   lines: LineData[];
-  stationDistances?: StationDistanceEntry[];
+}
+
+interface ConnectionsFile {
+  connections: ConnectionEntry[];
 }
 
 function parseStationsJson(data: RegionFile): {
@@ -200,54 +208,21 @@ const parsedLinesI = dataI.lines as unknown as LineData[];
 const parsedLinesL = dataL.lines as unknown as LineData[];
 const parsedLinesS = dataS.lines as unknown as LineData[];
 
-for (const line of parsedLinesR) {
-  line.stations = line.stations.map(([id, waypoints]) => [
-    regionStationId(parsedR.prefix, id),
-    waypoints,
-  ]);
-  if (line.lineLabels)
-    line.lineLabels = line.lineLabels.map(([id, dir]) => [
-      regionStationId(parsedR.prefix, id),
-      dir,
-    ]);
-  line.fontFamily = parsedR.fontFamily;
-}
-for (const line of parsedLinesI) {
-  line.stations = line.stations.map(([id, waypoints]) => [
-    regionStationId(parsedI.prefix, id),
-    waypoints,
-  ]);
-  if (line.lineLabels)
-    line.lineLabels = line.lineLabels.map(([id, dir]) => [
-      regionStationId(parsedI.prefix, id),
-      dir,
-    ]);
-  line.fontFamily = parsedI.fontFamily;
-  if (line.nameZh) line.fontFamilyZh = 'Noto Serif SC';
-}
-for (const line of parsedLinesL) {
-  line.stations = line.stations.map(([id, waypoints]) => [
-    regionStationId(parsedL.prefix, id),
-    waypoints,
-  ]);
-  if (line.lineLabels)
-    line.lineLabels = line.lineLabels.map(([id, dir]) => [
-      regionStationId(parsedL.prefix, id),
-      dir,
-    ]);
-  line.fontFamily = parsedL.fontFamily;
-}
-for (const line of parsedLinesS) {
-  line.stations = line.stations.map(([id, waypoints]) => [
-    regionStationId(parsedS.prefix, id),
-    waypoints,
-  ]);
-  if (line.lineLabels)
-    line.lineLabels = line.lineLabels.map(([id, dir]) => [
-      regionStationId(parsedS.prefix, id),
-      dir,
-    ]);
-  line.fontFamily = parsedS.fontFamily;
+const regionLineSets: { lines: LineData[]; prefix: string; fontFamily: string; hasZh?: boolean }[] =
+  [
+    { lines: parsedLinesR, prefix: parsedR.prefix, fontFamily: parsedR.fontFamily },
+    { lines: parsedLinesI, prefix: parsedI.prefix, fontFamily: parsedI.fontFamily, hasZh: true },
+    { lines: parsedLinesL, prefix: parsedL.prefix, fontFamily: parsedL.fontFamily },
+    { lines: parsedLinesS, prefix: parsedS.prefix, fontFamily: parsedS.fontFamily },
+  ];
+for (const { lines, prefix, fontFamily, hasZh } of regionLineSets) {
+  for (const line of lines) {
+    line.stations = line.stations.map((id) => regionStationId(prefix, id));
+    if (line.lineLabels)
+      line.lineLabels = line.lineLabels.map(([id, dir]) => [regionStationId(prefix, id), dir]);
+    line.fontFamily = fontFamily;
+    if (hasZh && line.nameZh) line.fontFamilyZh = 'Noto Serif SC';
+  }
 }
 
 const parsedFerryLines = (ferryData as any).lines as LineData[];
@@ -261,46 +236,6 @@ const parsedLines: LineData[] = [
   ...parsedFerryLines,
   ...parsedSameLines,
 ];
-
-const parsedStationDistancesR: StationDistanceEntry[] = (dataR as any).stationDistances ?? [];
-const parsedStationDistancesI: StationDistanceEntry[] = (dataI as any).stationDistances ?? [];
-const parsedStationDistancesL: StationDistanceEntry[] = (dataL as any).stationDistances ?? [];
-const parsedStationDistancesS: StationDistanceEntry[] = (dataS as any).stationDistances ?? [];
-
-function prefixDistances(entries: StationDistanceEntry[], prefix: string): StationDistanceEntry[] {
-  return entries.map((e) => ({
-    from: regionStationId(prefix, e.from),
-    to: regionStationId(prefix, e.to),
-    distance: e.distance,
-  }));
-}
-
-const parsedRegionDistances: StationDistanceEntry[] = [
-  ...prefixDistances(parsedStationDistancesR, parsedR.prefix),
-  ...prefixDistances(parsedStationDistancesI, parsedI.prefix),
-  ...prefixDistances(parsedStationDistancesL, parsedL.prefix),
-  ...prefixDistances(parsedStationDistancesS, parsedS.prefix),
-];
-
-const parsedFerryDistances: StationDistanceEntry[] = (ferryData as any).stationDistances ?? [];
-const parsedSameDistances: StationDistanceEntry[] = (sameData as any).stationDistances ?? [];
-
-const allDistances: StationDistanceEntry[] = [
-  ...parsedRegionDistances,
-  ...parsedFerryDistances,
-  ...parsedSameDistances,
-];
-
-export const stationDistanceMap = new Map<string, number>();
-for (const d of allDistances) {
-  const key = [d.from, d.to].sort().join('|');
-  stationDistanceMap.set(key, d.distance);
-}
-
-export function lookupDistance(aId: string, bId: string): number {
-  const key = [aId, bId].sort().join('|');
-  return stationDistanceMap.get(key) ?? 10;
-}
 
 export const minX = Math.min(...parsedStations.map((s) => s.x)) - margin;
 const maxX = Math.max(...parsedStations.map((s) => s.x)) + margin;
@@ -323,9 +258,40 @@ export const stations: Station[] = parsedStations.map((s) => ({
 
 export const stationMap = new Map(stations.map((s) => [s.id, s]));
 
+/** 连接条目缺 distance 时的默认公里数（等价旧的 `?? 10` 行为） */
+export const DEFAULT_CONNECTION_DISTANCE = 10;
+
+const connectionMap = new Map<string, ConnectionEntry>();
+
+function connectionKey(aId: string, bId: string): string {
+  return [aId, bId].sort().join('|');
+}
+
+const connectionsFile = connectionsData as unknown as ConnectionsFile;
+
+for (const entry of connectionsFile.connections) {
+  if (!entry.from.includes('-') || !entry.to.includes('-'))
+    throw new Error(`connections.json 必须使用完整站点 id：${entry.from} ~ ${entry.to}`);
+  if (!stationMap.has(entry.from) || !stationMap.has(entry.to))
+    throw new Error(`connections.json 引用了不存在的站点：${entry.from} ~ ${entry.to}`);
+  const key = connectionKey(entry.from, entry.to);
+  if (connectionMap.has(key))
+    throw new Error(`connections.json 中重复的站点对：${entry.from} ~ ${entry.to}`);
+  connectionMap.set(key, entry);
+}
+
+/** 两站之间的连接定义；无条目时返回 undefined（距离回退默认值、几何回退直线） */
+export function lookupConnection(aId: string, bId: string): ConnectionEntry | undefined {
+  return connectionMap.get(connectionKey(aId, bId));
+}
+
+export function lookupDistance(aId: string, bId: string): number {
+  return lookupConnection(aId, bId)?.distance ?? DEFAULT_CONNECTION_DISTANCE;
+}
+
 const stationLineCount = new Map<string, number>();
 for (const line of parsedLines) {
-  for (const sid of new Set(line.stations.map(([id]) => id))) {
+  for (const sid of new Set(line.stations)) {
     stationLineCount.set(sid, (stationLineCount.get(sid) || 0) + 1);
   }
 }
@@ -433,6 +399,20 @@ function pairVertices(a: Station, b: Station, waypoints?: Waypoints): { x: numbe
   return pts;
 }
 
+/** 线路按 a → b 方向走时，该站间区间的顶点序列：连接表的 from→to 是规范方向，反向经过时把整条顶点序列逆序 */
+function connectionVertices(a: Station, b: Station): { x: number; y: number }[] {
+  const conn = lookupConnection(a.id, b.id);
+  if (!conn?.waypoints?.length)
+    return [
+      { x: a.cx, y: a.cy },
+      { x: b.cx, y: b.cy },
+    ];
+  const canonFrom = stationMap.get(conn.from)!;
+  const canonTo = stationMap.get(conn.to)!;
+  const verts = pairVertices(canonFrom, canonTo, conn.waypoints);
+  return conn.from === a.id ? verts : [...verts].reverse();
+}
+
 /** 折线几何签名（方向无关），用于平行轨道分组 */
 function polylineKey(pts: { x: number; y: number }[]): string {
   const fwd = pts.map((p) => `${p.x},${p.y}`).join('|');
@@ -486,8 +466,8 @@ for (const line of parsedLines) {
   const lw = lineWidth(line);
   const dash = line.lineType === 'ferry' ? FERRY_DASH : undefined;
   for (let i = 0; i < line.stations.length - 1; i++) {
-    const [aId, waypoints] = line.stations[i];
-    const [bId] = line.stations[i + 1];
+    const aId = line.stations[i];
+    const bId = line.stations[i + 1];
     const sa = stationMap.get(aId);
     const sb = stationMap.get(bId);
     if (!sa || !sb) continue;
@@ -497,7 +477,7 @@ for (const line of parsedLines) {
     const fare = Math.round(dist * preset.farePerKm);
     const time = Math.round(dist * preset.minutesPerKm);
 
-    const verts = pairVertices(sa, sb, waypoints);
+    const verts = connectionVertices(sa, sb);
     const groupKey = polylineKey(verts);
     const ids: string[] = [];
     for (let k = 0; k < verts.length - 1; k++) {

@@ -13,6 +13,7 @@ const ALLOWED_FILES = [
   'snezhnaya.json',
   'ferry.json',
   'same.json',
+  'connections.json',
 ];
 
 function adminApi(

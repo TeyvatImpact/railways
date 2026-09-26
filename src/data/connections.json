@@ -1,0 +1,1107 @@
+{
+  "connections": [
+    {
+      "from": "Inazuma-AKI",
+      "to": "Inazuma-HMZ",
+      "distance": 6
+    },
+    {
+      "from": "Inazuma-AKI",
+      "to": "Inazuma-KJE",
+      "distance": 9,
+      "waypoints": [[-1, 1]]
+    },
+    {
+      "from": "Inazuma-ATP",
+      "to": "Inazuma-MKN",
+      "distance": 4
+    },
+    {
+      "from": "Inazuma-AUM",
+      "to": "Inazuma-KDV",
+      "distance": 6,
+      "waypoints": [[-1, 1]]
+    },
+    {
+      "from": "Inazuma-AUM",
+      "to": "Inazuma-YGN",
+      "distance": 4
+    },
+    {
+      "from": "Inazuma-BKP",
+      "to": "Inazuma-CJF",
+      "distance": 5,
+      "waypoints": [[1, 0]]
+    },
+    {
+      "from": "Inazuma-BKP",
+      "to": "Inazuma-GNS",
+      "distance": 7,
+      "waypoints": [[0, -1]]
+    },
+    {
+      "from": "Inazuma-BKP",
+      "to": "Inazuma-HMZ",
+      "distance": 3
+    },
+    {
+      "from": "Inazuma-BKP",
+      "to": "Inazuma-KDV",
+      "distance": 6
+    },
+    {
+      "from": "Inazuma-BRV",
+      "to": "Inazuma-SGM",
+      "distance": 3
+    },
+    {
+      "from": "Inazuma-BRV",
+      "to": "Inazuma-WTE",
+      "distance": 4
+    },
+    {
+      "from": "Inazuma-CJF",
+      "to": "Inazuma-KSE",
+      "distance": 4
+    },
+    {
+      "from": "Inazuma-CRS",
+      "to": "Inazuma-MCS",
+      "distance": 4
+    },
+    {
+      "from": "Inazuma-CRS",
+      "to": "Inazuma-ONB",
+      "distance": 3
+    },
+    {
+      "from": "Inazuma-FFT",
+      "to": "Inazuma-HGV",
+      "distance": 3
+    },
+    {
+      "from": "Inazuma-HGV",
+      "to": "Inazuma-MSG",
+      "distance": 4,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Inazuma-HGV",
+      "to": "Inazuma-SPH",
+      "distance": 2
+    },
+    {
+      "from": "Inazuma-HGV",
+      "to": "Inazuma-WTE",
+      "distance": 10
+    },
+    {
+      "from": "Inazuma-HMZ",
+      "to": "Inazuma-IZC",
+      "distance": 1.5
+    },
+    {
+      "from": "Inazuma-IZC",
+      "to": "Inazuma-NIT",
+      "distance": 1
+    },
+    {
+      "from": "Inazuma-IZC",
+      "to": "Inazuma-TMP",
+      "distance": 30
+    },
+    {
+      "from": "Inazuma-JTM",
+      "to": "Inazuma-SPH",
+      "distance": 3
+    },
+    {
+      "from": "Inazuma-KDV",
+      "to": "Inazuma-RTU",
+      "distance": 4,
+      "waypoints": [[-1, -1]]
+    },
+    {
+      "from": "Inazuma-KJE",
+      "to": "Inazuma-KNZ",
+      "distance": 7,
+      "waypoints": [[-1, 0]]
+    },
+    {
+      "from": "Inazuma-KNZ",
+      "to": "Inazuma-NCB",
+      "distance": 5
+    },
+    {
+      "from": "Inazuma-KSE",
+      "to": "Inazuma-YGN",
+      "distance": 4,
+      "waypoints": [[0, -1]]
+    },
+    {
+      "from": "Inazuma-MCS",
+      "to": "Inazuma-MKN",
+      "distance": 3
+    },
+    {
+      "from": "Inazuma-MCS",
+      "to": "Inazuma-TMP",
+      "distance": 4,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Inazuma-MCS",
+      "to": "Inazuma-WKS",
+      "distance": 1
+    },
+    {
+      "from": "Inazuma-MSG",
+      "to": "Inazuma-NCB",
+      "distance": 5
+    },
+    {
+      "from": "Inazuma-MUS",
+      "to": "Inazuma-SGM",
+      "distance": 4
+    },
+    {
+      "from": "Inazuma-MUS",
+      "to": "Liyue-KYN",
+      "distance": 140
+    },
+    {
+      "from": "Inazuma-MUS",
+      "to": "Teyvat-POM",
+      "distance": 120
+    },
+    {
+      "from": "Inazuma-ONB",
+      "to": "Inazuma-SKP",
+      "distance": 3
+    },
+    {
+      "from": "Inazuma-RTP",
+      "to": "Inazuma-RTU",
+      "distance": 1
+    },
+    {
+      "from": "Inazuma-RTP",
+      "to": "Liyue-KYB",
+      "distance": 150
+    },
+    {
+      "from": "Liyue-BCM",
+      "to": "Liyue-HET",
+      "distance": 1
+    },
+    {
+      "from": "Liyue-BCM",
+      "to": "Liyue-KYB",
+      "distance": 2
+    },
+    {
+      "from": "Liyue-BCM",
+      "to": "Liyue-YLQ",
+      "distance": 2
+    },
+    {
+      "from": "Liyue-BCM",
+      "to": "Liyue-YLY",
+      "distance": 5,
+      "waypoints": [[2, -2]]
+    },
+    {
+      "from": "Liyue-CHY",
+      "to": "Liyue-HYG",
+      "distance": 2
+    },
+    {
+      "from": "Liyue-CHY",
+      "to": "Liyue-PSC",
+      "distance": 1
+    },
+    {
+      "from": "Liyue-FYP",
+      "to": "Liyue-HET",
+      "distance": 2
+    },
+    {
+      "from": "Liyue-FYP",
+      "to": "Liyue-LYN",
+      "distance": 1
+    },
+    {
+      "from": "Liyue-GYG",
+      "to": "Liyue-GYX",
+      "distance": 3
+    },
+    {
+      "from": "Liyue-GYX",
+      "to": "Liyue-YLY",
+      "distance": 2
+    },
+    {
+      "from": "Liyue-HET",
+      "to": "Liyue-LYG",
+      "distance": 2
+    },
+    {
+      "from": "Liyue-HET",
+      "to": "Liyue-YHT",
+      "distance": 1
+    },
+    {
+      "from": "Liyue-HJW",
+      "to": "Liyue-NCM",
+      "distance": 3
+    },
+    {
+      "from": "Liyue-HYC",
+      "to": "Liyue-NCM",
+      "distance": 4
+    },
+    {
+      "from": "Liyue-KYB",
+      "to": "Liyue-KYN",
+      "distance": 0.5
+    },
+    {
+      "from": "Liyue-KYN",
+      "to": "Liyue-PSC",
+      "distance": 1
+    },
+    {
+      "from": "Liyue-LHC",
+      "to": "Liyue-LYB",
+      "distance": 3,
+      "waypoints": [[1, 1]]
+    },
+    {
+      "from": "Liyue-LYB",
+      "to": "Liyue-YLQ",
+      "distance": 2
+    },
+    {
+      "from": "Liyue-LYB",
+      "to": "Liyue-YLY",
+      "distance": 3
+    },
+    {
+      "from": "Liyue-LYB",
+      "to": "Teyvat-LYN",
+      "distance": 0.5
+    },
+    {
+      "from": "Liyue-LYG",
+      "to": "Teyvat-LYH",
+      "distance": 0.3
+    },
+    {
+      "from": "Liyue-LYN",
+      "to": "Liyue-PSC",
+      "distance": 1
+    },
+    {
+      "from": "Liyue-LYN",
+      "to": "Teyvat-LYS",
+      "distance": 0.3
+    },
+    {
+      "from": "Liyue-NCM",
+      "to": "Liyue-PSC",
+      "distance": 1
+    },
+    {
+      "from": "Liyue-NCM",
+      "to": "Liyue-YJT",
+      "distance": 1.5
+    },
+    {
+      "from": "Liyue-YHT",
+      "to": "Liyue-YJT",
+      "distance": 0.5
+    },
+    {
+      "from": "Snezhnaya-Flamefeather",
+      "to": "Snezhnaya-Morepesok",
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Snezhnaya-Flamefeather",
+      "to": "Snezhnaya-Zorya",
+      "waypoints": [[0, 1]]
+    },
+    {
+      "from": "Snezhnaya-Morepesok",
+      "to": "Snezhnaya-Snezhnaya",
+      "waypoints": [[1, 0]]
+    },
+    {
+      "from": "Snezhnaya-Morepesok",
+      "to": "Snezhnaya-Zorya",
+      "waypoints": [[-1, 1]]
+    },
+    {
+      "from": "Snezhnaya-PaleCrown",
+      "to": "Snezhnaya-Snezhnaya",
+      "waypoints": [[-2, 2]]
+    },
+    {
+      "from": "Snezhnaya-Snezhnaya",
+      "to": "Snezhnaya-Svetloledovka",
+      "waypoints": [[1, 1]]
+    },
+    {
+      "from": "Snezhnaya-Snezhnaya",
+      "to": "Snezhnaya-Zorya",
+      "waypoints": [[-2, 2]]
+    },
+    {
+      "from": "Snezhnaya-Sretomorozsk",
+      "to": "Snezhnaya-Zorya",
+      "waypoints": [[-1, -1]]
+    },
+    {
+      "from": "Snezhnaya-Sretomorozsk",
+      "to": "Teyvat-STR",
+      "distance": 30,
+      "waypoints": [[-3, 3]]
+    },
+    {
+      "from": "Teyvat-APW",
+      "to": "Teyvat-POM",
+      "distance": 16
+    },
+    {
+      "from": "Teyvat-APW",
+      "to": "Teyvat-ROD",
+      "distance": 10,
+      "waypoints": [[-1, 0]]
+    },
+    {
+      "from": "Teyvat-ARV",
+      "to": "Teyvat-CVR",
+      "distance": 12,
+      "waypoints": [[1, 0]]
+    },
+    {
+      "from": "Teyvat-ARV",
+      "to": "Teyvat-MKD",
+      "distance": 40
+    },
+    {
+      "from": "Teyvat-AST",
+      "to": "Teyvat-TPP",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-AST",
+      "to": "Teyvat-TPR",
+      "distance": 12,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Teyvat-AVT",
+      "to": "Teyvat-FNK",
+      "distance": 5,
+      "waypoints": [[-1, 1]]
+    },
+    {
+      "from": "Teyvat-AVT",
+      "to": "Teyvat-STR",
+      "distance": 5,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Teyvat-AYW",
+      "to": "Teyvat-POS",
+      "distance": 9
+    },
+    {
+      "from": "Teyvat-AYW",
+      "to": "Teyvat-TPP",
+      "distance": 10,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Teyvat-BAL",
+      "to": "Teyvat-BMB",
+      "distance": 7
+    },
+    {
+      "from": "Teyvat-BAL",
+      "to": "Teyvat-NTP",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-BDH",
+      "to": "Teyvat-CTC",
+      "distance": 12
+    },
+    {
+      "from": "Teyvat-BDH",
+      "to": "Teyvat-RRH",
+      "distance": 70
+    },
+    {
+      "from": "Teyvat-BMB",
+      "to": "Teyvat-NST",
+      "distance": 7,
+      "waypoints": [[-1, 1]]
+    },
+    {
+      "from": "Teyvat-CBC",
+      "to": "Teyvat-CHM",
+      "distance": 3
+    },
+    {
+      "from": "Teyvat-CBC",
+      "to": "Teyvat-GHV",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-CFC",
+      "to": "Teyvat-EBM",
+      "distance": 2,
+      "waypoints": [[1, 0]]
+    },
+    {
+      "from": "Teyvat-CFC",
+      "to": "Teyvat-WVB",
+      "distance": 2
+    },
+    {
+      "from": "Teyvat-CHH",
+      "to": "Teyvat-CTC",
+      "distance": 15,
+      "waypoints": [[-1, -1]]
+    },
+    {
+      "from": "Teyvat-CHH",
+      "to": "Teyvat-GHV",
+      "distance": 12
+    },
+    {
+      "from": "Teyvat-CHM",
+      "to": "Teyvat-LPV",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-CHM",
+      "to": "Teyvat-LSA",
+      "distance": 20
+    },
+    {
+      "from": "Teyvat-CHM",
+      "to": "Teyvat-TGG",
+      "distance": 12
+    },
+    {
+      "from": "Teyvat-CJS",
+      "to": "Teyvat-GLP",
+      "distance": 15
+    },
+    {
+      "from": "Teyvat-CJS",
+      "to": "Teyvat-TQV",
+      "distance": 15,
+      "waypoints": [[-1, 0]]
+    },
+    {
+      "from": "Teyvat-CKC",
+      "to": "Teyvat-FME",
+      "distance": 12,
+      "waypoints": [[-1, 0]]
+    },
+    {
+      "from": "Teyvat-CKC",
+      "to": "Teyvat-NST",
+      "distance": 10,
+      "waypoints": [[1, 0]]
+    },
+    {
+      "from": "Teyvat-CLR",
+      "to": "Teyvat-FRI",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-CLR",
+      "to": "Teyvat-LCU",
+      "distance": 18,
+      "waypoints": [[2, 0]]
+    },
+    {
+      "from": "Teyvat-COE",
+      "to": "Teyvat-DOM",
+      "distance": 25
+    },
+    {
+      "from": "Teyvat-COE",
+      "to": "Teyvat-SFV",
+      "distance": 15
+    },
+    {
+      "from": "Teyvat-COE",
+      "to": "Teyvat-TPR",
+      "distance": 7,
+      "waypoints": [[-1, 1]]
+    },
+    {
+      "from": "Teyvat-COF",
+      "to": "Teyvat-ENS",
+      "distance": 15
+    },
+    {
+      "from": "Teyvat-COF",
+      "to": "Teyvat-MAT",
+      "distance": 20,
+      "waypoints": [[2, 2]]
+    },
+    {
+      "from": "Teyvat-COF",
+      "to": "Teyvat-MCT",
+      "distance": 16,
+      "waypoints": [[2, -2]]
+    },
+    {
+      "from": "Teyvat-COF",
+      "to": "Teyvat-PLM",
+      "distance": 1
+    },
+    {
+      "from": "Teyvat-COP",
+      "to": "Teyvat-FSF",
+      "distance": 7,
+      "waypoints": [[-1, 0]]
+    },
+    {
+      "from": "Teyvat-COP",
+      "to": "Teyvat-NWW",
+      "distance": 20
+    },
+    {
+      "from": "Teyvat-CTC",
+      "to": "Teyvat-SMC",
+      "distance": 6
+    },
+    {
+      "from": "Teyvat-CTC",
+      "to": "Teyvat-VNA",
+      "distance": 14
+    },
+    {
+      "from": "Teyvat-CVR",
+      "to": "Teyvat-PDD",
+      "distance": 20
+    },
+    {
+      "from": "Teyvat-CVR",
+      "to": "Teyvat-ROD",
+      "distance": 5
+    },
+    {
+      "from": "Teyvat-CVR",
+      "to": "Teyvat-YNM",
+      "distance": 12
+    },
+    {
+      "from": "Teyvat-CWC",
+      "to": "Teyvat-FNK",
+      "distance": 6,
+      "waypoints": [[0, 1]]
+    },
+    {
+      "from": "Teyvat-CWC",
+      "to": "Teyvat-KMC",
+      "distance": 4
+    },
+    {
+      "from": "Teyvat-CWF",
+      "to": "Teyvat-HZH",
+      "distance": 9
+    },
+    {
+      "from": "Teyvat-CWF",
+      "to": "Teyvat-NWW",
+      "distance": 8,
+      "waypoints": [[-1, 0]]
+    },
+    {
+      "from": "Teyvat-CWF",
+      "to": "Teyvat-SFV",
+      "distance": 14,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Teyvat-CWF",
+      "to": "Teyvat-SSF",
+      "distance": 0.5
+    },
+    {
+      "from": "Teyvat-CWT",
+      "to": "Teyvat-MMY",
+      "distance": 16,
+      "waypoints": [[0, -2]]
+    },
+    {
+      "from": "Teyvat-CZW",
+      "to": "Teyvat-JDM",
+      "distance": 11,
+      "waypoints": [[-1, -1]]
+    },
+    {
+      "from": "Teyvat-CZW",
+      "to": "Teyvat-MXL",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-DHM",
+      "to": "Teyvat-QCV",
+      "distance": 11
+    },
+    {
+      "from": "Teyvat-DHM",
+      "to": "Teyvat-STG",
+      "distance": 7
+    },
+    {
+      "from": "Teyvat-DHM",
+      "to": "Teyvat-WSI",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-DOM",
+      "to": "Teyvat-MKD",
+      "distance": 30
+    },
+    {
+      "from": "Teyvat-DOM",
+      "to": "Teyvat-WSV",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-DSC",
+      "to": "Teyvat-SCP",
+      "distance": 4
+    },
+    {
+      "from": "Teyvat-DSC",
+      "to": "Teyvat-WDR",
+      "distance": 12,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Teyvat-DSM",
+      "to": "Teyvat-FNK",
+      "distance": 8,
+      "waypoints": [[0, -1]]
+    },
+    {
+      "from": "Teyvat-DSM",
+      "to": "Teyvat-PRM",
+      "distance": 6
+    },
+    {
+      "from": "Teyvat-DTM",
+      "to": "Teyvat-GHV",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-DTM",
+      "to": "Teyvat-POM",
+      "distance": 15
+    },
+    {
+      "from": "Teyvat-DTM",
+      "to": "Teyvat-TGG",
+      "distance": 20,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Teyvat-DWW",
+      "to": "Teyvat-SPV",
+      "distance": 12,
+      "waypoints": [[2, 0]]
+    },
+    {
+      "from": "Teyvat-DWW",
+      "to": "Teyvat-STG",
+      "distance": 20,
+      "waypoints": [[-1, 0]]
+    },
+    {
+      "from": "Teyvat-DWW",
+      "to": "Teyvat-WLD",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-DWW",
+      "to": "Teyvat-WRV",
+      "distance": 15,
+      "waypoints": [[1, 1]]
+    },
+    {
+      "from": "Teyvat-DYR",
+      "to": "Teyvat-LYH",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-DYR",
+      "to": "Teyvat-TQV",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-EBM",
+      "to": "Teyvat-EBP",
+      "distance": 2,
+      "waypoints": [[1, 1]]
+    },
+    {
+      "from": "Teyvat-EBP",
+      "to": "Teyvat-FFC",
+      "distance": 14
+    },
+    {
+      "from": "Teyvat-ENS",
+      "to": "Teyvat-POI",
+      "distance": 15,
+      "waypoints": [[1, 1]]
+    },
+    {
+      "from": "Teyvat-FCR",
+      "to": "Teyvat-FFP",
+      "distance": 12
+    },
+    {
+      "from": "Teyvat-FCR",
+      "to": "Teyvat-MAE",
+      "distance": 15,
+      "waypoints": [[-2, 2]]
+    },
+    {
+      "from": "Teyvat-FFC",
+      "to": "Teyvat-HZH",
+      "distance": 10,
+      "waypoints": [[1, 0]]
+    },
+    {
+      "from": "Teyvat-FFC",
+      "to": "Teyvat-NSP",
+      "distance": 90
+    },
+    {
+      "from": "Teyvat-FFC",
+      "to": "Teyvat-ONT",
+      "distance": 25,
+      "waypoints": [[-2, -2]]
+    },
+    {
+      "from": "Teyvat-FFP",
+      "to": "Teyvat-LDH",
+      "distance": 10,
+      "waypoints": [[2, 0]]
+    },
+    {
+      "from": "Teyvat-FFP",
+      "to": "Teyvat-OPE",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-FFP",
+      "to": "Teyvat-WWL",
+      "distance": 7
+    },
+    {
+      "from": "Teyvat-FNC",
+      "to": "Teyvat-PHI",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-FNC",
+      "to": "Teyvat-VOP",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-FOA",
+      "to": "Teyvat-VNA",
+      "distance": 8,
+      "waypoints": [[0, -1]]
+    },
+    {
+      "from": "Teyvat-FOA",
+      "to": "Teyvat-YNM",
+      "distance": 9
+    },
+    {
+      "from": "Teyvat-FRI",
+      "to": "Teyvat-PLM",
+      "distance": 25,
+      "waypoints": [[-2, 2]]
+    },
+    {
+      "from": "Teyvat-GHV",
+      "to": "Teyvat-SMC",
+      "distance": 15,
+      "waypoints": [[-1, -1]]
+    },
+    {
+      "from": "Teyvat-GLP",
+      "to": "Teyvat-LYN",
+      "distance": 15
+    },
+    {
+      "from": "Teyvat-GLP",
+      "to": "Teyvat-MYV",
+      "distance": 18,
+      "waypoints": [[1, 0]]
+    },
+    {
+      "from": "Teyvat-GLP",
+      "to": "Teyvat-WSI",
+      "distance": 11
+    },
+    {
+      "from": "Teyvat-JDM",
+      "to": "Teyvat-YLW",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-KEE",
+      "to": "Teyvat-KEW",
+      "distance": 2
+    },
+    {
+      "from": "Teyvat-KEE",
+      "to": "Teyvat-NTP",
+      "distance": 6
+    },
+    {
+      "from": "Teyvat-LCU",
+      "to": "Teyvat-WWL",
+      "distance": 6
+    },
+    {
+      "from": "Teyvat-LDH",
+      "to": "Teyvat-YLW",
+      "distance": 20
+    },
+    {
+      "from": "Teyvat-LPV",
+      "to": "Teyvat-TQV",
+      "distance": 15,
+      "waypoints": [[0, -1]]
+    },
+    {
+      "from": "Teyvat-LSA",
+      "to": "Teyvat-LYH",
+      "distance": 14
+    },
+    {
+      "from": "Teyvat-LYH",
+      "to": "Teyvat-LYN",
+      "distance": 5
+    },
+    {
+      "from": "Teyvat-LYH",
+      "to": "Teyvat-LYS",
+      "distance": 3,
+      "waypoints": [[1, 1]]
+    },
+    {
+      "from": "Teyvat-MAE",
+      "to": "Teyvat-MAT",
+      "distance": 6
+    },
+    {
+      "from": "Teyvat-MAT",
+      "to": "Teyvat-POI",
+      "distance": 3
+    },
+    {
+      "from": "Teyvat-MAT",
+      "to": "Teyvat-RRH",
+      "distance": 20,
+      "waypoints": [[-1, 1]]
+    },
+    {
+      "from": "Teyvat-MCT",
+      "to": "Teyvat-OPE",
+      "distance": 10,
+      "waypoints": [[1, 0]]
+    },
+    {
+      "from": "Teyvat-MES",
+      "to": "Teyvat-PLM",
+      "distance": 20,
+      "waypoints": [[0, 1]]
+    },
+    {
+      "from": "Teyvat-MIL",
+      "to": "Teyvat-MXL",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-MIL",
+      "to": "Teyvat-NTM",
+      "distance": 7
+    },
+    {
+      "from": "Teyvat-MMY",
+      "to": "Teyvat-YLW",
+      "distance": 5
+    },
+    {
+      "from": "Teyvat-MNW",
+      "to": "Teyvat-NWW",
+      "distance": 9,
+      "waypoints": [[1, 0]]
+    },
+    {
+      "from": "Teyvat-MNW",
+      "to": "Teyvat-TPB",
+      "distance": 15
+    },
+    {
+      "from": "Teyvat-MSC",
+      "to": "Teyvat-MSG",
+      "distance": 0.5
+    },
+    {
+      "from": "Teyvat-MSC",
+      "to": "Teyvat-SAA",
+      "distance": 1
+    },
+    {
+      "from": "Teyvat-MSG",
+      "to": "Teyvat-SPV",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-MSG",
+      "to": "Teyvat-WDR",
+      "distance": 9
+    },
+    {
+      "from": "Teyvat-MSG",
+      "to": "Teyvat-WSW",
+      "distance": 7
+    },
+    {
+      "from": "Teyvat-MYV",
+      "to": "Teyvat-WRV",
+      "distance": 18,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Teyvat-NSP",
+      "to": "Teyvat-NST",
+      "distance": 1
+    },
+    {
+      "from": "Teyvat-NSP",
+      "to": "Teyvat-RRH",
+      "distance": 140
+    },
+    {
+      "from": "Teyvat-NTM",
+      "to": "Teyvat-TQV",
+      "distance": 11
+    },
+    {
+      "from": "Teyvat-NTP",
+      "to": "Teyvat-PHI",
+      "distance": 14
+    },
+    {
+      "from": "Teyvat-NWW",
+      "to": "Teyvat-SSF",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-PDD",
+      "to": "Teyvat-SMC",
+      "distance": 20,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Teyvat-POM",
+      "to": "Teyvat-VMV",
+      "distance": 16
+    },
+    {
+      "from": "Teyvat-POS",
+      "to": "Teyvat-SSF",
+      "distance": 16
+    },
+    {
+      "from": "Teyvat-PRM",
+      "to": "Teyvat-VOP",
+      "distance": 8
+    },
+    {
+      "from": "Teyvat-QCV",
+      "to": "Teyvat-QYV",
+      "distance": 25,
+      "waypoints": [[-1, 0]]
+    },
+    {
+      "from": "Teyvat-QYV",
+      "to": "Teyvat-YLW",
+      "distance": 18,
+      "waypoints": [[-1, -1]]
+    },
+    {
+      "from": "Teyvat-RRH",
+      "to": "Teyvat-VKO",
+      "distance": 40
+    },
+    {
+      "from": "Teyvat-SCP",
+      "to": "Teyvat-WRV",
+      "distance": 10
+    },
+    {
+      "from": "Teyvat-SFL",
+      "to": "Teyvat-WSW",
+      "distance": 7
+    },
+    {
+      "from": "Teyvat-SMC",
+      "to": "Teyvat-VMV",
+      "distance": 14
+    },
+    {
+      "from": "Teyvat-SOC",
+      "to": "Teyvat-SSF",
+      "distance": 11,
+      "waypoints": [[-1, -1]]
+    },
+    {
+      "from": "Teyvat-SOC",
+      "to": "Teyvat-TPP",
+      "distance": 6
+    },
+    {
+      "from": "Teyvat-STL",
+      "to": "Teyvat-WLD",
+      "distance": 20,
+      "waypoints": [[1, 1]]
+    },
+    {
+      "from": "Teyvat-TLI",
+      "to": "Teyvat-WVB",
+      "distance": 4
+    },
+    {
+      "from": "Teyvat-TMM",
+      "to": "Teyvat-VKO",
+      "distance": 20,
+      "waypoints": [[1, -1]]
+    },
+    {
+      "from": "Teyvat-TMM",
+      "to": "Teyvat-WSV",
+      "distance": 30
+    }
+  ]
+}

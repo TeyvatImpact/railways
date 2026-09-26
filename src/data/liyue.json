@@ -182,7 +182,15 @@
         ["LYG", "RT"],
         ["HYG", "T"]
       ],
-      "stations": [["LYG"], ["HET"], ["FYP"], ["LYN"], ["PSC"], ["CHY"], ["HYG"]],
+      "stations": [
+        "Liyue-LYG",
+        "Liyue-HET",
+        "Liyue-FYP",
+        "Liyue-LYN",
+        "Liyue-PSC",
+        "Liyue-CHY",
+        "Liyue-HYG"
+      ],
       "costPreset": "liyue-metro"
     },
     {
@@ -193,7 +201,16 @@
         ["HYC", "LT"],
         ["LYB", "LB"]
       ],
-      "stations": [["HYC"], ["NCM"], ["PSC"], ["KYN"], ["KYB"], ["BCM"], ["YLQ"], ["LYB"]],
+      "stations": [
+        "Liyue-HYC",
+        "Liyue-NCM",
+        "Liyue-PSC",
+        "Liyue-KYN",
+        "Liyue-KYB",
+        "Liyue-BCM",
+        "Liyue-YLQ",
+        "Liyue-LYB"
+      ],
       "costPreset": "liyue-metro"
     },
     {
@@ -204,7 +221,15 @@
         ["YHT", "LT"],
         ["BCM", "RT"]
       ],
-      "stations": [["HJW"], ["NCM"], ["YJT"], ["YHT"], ["HET"], ["BCM", [[2, -2]]], ["YLY"]],
+      "stations": [
+        "Liyue-HJW",
+        "Liyue-NCM",
+        "Liyue-YJT",
+        "Liyue-YHT",
+        "Liyue-HET",
+        "Liyue-BCM",
+        "Liyue-YLY"
+      ],
       "costPreset": "liyue-metro"
     },
     {
@@ -215,125 +240,8 @@
         ["LHC", "LT"],
         ["GYG", "B"]
       ],
-      "stations": [["LHC", [[1, 1]]], ["LYB"], ["YLY"], ["GYX"], ["GYG"]],
+      "stations": ["Liyue-LHC", "Liyue-LYB", "Liyue-YLY", "Liyue-GYX", "Liyue-GYG"],
       "costPreset": "liyue-metro"
-    }
-  ],
-  "stationDistances": [
-    {
-      "from": "BCM",
-      "to": "HET",
-      "distance": 1
-    },
-    {
-      "from": "BCM",
-      "to": "KYB",
-      "distance": 2
-    },
-    {
-      "from": "BCM",
-      "to": "YLQ",
-      "distance": 2
-    },
-    {
-      "from": "BCM",
-      "to": "YLY",
-      "distance": 5
-    },
-    {
-      "from": "CHY",
-      "to": "HYG",
-      "distance": 2
-    },
-    {
-      "from": "CHY",
-      "to": "PSC",
-      "distance": 1
-    },
-    {
-      "from": "FYP",
-      "to": "HET",
-      "distance": 2
-    },
-    {
-      "from": "FYP",
-      "to": "LYN",
-      "distance": 1
-    },
-    {
-      "from": "GYG",
-      "to": "GYX",
-      "distance": 3
-    },
-    {
-      "from": "GYX",
-      "to": "YLY",
-      "distance": 2
-    },
-    {
-      "from": "HET",
-      "to": "LYG",
-      "distance": 2
-    },
-    {
-      "from": "HET",
-      "to": "YHT",
-      "distance": 1
-    },
-    {
-      "from": "HJW",
-      "to": "NCM",
-      "distance": 3
-    },
-    {
-      "from": "HYC",
-      "to": "NCM",
-      "distance": 4
-    },
-    {
-      "from": "KYB",
-      "to": "KYN",
-      "distance": 0.5
-    },
-    {
-      "from": "KYN",
-      "to": "PSC",
-      "distance": 1
-    },
-    {
-      "from": "LHC",
-      "to": "LYB",
-      "distance": 3
-    },
-    {
-      "from": "LYB",
-      "to": "YLQ",
-      "distance": 2
-    },
-    {
-      "from": "LYB",
-      "to": "YLY",
-      "distance": 3
-    },
-    {
-      "from": "LYN",
-      "to": "PSC",
-      "distance": 1
-    },
-    {
-      "from": "NCM",
-      "to": "PSC",
-      "distance": 1
-    },
-    {
-      "from": "NCM",
-      "to": "YJT",
-      "distance": 1.5
-    },
-    {
-      "from": "YHT",
-      "to": "YJT",
-      "distance": 0.5
     }
   ]
 }

@@ -75,7 +75,7 @@ function addEdge(a: string, b: string, w: number, m?: EdgeMetrics, oneWay = fals
 const seenNodes = new Set<string>();
 
 for (const line of lines) {
-  for (const [sid] of line.stations) {
+  for (const sid of line.stations) {
     const st = stationMap.get(sid);
     if (!st) continue;
 
@@ -98,8 +98,8 @@ for (const line of lines) {
   }
 
   for (let i = 0; i < line.stations.length - 1; i++) {
-    const [aId] = line.stations[i];
-    const [bId] = line.stations[i + 1];
+    const aId = line.stations[i];
+    const bId = line.stations[i + 1];
     const aSt = stationMap.get(aId);
     const bSt = stationMap.get(bId);
     if (!aSt || !bSt) continue;

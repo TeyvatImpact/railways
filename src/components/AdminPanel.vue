@@ -86,30 +86,35 @@
               </div>
 
               <div class="admin-section">
-                <h3>Station Distances</h3>
-                <table v-if="currentDistances.length" class="data-table">
+                <h3>Connections</h3>
+                <table v-if="currentConnections.length" class="data-table">
                   <thead>
                     <tr>
                       <th>From</th>
                       <th>To</th>
+                      <th class="col-seg">Path</th>
                       <th class="col-num">Dist (km)</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(d, di) in currentDistances" :key="di">
-                      <td>{{ distStationName(d.from) }}</td>
-                      <td>{{ distStationName(d.to) }}</td>
+                    <tr v-for="(c, ci) in currentConnections" :key="ci">
+                      <td>{{ distStationName(c.from) }}</td>
+                      <td>{{ distStationName(c.to) }}</td>
+                      <td class="col-seg">{{ fmtWaypoints(c.waypoints) }}</td>
                       <td>
                         <input
                           type="number"
-                          v-model.number="d.distance"
+                          v-model.number="c.distance"
                           class="edit-input num"
+                          placeholder="默认 10"
                           step="0.1" />
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                <p v-else class="text-gray-400 text-xs italic">No distance entries in this file.</p>
+                <p v-else class="text-gray-400 text-xs italic">
+                  No connection entries in this file.
+                </p>
               </div>
             </div>
 
@@ -129,7 +134,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
 
-const fileKeys = ['teyvat', 'inazuma', 'liyue', 'snezhnaya', 'ferry', 'same'];
+const fileKeys = ['teyvat', 'inazuma', 'liyue', 'snezhnaya', 'ferry', 'same', 'connections'];
 const regionKeys = ['teyvat', 'inazuma', 'liyue', 'snezhnaya'];
 
 const presetOptions = [
@@ -201,18 +206,22 @@ const currentLines = computed(() => {
   return d.lines;
 });
 
-const currentDistances = computed(() => {
+const currentConnections = computed(() => {
   const d = currentFileData.value;
-  if (!d?.stationDistances) return [];
-  return d.stationDistances;
+  if (!d?.connections) return [];
+  return d.connections;
 });
+
+function fmtWaypoints(w?: [number, number][]) {
+  return w?.length ? w.map(([x, y]) => `${x},${y}`).join(' → ') : '直线';
+}
 
 function getSegments(line: any) {
   const segs: any[] = [];
   const data = currentFileData.value;
   for (let i = 0; i < line.stations.length - 1; i++) {
-    const [fromId] = line.stations[i];
-    const [toId] = line.stations[i + 1];
+    const fromId = line.stations[i];
+    const toId = line.stations[i + 1];
     const fromName = regionKeys.includes(activeFile.value)
       ? stationName(fromId, activeFile.value)
       : stationName(fromId);

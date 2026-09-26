@@ -313,7 +313,15 @@
         ["RTU", "T"],
         ["NIT", "B"]
       ],
-      "stations": [["NIT"], ["IZC"], ["HMZ"], ["BKP"], ["KDV", [[-1, -1]]], ["RTU"], ["RTP"]],
+      "stations": [
+        "Inazuma-NIT",
+        "Inazuma-IZC",
+        "Inazuma-HMZ",
+        "Inazuma-BKP",
+        "Inazuma-KDV",
+        "Inazuma-RTU",
+        "Inazuma-RTP"
+      ],
       "costPreset": "inazuma"
     },
     {
@@ -323,13 +331,13 @@
       "nameEn": "IR East Mt. Yougou Loop Line",
       "lineLabels": [["AUM", "LT"]],
       "stations": [
-        ["BKP"],
-        ["KDV", [[0, -2]]],
-        ["AUM"],
-        ["YGN", [[1, 1]]],
-        ["KSE"],
-        ["CJF", [[-1, 1]]],
-        ["BKP"]
+        "Inazuma-BKP",
+        "Inazuma-KDV",
+        "Inazuma-AUM",
+        "Inazuma-YGN",
+        "Inazuma-KSE",
+        "Inazuma-CJF",
+        "Inazuma-BKP"
       ],
       "costPreset": "inazuma"
     },
@@ -343,14 +351,14 @@
         ["NCB", "B"]
       ],
       "stations": [
-        ["IZC"],
-        ["HMZ"],
-        ["AKI", [[-1, 1]]],
-        ["KJE", [[-1, 0]]],
-        ["KNZ"],
-        ["NCB"],
-        ["MSG", [[-1, 0]]],
-        ["HGV"]
+        "Inazuma-IZC",
+        "Inazuma-HMZ",
+        "Inazuma-AKI",
+        "Inazuma-KJE",
+        "Inazuma-KNZ",
+        "Inazuma-NCB",
+        "Inazuma-MSG",
+        "Inazuma-HGV"
       ],
       "costPreset": "inazuma"
     },
@@ -360,7 +368,7 @@
       "nameZh": "IR 东稻妻·鸣神大社线",
       "nameEn": "IR East Shrine Line",
       "lineLabels": [["IZC", "LB"]],
-      "stations": [["NIT"], ["IZC"], ["HMZ"], ["BKP", [[0, -1]]], ["GNS"]],
+      "stations": ["Inazuma-NIT", "Inazuma-IZC", "Inazuma-HMZ", "Inazuma-BKP", "Inazuma-GNS"],
       "costPreset": "inazuma"
     },
     {
@@ -369,7 +377,7 @@
       "nameZh": "IR 东稻妻·八酝岛线",
       "nameEn": "IR East Yashiori Island Line",
       "lineLabels": [["SPH", "LB"]],
-      "stations": [["FFT"], ["HGV"], ["SPH"], ["JTM"]],
+      "stations": ["Inazuma-FFT", "Inazuma-HGV", "Inazuma-SPH", "Inazuma-JTM"],
       "costPreset": "inazuma"
     },
     {
@@ -378,7 +386,7 @@
       "nameZh": "IR 珊瑚宫·海祇岛线",
       "nameEn": "IR Sangonomiya Watatsumi Island Line",
       "lineLabels": [["WTE", "LB"]],
-      "stations": [["WTE"], ["BRV"], ["SGM"], ["MUS"]],
+      "stations": ["Inazuma-WTE", "Inazuma-BRV", "Inazuma-SGM", "Inazuma-MUS"],
       "costPreset": "inazuma"
     },
     {
@@ -387,7 +395,7 @@
       "nameZh": "IR 鹤观·一号线",
       "nameEn": "IR Tsurumi Line 1",
       "lineLabels": [["ATP", "LT"]],
-      "stations": [["TMP", [[-1, 0]]], ["MCS"], ["MKN"], ["ATP"]],
+      "stations": ["Inazuma-TMP", "Inazuma-MCS", "Inazuma-MKN", "Inazuma-ATP"],
       "costPreset": "inazuma"
     },
     {
@@ -396,7 +404,7 @@
       "nameZh": "IR 鹤观·二号线",
       "nameEn": "IR Tsurumi Line 2",
       "lineLabels": [["SKP", "LT"]],
-      "stations": [["SKP"], ["ONB"], ["CRS"], ["MCS"], ["WKS"]],
+      "stations": ["Inazuma-SKP", "Inazuma-ONB", "Inazuma-CRS", "Inazuma-MCS", "Inazuma-WKS"],
       "costPreset": "inazuma"
     },
     {
@@ -406,7 +414,7 @@
       "nameEn": "Higii Village ↔ Watatsumi East Ferry",
       "lineType": "ferry",
       "costPreset": "ferry",
-      "stations": [["HGV"], ["WTE"]]
+      "stations": ["Inazuma-HGV", "Inazuma-WTE"]
     },
     {
       "id": "ferry-izc-tmp",
@@ -415,174 +423,7 @@
       "nameEn": "Inazuma City ↔ Tsurumi Port Ferry",
       "lineType": "ferry",
       "costPreset": "ferry",
-      "stations": [["IZC"], ["TMP"]]
-    }
-  ],
-  "stationDistances": [
-    {
-      "from": "AKI",
-      "to": "HMZ",
-      "distance": 6
-    },
-    {
-      "from": "AKI",
-      "to": "KJE",
-      "distance": 9
-    },
-    {
-      "from": "ATP",
-      "to": "MKN",
-      "distance": 4
-    },
-    {
-      "from": "AUM",
-      "to": "KDV",
-      "distance": 6
-    },
-    {
-      "from": "AUM",
-      "to": "YGN",
-      "distance": 4
-    },
-    {
-      "from": "BKP",
-      "to": "CJF",
-      "distance": 5
-    },
-    {
-      "from": "BKP",
-      "to": "GNS",
-      "distance": 7
-    },
-    {
-      "from": "BKP",
-      "to": "HMZ",
-      "distance": 3
-    },
-    {
-      "from": "BKP",
-      "to": "KDV",
-      "distance": 6
-    },
-    {
-      "from": "BRV",
-      "to": "SGM",
-      "distance": 3
-    },
-    {
-      "from": "BRV",
-      "to": "WTE",
-      "distance": 4
-    },
-    {
-      "from": "CJF",
-      "to": "KSE",
-      "distance": 4
-    },
-    {
-      "from": "CRS",
-      "to": "MCS",
-      "distance": 4
-    },
-    {
-      "from": "CRS",
-      "to": "ONB",
-      "distance": 3
-    },
-    {
-      "from": "FFT",
-      "to": "HGV",
-      "distance": 3
-    },
-    {
-      "from": "HGV",
-      "to": "MSG",
-      "distance": 4
-    },
-    {
-      "from": "HGV",
-      "to": "SPH",
-      "distance": 2
-    },
-    {
-      "from": "HMZ",
-      "to": "IZC",
-      "distance": 1.5
-    },
-    {
-      "from": "IZC",
-      "to": "NIT",
-      "distance": 1
-    },
-    {
-      "from": "JTM",
-      "to": "SPH",
-      "distance": 3
-    },
-    {
-      "from": "KDV",
-      "to": "RTU",
-      "distance": 4
-    },
-    {
-      "from": "KJE",
-      "to": "KNZ",
-      "distance": 7
-    },
-    {
-      "from": "KNZ",
-      "to": "NCB",
-      "distance": 5
-    },
-    {
-      "from": "KSE",
-      "to": "YGN",
-      "distance": 4
-    },
-    {
-      "from": "MCS",
-      "to": "MKN",
-      "distance": 3
-    },
-    {
-      "from": "MCS",
-      "to": "TMP",
-      "distance": 4
-    },
-    {
-      "from": "MCS",
-      "to": "WKS",
-      "distance": 1
-    },
-    {
-      "from": "MSG",
-      "to": "NCB",
-      "distance": 5
-    },
-    {
-      "from": "MUS",
-      "to": "SGM",
-      "distance": 4
-    },
-    {
-      "from": "ONB",
-      "to": "SKP",
-      "distance": 3
-    },
-    {
-      "from": "RTP",
-      "to": "RTU",
-      "distance": 1
-    },
-    {
-      "from": "HGV",
-      "to": "WTE",
-      "distance": 10
-    },
-    {
-      "from": "IZC",
-      "to": "TMP",
-      "distance": 30
+      "stations": ["Inazuma-IZC", "Inazuma-TMP"]
     }
   ]
 }

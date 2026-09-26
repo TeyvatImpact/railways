@@ -76,8 +76,7 @@ const lines = computed<DisplayLine[]>(() => {
   let colorIndex = 0;
   for (const { data, prefix } of allRegionData) {
     for (const line of data.lines) {
-      const stations: LineStation[] = line.stations.map((st) => {
-        const sid = st[0] as string;
+      const stations: LineStation[] = line.stations.map((sid: string) => {
         // Cross-region references are written with their full id (e.g. `Teyvat-STR`) and must not be re-prefixed.
         const fullId = sid.includes('-') ? sid : prefix + sid;
         const info = getStation(fullId);
@@ -95,8 +94,7 @@ const lines = computed<DisplayLine[]>(() => {
   }
 
   for (const line of ferryData.lines) {
-    const stations: LineStation[] = line.stations.map((st) => {
-      const sid = st[0] as string;
+    const stations: LineStation[] = line.stations.map((sid: string) => {
       const info = getStation(sid);
       return { id: sid, ...info };
     });
@@ -111,8 +109,7 @@ const lines = computed<DisplayLine[]>(() => {
   }
 
   for (const line of sameData.lines) {
-    const stations: LineStation[] = line.stations.map((st) => {
-      const sid = st[0] as string;
+    const stations: LineStation[] = line.stations.map((sid: string) => {
       const info = getStation(sid);
       return { id: sid, ...info };
     });
