@@ -109,6 +109,7 @@ Two special line files:
       "nameZh"?: string,
       "nameEn": string,
       "costPreset": string,
+      "oneWay"?: boolean,                   // true = 单向，只按 stations 顺序开行
       "lineLabels"?: [ [stationId, position], ... ],
       "stations": [ [stationId, diagonalFirst], ... ]
     }
@@ -149,6 +150,7 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 - **`config.x`/`config.y`**: Origin offset applied to all station coordinates in that region at runtime.
 - **Station tuple**: `[stationId, diagonalFirst]` — fare/time/distance are no longer stored inline. See `stationDistances` below.
 - **`costPreset`**: Each line selects a fare/speed preset from `config/fare-presets.json`. Determines `farePerKm` and `minutesPerKm` for cost computation.
+- **`oneWay`**: Optional boolean; `true` = 单向线路，只按 `stations` 的排列顺序开行，反向不可乘坐（环线即按单一方向绕行）。缺省 = 双向。当前仅 `snezhnaya.json` 的三条环线 `Trian-1`/`Trian-2`/`Trian-3` 为单向；`Trian-4`（白冕宫线）与 `Trian-5`（挪德卡莱连接线）为双向。
 - **`stationDistances`**: Array of `{ from, to, distance }` where `from`/`to` are sorted alphabetically (direction-independent). Distance is in kilometers.
 - **Cost computation**: fare = distance × farePerKm (摩拉), time = distance × minutesPerKm (分钟). Computed at runtime in `useMapData.ts` and `useRouting.ts`.
 
@@ -156,11 +158,11 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 
 **Graph construction** (built once at module load):
 
-| Edge type                          | Cost metric                    | Description                                               |
-| ---------------------------------- | ------------------------------ | --------------------------------------------------------- |
-| Line adjacency                     | Actual fare (dist × farePerKm) | Consecutive stations on the same regular/ferry line       |
-| Transfer (same-station)            | 0                              | Two lines sharing the same physical station (same prefix) |
-| Cross-network transfer (same.json) | 0                              | Connections defined in `same.json` (different prefix)     |
+| Edge type                          | Cost metric                    | Description                                                                                                                                               |
+| ---------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Line adjacency                     | Actual fare (dist × farePerKm) | Consecutive stations on the same regular/ferry line; `oneWay` lines only get the forward edge (reverse travel is impossible, loops must be ridden around) |
+| Transfer (same-station)            | 0                              | Two lines sharing the same physical station (same prefix)                                                                                                 |
+| Cross-network transfer (same.json) | 0                              | Connections defined in `same.json` (different prefix)                                                                                                     |
 
 **Node format**: `` `${stationFullId}-${lineId}` ``, e.g. `Teyvat-LYH-A`, `Liyue-KYB-ferry-kyb-rtp`.
 

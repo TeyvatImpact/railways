@@ -67,6 +67,7 @@
       "id": "Trian-1",
       "name": "至冬列车大环线",
       "nameEn": "Snezhnaya Large Loop Line",
+      "oneWay": true,
       "lineLabels": [],
       "stations": [
         ["Snezhnaya", true],
@@ -80,6 +81,7 @@
       "id": "Trian-2",
       "name": "至冬列车小环线",
       "nameEn": "Snezhnaya Small Loop Line",
+      "oneWay": true,
       "lineLabels": [],
       "stations": [
         ["Snezhnaya", true],
@@ -92,6 +94,7 @@
       "id": "Trian-3",
       "name": "至冬列车焰羽谷线",
       "nameEn": "Snezhnaya Flamefeather Line",
+      "oneWay": true,
       "lineLabels": [],
       "stations": [
         ["Snezhnaya", true],
@@ -108,8 +111,7 @@
       "lineLabels": [],
       "stations": [
         ["Snezhnaya", false],
-        ["PaleCrown", true],
-        ["Snezhnaya", false]
+        ["PaleCrown", true]
       ]
     },
     {

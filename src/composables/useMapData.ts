@@ -59,6 +59,8 @@ export interface LineData {
   costPreset: string;
   lineLabels?: [string, string][];
   stations: [string, boolean][];
+  /** true = 单向线路，只按 `stations` 的顺序开行 */
+  oneWay?: boolean;
   fontFamily?: string;
   fontFamilyZh?: string;
   lineType?: 'ferry' | 'same-station';
@@ -87,6 +89,8 @@ export interface Line {
   costPreset: string;
   lineLabels?: [string, string][];
   stations: [string, boolean][];
+  /** true = 单向线路，只按 `stations` 的顺序开行 */
+  oneWay?: boolean;
   fontFamily?: string;
   fontFamilyZh?: string;
   lineType?: 'ferry' | 'same-station';

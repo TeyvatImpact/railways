@@ -56,15 +56,18 @@ const edgeMetrics = new Map<string, Map<string, EdgeMetrics>>();
 const stationNodeMap = new Map<string, string[]>();
 const nodeInfoMap = new Map<string, NodeInfo>();
 
-function addEdge(a: string, b: string, w: number, m?: EdgeMetrics) {
+function addEdge(a: string, b: string, w: number, m?: EdgeMetrics, oneWay = false) {
   if (!graph.has(a)) graph.set(a, new Map());
   if (!graph.has(b)) graph.set(b, new Map());
   graph.get(a)!.set(b, w);
-  graph.get(b)!.set(a, w);
   if (m) {
     if (!edgeMetrics.has(a)) edgeMetrics.set(a, new Map());
     if (!edgeMetrics.has(b)) edgeMetrics.set(b, new Map());
     edgeMetrics.get(a)!.set(b, m);
+  }
+  if (oneWay) return;
+  graph.get(b)!.set(a, w);
+  if (m) {
     edgeMetrics.get(b)!.set(a, m);
   }
 }
@@ -104,11 +107,17 @@ for (const line of lines) {
     const preset = getPreset(line.costPreset);
     const fare = Math.round(dist * preset.farePerKm);
     const time = Math.round(dist * preset.minutesPerKm);
-    addEdge(`${aId}-${line.id}`, `${bId}-${line.id}`, fare, {
+    addEdge(
+      `${aId}-${line.id}`,
+      `${bId}-${line.id}`,
       fare,
-      time,
-      distance: dist,
-    });
+      {
+        fare,
+        time,
+        distance: dist,
+      },
+      line.oneWay === true,
+    );
   }
 }
 
