@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { lines, stationMap, type Line } from '../../composables/useMapData';
+import { lines, stationMap, type Line, type Station } from '../../composables/useMapData';
 import { measureText } from '../../composables/useLabelPlacement';
-import { pickDisplayVariant } from './variantStrip';
-import { buildStrip, EDGE, type MeasureFn, type StripInput } from './stripModel';
+import { splitVariants } from './variantStrip';
+import { buildStrip, EDGE, type MeasureFn, type StripInput, type StripModel } from './stripModel';
 
 /** 只画轨道交通线路：轮渡（ferry.json 9 条 + 区域文件内 3 条）与同站换乘（same.json 3 条）都不画 */
 const railLines = lines.filter((line) => !line.lineType);
@@ -26,20 +26,24 @@ function shortName(name: string): string {
 const measure: MeasureFn = (text, size, weight, family) =>
   measureText(text, size, weight >= 600, family);
 
+/** 站名三行（中文 / 稻妻中译 / 英文）要用的字段 */
+function stationLabel(station: Station) {
+  return { id: station.id, name: station.name, nameZh: station.nameZh, nameEn: station.nameEn };
+}
+
+/** 本站换乘的其他轨道交通线路徽章 */
+function badgesFor(line: Line, stationId: string) {
+  return (stationLines.get(stationId) ?? [])
+    .filter((other) => other.id !== line.id)
+    .map((other) => ({ label: shortName(other.name), fill: other.color }));
+}
+
 function buildInput(line: Line): StripInput {
-  const { variant } = pickDisplayVariant(line.variants);
-  const stations = variant.stations
+  const { primary, branches } = splitVariants(line.variants);
+  const stations = primary.variant.stations
     .map((sid) => stationMap.get(sid))
     .filter((station) => station !== undefined)
-    .map((station) => ({
-      id: station.id,
-      name: station.name,
-      nameZh: station.nameZh,
-      nameEn: station.nameEn,
-      badges: (stationLines.get(station.id) ?? [])
-        .filter((other) => other.id !== line.id)
-        .map((other) => ({ label: shortName(other.name), fill: other.color })),
-    }));
+    .map((station) => ({ ...stationLabel(station), badges: badgesFor(line, station.id) }));
 
   return {
     key: line.id,
@@ -51,25 +55,47 @@ function buildInput(line: Line): StripInput {
     operator: line.operator,
     authority: line.authority,
     stations,
+    // 支线独占站只画车道上的圆圈与站名，不带换乘徽章（徽章行在主线之上，引线要横穿主线）
+    branches: branches.map((b) => ({
+      name: b.variant.name,
+      nameEn: b.variant.nameEn,
+      junctionId: b.junctionId,
+      stations: b.stationIds
+        .map((sid) => stationMap.get(sid))
+        .filter((station) => station !== undefined)
+        .map(stationLabel),
+    })),
   };
 }
 
 const strips = computed(() => railLines.map((line) => buildStrip(buildInput(line), measure)));
 
-function stripStyle(s: (typeof strips.value)[number]) {
+/** `.strip` 的纵向骨架：页头 / 徽章两行（含上下间隔）/ 引线通道 / 主线 / 每条支线一段车道 / 站名（吃掉剩余高度） */
+const BASE_ROWS = ['52px', '4px', '20px', '6px', '20px', '12px', '18px'];
+/** 一段支线车道的高度（px）：支线的 45° 引线与车道横线落点都由它推出来（见 .lane-diag / .lane-track） */
+const LANE_ROW = 24;
+const PANEL_H = 280;
+
+function stripStyle(s: StripModel) {
   const n = s.stations.length;
   return {
     '--line-color': s.color,
     '--chip-text': s.chipTextFill,
     '--cjk-font': s.cjkFont,
+    '--branch-color': s.branchLabelColor,
+    '--lane-row': `${LANE_ROW}px`,
     // 首末站各留 EDGE，中间等分（与 stripModel 的站距算法一致）
     gridTemplateColumns: `${EDGE}px repeat(${Math.max(1, n - 1)}, 1fr) ${EDGE}px`,
+    gridTemplateRows: [...BASE_ROWS, ...s.lanes.map(() => `${LANE_ROW}px`), 'minmax(0, 1fr)'].join(
+      ' ',
+    ),
+    height: `${PANEL_H + s.lanes.length * LANE_ROW}px`,
   };
 }
 
-/** 第 index 站（1 起算）落在 grid 的第 index+1 列（第 1 列是左边距） */
-function cell(index: number) {
-  return { gridColumn: index + 1 };
+/** 第 col 列（0 起算）的站点落在 grid 的第 col+2 条列线上（第 1 列是左边距） */
+function cell(col: number) {
+  return { gridColumn: col + 2 };
 }
 </script>
 
@@ -102,7 +128,7 @@ function cell(index: number) {
           :key="'badges-' + st.id"
           class="badges"
           :class="st.badges[0]?.row === 1 ? 'badges-far' : 'badges-near'"
-          :style="{ ...cell(st.index), '--badge-shift': st.badgeShift + 'px' }">
+          :style="{ ...cell(st.col), '--badge-shift': st.badgeShift + 'px' }">
           <span
             v-for="(b, k) in st.badges"
             :key="k"
@@ -113,10 +139,35 @@ function cell(index: number) {
         </div>
 
         <!-- 主线 -->
-        <div class="track"></div>
+        <div class="track" :style="{ gridColumnEnd: s.trunkEndCol + 2 }"></div>
+
+        <!-- 支线：45° 汇入引线 + 车道横线 + 末端支线名标签块（每条支线占主线下方一段） -->
+        <template v-for="ln in s.lanes" :key="'lane-' + ln.lane">
+          <div
+            class="lane-diag"
+            :style="{ gridRow: 7 + ln.lane, gridColumn: ln.junctionCol + 2 }"></div>
+          <div
+            class="lane-track"
+            :style="{
+              gridRow: 7 + ln.lane,
+              gridColumn: ln.junctionCol + 2,
+              gridColumnEnd: ln.lastCol + 2,
+            }"></div>
+          <div
+            v-if="ln.tag"
+            class="lane-tag"
+            :style="{ gridRow: 7 + ln.lane, gridColumn: ln.tag.col + 2 }">
+            <span>{{ ln.tag.text }}</span>
+            <span class="lane-tag-en">{{ ln.tag.textEn }}</span>
+          </div>
+        </template>
 
         <!-- 站点：白底圆圈 + 居中的序号 -->
-        <div v-for="st in s.stations" :key="'node-' + st.id" class="node" :style="cell(st.index)">
+        <div
+          v-for="st in s.stations"
+          :key="'node-' + st.id"
+          class="node"
+          :style="{ ...cell(st.col), gridRow: 7 + st.lane }">
           {{ st.index }}
         </div>
 
@@ -125,7 +176,8 @@ function cell(index: number) {
           v-for="st in s.stations"
           :key="'label-' + st.id"
           class="st-label"
-          :style="{ ...cell(st.index), '--label-shift': st.labelShift + 'px' }">
+          :class="{ 'st-label-branch': st.lane > 0 }"
+          :style="{ ...cell(st.col), '--label-shift': st.labelShift + 'px' }">
           <div v-for="(l, k) in st.label" :key="k" :class="'st-' + l.kind">{{ l.text }}</div>
         </div>
       </div>
@@ -134,13 +186,12 @@ function cell(index: number) {
 </template>
 
 <style scoped>
-/* 每条线路 = 一张 1920×280 的面板。格子（grid）把「页头 / 两行徽章 / 引线通道 / 主线 / 站名」
-   分成 8 行，线路的每个车站占一列，所有对齐、间距、居中、旋转都交给 CSS。 */
+/* 每条线路 = 一张宽 1920 的面板（高 280，有支线时每段车道再加 24，见 stripStyle）。格子（grid）把
+   「页头 / 两行徽章 / 引线通道 / 主线 / 每条支线一段车道 / 站名」分成若干行，线路的每个车站占一列，
+   所有对齐、间距、居中、旋转都交给 CSS；纵向骨架与列模板由 index.vue 的 stripStyle 生成。 */
 .strip {
   display: grid;
-  grid-template-rows: 52px 4px 20px 6px 20px 12px 18px minmax(0, 1fr);
   width: 1920px;
-  height: 280px;
   padding: 16px;
   border: 2.5px solid var(--line-color);
   border-radius: 14px;
@@ -253,12 +304,65 @@ function cell(index: number) {
 /* ---- 主线与站点 ---- */
 .track {
   grid-row: 7;
-  /* 只跨首末站之间：两端各留出 EDGE 列（= 首末站距面板左右边缘的固定值） */
-  grid-column: 2 / -2;
+  /* 起点 = 首站列线；末端列线由模板按 trunkEndCol 给（主线只跨首末主线站） */
+  grid-column: 2;
   align-self: center;
   height: 5px;
   border-radius: 3px;
   background: var(--line-color);
+}
+
+/* ---- 支线车道 ---- */
+/* 45° 汇入引线：起点 = 主线圆圈中心（主线行高 18px → 圆心在车道段上沿之上 9px），
+   落点 = 车道圆圈中心（车道段居中）；45° 下水平行程 = 竖直落差 */
+.lane-diag {
+  justify-self: start;
+  align-self: start;
+  /* 起点 = 主线圆圈中心（主线行高 18px → 圆心恰在车道段上沿之上 9px，不能再减车道段的一半高度） */
+  margin-top: -9px;
+  /* 45°：水平行程 = 竖直落差 = 车道段一半高 + 9px（主线圆心 → 车道圆心的距离） */
+  width: calc((var(--lane-row) / 2 + 9px) * 1.4142136);
+  height: 5px;
+  border-radius: 3px;
+  background: var(--line-color);
+  transform: rotate(45deg);
+  transform-origin: 0 0;
+}
+/* 车道横线：从引线落点起（横线起点缩进 = 同上水平行程），画到支线末站的列线 */
+.lane-track {
+  align-self: center;
+  margin-left: calc(var(--lane-row) / 2 + 9px);
+  height: 5px;
+  border-radius: 3px;
+  background: var(--line-color);
+}
+/* 支线名标签块：挂在支线末站右边那一列上 */
+.lane-tag {
+  justify-self: start;
+  align-self: center;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 18px;
+  padding: 0 9px;
+  border-radius: 6px;
+  background: var(--branch-color);
+  color: #fff;
+}
+.lane-tag > span {
+  font: 700 11px/1 var(--cjk-font);
+}
+.lane-tag .lane-tag-en {
+  font:
+    400 8px/1 Barlow,
+    sans-serif;
+}
+/* 支线站名（含稻妻中译行）用支线红 */
+.st-label-branch .st-name,
+.st-label-branch .st-zh,
+.st-label-branch .st-en {
+  color: var(--branch-color);
 }
 .node {
   grid-row: 7;
@@ -279,7 +383,8 @@ function cell(index: number) {
 
 /* ---- 站名：整块绕左上角旋转 45°，起点就在本站（圆圈中心） ---- */
 .st-label {
-  grid-row: 8;
+  /* 最后一行 = 站名行（支线车道行插在主线行与它之间，行数随支线数变） */
+  grid-row: -2;
   justify-self: start;
   align-self: start;
   transform: translateX(var(--label-shift, 0px)) rotate(45deg);

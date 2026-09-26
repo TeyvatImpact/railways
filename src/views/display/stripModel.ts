@@ -1,4 +1,4 @@
-// /display 条带图的数据模型：只产出「有哪些文字 / 徽章、徽章放哪一行、站名要不要左移」。
+// /display 条带图的数据模型：只产出「有哪些文字 / 徽章、徽章放哪一行、站名要不要左移、支线车道画在哪几列」。
 // 排版本身全部交给 index.vue 的 CSS（grid + flex + rotate），这里不做像素定位；
 // 只有下列常量与 CSS 对应，用来按真实字宽决定徽章换行与站名左移。
 
@@ -32,6 +32,9 @@ const BADGE_PAD_X = 24;
 const BADGE_GAP = 8;
 const COS45 = Math.SQRT1_2;
 
+/** 支线站名与「支线」标签块的红（参考图：主线站名黑、支线站名红） */
+const BRANCH_LABEL_COLOR = '#c0392b';
+
 /** 一行站名：样式由 CSS 类按 kind 决定 */
 export interface StripLabelLine {
   text: string;
@@ -46,16 +49,39 @@ export interface StripBadgeModel {
   row: 0 | 1;
 }
 
-export interface StripStationModel {
+/** 一个站点在条带上要画的文字（主线段与支线段共用） */
+export interface StripStationBase {
   id: string;
-  /** 1 起算的站序（= 圆圈里的号，也 = CSS grid 的列号） */
+  name: string;
+  nameZh?: string;
+  nameEn: string;
+}
+
+export interface StripStationModel extends StripStationBase {
+  /** 并集列号（0 起算）：CSS 网格列线 = col + 2，站距也按它算 */
+  col: number;
+  /** 1 起算的站序（= 圆圈里的号）= col + 1 */
   index: number;
+  /** 0 = 主线车道，1 起算 = 第几条支线车道（CSS 网格行 = 7 + lane） */
+  lane: number;
   label: StripLabelLine[];
   /** 站名块的横向左移量（px，≤ 0）：靠右的车站斜排会顶出面板，用它压回来 */
   labelShift: number;
   /** 徽章簇的横向修正量（px）：簇以本站为中心，顶到内容区边缘时用它挤回来 */
   badgeShift: number;
   badges: StripBadgeModel[];
+}
+
+/** 一条支线车道：45° 引线从分歧站落到车道，横线画到末站列，末端挂支线名标签块 */
+export interface StripLaneModel {
+  /** 1 起算的支线序号（CSS 网格行 = 7 + lane） */
+  lane: number;
+  /** 分歧站所在列：45° 引线与车道横线都从这里起 */
+  junctionCol: number;
+  /** 该支线最后一站所在列（车道横线的末端列线 = lastCol + 2） */
+  lastCol: number;
+  /** 车道末端的支线名标签块；末站后面没有列时为 null（此时不画标签） */
+  tag: { text: string; textEn: string; col: number } | null;
 }
 
 /** 运营公司 / 运营主体：中文主行 + 英文小字 + 可选第三行小字 */
@@ -65,12 +91,19 @@ export interface StripOperator {
   nameAlt?: string;
 }
 
-export interface StripInputStation {
-  id: string;
-  name: string;
-  nameZh?: string;
-  nameEn: string;
+export interface StripInputStation extends StripStationBase {
   badges: { label: string; fill: string }[];
+}
+
+/** 一条支线：分歧站 + 独占站（按支线自身顺序，不含分歧站） */
+export interface StripBranchInput {
+  /** 支线短名（`支线`）；缺省 `支线` */
+  name?: string;
+  /** 缺省 `Branch` */
+  nameEn?: string;
+  /** 分歧站（主变体里的站 id） */
+  junctionId: string;
+  stations: StripStationBase[];
 }
 
 export interface StripInput {
@@ -85,6 +118,8 @@ export interface StripInput {
   operator?: StripOperator;
   authority?: StripOperator;
   stations: StripInputStation[];
+  /** 与主线分岔的支线（纯子集的小交路不算），无支线时传空数组 */
+  branches: StripBranchInput[];
 }
 
 export interface StripModel {
@@ -98,6 +133,12 @@ export interface StripModel {
   authority?: StripOperator;
   /** 线路名称色块上的文字色 */
   chipTextFill: string;
+  /** 主线最后一个站的列号（主线横线的末端列线 = trunkEndCol + 2） */
+  trunkEndCol: number;
+  /** 支线车道（按变体顺序）；空数组 = 该线路没有支线 */
+  lanes: StripLaneModel[];
+  /** 支线站名与标签块的颜色 */
+  branchLabelColor: string;
   stations: StripStationModel[];
 }
 
@@ -163,6 +204,7 @@ function readableOn(fill: string): string {
 /**
  * 换乘徽章的行分配：徽章簇居中在本站列上，若与同一行左邻的簇在列坐标上重叠，
  * 就换到上面那一行（两行都放不下时接受第二行的重叠 —— 当前数据不会走到）。
+ * 入参数组按「并集列序」逐列给出（没有徽章的列给空数组），因此下标即列号。
  */
 function assignBadgeRows(clusters: { widths: number[] }[], colW: number): (0 | 1)[] {
   const rows: (0 | 1)[] = clusters.map(() => 0);
@@ -192,7 +234,26 @@ function assignBadgeRows(clusters: { widths: number[] }[], colW: number): (0 | 1
 }
 
 export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
-  const count = input.stations.length;
+  // ===== 并集列：主线各站依次成列；某个分歧站之后紧接着插入对应支线的独占站 =====
+  const cols: { station: StripStationBase; lane: number; badges: StripInputStation['badges'] }[] =
+    [];
+  /** 第 bi 条支线的分歧站在并集列里的列号；-1 = 分歧站不在主线里（该支线整条丢弃） */
+  const laneJunctionCol: number[] = input.branches.map(() => -1);
+  let trunkEndCol = 0;
+
+  input.stations.forEach((station) => {
+    cols.push({ station, lane: 0, badges: station.badges });
+    trunkEndCol = cols.length - 1;
+    input.branches.forEach((branch, bi) => {
+      if (branch.junctionId !== station.id) return;
+      laneJunctionCol[bi] = cols.length - 1;
+      for (const branchStation of branch.stations) {
+        cols.push({ station: branchStation, lane: bi + 1, badges: [] });
+      }
+    });
+  });
+
+  const count = cols.length;
   const contentW = PANEL_W - BORDER * 2 - PAD_X * 2;
   // 首末站各留 EDGE，其余等分：站距与 CSS grid 的 `EDGE repeat(count-1, 1fr) EDGE` 完全一致
   const span = Math.max(1, count - 1);
@@ -200,15 +261,15 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
   const innerRight = PANEL_W - BORDER - PAD_X;
 
   const rows = assignBadgeRows(
-    input.stations.map((s) => ({
-      widths: s.badges.map((b) => measure(b.label, BADGE_LABEL_SIZE, 700, input.cjkFont)),
+    cols.map((col) => ({
+      widths: col.badges.map((b) => measure(b.label, BADGE_LABEL_SIZE, 700, input.cjkFont)),
     })),
     colW,
   );
   // 徽章簇的实际宽度（与 CSS 的 padding 12 / gap 8 对应），用于首末站附近的横向夹紧
-  const clusterW = input.stations.map((s) => {
-    if (!s.badges.length) return 0;
-    const widths = s.badges.map(
+  const clusterW = cols.map((col) => {
+    if (!col.badges.length) return 0;
+    const widths = col.badges.map(
       (b) => measure(b.label, BADGE_LABEL_SIZE, 700, input.cjkFont) + BADGE_PAD_X,
     );
     return widths.reduce((a, w) => a + w, 0) + BADGE_GAP * (widths.length - 1);
@@ -216,7 +277,7 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
   const contentLeft = BORDER + PAD_X;
   const contentRight = PANEL_W - BORDER - PAD_X;
 
-  const stations: StripStationModel[] = input.stations.map((station, i) => {
+  const stations: StripStationModel[] = cols.map(({ station, lane, badges }, i) => {
     const wName = measure(station.name, LABEL_NAME_SIZE, 700, input.cjkFont);
     const wZh = station.nameZh ? measure(station.nameZh, LABEL_SUB_SIZE, 700, FONT_ZH) : 0;
     const wEn = measure(station.nameEn, LABEL_SUB_SIZE, 400, FONT_EN);
@@ -241,7 +302,12 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
 
     return {
       id: station.id,
+      col: i,
       index: i + 1,
+      lane,
+      name: station.name,
+      nameZh: station.nameZh,
+      nameEn: station.nameEn,
       label: [
         { text: station.name, kind: 'name' },
         ...(station.nameZh ? [{ text: station.nameZh, kind: 'zh' as const }] : []),
@@ -249,7 +315,7 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
       ],
       labelShift,
       badgeShift,
-      badges: station.badges.map((b) => ({
+      badges: badges.map((b) => ({
         label: b.label,
         fill: b.fill,
         textFill: textOn(b.fill),
@@ -257,6 +323,23 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
       })),
     };
   });
+
+  // 支线车道：分歧站列 → 末站列之间画横线；末站后面还有列时，把支线名标签块挂在那一列
+  const lanes: StripLaneModel[] = input.branches
+    .map((branch, bi) => ({ branch, lane: bi + 1, junctionCol: laneJunctionCol[bi] }))
+    .filter(({ junctionCol }) => junctionCol >= 0)
+    .map(({ branch, lane, junctionCol }) => {
+      const lastCol = junctionCol + branch.stations.length;
+      return {
+        lane,
+        junctionCol,
+        lastCol,
+        tag:
+          lastCol + 1 <= count - 1
+            ? { text: branch.name || '支线', textEn: branch.nameEn || 'Branch', col: lastCol + 1 }
+            : null,
+      };
+    });
 
   return {
     key: input.key,
@@ -268,6 +351,9 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
     operator: input.operator,
     authority: input.authority,
     chipTextFill: textOn(input.color),
+    trunkEndCol,
+    lanes,
+    branchLabelColor: BRANCH_LABEL_COLOR,
     stations,
   };
 }
