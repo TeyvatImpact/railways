@@ -954,31 +954,57 @@
         ["ARV", "T"],
         ["TMM", "L"]
       ],
-      "stations": [
-        "Teyvat-SAA",
-        "Teyvat-MSC",
-        "Teyvat-MSG",
-        "Teyvat-SPV",
-        "Teyvat-DWW",
-        "Teyvat-STG",
-        "Teyvat-DHM",
-        "Teyvat-WSI",
-        "Teyvat-GLP",
-        "Teyvat-LYN",
-        "Teyvat-LYH",
-        "Teyvat-LSA",
-        "Teyvat-CHM",
-        "Teyvat-CBC",
-        "Teyvat-GHV",
-        "Teyvat-SMC",
-        "Teyvat-PDD",
-        "Teyvat-CVR",
-        "Teyvat-ARV",
-        "Teyvat-MKD",
-        "Teyvat-DOM",
-        "Teyvat-WSV",
-        "Teyvat-TMM",
-        "Teyvat-VKO"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-SAA",
+            "Teyvat-MSC",
+            "Teyvat-MSG",
+            "Teyvat-SPV",
+            "Teyvat-DWW",
+            "Teyvat-STG",
+            "Teyvat-DHM",
+            "Teyvat-WSI",
+            "Teyvat-GLP",
+            "Teyvat-LYN",
+            "Teyvat-LYH",
+            "Teyvat-LSA",
+            "Teyvat-CHM",
+            "Teyvat-CBC",
+            "Teyvat-GHV",
+            "Teyvat-SMC",
+            "Teyvat-PDD",
+            "Teyvat-CVR",
+            "Teyvat-ARV",
+            "Teyvat-MKD",
+            "Teyvat-DOM",
+            "Teyvat-WSV",
+            "Teyvat-TMM",
+            "Teyvat-VKO"
+          ]
+        },
+        {
+          "name": "小交路",
+          "nameEn": "Short Turnback",
+          "stations": [
+            "Teyvat-SAA",
+            "Teyvat-MSC",
+            "Teyvat-MSG",
+            "Teyvat-SPV",
+            "Teyvat-DWW",
+            "Teyvat-STG",
+            "Teyvat-DHM",
+            "Teyvat-WSI",
+            "Teyvat-GLP",
+            "Teyvat-LYN",
+            "Teyvat-LYH",
+            "Teyvat-LSA",
+            "Teyvat-CHM",
+            "Teyvat-CBC",
+            "Teyvat-GHV",
+            "Teyvat-SMC"
+          ]
+        }
       ],
       "costPreset": "standard"
     },
@@ -992,20 +1018,24 @@
         ["LPV", "L"],
         ["DTM", "RB"]
       ],
-      "stations": [
-        "Teyvat-STL",
-        "Teyvat-WLD",
-        "Teyvat-DWW",
-        "Teyvat-WRV",
-        "Teyvat-MYV",
-        "Teyvat-GLP",
-        "Teyvat-CJS",
-        "Teyvat-TQV",
-        "Teyvat-LPV",
-        "Teyvat-CHM",
-        "Teyvat-TGG",
-        "Teyvat-DTM",
-        "Teyvat-POM"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-STL",
+            "Teyvat-WLD",
+            "Teyvat-DWW",
+            "Teyvat-WRV",
+            "Teyvat-MYV",
+            "Teyvat-GLP",
+            "Teyvat-CJS",
+            "Teyvat-TQV",
+            "Teyvat-LPV",
+            "Teyvat-CHM",
+            "Teyvat-TGG",
+            "Teyvat-DTM",
+            "Teyvat-POM"
+          ]
+        }
       ],
       "costPreset": "standard"
     },
@@ -1017,14 +1047,23 @@
         ["SFL", "RT"],
         ["DSC", "LT"]
       ],
-      "stations": [
-        "Teyvat-SFL",
-        "Teyvat-WSW",
-        "Teyvat-MSG",
-        "Teyvat-WDR",
-        "Teyvat-DSC",
-        "Teyvat-SCP",
-        "Teyvat-WRV"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-SFL",
+            "Teyvat-WSW",
+            "Teyvat-MSG",
+            "Teyvat-WDR",
+            "Teyvat-DSC",
+            "Teyvat-SCP",
+            "Teyvat-WRV"
+          ]
+        },
+        {
+          "name": "小交路",
+          "nameEn": "Short Turnback",
+          "stations": ["Teyvat-SFL", "Teyvat-WSW", "Teyvat-MSG", "Teyvat-WDR"]
+        }
       ],
       "costPreset": "standard"
     },
@@ -1037,17 +1076,21 @@
         ["MIL", "R"],
         ["YLW", "RT"]
       ],
-      "stations": [
-        "Teyvat-LYS",
-        "Teyvat-LYH",
-        "Teyvat-DYR",
-        "Teyvat-TQV",
-        "Teyvat-NTM",
-        "Teyvat-MIL",
-        "Teyvat-MXL",
-        "Teyvat-CZW",
-        "Teyvat-JDM",
-        "Teyvat-YLW"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-LYS",
+            "Teyvat-LYH",
+            "Teyvat-DYR",
+            "Teyvat-TQV",
+            "Teyvat-NTM",
+            "Teyvat-MIL",
+            "Teyvat-MXL",
+            "Teyvat-CZW",
+            "Teyvat-JDM",
+            "Teyvat-YLW"
+          ]
+        }
       ],
       "costPreset": "standard"
     },
@@ -1060,14 +1103,23 @@
         ["QCV", "LB"],
         ["WSI", "LT"]
       ],
-      "stations": [
-        "Teyvat-CWT",
-        "Teyvat-MMY",
-        "Teyvat-YLW",
-        "Teyvat-QYV",
-        "Teyvat-QCV",
-        "Teyvat-DHM",
-        "Teyvat-WSI"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-CWT",
+            "Teyvat-MMY",
+            "Teyvat-YLW",
+            "Teyvat-QYV",
+            "Teyvat-QCV",
+            "Teyvat-DHM",
+            "Teyvat-WSI"
+          ]
+        },
+        {
+          "name": "小交路",
+          "nameEn": "Short Turnback",
+          "stations": ["Teyvat-YLW", "Teyvat-QYV", "Teyvat-QCV", "Teyvat-DHM", "Teyvat-WSI"]
+        }
       ],
       "costPreset": "standard"
     },
@@ -1079,7 +1131,11 @@
         ["BDH", "RT"],
         ["VMV", "LT"]
       ],
-      "stations": ["Teyvat-BDH", "Teyvat-CTC", "Teyvat-SMC", "Teyvat-VMV", "Teyvat-POM"],
+      "variants": [
+        {
+          "stations": ["Teyvat-BDH", "Teyvat-CTC", "Teyvat-SMC", "Teyvat-VMV", "Teyvat-POM"]
+        }
+      ],
       "costPreset": "standard"
     },
     {
@@ -1090,19 +1146,23 @@
         ["APW", "T"],
         ["VNA", "RB"]
       ],
-      "stations": [
-        "Teyvat-CTC",
-        "Teyvat-CHH",
-        "Teyvat-GHV",
-        "Teyvat-DTM",
-        "Teyvat-POM",
-        "Teyvat-APW",
-        "Teyvat-ROD",
-        "Teyvat-CVR",
-        "Teyvat-YNM",
-        "Teyvat-FOA",
-        "Teyvat-VNA",
-        "Teyvat-CTC"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-CTC",
+            "Teyvat-CHH",
+            "Teyvat-GHV",
+            "Teyvat-DTM",
+            "Teyvat-POM",
+            "Teyvat-APW",
+            "Teyvat-ROD",
+            "Teyvat-CVR",
+            "Teyvat-YNM",
+            "Teyvat-FOA",
+            "Teyvat-VNA",
+            "Teyvat-CTC"
+          ]
+        }
       ],
       "costPreset": "standard"
     },
@@ -1115,20 +1175,24 @@
         ["CLR", "B"],
         ["FCR", "L"]
       ],
-      "stations": [
-        "Teyvat-COF",
-        "Teyvat-PLM",
-        "Teyvat-FRI",
-        "Teyvat-CLR",
-        "Teyvat-LCU",
-        "Teyvat-WWL",
-        "Teyvat-FFP",
-        "Teyvat-FCR",
-        "Teyvat-MAE",
-        "Teyvat-MAT",
-        "Teyvat-POI",
-        "Teyvat-ENS",
-        "Teyvat-COF"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-COF",
+            "Teyvat-PLM",
+            "Teyvat-FRI",
+            "Teyvat-CLR",
+            "Teyvat-LCU",
+            "Teyvat-WWL",
+            "Teyvat-FFP",
+            "Teyvat-FCR",
+            "Teyvat-MAE",
+            "Teyvat-MAT",
+            "Teyvat-POI",
+            "Teyvat-ENS",
+            "Teyvat-COF"
+          ]
+        }
       ],
       "costPreset": "aquabus"
     },
@@ -1140,7 +1204,11 @@
         ["MCT", "T"],
         ["LDH", "RT"]
       ],
-      "stations": ["Teyvat-COF", "Teyvat-MCT", "Teyvat-OPE", "Teyvat-FFP", "Teyvat-LDH"],
+      "variants": [
+        {
+          "stations": ["Teyvat-COF", "Teyvat-MCT", "Teyvat-OPE", "Teyvat-FFP", "Teyvat-LDH"]
+        }
+      ],
       "costPreset": "aquabus"
     },
     {
@@ -1151,7 +1219,11 @@
         ["RRH", "L"],
         ["MES", "L"]
       ],
-      "stations": ["Teyvat-RRH", "Teyvat-MAT", "Teyvat-COF", "Teyvat-PLM", "Teyvat-MES"],
+      "variants": [
+        {
+          "stations": ["Teyvat-RRH", "Teyvat-MAT", "Teyvat-COF", "Teyvat-PLM", "Teyvat-MES"]
+        }
+      ],
       "costPreset": "aquabus"
     },
     {
@@ -1159,7 +1231,11 @@
       "name": "纳塔局·连接线",
       "nameEn": "Natlan Connection Line",
       "lineLabels": [["COE", "RB"]],
-      "stations": ["Teyvat-DOM", "Teyvat-COE", "Teyvat-SFV", "Teyvat-CWF", "Teyvat-SSF"],
+      "variants": [
+        {
+          "stations": ["Teyvat-DOM", "Teyvat-COE", "Teyvat-SFV", "Teyvat-CWF", "Teyvat-SSF"]
+        }
+      ],
       "costPreset": "standard"
     },
     {
@@ -1170,13 +1246,17 @@
         ["SFV", "B"],
         ["FSF", "LT"]
       ],
-      "stations": [
-        "Teyvat-COE",
-        "Teyvat-SFV",
-        "Teyvat-CWF",
-        "Teyvat-NWW",
-        "Teyvat-COP",
-        "Teyvat-FSF"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-COE",
+            "Teyvat-SFV",
+            "Teyvat-CWF",
+            "Teyvat-NWW",
+            "Teyvat-COP",
+            "Teyvat-FSF"
+          ]
+        }
       ],
       "costPreset": "natlan-resort"
     },
@@ -1189,18 +1269,22 @@
         ["POS", "LB"],
         ["TPR", "LT"]
       ],
-      "stations": [
-        "Teyvat-ONT",
-        "Teyvat-FFC",
-        "Teyvat-HZH",
-        "Teyvat-CWF",
-        "Teyvat-SSF",
-        "Teyvat-POS",
-        "Teyvat-AYW",
-        "Teyvat-TPP",
-        "Teyvat-AST",
-        "Teyvat-TPR",
-        "Teyvat-COE"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-ONT",
+            "Teyvat-FFC",
+            "Teyvat-HZH",
+            "Teyvat-CWF",
+            "Teyvat-SSF",
+            "Teyvat-POS",
+            "Teyvat-AYW",
+            "Teyvat-TPP",
+            "Teyvat-AST",
+            "Teyvat-TPR",
+            "Teyvat-COE"
+          ]
+        }
       ],
       "costPreset": "standard"
     },
@@ -1212,13 +1296,17 @@
         ["SOC", "RT"],
         ["TPB", "B"]
       ],
-      "stations": [
-        "Teyvat-TPP",
-        "Teyvat-SOC",
-        "Teyvat-SSF",
-        "Teyvat-NWW",
-        "Teyvat-MNW",
-        "Teyvat-TPB"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-TPP",
+            "Teyvat-SOC",
+            "Teyvat-SSF",
+            "Teyvat-NWW",
+            "Teyvat-MNW",
+            "Teyvat-TPB"
+          ]
+        }
       ],
       "costPreset": "standard"
     },
@@ -1227,7 +1315,11 @@
       "name": "纳塔局·悠悠度假村线",
       "nameEn": "Natlan Easybreeze Holiday Resort Line",
       "lineLabels": [["EBM", "LB"]],
-      "stations": ["Teyvat-EBP", "Teyvat-EBM", "Teyvat-CFC", "Teyvat-WVB", "Teyvat-TLI"],
+      "variants": [
+        {
+          "stations": ["Teyvat-EBP", "Teyvat-EBM", "Teyvat-CFC", "Teyvat-WVB", "Teyvat-TLI"]
+        }
+      ],
       "costPreset": "standard"
     },
     {
@@ -1235,7 +1327,11 @@
       "name": "挪德卡莱局·希汐岛线",
       "nameEn": "Nod-Krai Hiisi Island Line",
       "lineLabels": [["NST", "LB"]],
-      "stations": ["Teyvat-NSP", "Teyvat-NST", "Teyvat-CKC", "Teyvat-FME"],
+      "variants": [
+        {
+          "stations": ["Teyvat-NSP", "Teyvat-NST", "Teyvat-CKC", "Teyvat-FME"]
+        }
+      ],
       "costPreset": "standard"
     },
     {
@@ -1244,32 +1340,34 @@
       "nameEn": "Nod-Krai Paha Isle Line",
       "lineLabels": [
         ["NSP", "LB"],
-        ["FNC", "LT"]
+        ["FNC", "LT"],
+        ["KEW", "LB"]
       ],
-      "stations": [
-        "Teyvat-NSP",
-        "Teyvat-NST",
-        "Teyvat-BMB",
-        "Teyvat-BAL",
-        "Teyvat-NTP",
-        "Teyvat-PHI",
-        "Teyvat-FNC"
-      ],
-      "costPreset": "standard"
-    },
-    {
-      "id": "K2-B",
-      "name": "挪德卡莱局·帕哈岛支线",
-      "nameEn": "Nod-Krai Paha Isle Branch Line",
-      "lineLabels": [["KEW", "LB"]],
-      "stations": [
-        "Teyvat-NSP",
-        "Teyvat-NST",
-        "Teyvat-BMB",
-        "Teyvat-BAL",
-        "Teyvat-NTP",
-        "Teyvat-KEE",
-        "Teyvat-KEW"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-NSP",
+            "Teyvat-NST",
+            "Teyvat-BMB",
+            "Teyvat-BAL",
+            "Teyvat-NTP",
+            "Teyvat-PHI",
+            "Teyvat-FNC"
+          ]
+        },
+        {
+          "name": "支线",
+          "nameEn": "Branch",
+          "stations": [
+            "Teyvat-NSP",
+            "Teyvat-NST",
+            "Teyvat-BMB",
+            "Teyvat-BAL",
+            "Teyvat-NTP",
+            "Teyvat-KEE",
+            "Teyvat-KEW"
+          ]
+        }
       ],
       "costPreset": "standard"
     },
@@ -1279,30 +1377,32 @@
       "nameEn": "Nod-Krai Voidsea Outlook Line",
       "lineLabels": [
         ["VOP", "LT"],
-        ["STR", "L"]
+        ["STR", "L"],
+        ["KMC", "L"]
       ],
-      "stations": [
-        "Teyvat-VOP",
-        "Teyvat-PRM",
-        "Teyvat-DSM",
-        "Teyvat-FNK",
-        "Teyvat-AVT",
-        "Teyvat-STR"
-      ],
-      "costPreset": "standard"
-    },
-    {
-      "id": "K3-B",
-      "name": "挪德卡莱局·虚海望支线",
-      "lineLabels": [["KMC", "L"]],
-      "nameEn": "Nod-Krai Voidsea Outlook Branch Line",
-      "stations": [
-        "Teyvat-VOP",
-        "Teyvat-PRM",
-        "Teyvat-DSM",
-        "Teyvat-FNK",
-        "Teyvat-CWC",
-        "Teyvat-KMC"
+      "variants": [
+        {
+          "stations": [
+            "Teyvat-VOP",
+            "Teyvat-PRM",
+            "Teyvat-DSM",
+            "Teyvat-FNK",
+            "Teyvat-AVT",
+            "Teyvat-STR"
+          ]
+        },
+        {
+          "name": "支线",
+          "nameEn": "Branch",
+          "stations": [
+            "Teyvat-VOP",
+            "Teyvat-PRM",
+            "Teyvat-DSM",
+            "Teyvat-FNK",
+            "Teyvat-CWC",
+            "Teyvat-KMC"
+          ]
+        }
       ],
       "costPreset": "standard"
     },
@@ -1312,7 +1412,11 @@
       "nameEn": "Final Night Cemetery ↔ Voidsea Outlook Port Ferry",
       "lineType": "ferry",
       "costPreset": "ferry",
-      "stations": ["Teyvat-FNC", "Teyvat-VOP"]
+      "variants": [
+        {
+          "stations": ["Teyvat-FNC", "Teyvat-VOP"]
+        }
+      ]
     }
   ]
 }

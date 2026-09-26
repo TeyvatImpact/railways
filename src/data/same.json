@@ -5,7 +5,11 @@
       "name": "璃月港同站换乘",
       "nameEn": "Liyue Harbor Same-Station",
       "lineType": "same-station",
-      "stations": ["Teyvat-LYH", "Liyue-LYG"],
+      "variants": [
+        {
+          "stations": ["Teyvat-LYH", "Liyue-LYG"]
+        }
+      ],
       "costPreset": "same-station"
     },
     {
@@ -13,7 +17,11 @@
       "name": "璃月港南同站换乘",
       "nameEn": "Liyue Harbor South Same-Station",
       "lineType": "same-station",
-      "stations": ["Teyvat-LYS", "Liyue-LYN"],
+      "variants": [
+        {
+          "stations": ["Teyvat-LYS", "Liyue-LYN"]
+        }
+      ],
       "costPreset": "same-station"
     },
     {
@@ -21,7 +29,11 @@
       "name": "璃月港北同站换乘",
       "nameEn": "Liyue Harbor North Same-Station",
       "lineType": "same-station",
-      "stations": ["Teyvat-LYN", "Liyue-LYB"],
+      "variants": [
+        {
+          "stations": ["Teyvat-LYN", "Liyue-LYB"]
+        }
+      ],
       "costPreset": "same-station"
     }
   ]

@@ -69,12 +69,16 @@
       "nameEn": "Snezhnaya Large Loop Line",
       "oneWay": true,
       "lineLabels": [],
-      "stations": [
-        "Snezhnaya-Snezhnaya",
-        "Snezhnaya-Svetloledovka",
-        "Snezhnaya-Sretomorozsk",
-        "Snezhnaya-Zorya",
-        "Snezhnaya-Snezhnaya"
+      "variants": [
+        {
+          "stations": [
+            "Snezhnaya-Snezhnaya",
+            "Snezhnaya-Svetloledovka",
+            "Snezhnaya-Sretomorozsk",
+            "Snezhnaya-Zorya",
+            "Snezhnaya-Snezhnaya"
+          ]
+        }
       ]
     },
     {
@@ -83,11 +87,15 @@
       "nameEn": "Snezhnaya Small Loop Line",
       "oneWay": true,
       "lineLabels": [],
-      "stations": [
-        "Snezhnaya-Snezhnaya",
-        "Snezhnaya-Morepesok",
-        "Snezhnaya-Zorya",
-        "Snezhnaya-Snezhnaya"
+      "variants": [
+        {
+          "stations": [
+            "Snezhnaya-Snezhnaya",
+            "Snezhnaya-Morepesok",
+            "Snezhnaya-Zorya",
+            "Snezhnaya-Snezhnaya"
+          ]
+        }
       ]
     },
     {
@@ -96,12 +104,16 @@
       "nameEn": "Snezhnaya Flamefeather Line",
       "oneWay": true,
       "lineLabels": [],
-      "stations": [
-        "Snezhnaya-Snezhnaya",
-        "Snezhnaya-Morepesok",
-        "Snezhnaya-Flamefeather",
-        "Snezhnaya-Zorya",
-        "Snezhnaya-Snezhnaya"
+      "variants": [
+        {
+          "stations": [
+            "Snezhnaya-Snezhnaya",
+            "Snezhnaya-Morepesok",
+            "Snezhnaya-Flamefeather",
+            "Snezhnaya-Zorya",
+            "Snezhnaya-Snezhnaya"
+          ]
+        }
       ]
     },
     {
@@ -109,7 +121,11 @@
       "name": "至冬列车白冕宫线",
       "nameEn": "Snezhnaya Pale Crown Palace Line",
       "lineLabels": [],
-      "stations": ["Snezhnaya-Snezhnaya", "Snezhnaya-PaleCrown"]
+      "variants": [
+        {
+          "stations": ["Snezhnaya-Snezhnaya", "Snezhnaya-PaleCrown"]
+        }
+      ]
     },
     {
       "id": "Trian-5",
@@ -117,7 +133,11 @@
       "nameEn": "Snezhnaya Railway Nod-Krai Connector",
       "costPreset": "standard",
       "lineLabels": [],
-      "stations": ["Snezhnaya-Sretomorozsk", "Teyvat-STR"]
+      "variants": [
+        {
+          "stations": ["Snezhnaya-Sretomorozsk", "Teyvat-STR"]
+        }
+      ]
     }
   ]
 }

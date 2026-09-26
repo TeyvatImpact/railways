@@ -40,35 +40,36 @@ HomeView.vue
 Both dialogs render through components/DialogWindow.vue.
 ```
 
-`views/display/index.vue` (the `/display` route) is a separate, self-contained renderer: it does **not** use `useMapData` — it re-reads the region JSONs, lays every line out as a fixed 1920×200 SVG strip with stations spaced by index (coordinates are irrelevant there), and takes colors from `palette` in `config/render.config.ts`.
+`views/display/index.vue` (the `/display` route) is a separate, self-contained renderer: it does **not** use `useMapData` — it re-reads the region JSONs, lays **one strip per line** out as a fixed 1920×200 SVG strip with stations spaced by index (coordinates are irrelevant there), and takes colors from `palette` in `config/render.config.ts`. Each strip draws the line's **variant with the most stations** (ties → the first one, i.e. normally the full-length service); other variants whose stations form a contiguous run inside that strip are drawn as a small same-colour bar under it, labelled with the variant name (`小交路`). Forked variants (真正的支线) are **not** drawn for now — their branch stations are simply absent from the strip; branch diagram support is deferred. The selection/annotation logic is `views/display/variantStrip.ts` (`pickDisplayVariant`, `contiguousSpans`), kept pure so it can be checked without a browser.
 
-| Layer       | File                               | Role                                                                                                                                                                                                                             |
-| ----------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Entry       | `main.ts`                          | Mounts `App.vue` with Varlet UI + router; imports `style.css` first                                                                                                                                                              |
-| App         | `App.vue`                          | Renders `<router-view />` only                                                                                                                                                                                                   |
-| Routing     | `router/index.ts`                  | Two routes: `/` → `HomeView.vue`, `/display` → `views/display/index.vue` (lazy)                                                                                                                                                  |
-| Page        | `views/HomeView.vue`               | Map page: TitleBar + (map \| RoutePanel) + InfoDialog/AdminPanel, first-visit dialog trigger                                                                                                                                     |
-| Page        | `views/display/index.vue`          | Static per-line SVG strip renderer on `/display`; index-based layout, ignores coordinates                                                                                                                                        |
-| App         | `TitleBar.vue`                     | Top title bar + "关于" button                                                                                                                                                                                                    |
-| App         | `InfoDialog.vue`                   | Modal showing intro.md via `markdown-exit` + `github-markdown-css`                                                                                                                                                               |
-| Map         | `RailwayMap.vue`                   | SVG viewport with pan/zoom, grid lines, segments, stations, labels, markers; emits `station-click`                                                                                                                               |
-| Routing     | `RoutePanel.vue`                   | Right sidebar: fuzzy-search dropdown, map pick mode, calculate button, multi-route option list, RouteTimeline detail view                                                                                                        |
-| Overlays    | `MapControls.vue`                  | Fixed bottom-left zoom +/- buttons and mouse coordinate readout (data-space x,y); rendered inside RailwayMap                                                                                                                     |
-| Data        | `composables/useMapData.ts`        | Imports region JSON + ferry.json + same.json, computes segments with line offsetting for parallel tracks                                                                                                                         |
-| Interaction | `composables/useMapInteraction.ts` | Mouse drag/scroll, touch pan/pinch-zoom; persists viewport to localStorage                                                                                                                                                       |
-| UI          | `composables/useTheme.ts`          | Light/dark theme ref, Varlet MD3 StyleProvider swap, persisted to localStorage                                                                                                                                                   |
-| UI          | `composables/useRenderMode.ts`     | Line-connection mode ref; `straight` (default) / `curve` (Catmull-Rom). Dormant: no UI control, no persistence                                                                                                                   |
-| Render      | `composables/useCurveGeometry.ts`  | Chains station pairs per line and converts each pair to a centripetal Catmull-Rom cubic; returns one entry per renderSegment, index-aligned                                                                                      |
-| UI          | `components/DialogWindow.vue`      | Shared modal shell used by InfoDialog and AdminPanel                                                                                                                                                                             |
-| Labels      | `composables/useLabelPlacement.ts` | Label box layout + leader lines via `@chenglou/pretext`                                                                                                                                                                          |
-| **Routing** | **`composables/useRouting.ts`**    | **Graph builder (node = prefix-stationId-lineId), Dijkstra multi-source/multi-target, fuzzy station search**                                                                                                                     |
-| Routing     | `components/RouteTimeline.vue`     | Detailed route timeline view with stations, line colors, and fare/time/distance stats                                                                                                                                            |
-| Data        | `scripts/migrate-data-v2.cjs`      | Migration script that extracts fare/time/distance from station tuples into standalone stationDistances arrays                                                                                                                    |
-| Data        | `scripts/migrate-connections.cjs`  | One-shot migration that moved every station pair's distance and waypoints from the per-file `stationDistances` arrays and line station tuples into the global `connections.json`, and turned line `stations` into bare id arrays |
-| Dev         | `components/AdminPanel.vue`        | Floating data editor (dev-only) — edit station names and segment costs via web UI                                                                                                                                                |
-| Dev         | `vite.config.ts`                   | Admin API middleware (`GET/PUT /__admin/data/*`) for reading/writing JSON files in dev mode                                                                                                                                      |
-| Config      | `config/render.config.ts`          | All render constants (fonts, palette, spacing, special line colors)                                                                                                                                                              |
-| Config      | `config/fare-presets.json`         | Fare/speed presets (farePerKm, minutesPerKm); used by lines' `costPreset` field                                                                                                                                                  |
+| Layer       | File                                | Role                                                                                                                                                                                                                             |
+| ----------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Entry       | `main.ts`                           | Mounts `App.vue` with Varlet UI + router; imports `style.css` first                                                                                                                                                              |
+| App         | `App.vue`                           | Renders `<router-view />` only                                                                                                                                                                                                   |
+| Routing     | `router/index.ts`                   | Two routes: `/` → `HomeView.vue`, `/display` → `views/display/index.vue` (lazy)                                                                                                                                                  |
+| Page        | `views/HomeView.vue`                | Map page: TitleBar + (map \| RoutePanel) + InfoDialog/AdminPanel, first-visit dialog trigger                                                                                                                                     |
+| Page        | `views/display/index.vue`           | Static per-line SVG strip renderer on `/display`; index-based layout, ignores coordinates; one strip per line (its longest variant) + 大小交路 span labels                                                                       |
+| App         | `TitleBar.vue`                      | Top title bar + "关于" button                                                                                                                                                                                                    |
+| App         | `InfoDialog.vue`                    | Modal showing intro.md via `markdown-exit` + `github-markdown-css`                                                                                                                                                               |
+| Map         | `RailwayMap.vue`                    | SVG viewport with pan/zoom, grid lines, segments, stations, labels, markers; emits `station-click`                                                                                                                               |
+| Routing     | `RoutePanel.vue`                    | Right sidebar: fuzzy-search dropdown, map pick mode, calculate button, multi-route option list, RouteTimeline detail view                                                                                                        |
+| Overlays    | `MapControls.vue`                   | Fixed bottom-left zoom +/- buttons and mouse coordinate readout (data-space x,y); rendered inside RailwayMap                                                                                                                     |
+| Data        | `composables/useMapData.ts`         | Imports region JSON + ferry.json + same.json, flattens every line's `variants` into unique station pairs, computes segments with line offsetting for parallel tracks                                                             |
+| Interaction | `composables/useMapInteraction.ts`  | Mouse drag/scroll, touch pan/pinch-zoom; persists viewport to localStorage                                                                                                                                                       |
+| UI          | `composables/useTheme.ts`           | Light/dark theme ref, Varlet MD3 StyleProvider swap, persisted to localStorage                                                                                                                                                   |
+| UI          | `composables/useRenderMode.ts`      | Line-connection mode ref; `straight` (default) / `curve` (Catmull-Rom). Dormant: no UI control, no persistence                                                                                                                   |
+| Render      | `composables/useCurveGeometry.ts`   | Chains station pairs per line and converts each pair to a centripetal Catmull-Rom cubic; returns one entry per renderSegment, index-aligned                                                                                      |
+| UI          | `components/DialogWindow.vue`       | Shared modal shell used by InfoDialog and AdminPanel                                                                                                                                                                             |
+| Labels      | `composables/useLabelPlacement.ts`  | Label box layout + leader lines via `@chenglou/pretext`                                                                                                                                                                          |
+| **Routing** | **`composables/useRouting.ts`**     | **Graph builder (node = `stationId-lineId#variantIndex`), Dijkstra multi-source/multi-target, fuzzy station search**                                                                                                             |
+| Routing     | `components/RouteTimeline.vue`      | Detailed route timeline view with stations, line colors, and fare/time/distance stats                                                                                                                                            |
+| Data        | `scripts/migrate-data-v2.cjs`       | Migration script that extracts fare/time/distance from station tuples into standalone stationDistances arrays                                                                                                                    |
+| Data        | `scripts/migrate-connections.cjs`   | One-shot migration that moved every station pair's distance and waypoints from the per-file `stationDistances` arrays and line station tuples into the global `connections.json`, and turned line `stations` into bare id arrays |
+| Data        | `scripts/migrate-line-variants.cjs` | One-shot migration that wrapped every line's `stations` into `variants: [{ stations }]` and built the 大小交路 / 支线 variants of `M1`, `A`, `L2`, `K2` (+`K2-B`), `K3` (+`K3-B`)                                                |
+| Dev         | `components/AdminPanel.vue`         | Floating data editor (dev-only) — edit station names, per-variant line names and connection distances via web UI                                                                                                                 |
+| Dev         | `vite.config.ts`                    | Admin API middleware (`GET/PUT /__admin/data/*`) for reading/writing JSON files in dev mode                                                                                                                                      |
+| Config      | `config/render.config.ts`           | All render constants (fonts, palette, spacing, special line colors)                                                                                                                                                              |
+| Config      | `config/fare-presets.json`          | Fare/speed presets (farePerKm, minutesPerKm); used by lines' `costPreset` field                                                                                                                                                  |
 
 ## Data
 
@@ -111,10 +112,16 @@ Two special line files:
       "nameZh"?: string,
       "nameEn": string,
       "costPreset": string,
-      "oneWay"?: boolean,                   // true = 单向，只按 stations 顺序开行
-      "lineLabels"?: [ [stationId, position], ... ],
-      "stations": [stationId, ...]
-      // 裸站点 id 数组：短 id（不含 `-`）按本区前缀展开，跨区引用直接写完整 id（如 "Teyvat-STR"）
+      "oneWay"?: boolean,                   // true = 单向，所有变体都只按各自 stations 的顺序开行
+      "lineLabels"?: [ [stationId, position], ... ],   // 线路级：对该线全部变体生效
+      "variants": [
+        {
+          "name"?: string,                  // 短变体名（`支线` / `小交路` …）；空或省略 = 该线路的全线交路
+          "nameEn"?: string,
+          "stations": [stationId, ...]      // 裸站点 id 数组：短 id 按本区前缀展开，跨区引用写完整 id（如 "Teyvat-STR"）
+        }
+      ]
+      // 至少 1 个变体，每个变体至少 2 站；同一线路的变体共用 id / 名称 / 颜色 / 票价 preset / 平行轨道槽位
     }
   ]
 }
@@ -122,10 +129,10 @@ Two special line files:
 
 ### Special line files
 
-**`ferry.json`** — `{ lines: [{ id, name, nameEn, "lineType": "ferry", stations: [prefixedId, ...] }] }`  
-**`same.json`** — `{ lines: [{ id, name, nameEn, "lineType": "same-station", stations: [prefixedId, ...] }] }`
+**`ferry.json`** — `{ lines: [{ id, name, nameEn, "lineType": "ferry", variants: [{ stations: [prefixedId, ...] }] }] }`  
+**`same.json`** — `{ lines: [{ id, name, nameEn, "lineType": "same-station", variants: [{ stations: [prefixedId, ...] }] }] }`
 
-Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat-LYS"`) to reference stations across region files. They are not re-prefixed at runtime; their `stations` arrays are bare id strings like the region files'. Their pairs get their `connections.json` entries from the same global table.
+Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat-LYS"`) to reference stations across region files. They are not re-prefixed at runtime; their variant `stations` arrays are bare id strings like the region files'. Their pairs get their `connections.json` entries from the same global table.
 
 ### Connections file (`connections.json`)
 
@@ -153,14 +160,14 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 ### Station/line field details
 
 - **`id`** (station): Short uppercase code, e.g. `"LYH"`, `"RTP"`. Gets runtime prefix → `"Teyvat-LYH"`.
-- **Cross-region reference**: A region line may reference a station owned by another region by writing its **already-prefixed** id, e.g. `"Teyvat-STR"` inside `snezhnaya.json`. `regionStationId()` in `useMapData.ts` passes any id containing `-` through untouched (applies to `stations` and `lineLabels`). Raw station ids must therefore NEVER contain `-`; `connections.json` always uses full ids.
+- **Cross-region reference**: A region line may reference a station owned by another region by writing its **already-prefixed** id, e.g. `"Teyvat-STR"` inside `snezhnaya.json`. `regionStationId()` in `useMapData.ts` passes any id containing `-` through untouched (applies to each variant's `stations` and to `lineLabels`). Raw station ids must therefore NEVER contain `-`; `connections.json` always uses full ids.
+- **`variants`** (line): the line's service patterns. `stations` is a bare station id array — the ordered sequence that variant runs through; every adjacent pair must have an entry in `connections.json` (or fall back to 10 km + straight line). `name` / `nameEn` are the short variant labels (`支线` / `小交路`), empty for the everyday full-length service. Variants of one line share its id, name, colour, preset and parallel-track slot, so two variants over the same pair render as **one** track; the runtime `Line.stations` is a derived union of all variants' stations (first-appearance order), used for station↔line lookups only.
 - **`labelDir`**: Optional, one of `L`/`R`/`T`/`B`/`LT`/`LB`/`RT`/`RB`. Controls label offset direction from station point.
-- **`stations`** (line): bare station id array — the ordered sequence the line runs through. Every adjacent pair must have an entry in `connections.json` (or fall back to 10 km + straight line).
 - **`waypoints`** (connection): the path between a connection's two stations — see [Connections file](#connections-file-connectionsjson) above.
 - **`lineLabels`**: Optional array of `[stationId, position]` — instructs renderer where to place the line's name label relative to that station.
 - **`config.x`/`config.y`**: Origin offset applied to all station coordinates in that region at runtime.
 - **`costPreset`**: Each line selects a fare/speed preset from `config/fare-presets.json`. Determines `farePerKm` and `minutesPerKm` for cost computation.
-- **`oneWay`**: Optional boolean; `true` = 单向线路，只按 `stations` 的排列顺序开行，反向不可乘坐（环线即按单一方向绕行）。缺省 = 双向。当前仅 `snezhnaya.json` 的三条环线 `Trian-1`/`Trian-2`/`Trian-3` 为单向；`Trian-4`（白冕宫线）与 `Trian-5`（挪德卡莱连接线）为双向。
+- **`oneWay`**: Optional boolean; `true` = 单向线路，所有变体都只按各自 `stations` 的排列顺序开行，反向不可乘坐（环线即按单一方向绕行）。缺省 = 双向。当前仅 `snezhnaya.json` 的三条环线 `Trian-1`/`Trian-2`/`Trian-3` 为单向；`Trian-4`（白冕宫线）与 `Trian-5`（挪德卡莱连接线）为双向。
 - **`connections`**: the global station-pair table in `connections.json` (replaces the old per-file `stationDistances` and the per-line waypoint tuples). See [Connections file](#connections-file-connectionsjson) above.
 - **Cost computation**: fare = distance × farePerKm (摩拉), time = distance × minutesPerKm (分钟). Computed at runtime in `useMapData.ts` and `useRouting.ts`.
 
@@ -168,15 +175,15 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 
 **Graph construction** (built once at module load):
 
-| Edge type                          | Cost metric                    | Description                                                                                                                                               |
-| ---------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Line adjacency                     | Actual fare (dist × farePerKm) | Consecutive stations on the same regular/ferry line; `oneWay` lines only get the forward edge (reverse travel is impossible, loops must be ridden around) |
-| Transfer (same-station)            | 0                              | Two lines sharing the same physical station (same prefix)                                                                                                 |
-| Cross-network transfer (same.json) | 0                              | Connections defined in `same.json` (different prefix)                                                                                                     |
+| Edge type                          | Cost metric                    | Description                                                                                                                                       |
+| ---------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Line adjacency                     | Actual fare (dist × farePerKm) | Consecutive stations **within one variant**; `oneWay` lines only get the forward edge (reverse travel is impossible, loops must be ridden around) |
+| Transfer (same-station)            | 0                              | Two lines — or two variants of the same line — sharing the same physical station                                                                  |
+| Cross-network transfer (same.json) | 0                              | Connections defined in `same.json` (different prefix)                                                                                             |
 
-**Node format**: `` `${stationFullId}-${lineId}` ``, e.g. `Teyvat-LYH-A`, `Liyue-KYB-ferry-kyb-rtp`.
+**Node format**: `` `${stationFullId}-${lineId}#${variantIndex}` ``, e.g. `Teyvat-LYH-A#0`, `Liyue-KYB-ferry-kyb-rtp#0`.
 
-Line-adjacency distance comes from `connections.json` via `lookupDistance()` (a missing entry counts as 10 km); pair geometry plays no part in the graph.
+Each variant is its own chain in the graph, so changing from a branch/local (小交路) train to the full-length (大交路) one shows up as a transfer at the shared station — e.g. branch terminus → main terminus comes back as two segments. Station-pair connections are only used for the cost; distances come from `connections.json` via `lookupDistance()` (a missing entry counts as 10 km), and pair geometry plays no part in the graph.
 
 **`findRoute(startStationId, endStationId, metric)`**: gathers ALL line-nodes for each physical station, runs Dijkstra with virtual multi-source / multi-target (all start-nodes at dist 0, stop when any end-node is reached). `metric` is one of `'fare'` (default), `'time'`, or `'distance'` — Dijkstra uses the corresponding value from the edge metrics as weight.
 
@@ -193,7 +200,7 @@ Line-adjacency distance comes from `connections.json` via `lookupDistance()` (a 
 - **Label sizes**: Fixed small size (`fsCNSmall: 12`, `fsENSmall: 8`). No zoom-dependent switching.
 - **nameZh (Inazuma)**: Inazuma stations/lines carry an extra `nameZh` field (Chinese translation). When present, labels render three lines: JP name → CN name (zhX) → EN name. CN text uses `"Noto Serif SC"` at EN font size.
 - **Line palette**: Cycles through 20 colors in `render.config.ts`.
-- **Parallel tracks**: Shared segments are offset by `LINE_WIDTH` per line, centered.
+- **Parallel tracks**: Shared segments are offset by `LINE_WIDTH` per line, centered. A line occupies **one** slot no matter how many variants traverse the segment — variant station pairs are de-duplicated (direction-insensitively, first occurrence wins) before offsetting, so a 支线/小交路 does not push its own line (or anyone else) sideways.
 - **Viewport persistence**: Pan/zoom saved to localStorage key `teyvat-railways-map-state`.
 - **All imports**: Use `@/*` path alias → `./src/*`.
 - **SVG isolation**: RailwayMap.vue uses ONLY inline styles (`fill`, `stroke`, SVG attributes) — no Tailwind CSS classes. This allows the SVG to be copy-pasted as a standalone SVG file.
@@ -239,11 +246,15 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 - Ferry/same-station JSON files don't have their own stations — lines reference prefixed station IDs (e.g. `Teyvat-LYS`) directly. These lines are not run through the standard prefix step.
 - `intro.md` is imported via `?raw` in `InfoDialog.vue` and rendered with `markdown-exit`. The modal has `github-markdown-css` with transparent background override.
 - First visit detection uses localStorage key `teyvat-railways-visited`.
-- AdminPanel (🛠 button, dev-mode only) exposes a GUI for editing station names, line names, cost presets, and station distances; changes write back via `PUT /__admin/data/*` and Vite HMR auto-reloads the app.
+- AdminPanel (🛠 button, dev-mode only) exposes a GUI for editing station names, line names, variant names and connection distances; it lists each line's variants as read-only segment sequences. Changes write back via `PUT /__admin/data/*` and Vite HMR auto-reloads the app.
 - RoutePanel exposes `onStationClick(stationId)` via `defineExpose` — App.vue calls it when RailwayMap emits `station-click`.
 - RoutePanel now shows a multi-route option list (fare/time/distance) after calculation; clicking one opens the RouteTimeline detail view, clicking × returns to the list.
 - `useRouting.ts` builds the graph eagerly at module import time (synchronous, runs once).
 - Segment paths are built in `useMapData.ts`: `connectionVertices()` reads the pair from `connections.json` (`lookupConnection()`), expands its chained `waypoints` into polyline vertices, and reverses the whole vertex list when the line traverses the pair against the canonical `from → to` order. Every pair contributes one `RenderSegment` per vertex span (`partIndex` 0..N). `pairSegmentIds` (also exported there) maps `${lineId}|${aId}|${bId}` → the pair's segment ids in both directions; `RailwayMap.vue` uses that map for route highlighting instead of recomputing corner geometry.
 - Parallel-track offsetting groups **whole polylines** by their direction-normalized vertex signature (`polylineKey`) and translates the entire pair by one vector derived from the start→end chord, so corners stay continuous. Straight pairs are unaffected; only corridors additionally shared by another identically-shaped polyline shift (offset ≤ 4px per neighbour).
 - Station-pair connections (distance **and** waypoints) live only in `src/data/connections.json`; region files no longer carry `stationDistances` and lines no longer carry per-pair waypoints. Adding a connection = adding one fully-prefixed entry there (a missing pair silently means 10 km + straight line).
+- Line variants (支线 / 大小交路) live inside the owning line as `variants[]`, sharing its id, name, colour, preset and track slot — a variant is **not** a separate line, so it never gets its own colour or parallel offset. Today's variants: `M1`/`A`/`L2` each carry a `小交路` (short turnback) beside the full-length one, and the former standalone `K2-B` / `K3-B` lines were folded into `K2` / `K3` as `支线` (their `lineLabels` were merged into the parent, so the map still names the line at the branch termini). `ferry.json` / `same.json` lines are single-variant.
+- Because the map graph is built per variant, a route that changes variant (branch → main, 小交路 → 大交路) is reported as a transfer at the shared station; a ride entirely inside one variant stays a single segment. `RouteSegment` / `NodeInfo` carry `variantIndex` / `variantName` / `variantNameEn`, and `segmentLineName()` renders `帕哈岛线（支线）`-style labels.
+- Transfer-station circles count **lines**, not variants: `transferStationIds` uses the per-line station union, so `K2`/`K3` trunk stations stopped being transfer stations when `K2-B`/`K3-B` merged (those also served by `K1` or a ferry kept it).
+- Line colours come from the line's index in the flattened line list, so adding/removing a line entry (e.g. folding `K2-B`/`K3-B` away) shifts the palette for every line after it.
 - Curve mode (`useCurveGeometry.ts`, implemented but not surfaced in the UI) deliberately **ignores waypoints** — its vertices are the pair's two stations, taken from the first part's start and the last part's end.

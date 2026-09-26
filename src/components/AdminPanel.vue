@@ -70,18 +70,30 @@
                       </option>
                     </select>
                   </div>
-                  <table class="data-table">
-                    <thead>
-                      <tr>
-                        <th class="col-seg">Segment</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(seg, si) in getSegments(line)" :key="si">
-                        <td class="col-seg">{{ seg.fromName }} → {{ seg.toName }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div v-for="(variant, vi) in line.variants" :key="vi" class="variant-group">
+                    <div class="line-header">
+                      <input
+                        v-model="variant.name"
+                        class="edit-input line-name"
+                        placeholder="变体名（可空）" />
+                      <input
+                        v-model="variant.nameEn"
+                        class="edit-input line-name"
+                        placeholder="Variant (EN)" />
+                    </div>
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                          <th class="col-seg">Segment</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(seg, si) in getSegments(variant)" :key="si">
+                          <td class="col-seg">{{ seg.fromName }} → {{ seg.toName }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
 
@@ -216,12 +228,11 @@ function fmtWaypoints(w?: [number, number][]) {
   return w?.length ? w.map(([x, y]) => `${x},${y}`).join(' → ') : '直线';
 }
 
-function getSegments(line: any) {
+function getSegments(variant: any) {
   const segs: any[] = [];
-  const data = currentFileData.value;
-  for (let i = 0; i < line.stations.length - 1; i++) {
-    const fromId = line.stations[i];
-    const toId = line.stations[i + 1];
+  for (let i = 0; i < variant.stations.length - 1; i++) {
+    const fromId = variant.stations[i];
+    const toId = variant.stations[i + 1];
     const fromName = regionKeys.includes(activeFile.value)
       ? stationName(fromId, activeFile.value)
       : stationName(fromId);
@@ -440,6 +451,11 @@ async function save() {
   font-size: 13px;
   margin: 0 0 6px;
   color: #444;
+}
+.variant-group {
+  margin-top: 6px;
+  padding-left: 8px;
+  border-left: 2px solid #eee;
 }
 .line-header {
   display: flex;

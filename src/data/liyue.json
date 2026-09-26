@@ -182,14 +182,18 @@
         ["LYG", "RT"],
         ["HYG", "T"]
       ],
-      "stations": [
-        "Liyue-LYG",
-        "Liyue-HET",
-        "Liyue-FYP",
-        "Liyue-LYN",
-        "Liyue-PSC",
-        "Liyue-CHY",
-        "Liyue-HYG"
+      "variants": [
+        {
+          "stations": [
+            "Liyue-LYG",
+            "Liyue-HET",
+            "Liyue-FYP",
+            "Liyue-LYN",
+            "Liyue-PSC",
+            "Liyue-CHY",
+            "Liyue-HYG"
+          ]
+        }
       ],
       "costPreset": "liyue-metro"
     },
@@ -201,15 +205,19 @@
         ["HYC", "LT"],
         ["LYB", "LB"]
       ],
-      "stations": [
-        "Liyue-HYC",
-        "Liyue-NCM",
-        "Liyue-PSC",
-        "Liyue-KYN",
-        "Liyue-KYB",
-        "Liyue-BCM",
-        "Liyue-YLQ",
-        "Liyue-LYB"
+      "variants": [
+        {
+          "stations": [
+            "Liyue-HYC",
+            "Liyue-NCM",
+            "Liyue-PSC",
+            "Liyue-KYN",
+            "Liyue-KYB",
+            "Liyue-BCM",
+            "Liyue-YLQ",
+            "Liyue-LYB"
+          ]
+        }
       ],
       "costPreset": "liyue-metro"
     },
@@ -221,14 +229,18 @@
         ["YHT", "LT"],
         ["BCM", "RT"]
       ],
-      "stations": [
-        "Liyue-HJW",
-        "Liyue-NCM",
-        "Liyue-YJT",
-        "Liyue-YHT",
-        "Liyue-HET",
-        "Liyue-BCM",
-        "Liyue-YLY"
+      "variants": [
+        {
+          "stations": [
+            "Liyue-HJW",
+            "Liyue-NCM",
+            "Liyue-YJT",
+            "Liyue-YHT",
+            "Liyue-HET",
+            "Liyue-BCM",
+            "Liyue-YLY"
+          ]
+        }
       ],
       "costPreset": "liyue-metro"
     },
@@ -240,7 +252,11 @@
         ["LHC", "LT"],
         ["GYG", "B"]
       ],
-      "stations": ["Liyue-LHC", "Liyue-LYB", "Liyue-YLY", "Liyue-GYX", "Liyue-GYG"],
+      "variants": [
+        {
+          "stations": ["Liyue-LHC", "Liyue-LYB", "Liyue-YLY", "Liyue-GYX", "Liyue-GYG"]
+        }
+      ],
       "costPreset": "liyue-metro"
     }
   ]

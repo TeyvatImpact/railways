@@ -61,7 +61,8 @@
           <template v-if="block.type === 'process'">
             <div class="text-sm mb-2">
               <span class="font-semibold">
-                {{ block.lineName }}
+                {{ block.lineName
+                }}<span v-if="block.variantName">（{{ block.variantName }}）</span>
                 <span v-if="block.isFerry" class="text-xs font-normal">(轮渡)</span>
               </span>
               <br />
@@ -112,6 +113,7 @@ interface ProcessBlock {
   type: 'process';
   lineName: string;
   lineNameEn: string;
+  variantName: string;
   isFerry: boolean;
   isSameStation: boolean;
   direction: string;
@@ -177,6 +179,7 @@ const blocks = computed<Block[]>(() => {
         type: 'process',
         lineName: seg.lineName,
         lineNameEn: seg.lineNameEn,
+        variantName: seg.variantName,
         isFerry: seg.isFerry,
         isSameStation: seg.isSameStation,
         direction: seg.nodes[seg.nodes.length - 1].stationName,

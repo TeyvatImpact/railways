@@ -59,6 +59,14 @@ export interface PresetConfig {
 /** 途经点：链式增量，单位为数据坐标单位（与 station.x/y 同尺度）。第 1 个点相对区间起点站，之后每个点相对前一个点 */
 export type Waypoints = [number, number][];
 
+export interface LineVariantData {
+  /** 短变体名（如 `支线` / `小交路`）；空或省略表示该线路的全线交路 */
+  name?: string;
+  nameEn?: string;
+  /** 该变体的站序（短 id；跨区引用写完整 id） */
+  stations: string[];
+}
+
 export interface LineData {
   id: string;
   name: string;
@@ -66,8 +74,9 @@ export interface LineData {
   nameEn: string;
   costPreset: string;
   lineLabels?: [string, string][];
-  stations: string[];
-  /** true = 单向线路，只按 `stations` 的顺序开行 */
+  /** 同一线路的多个交路（支线 / 大小交路），至少一个；变体之间共用线路名与颜色 */
+  variants: LineVariantData[];
+  /** true = 单向线路，所有变体都只按各自 `stations` 的顺序开行 */
   oneWay?: boolean;
   fontFamily?: string;
   fontFamilyZh?: string;
@@ -88,20 +97,17 @@ export interface Station extends StationData {
   cy: number;
 }
 
-export interface Line {
-  id: string;
+export interface LineVariant {
   name: string;
-  nameZh?: string;
   nameEn: string;
-  color: string;
-  costPreset: string;
-  lineLabels?: [string, string][];
   stations: string[];
-  /** true = 单向线路，只按 `stations` 的顺序开行 */
-  oneWay?: boolean;
-  fontFamily?: string;
-  fontFamilyZh?: string;
-  lineType?: 'ferry' | 'same-station';
+}
+
+export interface Line extends Omit<LineData, 'variants'> {
+  color: string;
+  variants: LineVariant[];
+  /** 派生：所有变体站点的并集（按首次出现顺序），用于「站 ↔ 线路」查询 */
+  stations: string[];
 }
 
 export interface RenderSegment {
@@ -215,9 +221,23 @@ const regionLineSets: { lines: LineData[]; prefix: string; fontFamily: string; h
     { lines: parsedLinesL, prefix: parsedL.prefix, fontFamily: parsedL.fontFamily },
     { lines: parsedLinesS, prefix: parsedS.prefix, fontFamily: parsedS.fontFamily },
   ];
+
+/** 线路变体校验：至少一个变体，每个变体至少两个站点 */
+function assertVariants(line: LineData): void {
+  if (!Array.isArray(line.variants) || line.variants.length === 0)
+    throw new Error(`线路 ${line.id} 缺少 variants`);
+  for (const variant of line.variants) {
+    if (!Array.isArray(variant.stations) || variant.stations.length < 2)
+      throw new Error(`线路 ${line.id} 的变体站点数不足 2 个`);
+  }
+}
+
 for (const { lines, prefix, fontFamily, hasZh } of regionLineSets) {
   for (const line of lines) {
-    line.stations = line.stations.map((id) => regionStationId(prefix, id));
+    assertVariants(line);
+    for (const variant of line.variants) {
+      variant.stations = variant.stations.map((id) => regionStationId(prefix, id));
+    }
     if (line.lineLabels)
       line.lineLabels = line.lineLabels.map(([id, dir]) => [regionStationId(prefix, id), dir]);
     line.fontFamily = fontFamily;
@@ -236,6 +256,9 @@ const parsedLines: LineData[] = [
   ...parsedFerryLines,
   ...parsedSameLines,
 ];
+
+// 轮渡 / 同站线路不在 regionLineSets 里（不需要加前缀），单独校验变体
+for (const line of [...parsedFerryLines, ...parsedSameLines]) assertVariants(line);
 
 export const minX = Math.min(...parsedStations.map((s) => s.x)) - margin;
 const maxX = Math.max(...parsedStations.map((s) => s.x)) + margin;
@@ -289,9 +312,24 @@ export function lookupDistance(aId: string, bId: string): number {
   return lookupConnection(aId, bId)?.distance ?? DEFAULT_CONNECTION_DISTANCE;
 }
 
+/** 所有变体站点的并集（按首次出现顺序） */
+function unionStations(variants: { stations: string[] }[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const variant of variants) {
+    for (const sid of variant.stations) {
+      if (seen.has(sid)) continue;
+      seen.add(sid);
+      out.push(sid);
+    }
+  }
+  return out;
+}
+
 const stationLineCount = new Map<string, number>();
 for (const line of parsedLines) {
-  for (const sid of new Set(line.stations)) {
+  // 一条线路的多个变体算同一条线路 → 换乘站判定只看线路，不看变体
+  for (const sid of unionStations(line.variants)) {
     stationLineCount.set(sid, (stationLineCount.get(sid) || 0) + 1);
   }
 }
@@ -302,6 +340,12 @@ export const transferStationIds = new Set(
 
 export const lines: Line[] = parsedLines.map((line, index) => ({
   ...line,
+  variants: line.variants.map((variant) => ({
+    name: variant.name ?? '',
+    nameEn: variant.nameEn ?? '',
+    stations: variant.stations,
+  })),
+  stations: unionStations(line.variants),
   color:
     line.lineType === 'ferry'
       ? FERRY_COLOR
@@ -462,12 +506,32 @@ function lineWidth(line: LineData): number | undefined {
       : undefined;
 }
 
+/**
+ * 线路全部变体按顺序展开后的站间区间。同一无向站对只保留首次出现的方向：变体共用同一段轨道，
+ * 不能因为两个变体都经过而占两个平行轨道槽位。
+ */
+function linePairs(variants: { stations: string[] }[]): [string, string][] {
+  const seen = new Set<string>();
+  const out: [string, string][] = [];
+  for (const variant of variants) {
+    for (let i = 0; i < variant.stations.length - 1; i++) {
+      const a = variant.stations[i];
+      const b = variant.stations[i + 1];
+      const key = [a, b].sort().join('|');
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push([a, b]);
+    }
+  }
+  return out;
+}
+
 for (const line of parsedLines) {
   const lw = lineWidth(line);
   const dash = line.lineType === 'ferry' ? FERRY_DASH : undefined;
-  for (let i = 0; i < line.stations.length - 1; i++) {
-    const aId = line.stations[i];
-    const bId = line.stations[i + 1];
+  const pairs = linePairs(line.variants);
+  for (let i = 0; i < pairs.length; i++) {
+    const [aId, bId] = pairs[i];
     const sa = stationMap.get(aId);
     const sb = stationMap.get(bId);
     if (!sa || !sb) continue;

@@ -7,6 +7,7 @@ import snezhnayaData from '../../data/snezhnaya.json';
 import ferryData from '../../data/ferry.json';
 import sameData from '../../data/same.json';
 import { palette } from '../../config/render.config';
+import { pickDisplayVariant, contiguousSpans, type RawVariant } from './variantStrip';
 
 interface Station {
   id: string;
@@ -21,10 +22,22 @@ interface LineStation {
   nameEn: string;
 }
 
+interface RawLine {
+  id: string;
+  name: string;
+  nameEn: string;
+  variants: RawVariant[];
+}
+
 interface DisplayLine {
   id: string;
   name: string;
   nameEn: string;
+  /** 被绘制的（站数最多的）变体的短名；空 = 该线路的全线交路 */
+  variantName: string;
+  variantNameEn: string;
+  /** 其余变体中落在本条带上的连续区间（大小交路标注） */
+  spans: { name: string; start: number; end: number }[];
   stations: LineStation[];
   color: string;
 }
@@ -74,53 +87,42 @@ const lines = computed<DisplayLine[]>(() => {
   ];
 
   let colorIndex = 0;
+
+  // 一条线路只画一个变体（站数最多者），其余连续区间作为大小交路标注
+  function pushLine(line: RawLine, id: string, mapStation: (sid: string) => LineStation) {
+    const variants = line.variants;
+    const { variant, index } = pickDisplayVariant(variants);
+    result.push({
+      id,
+      name: line.name,
+      nameEn: line.nameEn,
+      variantName: variant.name ?? '',
+      variantNameEn: variant.nameEn ?? '',
+      stations: variant.stations.map(mapStation),
+      // 原始 id 空间里比较即可，区域前缀只是显示用
+      spans: contiguousSpans(variant.stations, variants, index),
+      color: palette[colorIndex % palette.length],
+    });
+    colorIndex++;
+  }
+
   for (const { data, prefix } of allRegionData) {
     for (const line of data.lines) {
-      const stations: LineStation[] = line.stations.map((sid: string) => {
+      pushLine(line, prefix + line.id, (sid) => {
         // Cross-region references are written with their full id (e.g. `Teyvat-STR`) and must not be re-prefixed.
         const fullId = sid.includes('-') ? sid : prefix + sid;
         const info = getStation(fullId);
         return { id: fullId, ...info };
       });
-      result.push({
-        id: prefix + line.id,
-        name: line.name,
-        nameEn: line.nameEn,
-        stations,
-        color: palette[colorIndex % palette.length],
-      });
-      colorIndex++;
     }
   }
 
   for (const line of ferryData.lines) {
-    const stations: LineStation[] = line.stations.map((sid: string) => {
-      const info = getStation(sid);
-      return { id: sid, ...info };
-    });
-    result.push({
-      id: line.id,
-      name: line.name,
-      nameEn: line.nameEn,
-      stations,
-      color: palette[colorIndex % palette.length],
-    });
-    colorIndex++;
+    pushLine(line, line.id, (sid) => ({ id: sid, ...getStation(sid) }));
   }
 
   for (const line of sameData.lines) {
-    const stations: LineStation[] = line.stations.map((sid: string) => {
-      const info = getStation(sid);
-      return { id: sid, ...info };
-    });
-    result.push({
-      id: line.id,
-      name: line.name,
-      nameEn: line.nameEn,
-      stations,
-      color: palette[colorIndex % palette.length],
-    });
-    colorIndex++;
+    pushLine(line, line.id, (sid) => ({ id: sid, ...getStation(sid) }));
   }
 
   return result;
@@ -164,9 +166,11 @@ function calcSpacing(stationCount: number): number {
 
         <text x="20" y="30" fill="#000" font-size="14" font-weight="bold" font-family="sans-serif">
           {{ line.name }}
+          <tspan v-if="line.variantName">（{{ line.variantName }}）</tspan>
         </text>
         <text x="20" y="48" fill="#aaaaaa" font-size="10" font-family="sans-serif">
           {{ line.nameEn }}
+          <tspan v-if="line.variantNameEn">({{ line.variantNameEn }})</tspan>
         </text>
 
         <line
@@ -177,6 +181,29 @@ function calcSpacing(stationCount: number): number {
           :stroke="line.color"
           stroke-width="4"
           stroke-linecap="round" />
+
+        <!-- 大小交路：其余变体在本条带上占的连续区间 -->
+        <line
+          v-for="(span, si) in line.spans"
+          :key="'span-' + si"
+          :x1="40 + span.start * calcSpacing(line.stations.length)"
+          :x2="40 + span.end * calcSpacing(line.stations.length)"
+          :y1="LINE_Y + 26"
+          :y2="LINE_Y + 26"
+          :stroke="line.color"
+          stroke-width="2"
+          stroke-linecap="round"
+          opacity="0.75" />
+        <text
+          v-for="(span, si) in line.spans"
+          :key="'span-label-' + si"
+          :x="40 + span.end * calcSpacing(line.stations.length) + 8"
+          :y="LINE_Y + 30"
+          :fill="line.color"
+          font-size="9"
+          font-family="sans-serif">
+          {{ span.name }}
+        </text>
 
         <template v-for="(station, idx) in line.stations" :key="station.id">
           <circle

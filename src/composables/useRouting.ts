@@ -9,9 +9,18 @@ export const METRIC_LABELS: Record<RouteMetric, string> = {
   distance: '路程最短',
 };
 
+/** 乘车段显示名：变体无名时即线路名，有名时加括号后缀（如 帕哈岛线（支线）） */
+export function segmentLineName(lineName: string, variantName: string): string {
+  return variantName ? `${lineName}（${variantName}）` : lineName;
+}
+
 export interface NodeInfo {
   stationId: string;
   lineId: string;
+  /** 该节点属于线路的哪个变体（支线 / 小交路 …） */
+  variantIndex: number;
+  variantName: string;
+  variantNameEn: string;
   stationName: string;
   stationNameEn: string;
   lineName: string;
@@ -22,6 +31,9 @@ export interface RouteSegment {
   lineId: string;
   lineName: string;
   lineNameEn: string;
+  variantIndex: number;
+  variantName: string;
+  variantNameEn: string;
   isFerry: boolean;
   isSameStation: boolean;
   nodes: NodeInfo[];
@@ -74,50 +86,65 @@ function addEdge(a: string, b: string, w: number, m?: EdgeMetrics, oneWay = fals
 
 const seenNodes = new Set<string>();
 
+/**
+ * 图节点 = 站 × 线路 × 变体。每个变体各自成一条链，同一站不同变体之间的连接由下面的 0 成本同站换乘边
+ * 负责，所以「支线换主线 / 小交路换大交路」在路径结果里表现为一次换乘。
+ */
+function nodeIdFor(stationId: string, lineId: string, variantIndex: number): string {
+  return `${stationId}-${lineId}#${variantIndex}`;
+}
+
 for (const line of lines) {
-  for (const sid of line.stations) {
-    const st = stationMap.get(sid);
-    if (!st) continue;
+  for (let vi = 0; vi < line.variants.length; vi++) {
+    const variant = line.variants[vi];
 
-    const nodeId = `${sid}-${line.id}`;
+    for (const sid of variant.stations) {
+      const st = stationMap.get(sid);
+      if (!st) continue;
 
-    if (!seenNodes.has(nodeId)) {
-      seenNodes.add(nodeId);
-      nodeInfoMap.set(nodeId, {
-        stationId: sid,
-        lineId: line.id,
-        stationName: st.name,
-        stationNameEn: st.nameEn,
-        lineName: line.name,
-        lineNameEn: line.nameEn,
-      });
+      const nodeId = nodeIdFor(sid, line.id, vi);
 
-      if (!stationNodeMap.has(sid)) stationNodeMap.set(sid, []);
-      stationNodeMap.get(sid)!.push(nodeId);
+      if (!seenNodes.has(nodeId)) {
+        seenNodes.add(nodeId);
+        nodeInfoMap.set(nodeId, {
+          stationId: sid,
+          lineId: line.id,
+          variantIndex: vi,
+          variantName: variant.name,
+          variantNameEn: variant.nameEn,
+          stationName: st.name,
+          stationNameEn: st.nameEn,
+          lineName: line.name,
+          lineNameEn: line.nameEn,
+        });
+
+        if (!stationNodeMap.has(sid)) stationNodeMap.set(sid, []);
+        stationNodeMap.get(sid)!.push(nodeId);
+      }
     }
-  }
 
-  for (let i = 0; i < line.stations.length - 1; i++) {
-    const aId = line.stations[i];
-    const bId = line.stations[i + 1];
-    const aSt = stationMap.get(aId);
-    const bSt = stationMap.get(bId);
-    if (!aSt || !bSt) continue;
-    const dist = lookupDistance(aId, bId);
-    const preset = getPreset(line.costPreset);
-    const fare = Math.round(dist * preset.farePerKm);
-    const time = Math.round(dist * preset.minutesPerKm);
-    addEdge(
-      `${aId}-${line.id}`,
-      `${bId}-${line.id}`,
-      fare,
-      {
+    for (let i = 0; i < variant.stations.length - 1; i++) {
+      const aId = variant.stations[i];
+      const bId = variant.stations[i + 1];
+      const aSt = stationMap.get(aId);
+      const bSt = stationMap.get(bId);
+      if (!aSt || !bSt) continue;
+      const dist = lookupDistance(aId, bId);
+      const preset = getPreset(line.costPreset);
+      const fare = Math.round(dist * preset.farePerKm);
+      const time = Math.round(dist * preset.minutesPerKm);
+      addEdge(
+        nodeIdFor(aId, line.id, vi),
+        nodeIdFor(bId, line.id, vi),
         fare,
-        time,
-        distance: dist,
-      },
-      line.oneWay === true,
-    );
+        {
+          fare,
+          time,
+          distance: dist,
+        },
+        line.oneWay === true,
+      );
+    }
   }
 }
 
@@ -258,11 +285,18 @@ export function useRouting() {
       const info = nodeInfoMap.get(nodeId);
       if (!info) continue;
 
-      if (!currentSeg || currentSeg.lineId !== info.lineId) {
+      if (
+        !currentSeg ||
+        currentSeg.lineId !== info.lineId ||
+        currentSeg.variantIndex !== info.variantIndex
+      ) {
         currentSeg = {
           lineId: info.lineId,
           lineName: info.lineName,
           lineNameEn: info.lineNameEn,
+          variantIndex: info.variantIndex,
+          variantName: info.variantName,
+          variantNameEn: info.variantNameEn,
           isFerry: info.lineId.startsWith('ferry-'),
           isSameStation: info.lineId.startsWith('same-'),
           nodes: [info],
@@ -306,7 +340,9 @@ export function useRouting() {
     const startNode = segs[0].nodes[0];
     const endNode = segs[segs.length - 1].nodes[segs[segs.length - 1].nodes.length - 1];
 
-    textLines.push(`从 ${startNode.stationName} 出发（${startNode.lineName}）`);
+    textLines.push(
+      `从 ${startNode.stationName} 出发（${segmentLineName(startNode.lineName, startNode.variantName)}）`,
+    );
 
     for (let i = 0; i < segs.length; i++) {
       const seg = segs[i];
@@ -314,7 +350,7 @@ export function useRouting() {
       if (i === 0) {
         if (seg.nodes.length > 1) {
           textLines.push(
-            `→ 乘坐 ${seg.lineName}: ${seg.nodes
+            `→ 乘坐 ${segmentLineName(seg.lineName, seg.variantName)}: ${seg.nodes
               .slice(1)
               .map((n) => n.stationName)
               .join(' → ')}`,
@@ -335,13 +371,19 @@ export function useRouting() {
       const suffix = restStations ? `: ${restStations}` : '';
 
       if (seg.isSameStation) {
-        textLines.push(`${prefix}同站换乘 ${seg.lineName}${suffix}`);
+        textLines.push(
+          `${prefix}同站换乘 ${segmentLineName(seg.lineName, seg.variantName)}${suffix}`,
+        );
       } else if (seg.isFerry) {
-        textLines.push(`${prefix}乘坐轮渡「${seg.lineName}」${suffix}`);
+        textLines.push(
+          `${prefix}乘坐轮渡「${segmentLineName(seg.lineName, seg.variantName)}」${suffix}`,
+        );
       } else if (prevSeg.isFerry) {
-        textLines.push(`→ 在 ${seg.nodes[0].stationName} 下车，换乘 ${seg.lineName}${suffix}`);
+        textLines.push(
+          `→ 在 ${seg.nodes[0].stationName} 下车，换乘 ${segmentLineName(seg.lineName, seg.variantName)}${suffix}`,
+        );
       } else {
-        textLines.push(`${prefix}换乘 ${seg.lineName}${suffix}`);
+        textLines.push(`${prefix}换乘 ${segmentLineName(seg.lineName, seg.variantName)}${suffix}`);
       }
     }
 

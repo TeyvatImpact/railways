@@ -313,14 +313,18 @@
         ["RTU", "T"],
         ["NIT", "B"]
       ],
-      "stations": [
-        "Inazuma-NIT",
-        "Inazuma-IZC",
-        "Inazuma-HMZ",
-        "Inazuma-BKP",
-        "Inazuma-KDV",
-        "Inazuma-RTU",
-        "Inazuma-RTP"
+      "variants": [
+        {
+          "stations": [
+            "Inazuma-NIT",
+            "Inazuma-IZC",
+            "Inazuma-HMZ",
+            "Inazuma-BKP",
+            "Inazuma-KDV",
+            "Inazuma-RTU",
+            "Inazuma-RTP"
+          ]
+        }
       ],
       "costPreset": "inazuma"
     },
@@ -330,14 +334,18 @@
       "nameZh": "IR 东稻妻·影向山环状线",
       "nameEn": "IR East Mt. Yougou Loop Line",
       "lineLabels": [["AUM", "LT"]],
-      "stations": [
-        "Inazuma-BKP",
-        "Inazuma-KDV",
-        "Inazuma-AUM",
-        "Inazuma-YGN",
-        "Inazuma-KSE",
-        "Inazuma-CJF",
-        "Inazuma-BKP"
+      "variants": [
+        {
+          "stations": [
+            "Inazuma-BKP",
+            "Inazuma-KDV",
+            "Inazuma-AUM",
+            "Inazuma-YGN",
+            "Inazuma-KSE",
+            "Inazuma-CJF",
+            "Inazuma-BKP"
+          ]
+        }
       ],
       "costPreset": "inazuma"
     },
@@ -350,15 +358,19 @@
         ["KJE", "T"],
         ["NCB", "B"]
       ],
-      "stations": [
-        "Inazuma-IZC",
-        "Inazuma-HMZ",
-        "Inazuma-AKI",
-        "Inazuma-KJE",
-        "Inazuma-KNZ",
-        "Inazuma-NCB",
-        "Inazuma-MSG",
-        "Inazuma-HGV"
+      "variants": [
+        {
+          "stations": [
+            "Inazuma-IZC",
+            "Inazuma-HMZ",
+            "Inazuma-AKI",
+            "Inazuma-KJE",
+            "Inazuma-KNZ",
+            "Inazuma-NCB",
+            "Inazuma-MSG",
+            "Inazuma-HGV"
+          ]
+        }
       ],
       "costPreset": "inazuma"
     },
@@ -368,7 +380,11 @@
       "nameZh": "IR 东稻妻·鸣神大社线",
       "nameEn": "IR East Shrine Line",
       "lineLabels": [["IZC", "LB"]],
-      "stations": ["Inazuma-NIT", "Inazuma-IZC", "Inazuma-HMZ", "Inazuma-BKP", "Inazuma-GNS"],
+      "variants": [
+        {
+          "stations": ["Inazuma-NIT", "Inazuma-IZC", "Inazuma-HMZ", "Inazuma-BKP", "Inazuma-GNS"]
+        }
+      ],
       "costPreset": "inazuma"
     },
     {
@@ -377,7 +393,11 @@
       "nameZh": "IR 东稻妻·八酝岛线",
       "nameEn": "IR East Yashiori Island Line",
       "lineLabels": [["SPH", "LB"]],
-      "stations": ["Inazuma-FFT", "Inazuma-HGV", "Inazuma-SPH", "Inazuma-JTM"],
+      "variants": [
+        {
+          "stations": ["Inazuma-FFT", "Inazuma-HGV", "Inazuma-SPH", "Inazuma-JTM"]
+        }
+      ],
       "costPreset": "inazuma"
     },
     {
@@ -386,7 +406,11 @@
       "nameZh": "IR 珊瑚宫·海祇岛线",
       "nameEn": "IR Sangonomiya Watatsumi Island Line",
       "lineLabels": [["WTE", "LB"]],
-      "stations": ["Inazuma-WTE", "Inazuma-BRV", "Inazuma-SGM", "Inazuma-MUS"],
+      "variants": [
+        {
+          "stations": ["Inazuma-WTE", "Inazuma-BRV", "Inazuma-SGM", "Inazuma-MUS"]
+        }
+      ],
       "costPreset": "inazuma"
     },
     {
@@ -395,7 +419,11 @@
       "nameZh": "IR 鹤观·一号线",
       "nameEn": "IR Tsurumi Line 1",
       "lineLabels": [["ATP", "LT"]],
-      "stations": ["Inazuma-TMP", "Inazuma-MCS", "Inazuma-MKN", "Inazuma-ATP"],
+      "variants": [
+        {
+          "stations": ["Inazuma-TMP", "Inazuma-MCS", "Inazuma-MKN", "Inazuma-ATP"]
+        }
+      ],
       "costPreset": "inazuma"
     },
     {
@@ -404,7 +432,11 @@
       "nameZh": "IR 鹤观·二号线",
       "nameEn": "IR Tsurumi Line 2",
       "lineLabels": [["SKP", "LT"]],
-      "stations": ["Inazuma-SKP", "Inazuma-ONB", "Inazuma-CRS", "Inazuma-MCS", "Inazuma-WKS"],
+      "variants": [
+        {
+          "stations": ["Inazuma-SKP", "Inazuma-ONB", "Inazuma-CRS", "Inazuma-MCS", "Inazuma-WKS"]
+        }
+      ],
       "costPreset": "inazuma"
     },
     {
@@ -414,7 +446,11 @@
       "nameEn": "Higii Village ↔ Watatsumi East Ferry",
       "lineType": "ferry",
       "costPreset": "ferry",
-      "stations": ["Inazuma-HGV", "Inazuma-WTE"]
+      "variants": [
+        {
+          "stations": ["Inazuma-HGV", "Inazuma-WTE"]
+        }
+      ]
     },
     {
       "id": "ferry-izc-tmp",
@@ -423,7 +459,11 @@
       "nameEn": "Inazuma City ↔ Tsurumi Port Ferry",
       "lineType": "ferry",
       "costPreset": "ferry",
-      "stations": ["Inazuma-IZC", "Inazuma-TMP"]
+      "variants": [
+        {
+          "stations": ["Inazuma-IZC", "Inazuma-TMP"]
+        }
+      ]
     }
   ]
 }
