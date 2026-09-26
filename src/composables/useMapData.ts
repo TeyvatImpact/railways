@@ -9,7 +9,7 @@ import connectionsData from '../data/connections.json';
 import {
   BLOCK_SIZE,
   margin,
-  palette,
+  linePalette,
   LINE_WIDTH,
   FERRY_COLOR,
   FERRY_LINE_WIDTH,
@@ -338,7 +338,14 @@ export const transferStationIds = new Set(
   [...stationLineCount.entries()].filter(([, c]) => c >= 2).map(([id]) => id),
 );
 
-export const lines: Line[] = parsedLines.map((line, index) => ({
+// 每个数据文件内的常规线路单独配色：文件内第 n 条线路取 linePalette[n]
+const fileLineIndex = new Map<LineData, number>();
+for (const { lines: fileLines } of regionLineSets) {
+  let index = 0;
+  for (const line of fileLines) if (!line.lineType) fileLineIndex.set(line, index++);
+}
+
+export const lines: Line[] = parsedLines.map((line) => ({
   ...line,
   variants: line.variants.map((variant) => ({
     name: variant.name ?? '',
@@ -351,7 +358,7 @@ export const lines: Line[] = parsedLines.map((line, index) => ({
       ? FERRY_COLOR
       : line.lineType === 'same-station'
         ? SAME_COLOR
-        : palette[index % palette.length],
+        : linePalette[(fileLineIndex.get(line) ?? 0) % linePalette.length],
 }));
 
 export const lineColorMap = new Map(lines.map((l) => [l.id, l.color]));

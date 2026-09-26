@@ -6,7 +6,7 @@ import inazumaData from '../../data/inazuma.json';
 import snezhnayaData from '../../data/snezhnaya.json';
 import ferryData from '../../data/ferry.json';
 import sameData from '../../data/same.json';
-import { palette } from '../../config/render.config';
+import { linePalette } from '../../config/render.config';
 import { pickDisplayVariant, contiguousSpans, type RawVariant } from './variantStrip';
 
 interface Station {
@@ -86,10 +86,14 @@ const lines = computed<DisplayLine[]>(() => {
     { data: snezhnayaData, prefix: 'Snezhnaya-' },
   ];
 
-  let colorIndex = 0;
-
   // 一条线路只画一个变体（站数最多者），其余连续区间作为大小交路标注
-  function pushLine(line: RawLine, id: string, mapStation: (sid: string) => LineStation) {
+  // order = 该线路在本文件内的序号，用于取 linePalette 的配色
+  function pushLine(
+    line: RawLine,
+    id: string,
+    order: number,
+    mapStation: (sid: string) => LineStation,
+  ) {
     const variants = line.variants;
     const { variant, index } = pickDisplayVariant(variants);
     result.push({
@@ -101,29 +105,28 @@ const lines = computed<DisplayLine[]>(() => {
       stations: variant.stations.map(mapStation),
       // 原始 id 空间里比较即可，区域前缀只是显示用
       spans: contiguousSpans(variant.stations, variants, index),
-      color: palette[colorIndex % palette.length],
+      color: linePalette[order % linePalette.length],
     });
-    colorIndex++;
   }
 
   for (const { data, prefix } of allRegionData) {
-    for (const line of data.lines) {
-      pushLine(line, prefix + line.id, (sid) => {
+    data.lines.forEach((line, order) =>
+      pushLine(line, prefix + line.id, order, (sid) => {
         // Cross-region references are written with their full id (e.g. `Teyvat-STR`) and must not be re-prefixed.
         const fullId = sid.includes('-') ? sid : prefix + sid;
         const info = getStation(fullId);
         return { id: fullId, ...info };
-      });
-    }
+      }),
+    );
   }
 
-  for (const line of ferryData.lines) {
-    pushLine(line, line.id, (sid) => ({ id: sid, ...getStation(sid) }));
-  }
+  ferryData.lines.forEach((line, order) =>
+    pushLine(line, line.id, order, (sid) => ({ id: sid, ...getStation(sid) })),
+  );
 
-  for (const line of sameData.lines) {
-    pushLine(line, line.id, (sid) => ({ id: sid, ...getStation(sid) }));
-  }
+  sameData.lines.forEach((line, order) =>
+    pushLine(line, line.id, order, (sid) => ({ id: sid, ...getStation(sid) })),
+  );
 
   return result;
 });
