@@ -39,17 +39,15 @@
             stroke-width="0.5" />
         </g>
 
-        <line
-          v-for="seg in renderSegments"
-          :key="`${seg.lineId}-${seg.id}`"
-          :x1="seg.x1"
-          :y1="seg.y1"
-          :x2="seg.x2"
-          :y2="seg.y2"
+        <path
+          v-for="(seg, i) in renderSegments"
+          :key="i"
+          :d="segPath(seg, i)"
           :stroke="segStroke(seg)"
           :stroke-width="seg.width"
           :stroke-dasharray="seg.dasharray ?? undefined"
           :opacity="segOpacity(seg)"
+          fill="none"
           stroke-linecap="round"
           style="cursor: pointer"
           @click.stop="onSegmentClick(seg.lineId)" />
@@ -201,6 +199,7 @@ import {
   stationMap,
   transferStationIds,
   renderSegments,
+  type RenderSegment,
   markerPaths,
   markerTexts,
   minX,
@@ -209,6 +208,8 @@ import {
 } from '../composables/useMapData';
 import { useMapInteraction } from '../composables/useMapInteraction';
 import { useLabelPlacement } from '../composables/useLabelPlacement';
+import { useRenderMode } from '../composables/useRenderMode';
+import { buildCurveSegments, type CurveSegment } from '../composables/useCurveGeometry';
 import MapControls from './MapControls.vue';
 import type { RouteResult } from '../composables/useRouting';
 import { selectTarget } from '../composables/useRouting';
@@ -220,6 +221,18 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'station-click', stationId: string): void;
 }>();
+
+const { renderMode } = useRenderMode();
+
+/** 曲线模式下每段线段对应的 path（与 renderSegments 同序）；直线模式为 null */
+const curveSegments = computed<CurveSegment[] | null>(() =>
+  renderMode.value === 'curve' ? buildCurveSegments(renderSegments) : null,
+);
+
+function segPath(seg: RenderSegment, index: number): string {
+  const curve = curveSegments.value?.[index];
+  return curve ? curve.d : `M ${seg.x1} ${seg.y1} L ${seg.x2} ${seg.y2}`;
+}
 
 const routeStationIds = computed(() => {
   if (!props.routeResult) return new Set<string>();
@@ -399,20 +412,39 @@ const segLabels = computed(() => {
     text: string;
     fontSize: number;
   }[] = [];
-  for (const seg of renderSegments) {
+  for (let i = 0; i < renderSegments.length; i++) {
+    const seg = renderSegments[i];
     if (!seg.showLabel) continue;
+    const key = seg.lineId + '-' + i;
+    const text = `${seg.fare}mora ${seg.time}' ${seg.distance}km`;
+    const fontSize = 4;
+    const curve = curveSegments.value?.[i];
+    if (curve?.curved) {
+      let angleDeg = curve.angle;
+      while (angleDeg > 90) angleDeg -= 180;
+      while (angleDeg <= -90) angleDeg += 180;
+      const angleRad = (angleDeg * Math.PI) / 180;
+      const off = 6;
+      result.push({
+        key,
+        x: curve.midX + Math.sin(angleRad) * off,
+        y: curve.midY - Math.cos(angleRad) * off,
+        angle: angleDeg,
+        text,
+        fontSize,
+      });
+      continue;
+    }
     const dx = seg.x2 - seg.x1;
     const dy = seg.y2 - seg.y1;
     const len = Math.hypot(dx, dy);
     if (!len) continue;
     const midX = (seg.x1 + seg.x2) / 2;
     const midY = (seg.y1 + seg.y2) / 2;
-    const text = `${seg.fare}mora ${seg.time}' ${seg.distance}km`;
-    const fontSize = 4;
     const isVertical = Math.abs(dx) < Math.abs(dy);
     if (isVertical) {
       result.push({
-        key: seg.lineId + '-' + seg.id,
+        key,
         x: midX - 5,
         y: midY,
         angle: -90,
@@ -430,7 +462,7 @@ const segLabels = computed(() => {
       const perpY = -Math.cos(angleRad);
       const off = 6;
       result.push({
-        key: seg.lineId + '-' + seg.id,
+        key,
         x: midX + perpX * off,
         y: midY + perpY * off,
         angle: angleDeg,

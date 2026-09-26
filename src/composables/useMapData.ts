@@ -106,6 +106,10 @@ export interface RenderSegment {
   time: number;
   distance: number;
   showLabel: boolean;
+  /** 本段所属站间区间在该线路内的序号（同一区间可能因折线中间点拆成两段） */
+  pairIndex: number;
+  /** 区间内的第几段：0 = 起点侧（单段区间恒为 0），1 = 折线中间点之后的部分 */
+  partIndex: number;
 }
 
 export interface MarkerPath {
@@ -406,6 +410,8 @@ function isAllowedSegment(dx: number, dy: number): boolean {
 interface RawSegment {
   id: string;
   lineId: string;
+  pairIndex: number;
+  partIndex: number;
   x1: number;
   y1: number;
   x2: number;
@@ -456,6 +462,8 @@ for (const line of parsedLines) {
       rawSegments.push({
         id: pathId(ax, ay, bx, by),
         lineId: line.id,
+        pairIndex: i,
+        partIndex: 0,
         x1: ax,
         y1: ay,
         x2: bx,
@@ -491,6 +499,8 @@ for (const line of parsedLines) {
       rawSegments.push({
         id: pathId(ax, ay, cx, cy),
         lineId: line.id,
+        pairIndex: i,
+        partIndex: 0,
         x1: ax,
         y1: ay,
         x2: cx,
@@ -503,6 +513,8 @@ for (const line of parsedLines) {
       rawSegments.push({
         id: pathId(cx, cy, bx, by),
         lineId: line.id,
+        pairIndex: i,
+        partIndex: 1,
         x1: cx,
         y1: cy,
         x2: bx,
@@ -556,6 +568,8 @@ for (const [, segments] of segmentGroups) {
       time: seg.time,
       distance: seg.distance,
       showLabel: seg.showLabel && i === 0,
+      pairIndex: seg.pairIndex,
+      partIndex: seg.partIndex,
     });
   }
 }

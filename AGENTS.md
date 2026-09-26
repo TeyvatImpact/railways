@@ -5,7 +5,7 @@
 ```
 pnpm install
 pnpm dev        # vite dev server at localhost:5173
-pnpm build      # vite build → dist/ (vite `base` is default; not `/tr`) 
+pnpm build      # vite build → dist/ (vite `base` is default; not `/tr`)
 pnpm preview    # vite preview of built dist/
 ```
 
@@ -43,30 +43,32 @@ All three dialogs render through components/DialogWindow.vue.
 
 `views/display/index.vue` (the `/display` route) is a separate, self-contained renderer: it does **not** use `useMapData` — it re-reads the region JSONs, lays every line out as a fixed 1920×200 SVG strip with stations spaced by index (coordinates are irrelevant there), and takes colors from `palette` in `config/render.config.ts`.
 
-| Layer       | File                               | Role                                                                                                                      |
-| ----------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Entry       | `main.ts`                          | Mounts `App.vue` with Varlet UI + router; imports `style.css` first                                                       |
-| App         | `App.vue`                          | Renders `<router-view />` only                                                                                            |
-| Routing     | `router/index.ts`                  | Two routes: `/` → `HomeView.vue`, `/display` → `views/display/index.vue` (lazy)                                           |
-| Page        | `views/HomeView.vue`               | Map page: TitleBar + (map \| RoutePanel) + InfoDialog/AiPromptDialog/AdminPanel, first-visit dialog trigger               |
-| Page        | `views/display/index.vue`          | Static per-line SVG strip renderer on `/display`; index-based layout, ignores coordinates                                 |
-| App         | `TitleBar.vue`                     | Top title bar + "关于" button                                                                                             |
-| App         | `InfoDialog.vue`                   | Modal showing intro.md via `markdown-exit` + `github-markdown-css`                                                        |
-| Map         | `RailwayMap.vue`                   | SVG viewport with pan/zoom, grid lines, segments, stations, labels, markers; emits `station-click`                        |
-| Routing     | `RoutePanel.vue`                   | Right sidebar: fuzzy-search dropdown, map pick mode, calculate button, multi-route option list, RouteTimeline detail view |
-| Overlays    | `MapControls.vue`                  | Fixed bottom-left zoom +/- buttons and mouse coordinate readout (data-space x,y); rendered inside RailwayMap              |
-| Data        | `composables/useMapData.ts`        | Imports region JSON + ferry.json + same.json, computes segments with line offsetting for parallel tracks                  |
-| Interaction | `composables/useMapInteraction.ts` | Mouse drag/scroll, touch pan/pinch-zoom; persists viewport to localStorage                                                |
-| UI          | `composables/useTheme.ts`          | Light/dark theme ref, Varlet MD3 StyleProvider swap, persisted to localStorage                                            |
-| UI          | `components/DialogWindow.vue`      | Shared modal shell used by InfoDialog, AiPromptDialog and AdminPanel                                                      |
-| Labels      | `composables/useLabelPlacement.ts` | Label box layout + leader lines via `@chenglou/pretext`                                                                   |
-| **Routing** | **`composables/useRouting.ts`**    | **Graph builder (node = prefix-stationId-lineId), Dijkstra multi-source/multi-target, fuzzy station search**              |
-| Routing     | `components/RouteTimeline.vue`     | Detailed route timeline view with stations, line colors, and fare/time/distance stats                                     |
-| Data        | `scripts/migrate-data-v2.cjs`      | Migration script that extracts fare/time/distance from station tuples into standalone stationDistances arrays             |
-| Dev         | `components/AdminPanel.vue`        | Floating data editor (dev-only) — edit station names and segment costs via web UI                                         |
-| Dev         | `vite.config.ts`                   | Admin API middleware (`GET/PUT /__admin/data/*`) for reading/writing JSON files in dev mode                               |
-| Config      | `config/render.config.ts`          | All render constants (fonts, palette, spacing, special line colors)                                                       |
-| Config      | `config/fare-presets.json`         | Fare/speed presets (farePerKm, minutesPerKm); used by lines' `costPreset` field                                           |
+| Layer       | File                               | Role                                                                                                                                        |
+| ----------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Entry       | `main.ts`                          | Mounts `App.vue` with Varlet UI + router; imports `style.css` first                                                                         |
+| App         | `App.vue`                          | Renders `<router-view />` only                                                                                                              |
+| Routing     | `router/index.ts`                  | Two routes: `/` → `HomeView.vue`, `/display` → `views/display/index.vue` (lazy)                                                             |
+| Page        | `views/HomeView.vue`               | Map page: TitleBar + (map \| RoutePanel) + InfoDialog/AiPromptDialog/AdminPanel, first-visit dialog trigger                                 |
+| Page        | `views/display/index.vue`          | Static per-line SVG strip renderer on `/display`; index-based layout, ignores coordinates                                                   |
+| App         | `TitleBar.vue`                     | Top title bar + "关于" button                                                                                                               |
+| App         | `InfoDialog.vue`                   | Modal showing intro.md via `markdown-exit` + `github-markdown-css`                                                                          |
+| Map         | `RailwayMap.vue`                   | SVG viewport with pan/zoom, grid lines, segments, stations, labels, markers; emits `station-click`                                          |
+| Routing     | `RoutePanel.vue`                   | Right sidebar: fuzzy-search dropdown, map pick mode, calculate button, multi-route option list, RouteTimeline detail view                   |
+| Overlays    | `MapControls.vue`                  | Fixed bottom-left zoom +/- buttons and mouse coordinate readout (data-space x,y); rendered inside RailwayMap                                |
+| Data        | `composables/useMapData.ts`        | Imports region JSON + ferry.json + same.json, computes segments with line offsetting for parallel tracks                                    |
+| Interaction | `composables/useMapInteraction.ts` | Mouse drag/scroll, touch pan/pinch-zoom; persists viewport to localStorage                                                                  |
+| UI          | `composables/useTheme.ts`          | Light/dark theme ref, Varlet MD3 StyleProvider swap, persisted to localStorage                                                              |
+| UI          | `composables/useRenderMode.ts`     | Line-connection mode ref; `straight` (default) / `curve` (Catmull-Rom). Dormant: no UI control, no persistence                              |
+| Render      | `composables/useCurveGeometry.ts`  | Chains station pairs per line and converts each pair to a centripetal Catmull-Rom cubic; returns one entry per renderSegment, index-aligned |
+| UI          | `components/DialogWindow.vue`      | Shared modal shell used by InfoDialog, AiPromptDialog and AdminPanel                                                                        |
+| Labels      | `composables/useLabelPlacement.ts` | Label box layout + leader lines via `@chenglou/pretext`                                                                                     |
+| **Routing** | **`composables/useRouting.ts`**    | **Graph builder (node = prefix-stationId-lineId), Dijkstra multi-source/multi-target, fuzzy station search**                                |
+| Routing     | `components/RouteTimeline.vue`     | Detailed route timeline view with stations, line colors, and fare/time/distance stats                                                       |
+| Data        | `scripts/migrate-data-v2.cjs`      | Migration script that extracts fare/time/distance from station tuples into standalone stationDistances arrays                               |
+| Dev         | `components/AdminPanel.vue`        | Floating data editor (dev-only) — edit station names and segment costs via web UI                                                           |
+| Dev         | `vite.config.ts`                   | Admin API middleware (`GET/PUT /__admin/data/*`) for reading/writing JSON files in dev mode                                                 |
+| Config      | `config/render.config.ts`          | All render constants (fonts, palette, spacing, special line colors)                                                                         |
+| Config      | `config/fare-presets.json`         | Fare/speed presets (farePerKm, minutesPerKm); used by lines' `costPreset` field                                                             |
 
 ## Data
 
@@ -182,6 +184,7 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 - **Viewport persistence**: Pan/zoom saved to localStorage key `teyvat-railways-map-state`.
 - **All imports**: Use `@/*` path alias → `./src/*`.
 - **SVG isolation**: RailwayMap.vue uses ONLY inline styles (`fill`, `stroke`, SVG attributes) — no Tailwind CSS classes. This allows the SVG to be copy-pasted as a standalone SVG file.
+- **Line connection style (dormant feature)**: every rendered segment is a `<path>`; `straight` mode emits `M x1 y1 L x2 y2`, `curve` mode (`useRenderMode`, currently **not enabled** — no UI control, always `straight`) emits a centripetal Catmull-Rom cubic built by `useCurveGeometry`. Curve vertices are the **station points only** — the orthogonal/diagonal corner waypoint that `useMapData` inserts for non-axis-aligned pairs (`pairIndex`/`partIndex`) is not assumed to exist, so a curve spans the whole station pair and its residual `partIndex: 1` element renders an empty `d` (the pair is drawn on its first part). Segment ids, opacity/dim logic and click handling are identical in both modes, so route highlighting keeps working; fare/time labels follow the curve's midpoint + tangent in curve mode. `/display` is unaffected.
 - **UI styling**: All other Vue components CAN use Tailwind utility classes (`flex`, `p-4`, `text-sm`, etc.).
 
 ## CSS / Tailwind
