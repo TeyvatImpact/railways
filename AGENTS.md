@@ -5,7 +5,7 @@
 ```
 pnpm install
 pnpm dev        # vite dev server at localhost:5173
-pnpm build      # vite build (base: `/tr`)
+pnpm build      # vite build → dist/ (vite `base` is default; not `/tr`) 
 pnpm preview    # vite preview of built dist/
 ```
 
@@ -18,25 +18,47 @@ No lint or test scripts configured.
 ## Architecture
 
 ```
-src/main.ts → src/style.css         (Tailwind CSS v4 via @tailwindcss/vite)
-           → src/App.vue
-              ├── src/components/TitleBar.vue     (top bar, "关于" button)
-              ├── src/components/RailwayMap.vue   (SVG map: pan/zoom, segments, stations, labels)
-              ├── src/components/RoutePanel.vue   (right sidebar: routing UI)
-              └── src/components/InfoDialog.vue   (markdown intro modal)
+src/main.ts → src/style.css          (Tailwind CSS v4 via @tailwindcss/vite)
+           → src/App.vue             (imports Varlet UI + router; renders <router-view /> only)
+           → src/router/index.ts
+              ├── /         → src/views/HomeView.vue    (the map page, see tree below)
+              └── /display  → src/views/display/index.vue (lazy; static per-line SVG strips)
 ```
+
+`HomeView.vue` (the `/` route):
+
+```
+HomeView.vue
+├── TitleBar                (top bar, in flow; emits open / open-ai / toggle-theme / toggle-admin)
+├── .app-body (flex row)
+│   ├── .map-area (flex: 1)
+│   │   └── RailwayMap      (emits station-click; renders MapControls internally)
+│   └── RoutePanel          (width: 320px; receives map clicks via expose; hosts RouteTimeline)
+├── InfoDialog              (modal overlay; markdown intro)
+├── AiPromptDialog          (modal overlay; dev button currently hidden in TitleBar)
+└── AdminPanel              (modal overlay; dev-only)
+
+All three dialogs render through components/DialogWindow.vue.
+```
+
+`views/display/index.vue` (the `/display` route) is a separate, self-contained renderer: it does **not** use `useMapData` — it re-reads the region JSONs, lays every line out as a fixed 1920×200 SVG strip with stations spaced by index (coordinates are irrelevant there), and takes colors from `palette` in `config/render.config.ts`.
 
 | Layer       | File                               | Role                                                                                                                      |
 | ----------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| App         | `App.vue`                          | Root layout, first-visit dialog trigger; flex layout with TitleBar + (map \| RoutePanel)                                  |
+| Entry       | `main.ts`                          | Mounts `App.vue` with Varlet UI + router; imports `style.css` first                                                       |
+| App         | `App.vue`                          | Renders `<router-view />` only                                                                                            |
+| Routing     | `router/index.ts`                  | Two routes: `/` → `HomeView.vue`, `/display` → `views/display/index.vue` (lazy)                                           |
+| Page        | `views/HomeView.vue`               | Map page: TitleBar + (map \| RoutePanel) + InfoDialog/AiPromptDialog/AdminPanel, first-visit dialog trigger               |
+| Page        | `views/display/index.vue`          | Static per-line SVG strip renderer on `/display`; index-based layout, ignores coordinates                                 |
 | App         | `TitleBar.vue`                     | Top title bar + "关于" button                                                                                             |
 | App         | `InfoDialog.vue`                   | Modal showing intro.md via `markdown-exit` + `github-markdown-css`                                                        |
 | Map         | `RailwayMap.vue`                   | SVG viewport with pan/zoom, grid lines, segments, stations, labels, markers; emits `station-click`                        |
 | Routing     | `RoutePanel.vue`                   | Right sidebar: fuzzy-search dropdown, map pick mode, calculate button, multi-route option list, RouteTimeline detail view |
-| Overlays    | `ZoomControls.vue`                 | Fixed bottom-right zoom +/- buttons                                                                                       |
-| Overlays    | `LineLegend.vue`                   | Fixed bottom-left mouse coordinate readout (data-space x,y)                                                               |
+| Overlays    | `MapControls.vue`                  | Fixed bottom-left zoom +/- buttons and mouse coordinate readout (data-space x,y); rendered inside RailwayMap              |
 | Data        | `composables/useMapData.ts`        | Imports region JSON + ferry.json + same.json, computes segments with line offsetting for parallel tracks                  |
 | Interaction | `composables/useMapInteraction.ts` | Mouse drag/scroll, touch pan/pinch-zoom; persists viewport to localStorage                                                |
+| UI          | `composables/useTheme.ts`          | Light/dark theme ref, Varlet MD3 StyleProvider swap, persisted to localStorage                                            |
+| UI          | `components/DialogWindow.vue`      | Shared modal shell used by InfoDialog, AiPromptDialog and AdminPanel                                                      |
 | Labels      | `composables/useLabelPlacement.ts` | Label box layout + leader lines via `@chenglou/pretext`                                                                   |
 | **Routing** | **`composables/useRouting.ts`**    | **Graph builder (node = prefix-stationId-lineId), Dijkstra multi-source/multi-target, fuzzy station search**              |
 | Routing     | `components/RouteTimeline.vue`     | Detailed route timeline view with stations, line colors, and fare/time/distance stats                                     |
@@ -45,18 +67,6 @@ src/main.ts → src/style.css         (Tailwind CSS v4 via @tailwindcss/vite)
 | Dev         | `vite.config.ts`                   | Admin API middleware (`GET/PUT /__admin/data/*`) for reading/writing JSON files in dev mode                               |
 | Config      | `config/render.config.ts`          | All render constants (fonts, palette, spacing, special line colors)                                                       |
 | Config      | `config/fare-presets.json`         | Fare/speed presets (farePerKm, minutesPerKm); used by lines' `costPreset` field                                           |
-
-### Component tree (current)
-
-```
-App.vue
-├── TitleBar                (position: relative, in flow)
-├── .app-body (flex row)
-│   ├── .map-area (flex: 1)
-│   │   └── RailwayMap      (emits station-click)
-│   └── RoutePanel          (width: 320px; receives map clicks via expose)
-└── InfoDialog               (modal overlay)
-```
 
 ## Data
 
@@ -204,7 +214,8 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 
 ## Gotchas
 
-- `dist/` is committed to git — rebuilding overwrites it on build.
+- `dist/` is **not** tracked — `.gitignore` ignores `/dist`; `pnpm build` regenerates it locally.
+- Router history base is `/tr` (`createWebHistory('/tr')` in `router/index.ts`), but `vite.config.ts` sets no `base`, so `dist/index.html` references `/assets/*` from the domain root.
 - Data imports in `useMapData.ts` use short names (`teyvat.json`, `inazuma.json`, etc.). If you add a new region, mirror this pattern.
 - Region lists are hardcoded in every consumer — adding a region file requires touching **all** of: `composables/useMapData.ts` (import + prefix loops + distances), `views/display/index.vue` (`allRegionData` + `getStation` prefixes), `components/AiPromptDialog.vue` (`allRegions`), `components/AdminPanel.vue` (`fileKeys`/`regionKeys`), and `vite.config.ts` (`ALLOWED_FILES`).
 - `vue-tsc` is in devDeps but has no npm script — run via `npx vue-tsc --noEmit`.
