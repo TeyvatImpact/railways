@@ -6,7 +6,14 @@ import fs from 'fs';
 import type { Connect } from 'vite';
 
 const DATA_DIR = path.join(__dirname, 'src', 'data');
-const ALLOWED_FILES = ['teyvat.json', 'inazuma.json', 'liyue.json', 'ferry.json', 'same.json'];
+const ALLOWED_FILES = [
+  'teyvat.json',
+  'inazuma.json',
+  'liyue.json',
+  'snezhnaya.json',
+  'ferry.json',
+  'same.json',
+];
 
 function adminApi(
   req: Connect.IncomingMessage,

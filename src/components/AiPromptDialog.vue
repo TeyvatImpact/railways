@@ -64,6 +64,7 @@ import DialogWindow from './DialogWindow.vue';
 import dataR from '../data/teyvat.json';
 import dataI from '../data/inazuma.json';
 import dataL from '../data/liyue.json';
+import dataS from '../data/snezhnaya.json';
 import ferryData from '../data/ferry.json';
 import sameData from '../data/same.json';
 
@@ -122,6 +123,7 @@ const allRegions: RegionEntry[] = [
   { file: dataR as unknown as RegionFile, prefix: 'Teyvat', name: '提瓦特（Teyvat）' },
   { file: dataI as unknown as RegionFile, prefix: 'Inazuma', name: '稻妻（Inazuma）' },
   { file: dataL as unknown as RegionFile, prefix: 'Liyue', name: '璃月港（Liyue）' },
+  { file: dataS as unknown as RegionFile, prefix: 'Snezhnaya', name: '至冬（Snezhnaya）' },
 ];
 for (const { file, prefix } of allRegions) {
   for (const s of file.stations) {

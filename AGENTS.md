@@ -64,13 +64,14 @@ All data is JSON stored in `src/data/`. No CSV files.
 
 **IMPORTANT**: When working with these files, do NOT always read them in full — they can be large (e.g. `teyvat.json` is ~2000 lines). Read only the first ~30-40 lines to understand structure, or use `grep` to find specific stations/lines by ID or name. The schemas below describe the structure precisely — rely on them instead of full file reads.
 
-Three region files, each with structure `{ config, stations, lines, stationDistances }`:
+Region files, each with structure `{ config, stations, lines, stationDistances }`:
 
-| File           | Config prefix | Config font                                                 |
-| -------------- | ------------- | ----------------------------------------------------------- |
-| `teyvat.json`  | `"Teyvat"`    | `"Noto Sans SC"`                                            |
-| `inazuma.json` | `"Inazuma"`   | `"Noto Serif JP"` (loaded via Google Fonts in `index.html`) |
-| `liyue.json`   | `"Liyue"`     | `"Noto Sans SC"`                                            |
+| File             | Config prefix | Config font                                                 |
+| ---------------- | ------------- | ----------------------------------------------------------- |
+| `teyvat.json`    | `"Teyvat"`    | `"Noto Sans SC"`                                            |
+| `inazuma.json`   | `"Inazuma"`   | `"Noto Serif JP"` (loaded via Google Fonts in `index.html`) |
+| `liyue.json`     | `"Liyue"`     | `"Noto Sans SC"`                                            |
+| `snezhnaya.json` | `"Snezhnaya"` | `"Noto Sans SC"`                                            |
 
 `mark.json` contains `{ paths, texts }` for annotation overlays.
 
@@ -81,7 +82,7 @@ Two special line files:
 | `ferry.json` | `"ferry"`        | Thin dark blue dashed line             |
 | `same.json`  | `"same-station"` | Thin semi-transparent black solid line |
 
-### Region file schema (`teyvat.json`, `inazuma.json`, `liyue.json`)
+### Region file schema (`teyvat.json`, `inazuma.json`, `liyue.json`, `snezhnaya.json`)
 
 ```jsonc
 {
@@ -130,6 +131,7 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 ### Station/line field details
 
 - **`id`** (station): Short uppercase code, e.g. `"LYH"`, `"RTP"`. Gets runtime prefix → `"Teyvat-LYH"`.
+- **Cross-region reference**: A region line may reference a station owned by another region by writing its **already-prefixed** id, e.g. `["Teyvat-STR", false]` inside `snezhnaya.json`. `regionStationId()` in `useMapData.ts` passes any id containing `-` through untouched (applies to `stations`, `lineLabels`, and `stationDistances`). Raw station ids must therefore NEVER contain `-`.
 - **`labelDir`**: Optional, one of `L`/`R`/`T`/`B`/`LT`/`LB`/`RT`/`RB`. Controls label offset direction from station point.
 - **`diagonalFirst`**: Controls path routing for non-axis-aligned segments (`true` = diagonal→orthogonal, `false` = orthogonal→diagonal).
 - **`lineLabels`**: Optional array of `[stationId, position]` — instructs renderer where to place the line's name label relative to that station.
@@ -204,6 +206,7 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 
 - `dist/` is committed to git — rebuilding overwrites it on build.
 - Data imports in `useMapData.ts` use short names (`teyvat.json`, `inazuma.json`, etc.). If you add a new region, mirror this pattern.
+- Region lists are hardcoded in every consumer — adding a region file requires touching **all** of: `composables/useMapData.ts` (import + prefix loops + distances), `views/display/index.vue` (`allRegionData` + `getStation` prefixes), `components/AiPromptDialog.vue` (`allRegions`), `components/AdminPanel.vue` (`fileKeys`/`regionKeys`), and `vite.config.ts` (`ALLOWED_FILES`).
 - `vue-tsc` is in devDeps but has no npm script — run via `npx vue-tsc --noEmit`.
 - Manual verification only: run `pnpm dev` and check the browser.
 - Ferry/same-station JSON files don't have their own stations — lines reference prefixed station IDs (e.g. `Teyvat-LYS`) directly. These lines are not run through the standard prefix step.

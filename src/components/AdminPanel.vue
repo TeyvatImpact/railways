@@ -129,8 +129,8 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
 
-const fileKeys = ['teyvat', 'inazuma', 'liyue', 'ferry', 'same'];
-const regionKeys = ['teyvat', 'inazuma', 'liyue'];
+const fileKeys = ['teyvat', 'inazuma', 'liyue', 'snezhnaya', 'ferry', 'same'];
+const regionKeys = ['teyvat', 'inazuma', 'liyue', 'snezhnaya'];
 
 const presetOptions = [
   { id: 'standard', label: '标准' },

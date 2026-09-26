@@ -1,0 +1,134 @@
+{
+  "config": {
+    "x": -25,
+    "y": -35,
+    "name": "Snezhnaya",
+    "fontFamily": "Noto Sans SC"
+  },
+  "stations": [
+    {
+      "id": "Snezhnaya",
+      "nameCn": "列车总站",
+      "nameEn": "Central Station",
+      "x": 0,
+      "y": 0,
+      "labelDir": "RT"
+    },
+    {
+      "id": "Svetloledovka",
+      "nameCn": "彩冰镇",
+      "nameEn": "Svetloledovka",
+      "x": 1,
+      "y": 2
+    },
+    {
+      "id": "Sretomorozsk",
+      "nameCn": "凝露镇",
+      "nameEn": "Sretomorozsk",
+      "x": -2,
+      "y": 5,
+      "labelDir": "B"
+    },
+    {
+      "id": "Zorya",
+      "nameCn": "曙光车站",
+      "nameEn": "Rankova Zorya",
+      "x": -3,
+      "y": 2,
+      "labelDir": "LB"
+    },
+    {
+      "id": "Morepesok",
+      "nameCn": "海屑镇",
+      "nameEn": "Morepesok",
+      "x": -2,
+      "y": -1,
+      "labelDir": "T"
+    },
+    {
+      "id": "Flamefeather",
+      "nameCn": "焰羽谷",
+      "nameEn": "Flamefeather Valley",
+      "x": -4,
+      "y": 0,
+      "labelDir": "L"
+    },
+    {
+      "id": "PaleCrown",
+      "nameCn": "白冕宫",
+      "nameEn": "Pale Crown Palace",
+      "x": 3,
+      "y": -2,
+      "labelDir": "R"
+    }
+  ],
+  "lines": [
+    {
+      "id": "Trian-1",
+      "name": "至冬列车大环线",
+      "nameEn": "Snezhnaya Large Loop Line",
+      "lineLabels": [],
+      "stations": [
+        ["Snezhnaya", true],
+        ["Svetloledovka", false],
+        ["Sretomorozsk", true],
+        ["Zorya", false],
+        ["Snezhnaya", false]
+      ]
+    },
+    {
+      "id": "Trian-2",
+      "name": "至冬列车小环线",
+      "nameEn": "Snezhnaya Small Loop Line",
+      "lineLabels": [],
+      "stations": [
+        ["Snezhnaya", true],
+        ["Morepesok", true],
+        ["Zorya", false],
+        ["Snezhnaya", false]
+      ]
+    },
+    {
+      "id": "Trian-3",
+      "name": "至冬列车焰羽谷线",
+      "nameEn": "Snezhnaya Flamefeather Line",
+      "lineLabels": [],
+      "stations": [
+        ["Snezhnaya", true],
+        ["Morepesok", false],
+        ["Flamefeather", false],
+        ["Zorya", false],
+        ["Snezhnaya", false]
+      ]
+    },
+    {
+      "id": "Trian-4",
+      "name": "至冬列车白冕宫线",
+      "nameEn": "Snezhnaya Pale Crown Palace Line",
+      "lineLabels": [],
+      "stations": [
+        ["Snezhnaya", false],
+        ["PaleCrown", true],
+        ["Snezhnaya", false]
+      ]
+    },
+    {
+      "id": "Trian-5",
+      "name": "至冬列车·挪德卡莱连接线",
+      "nameEn": "Snezhnaya Railway Nod-Krai Connector",
+      "costPreset": "standard",
+      "lineLabels": [],
+      "stations": [
+        ["Sretomorozsk", true],
+        ["Teyvat-STR", false]
+      ]
+    }
+  ],
+  "stationDistances": [
+    {
+      "from": "Sretomorozsk",
+      "to": "Teyvat-STR",
+      "distance": 30
+    }
+  ]
+}

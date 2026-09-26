@@ -1,6 +1,7 @@
 import dataR from '../data/teyvat.json';
 import dataI from '../data/inazuma.json';
 import dataL from '../data/liyue.json';
+import dataS from '../data/snezhnaya.json';
 import markersData from '../data/mark.json';
 import ferryData from '../data/ferry.json';
 import sameData from '../data/same.json';
@@ -163,37 +164,67 @@ function parseStationsJson(data: RegionFile): {
   return { stations, prefix, fontFamily };
 }
 
+/**
+ * Region files reference their own stations by short id (e.g. `LYH` → `Teyvat-LYH`).
+ * Ids that already carry a prefix separator (e.g. `Teyvat-STR`) are used as-is, which
+ * lets a region file declare links to stations owned by another region.
+ */
+function regionStationId(prefix: string, id: string): string {
+  return id.includes('-') ? id : `${prefix}-${id}`;
+}
+
 const parsedR = parseStationsJson(dataR as unknown as RegionFile);
 const parsedI = parseStationsJson(dataI as unknown as RegionFile);
 const parsedL = parseStationsJson(dataL as unknown as RegionFile);
+const parsedS = parseStationsJson(dataS as unknown as RegionFile);
 const parsedStations: StationData[] = [
   ...parsedR.stations,
   ...parsedI.stations,
   ...parsedL.stations,
+  ...parsedS.stations,
 ];
 
 const parsedLinesR = dataR.lines as unknown as LineData[];
 const parsedLinesI = dataI.lines as unknown as LineData[];
 const parsedLinesL = dataL.lines as unknown as LineData[];
+const parsedLinesS = dataS.lines as unknown as LineData[];
 
 for (const line of parsedLinesR) {
-  line.stations = line.stations.map(([id, dir]) => [parsedR.prefix + '-' + id, dir]);
+  line.stations = line.stations.map(([id, dir]) => [regionStationId(parsedR.prefix, id), dir]);
   if (line.lineLabels)
-    line.lineLabels = line.lineLabels.map(([id, dir]) => [parsedR.prefix + '-' + id, dir]);
+    line.lineLabels = line.lineLabels.map(([id, dir]) => [
+      regionStationId(parsedR.prefix, id),
+      dir,
+    ]);
   line.fontFamily = parsedR.fontFamily;
 }
 for (const line of parsedLinesI) {
-  line.stations = line.stations.map(([id, dir]) => [parsedI.prefix + '-' + id, dir]);
+  line.stations = line.stations.map(([id, dir]) => [regionStationId(parsedI.prefix, id), dir]);
   if (line.lineLabels)
-    line.lineLabels = line.lineLabels.map(([id, dir]) => [parsedI.prefix + '-' + id, dir]);
+    line.lineLabels = line.lineLabels.map(([id, dir]) => [
+      regionStationId(parsedI.prefix, id),
+      dir,
+    ]);
   line.fontFamily = parsedI.fontFamily;
   if (line.nameZh) line.fontFamilyZh = 'Noto Serif SC';
 }
 for (const line of parsedLinesL) {
-  line.stations = line.stations.map(([id, dir]) => [parsedL.prefix + '-' + id, dir]);
+  line.stations = line.stations.map(([id, dir]) => [regionStationId(parsedL.prefix, id), dir]);
   if (line.lineLabels)
-    line.lineLabels = line.lineLabels.map(([id, dir]) => [parsedL.prefix + '-' + id, dir]);
+    line.lineLabels = line.lineLabels.map(([id, dir]) => [
+      regionStationId(parsedL.prefix, id),
+      dir,
+    ]);
   line.fontFamily = parsedL.fontFamily;
+}
+for (const line of parsedLinesS) {
+  line.stations = line.stations.map(([id, dir]) => [regionStationId(parsedS.prefix, id), dir]);
+  if (line.lineLabels)
+    line.lineLabels = line.lineLabels.map(([id, dir]) => [
+      regionStationId(parsedS.prefix, id),
+      dir,
+    ]);
+  line.fontFamily = parsedS.fontFamily;
 }
 
 const parsedFerryLines = (ferryData as any).lines as LineData[];
@@ -203,6 +234,7 @@ const parsedLines: LineData[] = [
   ...parsedLinesR,
   ...parsedLinesI,
   ...parsedLinesL,
+  ...parsedLinesS,
   ...parsedFerryLines,
   ...parsedSameLines,
 ];
@@ -210,11 +242,12 @@ const parsedLines: LineData[] = [
 const parsedStationDistancesR: StationDistanceEntry[] = (dataR as any).stationDistances ?? [];
 const parsedStationDistancesI: StationDistanceEntry[] = (dataI as any).stationDistances ?? [];
 const parsedStationDistancesL: StationDistanceEntry[] = (dataL as any).stationDistances ?? [];
+const parsedStationDistancesS: StationDistanceEntry[] = (dataS as any).stationDistances ?? [];
 
 function prefixDistances(entries: StationDistanceEntry[], prefix: string): StationDistanceEntry[] {
   return entries.map((e) => ({
-    from: prefix + '-' + e.from,
-    to: prefix + '-' + e.to,
+    from: regionStationId(prefix, e.from),
+    to: regionStationId(prefix, e.to),
     distance: e.distance,
   }));
 }
@@ -223,6 +256,7 @@ const parsedRegionDistances: StationDistanceEntry[] = [
   ...prefixDistances(parsedStationDistancesR, parsedR.prefix),
   ...prefixDistances(parsedStationDistancesI, parsedI.prefix),
   ...prefixDistances(parsedStationDistancesL, parsedL.prefix),
+  ...prefixDistances(parsedStationDistancesS, parsedS.prefix),
 ];
 
 const parsedFerryDistances: StationDistanceEntry[] = (ferryData as any).stationDistances ?? [];

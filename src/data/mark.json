@@ -102,6 +102,23 @@
       "content": "挪德卡莱局 Nod-Krai / Нод-Край",
       "x": -34,
       "y": -7
+    },
+    {
+      "content": "至冬皇家轨道运输局",
+      "x": -25,
+      "y": -30
+    },
+    {
+      "content": "Snezhnaya Royal Railway Transport Bureau",
+      "x": -25,
+      "y": -29.5,
+      "fontSize": 18
+    },
+    {
+      "content": "Королевское управление железнодорожного транспорта Снежной",
+      "x": -25,
+      "y": -29,
+      "fontSize": 18
     }
   ]
 }
