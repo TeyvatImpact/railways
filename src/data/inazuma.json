@@ -3,7 +3,15 @@
     "x": 25,
     "y": 11,
     "name": "Inazuma",
-    "fontFamily": "Noto Serif JP"
+    "fontFamily": "Noto Serif JP",
+    "operator": {
+      "name": "稲妻旅客鉄道株式会社",
+      "nameEn": "Inazuma Railways"
+    },
+    "authority": {
+      "name": "稲妻幕府",
+      "nameEn": "Inazuma Shogunate"
+    }
   },
   "stations": [
     {
@@ -405,6 +413,10 @@
       "name": "IR 珊瑚宮·海祇島線",
       "nameZh": "IR 珊瑚宫·海祇岛线",
       "nameEn": "IR Sangonomiya Watatsumi Island Line",
+      "authority": {
+        "name": "稲妻国海祇島珊瑚宮自治政府",
+        "nameEn": "Watatsumi Sangonomiya Autonomous Government"
+      },
       "lineLabels": [["WTE", "LB"]],
       "variants": [
         {

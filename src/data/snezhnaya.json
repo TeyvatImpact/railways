@@ -3,7 +3,16 @@
     "x": -25,
     "y": -35,
     "name": "Snezhnaya",
-    "fontFamily": "Noto Sans SC"
+    "fontFamily": "Noto Sans SC",
+    "operator": {
+      "name": "至冬皇家铁路",
+      "nameEn": "Snezhnaya Royal Railway"
+    },
+    "authority": {
+      "name": "至冬皇家轨道运输局",
+      "nameEn": "Snezhnaya Royal Railway Transport Bureau",
+      "nameAlt": "Королевское управление железнодорожного транспорта Снежной"
+    }
   },
   "stations": [
     {

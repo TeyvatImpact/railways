@@ -3,7 +3,11 @@
     "x": 0,
     "y": 0,
     "name": "Teyvat",
-    "fontFamily": "Noto Sans SC"
+    "fontFamily": "Noto Sans SC",
+    "operator": {
+      "name": "提瓦特铁路",
+      "nameEn": "Teyvat Railway"
+    }
   },
   "stations": [
     {
@@ -947,6 +951,10 @@
       "id": "A",
       "name": "跨局·原初线",
       "nameEn": "Original Line",
+      "authority": {
+        "name": "跨局",
+        "nameEn": "Cross-Bureau"
+      },
       "lineLabels": [
         ["SAA", "RT"],
         ["WSI", "LB"],
@@ -1012,6 +1020,10 @@
       "id": "B",
       "name": "跨局·风岩草线",
       "nameEn": "Anemo-Geo-Dendro Line",
+      "authority": {
+        "name": "跨局",
+        "nameEn": "Cross-Bureau"
+      },
       "lineLabels": [
         ["STL", "RT"],
         ["CJS", "T"],
@@ -1043,6 +1055,10 @@
       "id": "M1",
       "name": "蒙德局·自由线",
       "nameEn": "Mondstadt Freedom Line",
+      "authority": {
+        "name": "蒙德局",
+        "nameEn": "Mondstadt Bureau"
+      },
       "lineLabels": [
         ["SFL", "RT"],
         ["DSC", "LT"]
@@ -1071,6 +1087,10 @@
       "id": "L1",
       "name": "璃月局·璃沉线",
       "nameEn": "Liyue Liyue-Chenyu Line",
+      "authority": {
+        "name": "璃月局",
+        "nameEn": "Liyue Bureau"
+      },
       "lineLabels": [
         ["LYS", "LB"],
         ["MIL", "R"],
@@ -1098,6 +1118,10 @@
       "id": "L2",
       "name": "璃月局·沉玉谷线",
       "nameEn": "Liyue Chenyu Valley Line",
+      "authority": {
+        "name": "璃月局",
+        "nameEn": "Liyue Bureau"
+      },
       "lineLabels": [
         ["CWT", "B"],
         ["QCV", "LB"],
@@ -1127,6 +1151,10 @@
       "id": "S1",
       "name": "须弥局·须弥南北线",
       "nameEn": "Sumeru South-North Line",
+      "authority": {
+        "name": "须弥局",
+        "nameEn": "Sumeru Bureau"
+      },
       "lineLabels": [
         ["BDH", "RT"],
         ["VMV", "LT"]
@@ -1142,6 +1170,10 @@
       "id": "S2",
       "name": "须弥局·须弥环线",
       "nameEn": "Sumeru Loop Line",
+      "authority": {
+        "name": "须弥局",
+        "nameEn": "Sumeru Bureau"
+      },
       "lineLabels": [
         ["APW", "T"],
         ["VNA", "RB"]
@@ -1170,6 +1202,14 @@
       "id": "F1",
       "name": "枫丹局·巡轨船·卡雷斯线",
       "nameEn": "Fontaine Aquabus Callas Line",
+      "operator": {
+        "name": "枫丹巡轨船",
+        "nameEn": "Fontaine Aquabus"
+      },
+      "authority": {
+        "name": "枫丹庭",
+        "nameEn": "Court of Fontaine"
+      },
       "lineLabels": [
         ["COF", "R"],
         ["CLR", "B"],
@@ -1200,6 +1240,14 @@
       "id": "F2",
       "name": "枫丹局·巡轨船·娜维娅线",
       "nameEn": "Fontaine Aquabus Navia Line",
+      "operator": {
+        "name": "枫丹巡轨船",
+        "nameEn": "Fontaine Aquabus"
+      },
+      "authority": {
+        "name": "枫丹庭",
+        "nameEn": "Court of Fontaine"
+      },
       "lineLabels": [
         ["MCT", "T"],
         ["LDH", "RT"]
@@ -1215,6 +1263,14 @@
       "id": "F3",
       "name": "枫丹局·巡轨船·克莱门汀线",
       "nameEn": "Fontaine Aquabus Clementine Line",
+      "operator": {
+        "name": "枫丹巡轨船",
+        "nameEn": "Fontaine Aquabus"
+      },
+      "authority": {
+        "name": "枫丹庭",
+        "nameEn": "Court of Fontaine"
+      },
       "lineLabels": [
         ["RRH", "L"],
         ["MES", "L"]
@@ -1230,6 +1286,10 @@
       "id": "N0",
       "name": "纳塔局·连接线",
       "nameEn": "Natlan Connection Line",
+      "authority": {
+        "name": "纳塔局",
+        "nameEn": "Natlan Bureau"
+      },
       "lineLabels": [["COE", "RB"]],
       "variants": [
         {
@@ -1242,6 +1302,10 @@
       "id": "N1",
       "name": "纳塔局·赫布里穆线",
       "nameEn": "Natlan Haborym Line",
+      "authority": {
+        "name": "纳塔局",
+        "nameEn": "Natlan Bureau"
+      },
       "lineLabels": [
         ["SFV", "B"],
         ["FSF", "LT"]
@@ -1264,6 +1328,10 @@
       "id": "N2",
       "name": "纳塔局·杜麦尼线",
       "nameEn": "Natlan Tumaini Line",
+      "authority": {
+        "name": "纳塔局",
+        "nameEn": "Natlan Bureau"
+      },
       "lineLabels": [
         ["ONT", "L"],
         ["POS", "LB"],
@@ -1292,6 +1360,10 @@
       "id": "N3",
       "name": "纳塔局·卡皮塔诺线",
       "nameEn": "Natlan Il Capitano Line",
+      "authority": {
+        "name": "纳塔局",
+        "nameEn": "Natlan Bureau"
+      },
       "lineLabels": [
         ["SOC", "RT"],
         ["TPB", "B"]
@@ -1314,6 +1386,14 @@
       "id": "N4",
       "name": "纳塔局·悠悠度假村线",
       "nameEn": "Natlan Easybreeze Holiday Resort Line",
+      "operator": {
+        "name": "悠悠度假村轨道交通",
+        "nameEn": "Easybreeze Holiday Resort Transit"
+      },
+      "authority": {
+        "name": "悠悠度假村管理委员会",
+        "nameEn": "Easybreeze Holiday Resort Management Committee"
+      },
       "lineLabels": [["EBM", "LB"]],
       "variants": [
         {
@@ -1326,6 +1406,10 @@
       "id": "K1",
       "name": "挪德卡莱局·希汐岛线",
       "nameEn": "Nod-Krai Hiisi Island Line",
+      "authority": {
+        "name": "挪德卡莱局",
+        "nameEn": "Nod-Krai Bureau"
+      },
       "lineLabels": [["NST", "LB"]],
       "variants": [
         {
@@ -1338,6 +1422,10 @@
       "id": "K2",
       "name": "挪德卡莱局·帕哈岛线",
       "nameEn": "Nod-Krai Paha Isle Line",
+      "authority": {
+        "name": "挪德卡莱局",
+        "nameEn": "Nod-Krai Bureau"
+      },
       "lineLabels": [
         ["NSP", "LB"],
         ["FNC", "LT"],
@@ -1375,6 +1463,10 @@
       "id": "K3",
       "name": "挪德卡莱局·虚海望线",
       "nameEn": "Nod-Krai Voidsea Outlook Line",
+      "authority": {
+        "name": "挪德卡莱局",
+        "nameEn": "Nod-Krai Bureau"
+      },
       "lineLabels": [
         ["VOP", "LT"],
         ["STR", "L"],

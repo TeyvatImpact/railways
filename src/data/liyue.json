@@ -3,7 +3,15 @@
     "x": 5,
     "y": -1,
     "name": "Liyue",
-    "fontFamily": "Noto Sans SC"
+    "fontFamily": "Noto Sans SC",
+    "operator": {
+      "name": "璃月港地铁",
+      "nameEn": "Liyue Harbor Metro"
+    },
+    "authority": {
+      "name": "璃月总务司",
+      "nameEn": "Liyue Ministry of Civil Affairs"
+    }
   },
   "stations": [
     {

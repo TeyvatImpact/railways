@@ -59,6 +59,13 @@ export interface PresetConfig {
 /** 途经点：链式增量，单位为数据坐标单位（与 station.x/y 同尺度）。第 1 个点相对区间起点站，之后每个点相对前一个点 */
 export type Waypoints = [number, number][];
 
+/** 运营公司 / 运营主体：中文主行 + 英文小字，`nameAlt` 为可选的第三行小字（如至冬的俄文） */
+export interface OperatorInfo {
+  name: string;
+  nameEn: string;
+  nameAlt?: string;
+}
+
 export interface LineVariantData {
   /** 短变体名（如 `支线` / `小交路`）；空或省略表示该线路的全线交路 */
   name?: string;
@@ -80,6 +87,10 @@ export interface LineData {
   oneWay?: boolean;
   fontFamily?: string;
   fontFamilyZh?: string;
+  /** 运营公司；缺省时取所属区域文件 config 的同名字段 */
+  operator?: OperatorInfo;
+  /** 运营主体（提瓦特铁路xx局 / 稻妻幕府 / 枫丹庭 …）；缺省同上 */
+  authority?: OperatorInfo;
   lineType?: 'ferry' | 'same-station';
 }
 
@@ -149,7 +160,15 @@ export interface MarkerText {
 }
 
 interface RegionFile {
-  config: { x: number; y: number; name: string; fontFamily?: string };
+  config: {
+    x: number;
+    y: number;
+    name: string;
+    fontFamily?: string;
+    /** 该文件所有线路的默认运营公司 / 运营主体，线路对象可各自覆盖 */
+    operator?: OperatorInfo;
+    authority?: OperatorInfo;
+  };
   stations: {
     id: string;
     nameCn: string;
@@ -169,6 +188,8 @@ function parseStationsJson(data: RegionFile): {
   stations: StationData[];
   prefix: string;
   fontFamily: string;
+  operator?: OperatorInfo;
+  authority?: OperatorInfo;
 } {
   const { config, stations: entries } = data;
   const prefix = config.name;
@@ -186,7 +207,7 @@ function parseStationsJson(data: RegionFile): {
     fontFamily,
     fontFamilyZh: (e as any).nameZh ? fontFamilyZh : undefined,
   }));
-  return { stations, prefix, fontFamily };
+  return { stations, prefix, fontFamily, operator: config.operator, authority: config.authority };
 }
 
 /**
@@ -214,13 +235,44 @@ const parsedLinesI = dataI.lines as unknown as LineData[];
 const parsedLinesL = dataL.lines as unknown as LineData[];
 const parsedLinesS = dataS.lines as unknown as LineData[];
 
-const regionLineSets: { lines: LineData[]; prefix: string; fontFamily: string; hasZh?: boolean }[] =
-  [
-    { lines: parsedLinesR, prefix: parsedR.prefix, fontFamily: parsedR.fontFamily },
-    { lines: parsedLinesI, prefix: parsedI.prefix, fontFamily: parsedI.fontFamily, hasZh: true },
-    { lines: parsedLinesL, prefix: parsedL.prefix, fontFamily: parsedL.fontFamily },
-    { lines: parsedLinesS, prefix: parsedS.prefix, fontFamily: parsedS.fontFamily },
-  ];
+const regionLineSets: {
+  lines: LineData[];
+  prefix: string;
+  fontFamily: string;
+  hasZh?: boolean;
+  operator?: OperatorInfo;
+  authority?: OperatorInfo;
+}[] = [
+  {
+    lines: parsedLinesR,
+    prefix: parsedR.prefix,
+    fontFamily: parsedR.fontFamily,
+    operator: parsedR.operator,
+    authority: parsedR.authority,
+  },
+  {
+    lines: parsedLinesI,
+    prefix: parsedI.prefix,
+    fontFamily: parsedI.fontFamily,
+    hasZh: true,
+    operator: parsedI.operator,
+    authority: parsedI.authority,
+  },
+  {
+    lines: parsedLinesL,
+    prefix: parsedL.prefix,
+    fontFamily: parsedL.fontFamily,
+    operator: parsedL.operator,
+    authority: parsedL.authority,
+  },
+  {
+    lines: parsedLinesS,
+    prefix: parsedS.prefix,
+    fontFamily: parsedS.fontFamily,
+    operator: parsedS.operator,
+    authority: parsedS.authority,
+  },
+];
 
 /** 线路变体校验：至少一个变体，每个变体至少两个站点 */
 function assertVariants(line: LineData): void {
@@ -232,7 +284,7 @@ function assertVariants(line: LineData): void {
   }
 }
 
-for (const { lines, prefix, fontFamily, hasZh } of regionLineSets) {
+for (const { lines, prefix, fontFamily, hasZh, operator, authority } of regionLineSets) {
   for (const line of lines) {
     assertVariants(line);
     for (const variant of line.variants) {
@@ -242,6 +294,9 @@ for (const { lines, prefix, fontFamily, hasZh } of regionLineSets) {
       line.lineLabels = line.lineLabels.map(([id, dir]) => [regionStationId(prefix, id), dir]);
     line.fontFamily = fontFamily;
     if (hasZh && line.nameZh) line.fontFamilyZh = 'Noto Serif SC';
+    // 运营公司 / 运营主体：线路对象上的值优先，否则落到本文件的默认值
+    if (!line.operator) line.operator = operator;
+    if (!line.authority) line.authority = authority;
   }
 }
 

@@ -68,7 +68,8 @@ export interface LineLabelBox {
 
 const prepCache = new Map<string, PreparedTextWithSegments>();
 
-function textWidth(
+/** 用 @chenglou/pretext 量一行文字的宽度（px）。带缓存；字体未加载时用当前可用的度量 */
+export function measureText(
   text: string,
   fontSize: number,
   bold: boolean,
@@ -105,9 +106,9 @@ function computeAllBoxes(fsCN_: number, fsEN_: number): Box[] {
     const ff = s.fontFamily;
     const fZh = s.fontFamilyZh || FONT_ZH;
     const hasZh = !!s.nameZh;
-    const wCN = textWidth(s.name, fsCN_, true, ff);
-    const wZh = hasZh ? textWidth(s.nameZh!, fsEN_, true, fZh) : 0;
-    const wEN = textWidth(s.nameEn, fsEN_, true, FONT_EN);
+    const wCN = measureText(s.name, fsCN_, true, ff);
+    const wZh = hasZh ? measureText(s.nameZh!, fsEN_, true, fZh) : 0;
+    const wEN = measureText(s.nameEn, fsEN_, true, FONT_EN);
     const w = Math.max(wCN, wZh, wEN) + pad * 2;
     const h = hasZh
       ? fsCN_ * 1.2 + textGap + fsEN_ * 1.2 + textGap + fsEN_ * 1.2
@@ -154,9 +155,9 @@ function computeLineLabels(): LineLabelBox[] {
       const ff = line.fontFamily || 'sans-serif';
       const fZh = line.fontFamilyZh || FONT_ZH;
       const hasZh = !!line.nameZh;
-      const wCN = textWidth(line.name, fCN, true, ff);
-      const wZh = hasZh ? textWidth(line.nameZh!, fEN, true, fZh) : 0;
-      const wEN = textWidth(line.nameEn, fEN, true, FONT_EN);
+      const wCN = measureText(line.name, fCN, true, ff);
+      const wZh = hasZh ? measureText(line.nameZh!, fEN, true, fZh) : 0;
+      const wEN = measureText(line.nameEn, fEN, true, FONT_EN);
       const w = Math.max(wCN, wZh, wEN) + pad * 2 + 6;
       const h = hasZh
         ? fCN * 1.2 + textGap + fEN * 1.2 + textGap + fEN * 1.2
