@@ -1,7 +1,6 @@
 <template>
   <TitleBar
     @open="showDialog = true"
-    @open-ai="showAiDialog = true"
     @toggle-theme="toggleTheme"
     @toggle-admin="showAdmin = !showAdmin"
     :theme="theme" />
@@ -12,7 +11,6 @@
     <RoutePanel ref="panel" @result-change="onResultChange" />
   </div>
   <InfoDialog :visible="showDialog" @close="onClose" />
-  <AiPromptDialog :visible="showAiDialog" @close="showAiDialog = false" />
   <AdminPanel :visible="showAdmin" @close="showAdmin = false" />
 </template>
 
@@ -23,14 +21,12 @@ import RailwayMap from '../components/RailwayMap.vue';
 import TitleBar from '../components/TitleBar.vue';
 import RoutePanel from '../components/RoutePanel.vue';
 import InfoDialog from '../components/InfoDialog.vue';
-import AiPromptDialog from '../components/AiPromptDialog.vue';
 import AdminPanel from '../components/AdminPanel.vue';
 import type { RouteResult } from '../composables/useRouting';
 
 const STORAGE_KEY = 'teyvat-railways-visited';
 const { theme, toggle: toggleTheme } = useTheme();
 const showDialog = ref(false);
-const showAiDialog = ref(false);
 const showAdmin = ref(false);
 const routeResult = ref<RouteResult | null>(null);
 const panel = ref<InstanceType<typeof RoutePanel> | null>(null);
