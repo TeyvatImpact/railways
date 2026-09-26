@@ -19,14 +19,14 @@ export interface RouteSpan {
 }
 
 export type ProgressStep =
-  | { kind: 'station'; col: number; label: string }
-  | { kind: 'interval'; label: string; spans: RouteSpan[] };
+  | { kind: 'station'; col: number; label: string; stationId: string }
+  | { kind: 'enter' | 'leave'; label: string; spans: RouteSpan[]; fromId: string; toId: string };
 
 /** 站 / 站名在动态模式下的呈现：dim = 灰（不在行程上或已经过）、lit = 原色（还没到）、current = 闪烁 */
 export type StationState = 'dim' | 'lit' | 'current';
 
 export interface ProgressModel {
-  /** 进度状态总数 = 2N-1（N 个停站 + N-1 个区间） */
+  /** 进度状态总数：2N-1（仅出站）/ 3N-2（出站与即将入站都启用）= N 个停站 + 每段 1~2 个区间状态 */
   count: number;
   /** 当前进度，已夹紧到 [0, count-1] */
   index: number;
@@ -87,14 +87,17 @@ function intervalSpans(a: StripStationModel, b: StripStationModel): RouteSpan[] 
 
 /**
  * 一趟行程的进度模型。`stationIds` 取变体自己的站序（`line.variants[i].stations`）；
- * `dir` = 'up' 顺站序（条带图上从左到右）、`down` 逆站序。
+ * `dir` = 'up' 顺站序（条带图上从左到右）、`down` 逆站序；
+ * `opts.leave` = 是否插入「离开区间（即将入站）」状态（默认 false，由 announce.config 的 PROGRESS_STATES 决定）。
  */
 export function buildProgress(
   strip: StripModel,
   stationIds: string[],
   dir: Direction,
   progress: number,
+  opts: { leave?: boolean } = {},
 ): ProgressModel {
+  const includeLeave = opts.leave ?? false;
   const cols = routeCols(strip.stations, stationIds);
   if (!cols.length) return EMPTY_PROGRESS;
   if (dir === 'down') cols.reverse();
@@ -103,13 +106,29 @@ export function buildProgress(
   const steps: ProgressStep[] = [];
   cols.forEach((col, i) => {
     const station = byCol.get(col)!;
-    steps.push({ kind: 'station', col, label: `${i + 1}. ${station.name}` });
+    steps.push({
+      kind: 'station',
+      col,
+      label: `${i + 1}. ${station.name}（到站）`,
+      stationId: station.id,
+    });
     const next = i + 1 < cols.length ? byCol.get(cols[i + 1])! : null;
-    if (next) {
+    if (!next) return;
+    const spans = intervalSpans(station, next);
+    steps.push({
+      kind: 'enter',
+      label: `区间：${station.name} → ${next.name}（出站）`,
+      spans,
+      fromId: station.id,
+      toId: next.id,
+    });
+    if (includeLeave) {
       steps.push({
-        kind: 'interval',
-        label: `区间：${station.name} → ${next.name}`,
-        spans: intervalSpans(station, next),
+        kind: 'leave',
+        label: `区间：${station.name} → ${next.name}（即将入站）`,
+        spans,
+        fromId: station.id,
+        toId: next.id,
       });
     }
   });
@@ -120,13 +139,16 @@ export function buildProgress(
   for (const station of strip.stations) states[station.col] = 'dim';
   const litSpans: RouteSpan[] = [];
   const currentSpans: RouteSpan[] = [];
+  // 「出站 / 即将入站」两个状态共用同一份 spans，点亮时按数组身份去重（否则同一段会叠两层同样的条）
+  const litSpanSets = new Set<RouteSpan[]>();
   for (let i = index; i < steps.length; i++) {
     const step = steps[i];
     if (step.kind === 'station') {
       states[step.col] = i === index ? 'current' : 'lit';
     } else if (i === index) {
       currentSpans.push(...step.spans);
-    } else {
+    } else if (!litSpanSets.has(step.spans)) {
+      litSpanSets.add(step.spans);
       litSpans.push(...step.spans);
     }
   }

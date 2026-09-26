@@ -15,8 +15,14 @@ import {
   EMPTY_PROGRESS,
   type Direction,
   type ProgressModel,
+  type ProgressStep,
   type RouteSpan,
 } from './dynamicStrip';
+import { buildAnnouncement, shortLineName, type AnnounceContext, type NamedText } from './announce';
+import { useSpeech } from '../../composables/useSpeech';
+import { PROGRESS_STATES, type AnnounceKind } from '../../config/announce.config';
+import VoicePanel from './VoicePanel.vue';
+import AnnounceLog from './AnnounceLog.vue';
 
 /** 只画轨道交通线路：轮渡（ferry.json 9 条 + 区域文件内 3 条）与同站换乘（same.json 3 条）都不画 */
 const railLines = lines.filter((line) => !line.lineType);
@@ -31,11 +37,6 @@ for (const line of railLines) {
   }
 }
 
-/** 徽章上的线名只留最后一段：`蒙德局·自由线` → `自由线`、`IR 東稲妻·鳴神島線` → `鳴神島線` */
-function shortName(name: string): string {
-  return name.split('·').pop() || name;
-}
-
 const measure: MeasureFn = (text, size, weight, family) =>
   measureText(text, size, weight >= 600, family);
 
@@ -48,7 +49,7 @@ function stationLabel(station: Station) {
 function badgesFor(line: Line, stationId: string) {
   return (stationLines.get(stationId) ?? [])
     .filter((other) => other.id !== line.id)
-    .map((other) => ({ label: shortName(other.name), fill: other.color }));
+    .map((other) => ({ label: shortLineName(other.name), fill: other.color }));
 }
 
 function buildInput(
@@ -87,21 +88,29 @@ function buildInput(
 interface VariantOption {
   index: number;
   label: string;
+  name: string;
+  nameEn: string;
   stations: string[];
 }
 
-/** 线路 id → 可选变体（含站序）与条带主线（= 站数最多的变体）序号 */
-const lineVariants = new Map<string, { options: VariantOption[]; primary: number }>();
+/** 线路 id → 可选变体（含站序）、条带主线（= 站数最多的变体）序号与分岔支线（换乘提示要用） */
+const lineVariants = new Map<
+  string,
+  { options: VariantOption[]; primary: number; branches: DivergentBranch<LineVariant>[] }
+>();
 
 const strips = railLines.map((line) => {
   const { primary, branches } = splitVariants(line.variants);
   lineVariants.set(line.id, {
     primary: primary.index,
+    branches,
     options: line.variants.map((variant, index) => ({
       index,
       label: variant.name
         ? `${variant.name}${variant.nameEn ? ` · ${variant.nameEn}` : ''}`
         : '全线',
+      name: variant.name,
+      nameEn: variant.nameEn,
       stations: variant.stations,
     })),
   });
@@ -132,7 +141,9 @@ const dynViews = computed<Record<string, ProgressModel>>(() => {
     const state = dynState[s.key];
     const variant = state.on ? lineVariants.get(s.key)?.options[state.variant] : undefined;
     out[s.key] = variant
-      ? buildProgress(s, variant.stations, state.dir, state.progress)
+      ? buildProgress(s, variant.stations, state.dir, state.progress, {
+          leave: PROGRESS_STATES.leave,
+        })
       : EMPTY_PROGRESS;
   }
   return out;
@@ -144,6 +155,92 @@ function dyn(key: string): ProgressModel {
 
 function variantOptions(key: string): VariantOption[] {
   return lineVariants.get(key)?.options ?? [];
+}
+
+/** 语音播报引擎（模块级单例）：自动播报关闭时 speak 自己会静默跳过 */
+const speech = useSpeech();
+
+/** 线路 id → 线路数据（判地区、取线路名） */
+const lineMap = new Map(railLines.map((line) => [line.id, line]));
+
+/**
+ * 拼出一次播报的上下文：站点级事件用该站的地区选语言、线路级事件用线路首个站的地区。
+ * 缺少必需对象（查不到站 / 变体不存在）时给 null —— 这次不播报。
+ */
+function buildContext(
+  key: string,
+  kind: AnnounceKind,
+  step?: ProgressStep,
+): AnnounceContext | null {
+  const line = lineMap.get(key);
+  const variant = variantOptions(key)[dynState[key].variant];
+  if (!line || !variant) return null;
+
+  const stations = variant.stations;
+  const terminusId = dynState[key].dir === 'up' ? stations[stations.length - 1] : stations[0];
+  const terminus = terminusId ? (stationMap.get(terminusId) ?? null) : null;
+  const branches = lineVariants.get(key)?.branches ?? [];
+
+  let station: NamedText | null = null;
+  let next: NamedText | null = null;
+  if (step?.kind === 'station') {
+    station = stationMap.get(step.stationId) ?? null;
+    if (!station) return null;
+  } else if (step) {
+    station = stationMap.get(step.fromId) ?? null;
+    next = stationMap.get(step.toId) ?? null;
+    if (!station || !next) return null;
+  }
+
+  // 换乘句：station 看本站、enter / leave 看下一站
+  const transferStation = kind === 'station' ? station : next;
+  const transfers = transferStation
+    ? (stationLines.get(transferStation.id) ?? [])
+        .filter((other) => other.id !== key)
+        .map((other) => ({ name: other.name, nameEn: other.nameEn }))
+    : [];
+  // 支线换乘提示：仅当「下一站是分岔站」
+  const nextBranches = next
+    ? branches
+        .filter((branch) => branch.junctionId === next.id)
+        .map((branch) => ({ name: branch.variant.name, nameEn: branch.variant.nameEn }))
+    : [];
+
+  return {
+    kind,
+    line: { name: line.name, nameZh: line.nameZh, nameEn: line.nameEn, stationIds: line.stations },
+    direction: dynState[key].dir,
+    variant: { name: variant.name, nameEn: variant.nameEn },
+    terminus,
+    station,
+    next,
+    transfers,
+    branches: nextBranches,
+    branchTrain: branches.some((branch) => branch.variant === line.variants[dynState[key].variant]),
+  };
+}
+
+function announce(key: string, kind: AnnounceKind, step?: ProgressStep, force = false) {
+  const ctx = buildContext(key, kind, step);
+  if (ctx) speech.speak(buildAnnouncement(ctx), { force });
+}
+
+/** 进度步骤 → 播报类型：station（到站）/ enter（出站）/ leave（即将入站） */
+function announceStep(key: string, step: ProgressStep, force = false) {
+  announce(key, step.kind, step, force);
+}
+
+/** ◀ ▶：改进度并播报新状态 */
+function goStep(key: string, delta: number) {
+  dynState[key].progress = dyn(key).index + delta;
+  const step = dyn(key).steps[dynState[key].progress];
+  if (step) announceStep(key, step);
+}
+
+/** 「播报」按钮：与自动播报同一条内容（当前进度状态），force 绕过自动播报开关 */
+function replay(key: string) {
+  const step = dyn(key).steps[dyn(key).index];
+  if (step) announceStep(key, step, true);
 }
 
 /** 方向下拉文案：上行 = 站序（图上从左到右），下行 = 逆序；环线（首末同站）注明顺行 / 逆行 */
@@ -169,21 +266,27 @@ function spanStyle(sp: RouteSpan) {
 
 function onToggle(key: string, e: Event) {
   dynState[key].on = (e.target as HTMLInputElement).checked;
+  if (dynState[key].on) announce(key, 'on');
+  else speech.note('动态模式已关闭');
 }
 
 /** 换方向 / 换变体都回到新行程的起点站 */
 function onDir(key: string, e: Event) {
   dynState[key].dir = (e.target as HTMLSelectElement).value === 'down' ? 'down' : 'up';
   dynState[key].progress = 0;
+  announce(key, 'direction');
 }
 
 function onVariant(key: string, e: Event) {
   dynState[key].variant = Number((e.target as HTMLSelectElement).value);
   dynState[key].progress = 0;
+  announce(key, 'variant');
 }
 
 function onProgress(key: string, e: Event) {
   dynState[key].progress = Number((e.target as HTMLSelectElement).value);
+  const step = dyn(key).steps[dynState[key].progress];
+  if (step) announceStep(key, step);
 }
 
 /** `.strip` 的纵向骨架：页头 / 徽章两行（含上下间隔）/ 引线通道 / 主线 / 每条支线一段车道 / 站名（吃掉剩余高度） */
@@ -216,67 +319,76 @@ function cell(col: number) {
 </script>
 
 <template>
-  <div class="bg-white h-screen overflow-y-auto p-4">
+  <div class="bg-white h-screen overflow-y-auto px-4 pb-4">
     <div class="w-max mx-auto flex flex-col gap-6">
+      <VoicePanel />
       <div v-for="s in strips" :key="s.key" class="flex flex-col gap-1.5">
-        <!-- 面板外的调试/配置栏：动态模式开关 + 展开后的三项配置 -->
+        <!-- 面板外的调试/配置栏：动态模式开关 + 展开后的三项配置 + 播报日志 -->
         <div class="dyn-bar">
-          <label class="dyn-switch">
-            <input
-              type="checkbox"
-              :checked="dynState[s.key].on"
-              @change="onToggle(s.key, $event)" />
-            <span class="dyn-switch-track"></span>
-            <span class="dyn-switch-text">动态模式</span>
-          </label>
-          <template v-if="dynState[s.key].on">
-            <label class="dyn-field">
-              <span class="dyn-field-label">线路方向</span>
-              <select
-                class="dyn-select dyn-select-dir"
-                :value="dynState[s.key].dir"
-                @change="onDir(s.key, $event)">
-                <option value="up">{{ dirLabel(s, 'up') }}</option>
-                <option value="down">{{ dirLabel(s, 'down') }}</option>
-              </select>
+          <div class="dyn-row">
+            <label class="dyn-switch">
+              <input
+                type="checkbox"
+                :checked="dynState[s.key].on"
+                @change="onToggle(s.key, $event)" />
+              <span class="dyn-switch-track"></span>
+              <span class="dyn-switch-text">动态模式</span>
             </label>
-            <label v-if="variantOptions(s.key).length > 1" class="dyn-field">
-              <span class="dyn-field-label">线路变体</span>
-              <select
-                class="dyn-select dyn-select-variant"
-                :value="dynState[s.key].variant"
-                @change="onVariant(s.key, $event)">
-                <option v-for="v in variantOptions(s.key)" :key="v.index" :value="v.index">
-                  {{ v.label }}
-                </option>
-              </select>
-            </label>
-            <div class="dyn-field">
-              <span class="dyn-field-label">进度</span>
-              <button
-                type="button"
-                class="dyn-btn"
-                :disabled="dyn(s.key).index <= 0"
-                @click="dynState[s.key].progress = dyn(s.key).index - 1">
-                ◀
-              </button>
-              <select
-                class="dyn-select dyn-select-progress"
-                :value="dyn(s.key).index"
-                @change="onProgress(s.key, $event)">
-                <option v-for="(step, i) in dyn(s.key).steps" :key="i" :value="i">
-                  {{ step.label }}
-                </option>
-              </select>
-              <button
-                type="button"
-                class="dyn-btn"
-                :disabled="dyn(s.key).index >= dyn(s.key).count - 1"
-                @click="dynState[s.key].progress = dyn(s.key).index + 1">
-                ▶
-              </button>
-            </div>
-          </template>
+            <template v-if="dynState[s.key].on">
+              <label class="dyn-field">
+                <span class="dyn-field-label">线路方向</span>
+                <select
+                  class="dyn-select dyn-select-dir"
+                  :value="dynState[s.key].dir"
+                  @change="onDir(s.key, $event)">
+                  <option value="up">{{ dirLabel(s, 'up') }}</option>
+                  <option value="down">{{ dirLabel(s, 'down') }}</option>
+                </select>
+              </label>
+              <label v-if="variantOptions(s.key).length > 1" class="dyn-field">
+                <span class="dyn-field-label">线路变体</span>
+                <select
+                  class="dyn-select dyn-select-variant"
+                  :value="dynState[s.key].variant"
+                  @change="onVariant(s.key, $event)">
+                  <option v-for="v in variantOptions(s.key)" :key="v.index" :value="v.index">
+                    {{ v.label }}
+                  </option>
+                </select>
+              </label>
+              <div class="dyn-field">
+                <span class="dyn-field-label">进度</span>
+                <button
+                  type="button"
+                  class="dyn-btn"
+                  :disabled="dyn(s.key).index <= 0"
+                  @click="goStep(s.key, -1)">
+                  ◀
+                </button>
+                <select
+                  class="dyn-select dyn-select-progress"
+                  :value="dyn(s.key).index"
+                  @change="onProgress(s.key, $event)">
+                  <option v-for="(step, i) in dyn(s.key).steps" :key="i" :value="i">
+                    {{ step.label }}
+                  </option>
+                </select>
+                <button
+                  type="button"
+                  class="dyn-btn"
+                  :disabled="dyn(s.key).index >= dyn(s.key).count - 1"
+                  @click="goStep(s.key, 1)">
+                  ▶
+                </button>
+              </div>
+            </template>
+          </div>
+          <div v-if="dynState[s.key].on" class="dyn-row dyn-row-bottom">
+            <button type="button" class="dyn-btn dyn-btn-speak" @click="replay(s.key)">
+              🔊 播报
+            </button>
+            <AnnounceLog class="dyn-log" />
+          </div>
         </div>
 
         <div class="strip" :class="{ 'strip-dyn': dynState[s.key].on }" :style="stripStyle(s)">
@@ -615,8 +727,9 @@ function cell(col: number) {
 /* ---- 面板外的调试/配置栏 ---- */
 .dyn-bar {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
   width: 1920px;
   padding: 6px 10px;
   border: 1px solid #d8dde3;
@@ -624,6 +737,23 @@ function cell(col: number) {
   background: #f6f8fa;
   color: #333;
   font-size: 12px;
+}
+/* 第一行 = 开关 + 三项配置；第二行 = 播报按钮 + 播报日志 */
+.dyn-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.dyn-row-bottom {
+  align-items: stretch;
+}
+.dyn-btn-speak {
+  align-self: center;
+  width: auto;
+  padding: 0 10px;
+}
+.dyn-log {
+  flex: 1;
 }
 .dyn-field {
   display: flex;
