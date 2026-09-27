@@ -72,6 +72,7 @@ function buildInput(
   stationIds: string[],
   loop: boolean,
   branches: DivergentBranch<LineVariant>[],
+  numbers?: number[],
 ): StripInput {
   const stations = stationIds
     .map((sid) => stationMap.get(sid))
@@ -86,6 +87,7 @@ function buildInput(
     operator: line.operator?.names,
     authority: line.authority?.names,
     stations,
+    numbers,
     loop,
     // 支线独占站只画车道上的圆圈与站名，不带换乘徽章（徽章行在主线之上，引线要横穿主线）
     branches: branches.map((b) => ({
@@ -206,8 +208,17 @@ function rolledStrip(key: string, rollId: string): StripModel {
   // 只有环线（有 ring）才会走到这里：`rollId` 只由 buildLoopProgress 产出
   const line = lineMap.get(key)!;
   const ring = loopRings.get(key)!;
+  const rolled = rollRing(ring, rollId, loopDir(key));
+  // 圆圈的号跟着站点本身的定义顺序走（首尾同站在两端显示同一个号），不随滚动改成第几列
+  const ringNo = new Map(ring.map((id, i) => [id, i + 1]));
   const strip = buildStrip(
-    buildInput(line, rollRing(ring, rollId, loopDir(key)), true, lineVariants.get(key)!.branches),
+    buildInput(
+      line,
+      rolled,
+      true,
+      lineVariants.get(key)!.branches,
+      rolled.map((id) => ringNo.get(id) ?? 0),
+    ),
     measure,
   );
   loopStrips.set(cacheKey, strip);

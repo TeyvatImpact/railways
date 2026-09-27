@@ -55,7 +55,7 @@ export interface StripStationBase {
 export interface StripStationModel extends StripStationBase {
   /** 并集列号（0 起算）：CSS 网格列线 = col + 2，站距也按它算 */
   col: number;
-  /** 1 起算的站序（= 圆圈里的号）= col + 1 */
+  /** 1 起算的站序（= 圆圈里的号）= `StripInput.numbers` 给的值，缺省 = col + 1 */
   index: number;
   /** 0 = 主线车道，1 起算 = 第几条支线车道（CSS 网格行 = 7 + lane） */
   lane: number;
@@ -106,6 +106,11 @@ export interface StripInput {
   operator?: OrgNames;
   authority?: OrgNames;
   stations: StripInputStation[];
+  /**
+   * 每个站圆圈里的编号（与 `stations` 一一对应）；缺省 = 列号 + 1。
+   * 环线滚动后条带的列序一直在变，但圆圈的号要跟着**站点本身**走，所以由调用方显式给出。
+   */
+  numbers?: number[];
   /** 与主线分岔的支线（纯子集的小交路不算），无支线时传空数组 */
   branches: StripBranchInput[];
   /** 环线条带：主线首尾各画一段 32px 虚线延伸，表示线路继续绕圈（见 index.vue 的 .strip-loop） */
@@ -299,7 +304,7 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
     return {
       id: station.id,
       col: i,
-      index: i + 1,
+      index: input.numbers?.[i] ?? i + 1,
       lane,
       name: station.lines[0].text,
       lines: station.lines,
