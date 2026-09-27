@@ -1,4 +1,5 @@
-// /display 动态模式的语音播报配置 —— 改播报词只改这个文件。
+// /display 动态模式的语音播报配置 —— 通用播报词（原子句 / 组合表）只改这个文件；
+// 地区专用报站脚本在 src/data/<地区>.announce.json（查表见 views/display/announceScript.ts，拼装在 announce.ts）。
 // 结构：ATOMS = 原子句（句子级最小单位，每句三语各写一份）；COMPOSITION = 组合表（每次播报按顺序念哪几句）。
 // 占位符：{line} {terminus} {station} {next} {variant} {transfers} {branch} {n}
 // 名称字段按语言取：zh → nameZh ?? name、ja → name、en → nameEn

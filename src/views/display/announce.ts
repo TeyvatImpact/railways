@@ -16,6 +16,7 @@ import {
   type AtomKey,
   type ComposeSlot,
 } from '../../config/announce.config';
+import { ANNOUNCE_SCRIPTS, type AnnounceScript, type ScriptTexts } from './announceScript';
 import type { Direction } from './dynamicStrip';
 
 export interface Announcement {
@@ -143,6 +144,42 @@ function localLang(ctx: AnnounceContext): AnnounceLang {
   return langOf(ctx.line.stationIds[0] ?? '');
 }
 
+/** 脚本归属的站点：站点级档位看目标站（station = 到达站，enter / leave = 下一站），线路级档位没有站点 */
+function scriptTarget(ctx: AnnounceContext): NamedText | null {
+  if (ctx.kind === 'station') return ctx.station;
+  if (ctx.kind === 'enter' || ctx.kind === 'leave') return ctx.next;
+  return null;
+}
+
+/** 文本池里随机取一条；rand 可注入（默认 Math.random），下标夹到池子范围内 */
+function pickRandom<T>(list: T[], rand: () => number): T {
+  const i = Math.min(list.length - 1, Math.max(0, Math.floor(rand() * list.length)));
+  return list[i]!;
+}
+
+/** 三段式地区脚本播报：到站提示 + 提前做好准备播报 + 站点专属文本（随机一条）；
+ *  每段都取 langs 里存在的语言版本（至冬只有 zh，补 en 即自动中英对照） */
+function scriptedAnnouncement(
+  script: AnnounceScript,
+  station: NamedText,
+  local: AnnounceLang,
+  langs: AnnounceLang[],
+  rand: () => number,
+): Announcement[] {
+  const entry = script.stations.find((it) => it.id === station.id) ?? null;
+  const vars = { station: entry?.announceName ?? nameFor(station, local) };
+  const parts: (ScriptTexts | undefined)[] = [script.templates.arrival, script.templates.prepare];
+  if (entry?.texts.length) parts.push(pickRandom(entry.texts, rand).text);
+  const out: Announcement[] = [];
+  for (const part of parts) {
+    for (const lang of langs) {
+      const text = fill(part?.[lang] ?? '', vars).trim();
+      if (text) out.push({ lang, text });
+    }
+  }
+  return out;
+}
+
 function fill(template: string, vars: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (_, key: string) => vars[key] ?? '');
 }
@@ -159,10 +196,20 @@ function varsFor(ctx: AnnounceContext, lang: AnnounceLang): Record<string, strin
   };
 }
 
-/** 本次播报要念的句子：按组合表顺序，每条原子句「本地语言一句 + 英文一句」交替 */
-export function buildAnnouncement(ctx: AnnounceContext): Announcement[] {
+/** 本次播报要念的句子：有地区脚本的地区只念脚本覆盖的档位（其余档位静音），其余地区按组合表展开 */
+export function buildAnnouncement(
+  ctx: AnnounceContext,
+  opts: { rand?: () => number } = {},
+): Announcement[] {
   const local = localLang(ctx);
   const langs: AnnounceLang[] = local === 'en' ? ['en'] : [local, 'en'];
+  const target = scriptTarget(ctx);
+  const script = ANNOUNCE_SCRIPTS[regionOf(target?.id ?? ctx.line.stationIds[0] ?? '')] ?? null;
+  if (script) {
+    return target && script.kinds.includes(ctx.kind)
+      ? scriptedAnnouncement(script, target, local, langs, opts.rand ?? Math.random)
+      : [];
+  }
   const out: Announcement[] = [];
   for (const slot of COMPOSITION[ctx.kind]) {
     const key = atomKeyFor(ctx, slot);

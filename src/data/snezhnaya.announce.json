@@ -1,0 +1,90 @@
+{
+  "kinds": ["station"],
+  "templates": {
+    "arrival": { "zh": "前方到站：{station}。" },
+    "prepare": { "zh": "需要在{station}下车的旅客请提前做好准备。" }
+  },
+  "stations": [
+    {
+      "id": "Snezhnaya-Snezhnaya",
+      "announceName": "至冬堡",
+      "texts": [
+        {
+          "announcer": "阿加波夫",
+          "text": { "zh": "注意携带随身物品，如果不小心丢失，有可能要到新基捷的运输局总部领取咯。" }
+        },
+        {
+          "announcer": "阿加波夫",
+          "text": {
+            "zh": "如果您是旅客，那我推荐…说实在话，最近也就科洛列夫茨基剧团的新剧还有点意思"
+          }
+        },
+        {
+          "announcer": "卡索娃",
+          "text": { "zh": "如果有想去至冬宫前广场参观的旅客，记得出站后乘坐升降厢车前往哦。" }
+        },
+        {
+          "announcer": "卡索娃",
+          "text": { "zh": "有新到至冬的旅客吗，那我推荐去老庭院餐厅尝试至冬本地正宗的招牌菜哦。" }
+        }
+      ]
+    },
+    {
+      "id": "Snezhnaya-Svetloledovka",
+      "texts": [
+        {
+          "announcer": "阿加波夫",
+          "text": { "zh": "车内外温差较大，下车的时候请注意，避免罹患风寒。" }
+        },
+        {
+          "announcer": "卡索娃",
+          "text": { "zh": "有对臻冰原材料采集和臻冰工艺感兴趣的旅客，可以在此处参观一番哦。" }
+        }
+      ]
+    },
+    {
+      "id": "Snezhnaya-Sretomorozsk",
+      "texts": [
+        {
+          "announcer": "卡索娃",
+          "text": { "zh": "有想要前往挪德卡莱并办好相应手续的旅客可以在凝露镇稍作休息再继续旅程。" }
+        }
+      ]
+    },
+    {
+      "id": "Snezhnaya-Zorya",
+      "announceName": "临时站点",
+      "texts": [
+        {
+          "announcer": "阿加波夫",
+          "text": { "zh": "…我记得应该有名字，「曙光车站」，好的，前方到站，「曙光车站」。" }
+        },
+        {
+          "announcer": "阿加波夫",
+          "text": { "zh": "…现在还有人维修废弃站点，真让人佩服啊…" }
+        },
+        {
+          "announcer": "卡索娃",
+          "text": { "zh": "站点内餐厅供应的餐点还挺不错的，欢迎各位前去品尝" }
+        },
+        {
+          "announcer": "卡索娃",
+          "text": { "zh": "…不过听说建立临时站点的人称呼站点为「曙光车站」，真是温暖的名字。" }
+        }
+      ]
+    },
+    {
+      "id": "Snezhnaya-Morepesok",
+      "texts": [
+        {
+          "announcer": "阿加波夫",
+          "text": { "zh": "如果想要尝试下出海捕鱼，可以联系「海沙皇号」的船长…" }
+        },
+        {
+          "announcer": "卡索娃",
+          "text": { "zh": "听说最近那边的烤鱼和烤肉店很受人欢迎呢。" }
+        }
+      ]
+    }
+  ]
+}
