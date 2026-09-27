@@ -1,4 +1,5 @@
 import { ref, type Ref } from 'vue';
+import { formatDuration } from './formatTime';
 import { stations, stationMap, lines, pairCost, sortLinesForDisplay } from './useMapData';
 import { ferrySegmentNames } from './lineNaming';
 import type { NameLocale } from './stationNames';
@@ -451,7 +452,7 @@ export function useRouting() {
 
     textLines.push(`到达 ${endNode.stationName}`);
     textLines.push(
-      `总票价: ${result.totalFare} 摩拉 | 总时间: ${result.totalTime} 分钟 | 总距离: ${result.totalDistance} 千米`,
+      `总票价: ${result.totalFare} 摩拉 | 总时间: ${formatDuration(result.totalTime)} | 总距离: ${result.totalDistance} 千米`,
     );
 
     return textLines.join('\n');

@@ -474,8 +474,9 @@ export interface PairCost {
 
 /**
  * 线路变体在某站对上的一程费用：距离先由 `connections.json` 查出，再交给该变体车型的
- * 计算公式（缺省 = 设计时速推时间、票价系数推票价），最后四舍五入到整数。
- * 渲染段的标签、路由图的边权、信息面板的区间费用都走这一个函数。
+ * 计算公式（缺省 = 设计时速推时间、票价系数推票价）。
+ * **时间不化整**（保留原始小数，展示层再用 `formatDuration` / `formatDurationShort` 处理），
+ * 票价四舍五入到整数摩拉。渲染段的标签、路由图的边权、信息面板的区间费用都走这一个函数。
  */
 export function pairCost(vehicleId: string, aId: string, bId: string): PairCost {
   const distance = lookupDistance(aId, bId);
@@ -483,7 +484,7 @@ export function pairCost(vehicleId: string, aId: string, bId: string): PairCost 
   const { time, fare } = (vehicle.compute ?? defaultCompute)(distance, vehicle);
   return {
     fare: Math.round(fare),
-    time: Math.round(time),
+    time,
     distance,
   };
 }

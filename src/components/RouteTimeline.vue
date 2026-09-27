@@ -17,7 +17,7 @@
           <span v-if="result.segments.length === 1">直达</span>
           <span v-else>{{ result.segments.length }} 段换乘</span>
           <span class="ml-2">票价 {{ result.totalFare }} 摩拉</span>
-          <span class="ml-2">时间 {{ result.totalTime }} 分钟</span>
+          <span class="ml-2">时间 {{ formatDuration(result.totalTime) }}</span>
           <span class="ml-2">距离 {{ result.totalDistance }} 千米</span>
         </div>
       </div>
@@ -36,6 +36,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { lineColorMap } from '../composables/useMapData';
+import { formatDuration } from '../composables/formatTime';
 import { segmentLineName, type RouteResult } from '../composables/useRouting';
 import { selectStation } from '../composables/useSelection';
 import TransitTimeline, { type TimelineItem } from './TransitTimeline.vue';
@@ -94,7 +95,9 @@ const items = computed<TimelineItem[]>(() => {
         title: segmentLineName(seg.lineName, seg.variantName),
         note: seg.isFerry ? '轮渡' : undefined,
         detail: seg.isSameStation ? undefined : `${last.stationName} 方向`,
-        metrics: showCost ? `(${seg.fare} 摩拉 ${seg.time} 分钟 ${seg.distance} 千米)` : undefined,
+        metrics: showCost
+          ? `(${seg.fare} 摩拉 ${formatDuration(seg.time)} ${seg.distance} 千米)`
+          : undefined,
         stops: seg.nodes.slice(1, -1).map((n) => ({
           name: n.stationName,
           nameEn: n.stationNameEn,

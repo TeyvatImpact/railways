@@ -226,6 +226,7 @@ import {
   stationLineMap,
 } from '../composables/useMapData';
 import { useMapInteraction } from '../composables/useMapInteraction';
+import { formatDurationShort } from '../composables/formatTime';
 import { useLabelPlacement } from '../composables/useLabelPlacement';
 import { useRenderMode } from '../composables/useRenderMode';
 import { buildCurveSegments, type CurveSegment } from '../composables/useCurveGeometry';
@@ -414,7 +415,7 @@ const segLabels = computed(() => {
     const seg = renderSegments[i];
     if (!seg.showLabel) continue;
     const key = seg.lineId + '-' + i;
-    const text = `${seg.fare}mora ${seg.time}' ${seg.distance}km`;
+    const text = `${seg.fare}mora ${formatDurationShort(seg.time)} ${seg.distance}km`;
     const fontSize = 4;
     const curve = curveSegments.value?.[i];
     if (curve?.curved) {

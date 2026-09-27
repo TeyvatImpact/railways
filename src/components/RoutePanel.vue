@@ -134,7 +134,7 @@
                 <span>·</span>
                 <span>{{ opt.result.totalFare }} 摩拉</span>
                 <span>·</span>
-                <span>{{ opt.result.totalTime }} 分钟</span>
+                <span>{{ formatDuration(opt.result.totalTime) }}</span>
                 <span>·</span>
                 <span>{{ opt.result.totalDistance }} 千米</span>
               </div>
@@ -164,6 +164,7 @@ import {
   type LineSuggestion,
   type RouteResult,
 } from '../composables/useRouting';
+import { formatDuration } from '../composables/formatTime';
 import { clearSelection, selectLine, selectStation, selection } from '../composables/useSelection';
 import RouteTimeline from './RouteTimeline.vue';
 import StationInfo from './StationInfo.vue';

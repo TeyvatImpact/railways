@@ -22,7 +22,7 @@ export interface TimelineLeg {
   note?: string;
   /** 方向 / 补充说明，与 `metrics` 同行显示 */
   detail?: string;
-  /** 费用行，如「(2000 摩拉 20 分钟 20 千米)」 */
+  /** 费用行，如「(2000 摩拉 20 分 30 秒 20 千米)」 */
   metrics?: string;
   /** 途经站 */
   stops?: { name: string; nameEn?: string }[];

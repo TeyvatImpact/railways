@@ -103,6 +103,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { lines, pairCost, stationLineMap, stationMap } from '../composables/useMapData';
+import { formatDuration } from '../composables/formatTime';
 import { bilingualLabel, nameRows } from '../composables/stationNames';
 import { selectStation } from '../composables/useSelection';
 import type { OrgInfo } from '../composables/useMapData';
@@ -217,7 +218,7 @@ function costLabel(i: number): string {
   const variant = line.value?.variants[variantIndex.value];
   if (!variant || !a || !b) return '';
   const cost = pairCost(variant.vehicle, a, b);
-  return `${cost.fare} 摩拉 · ${cost.time} 分钟 · ${cost.distance} 千米`;
+  return `${cost.fare} 摩拉 · ${formatDuration(cost.time)} · ${cost.distance} 千米`;
 }
 </script>
 
