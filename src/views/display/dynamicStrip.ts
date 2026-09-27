@@ -116,7 +116,7 @@ export function partDelay(i: number, parts: number): number {
  * 分岔区间按几何段算 —— 45° 引线自己一份、长直线分两份。
  * 返回顺序 = 行进方向：先亮的那一份在最前（反向行驶时把份序倒过来）。
  */
-function splitSpans(spans: RouteSpan[]): RouteSpanPart[] {
+export function splitSpans(spans: RouteSpan[]): RouteSpanPart[] {
   // 一段就是整个区间 → 等分三段；分岔区间里直线段只分两段（另一段给引线，合起来仍是三段）
   const straight = spans.length === 1 ? 3 : 2;
   const out: Omit<RouteSpanPart, 'parts'>[] = [];

@@ -12,6 +12,14 @@ import { nameLabelLines } from '../../composables/stationNames';
 import { splitVariants, type DivergentBranch } from './variantStrip';
 import { buildStrip, EDGE, type MeasureFn, type StripInput, type StripModel } from './stripModel';
 import {
+  buildLoopProgress,
+  isLoop,
+  loopRing,
+  ringOrder,
+  rollRing,
+  type LoopProgress,
+} from './loopStrip';
+import {
   buildProgress,
   EMPTY_PROGRESS,
   partDelay,
@@ -61,10 +69,11 @@ function badgesFor(line: Line, stationId: string) {
 
 function buildInput(
   line: Line,
-  variant: LineVariant,
+  stationIds: string[],
+  loop: boolean,
   branches: DivergentBranch<LineVariant>[],
 ): StripInput {
-  const stations = variant.stations
+  const stations = stationIds
     .map((sid) => stationMap.get(sid))
     .filter((station) => station !== undefined)
     .map((station) => ({ ...stationLabel(station), badges: badgesFor(line, station.id) }));
@@ -77,6 +86,7 @@ function buildInput(
     operator: line.operator?.names,
     authority: line.authority?.names,
     stations,
+    loop,
     // 支线独占站只画车道上的圆圈与站名，不带换乘徽章（徽章行在主线之上，引线要横穿主线）
     branches: branches.map((b) => ({
       name: b.variant.name,
@@ -104,6 +114,9 @@ const lineVariants = new Map<
   { options: VariantOption[]; primary: number; branches: DivergentBranch<LineVariant>[] }
 >();
 
+/** 环线：线路 id → 规范化后的环序（= 数据里的站序去掉末尾那个闭合用的重复站） */
+const loopRings = new Map<string, string[]>();
+
 const strips = railLines.map((line) => {
   const { primary, branches } = splitVariants(line.variants);
   lineVariants.set(line.id, {
@@ -119,7 +132,11 @@ const strips = railLines.map((line) => {
       stations: variant.stations,
     })),
   });
-  return buildStrip(buildInput(line, primary.variant, branches), measure);
+  // 环线：静态条带按规范化环序画（末尾的重复站删掉），首尾另画虚线延伸
+  const loop = isLoop(primary.variant.stations);
+  const ring = loopRing(primary.variant.stations);
+  if (loop) loopRings.set(line.id, ring);
+  return buildStrip(buildInput(line, ring, loop, branches), measure);
 });
 
 interface DynState {
@@ -139,20 +156,71 @@ const dynState = reactive<Record<string, DynState>>(
   ),
 );
 
+/** 线路 id → 线路数据（判地区、取线路名、判单向） */
+const lineMap = new Map(railLines.map((line) => [line.id, line]));
+
+/** 环线的运行方向：单线（oneWay）只有数据方向一种，不给逆行 */
+function loopDir(key: string): Direction {
+  return lineMap.get(key)?.oneWay ? 'up' : dynState[key].dir;
+}
+
+/** 单向环线：方向被锁在数据顺序上（配置栏不出现「下行」） */
+function isLoopDirLocked(key: string): boolean {
+  return loopRings.has(key) && lineMap.get(key)?.oneWay === true;
+}
+
+/** 环线在运行方向上的站序（带主语言站名，供步骤标签用） */
+function loopOrder(ring: string[], dir: Direction): { id: string; name: string }[] {
+  return ringOrder(ring, dir).map((id) => {
+    const station = stationMap.get(id);
+    return { id, name: station ? stationLabel(station).lines[0].text : id };
+  });
+}
+
 /** 每条线路的进度模型；关掉开关时给空模型（不下发任何灰 / 闪状态） */
 const dynViews = computed<Record<string, ProgressModel>>(() => {
   const out: Record<string, ProgressModel> = {};
   for (const s of strips) {
     const state = dynState[s.key];
     const variant = state.on ? lineVariants.get(s.key)?.options[state.variant] : undefined;
-    out[s.key] = variant
-      ? buildProgress(s, variant.stations, state.dir, state.progress, {
-          leave: PROGRESS_STATES.leave,
-        })
-      : EMPTY_PROGRESS;
+    const ring = state.on ? loopRings.get(s.key) : undefined;
+    out[s.key] = !variant
+      ? EMPTY_PROGRESS
+      : ring
+        ? buildLoopProgress(loopOrder(ring, loopDir(s.key)), state.progress, {
+            leave: PROGRESS_STATES.leave,
+          })
+        : buildProgress(s, variant.stations, state.dir, state.progress, {
+            leave: PROGRESS_STATES.leave,
+          });
   }
   return out;
 });
+
+/** 环线在动态模式下按当前站滚动：条带按滚动后的站序重建（按线路 + 当前站缓存，站序一样就复用） */
+const loopStrips = new Map<string, StripModel>();
+function rolledStrip(key: string, rollId: string): StripModel {
+  const cacheKey = `${key}|${rollId}`;
+  const hit = loopStrips.get(cacheKey);
+  if (hit) return hit;
+  // 只有环线（有 ring）才会走到这里：`rollId` 只由 buildLoopProgress 产出
+  const line = lineMap.get(key)!;
+  const ring = loopRings.get(key)!;
+  const strip = buildStrip(
+    buildInput(line, rollRing(ring, rollId, loopDir(key)), true, lineVariants.get(key)!.branches),
+    measure,
+  );
+  loopStrips.set(cacheKey, strip);
+  return strip;
+}
+
+/** 实际渲染的条带：普通线路 = 静态条带；环线在动态模式下 = 按当前站滚动后的条带 */
+const displayStrips = computed<StripModel[]>(() =>
+  strips.map((s) => {
+    const progress = dynViews.value[s.key] as LoopProgress | undefined;
+    return progress?.rollId ? rolledStrip(s.key, progress.rollId) : s;
+  }),
+);
 
 function dyn(key: string): ProgressModel {
   return dynViews.value[key] ?? EMPTY_PROGRESS;
@@ -169,9 +237,6 @@ function badgeFill(key: string, col: number, fill: string): string {
 
 /** 语音播报引擎（模块级单例）：自动播报关闭时 speak 自己会静默跳过 */
 const speech = useSpeech();
-
-/** 线路 id → 线路数据（判地区、取线路名） */
-const lineMap = new Map(railLines.map((line) => [line.id, line]));
 
 /**
  * 拼出一次播报的上下文：站点级事件用该站的地区选语言、线路级事件用线路首个站的地区。
@@ -240,11 +305,22 @@ function announceStep(key: string, step: ProgressStep, force = false) {
   announce(key, step.kind, step, force);
 }
 
-/** ◀ ▶：改进度并播报新状态 */
+/** ◀ ▶：改进度并播报新状态；环线绕圈，所以首尾相接（不夹紧在两端） */
 function goStep(key: string, delta: number) {
-  dynState[key].progress = dyn(key).index + delta;
+  const model = dyn(key);
+  const next = loopRings.has(key)
+    ? (model.index + delta + model.count) % model.count
+    : model.index + delta;
+  dynState[key].progress = next;
   const step = dyn(key).steps[dynState[key].progress];
   if (step) announceStep(key, step);
+}
+
+/** ◀ ▶ 是否可点：普通线路到两端就停，环线永远可点（绕圈） */
+function canStep(key: string, delta: number): boolean {
+  if (loopRings.has(key)) return true;
+  const model = dyn(key);
+  return delta < 0 ? model.index > 0 : model.index < model.count - 1;
 }
 
 /** 「播报」按钮：与自动播报同一条内容（当前进度状态），force 绕过自动播报开关 */
@@ -334,7 +410,7 @@ function cell(col: number) {
   <div class="bg-white h-screen overflow-y-auto px-4 pb-4">
     <div class="w-max mx-auto flex flex-col gap-6">
       <VoicePanel />
-      <div v-for="s in strips" :key="s.key" class="flex flex-col gap-1.5">
+      <div v-for="s in displayStrips" :key="s.key" class="flex flex-col gap-1.5">
         <!-- 面板外的调试/配置栏：动态模式开关 + 展开后的三项配置 + 播报日志 -->
         <div class="dyn-bar">
           <div class="dyn-row">
@@ -354,7 +430,10 @@ function cell(col: number) {
                   :value="dynState[s.key].dir"
                   @change="onDir(s.key, $event)">
                   <option value="up">{{ dirLabel(s, 'up') }}</option>
-                  <option value="down">{{ dirLabel(s, 'down') }}</option>
+                  <!-- 单向环线只有数据方向一种走法，不给「逆行」 -->
+                  <option v-if="!isLoopDirLocked(s.key)" value="down">
+                    {{ dirLabel(s, 'down') }}
+                  </option>
                 </select>
               </label>
               <label v-if="variantOptions(s.key).length > 1" class="dyn-field">
@@ -373,7 +452,7 @@ function cell(col: number) {
                 <button
                   type="button"
                   class="dyn-btn"
-                  :disabled="dyn(s.key).index <= 0"
+                  :disabled="!canStep(s.key, -1)"
                   @click="goStep(s.key, -1)">
                   ◀
                 </button>
@@ -388,7 +467,7 @@ function cell(col: number) {
                 <button
                   type="button"
                   class="dyn-btn"
-                  :disabled="dyn(s.key).index >= dyn(s.key).count - 1"
+                  :disabled="!canStep(s.key, 1)"
                   @click="goStep(s.key, 1)">
                   ▶
                 </button>
@@ -403,7 +482,10 @@ function cell(col: number) {
           </div>
         </div>
 
-        <div class="strip" :class="{ 'strip-dyn': dynState[s.key].on }" :style="stripStyle(s)">
+        <div
+          class="strip"
+          :class="{ 'strip-dyn': dynState[s.key].on, 'strip-loop': s.loop }"
+          :style="stripStyle(s)">
           <!-- 页头：线路名称色块 → 运营公司 → 运营主体（只写名称本身） -->
           <header class="head">
             <div class="chip">
@@ -642,6 +724,7 @@ function cell(col: number) {
 
 /* ---- 主线与站点 ---- */
 .track {
+  position: relative;
   grid-row: 7;
   /* 起点 = 首站列线；末端列线由模板按 trunkEndCol 给（主线只跨首末主线站） */
   grid-column: 2;
@@ -649,6 +732,29 @@ function cell(col: number) {
   height: 5px;
   border-radius: 3px;
   background: var(--line-color);
+}
+
+/* ---- 环线：首尾各 32px 虚线延伸（线路在视觉上继续绕圈，不是额外站点）---- */
+.strip-loop .track::before,
+.strip-loop .track::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 32px;
+  height: 5px;
+  /* 4px 实 4px 空 */
+  background: repeating-linear-gradient(90deg, var(--line-color) 0 4px, transparent 4px 8px);
+}
+.strip-loop .track::before {
+  right: 100%;
+}
+.strip-loop .track::after {
+  left: 100%;
+}
+/* 动态模式里底色整体变灰，延伸段跟着灰 */
+.strip-dyn.strip-loop .track::before,
+.strip-dyn.strip-loop .track::after {
+  background: repeating-linear-gradient(90deg, var(--dyn-gray) 0 4px, transparent 4px 8px);
 }
 
 /* ---- 支线车道 ---- */

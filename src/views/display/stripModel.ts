@@ -108,6 +108,8 @@ export interface StripInput {
   stations: StripInputStation[];
   /** 与主线分岔的支线（纯子集的小交路不算），无支线时传空数组 */
   branches: StripBranchInput[];
+  /** 环线条带：主线首尾各画一段 32px 虚线延伸，表示线路继续绕圈（见 index.vue 的 .strip-loop） */
+  loop?: boolean;
 }
 
 export interface StripModel {
@@ -126,6 +128,8 @@ export interface StripModel {
   lanes: StripLaneModel[];
   /** 支线站名与标签块的颜色 */
   branchLabelColor: string;
+  /** 环线：主线首尾各画一段 32px 虚线延伸（线路在视觉上继续绕圈，不是额外站点） */
+  loop: boolean;
   stations: StripStationModel[];
 }
 
@@ -338,6 +342,7 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
     trunkEndCol,
     lanes,
     branchLabelColor: BRANCH_LABEL_COLOR,
+    loop: input.loop === true,
     stations,
   };
 }
