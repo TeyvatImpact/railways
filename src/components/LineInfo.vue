@@ -39,7 +39,7 @@
         <div class="opacity-60">运营公司</div>
         <div>{{ orgLabel(line.operator) }}</div>
         <div class="opacity-60">运营主体</div>
-        <div>{{ orgLabel(line.authority) }}</div>
+        <div>{{ orgLabels(line.authority) }}</div>
       </div>
     </section>
 
@@ -102,7 +102,13 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { lines, pairCost, stationLineMap, stationMap } from '../composables/useMapData';
+import {
+  lines,
+  operatingOrgs,
+  pairCost,
+  stationLineMap,
+  stationMap,
+} from '../composables/useMapData';
 import { formatDuration } from '../composables/formatTime';
 import { displayLabel, nameRows } from '../composables/stationNames';
 import { selectStation } from '../composables/useSelection';
@@ -181,12 +187,15 @@ const termini = computed(() => {
   });
 });
 
-/** 某个站由哪些机构管理（服务它的线路的运营公司 / 运营主体，去重） */
+/** 某个站由哪些机构管理（服务它的线路的运营公司 / 运营主体，去重）—— 运营方按站所属地区取 */
 function stationOrgs(stationId: string): string {
+  const station = stationMap.get(stationId);
+  if (!station) return '—';
   const seen = new Set<string>();
   const out: string[] = [];
   for (const l of stationLineMap.get(stationId) ?? []) {
-    for (const org of [l.operator, l.authority] as (OrgInfo | undefined)[]) {
+    const { operator, authority } = operatingOrgs(l, station);
+    for (const org of [operator, ...authority]) {
       if (!org) continue;
       const label = displayLabel(org.names, org.langs);
       if (seen.has(label)) continue;
@@ -199,6 +208,11 @@ function stationOrgs(stationId: string): string {
 
 function orgLabel(org: OrgInfo | undefined): string {
   return org ? displayLabel(org.names, org.langs) : '—';
+}
+
+/** 运营主体可能不止一个（TR 线路 = 联合提瓦特机关 + 该国本地管理方），按序用；连接 */
+function orgLabels(orgs: OrgInfo[]): string {
+  return orgs.map((org) => orgLabel(org)).join('；');
 }
 
 function variantLabel(index: number): string {

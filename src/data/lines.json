@@ -1,13 +1,14 @@
 {
   "A": {
     "names": {
-      "zhCN": "跨局·原初线",
-      "zhTW": "跨局·原初線",
+      "zhCN": "原初线",
+      "zhTW": "原初線",
       "ja": "げんしょ線",
       "en": "Primordial Line"
     },
     "network": "teyvat",
-    "authority": "liyue-bureau",
+    "operator": "tr-liyue-bureau",
+    "authority": ["union-teyvat", "liyue-ministry-of-civil-affairs"],
     "colorSlot": 0,
     "lineLabels": [
       ["Teyvat-SAA", "RT"],
@@ -99,13 +100,14 @@
   },
   "B": {
     "names": {
-      "zhCN": "跨局·风岩草线",
-      "zhTW": "跨局·風岩草線",
+      "zhCN": "风岩草线",
+      "zhTW": "風岩草線",
       "ja": "風岩草線",
       "en": "Anemo-Geo-Dendro Line"
     },
     "network": "teyvat",
-    "authority": "liyue-bureau",
+    "operator": "tr-liyue-bureau",
+    "authority": ["union-teyvat", "liyue-ministry-of-civil-affairs"],
     "colorSlot": 1,
     "lineLabels": [
       ["Teyvat-STL", "RT"],
@@ -177,13 +179,14 @@
   },
   "M1": {
     "names": {
-      "zhCN": "蒙德局·自由线",
-      "zhTW": "蒙德局·自由線",
-      "ja": "モンド自由線",
-      "en": "Mondstadt Freedom Line"
+      "zhCN": "自由线",
+      "zhTW": "自由線",
+      "ja": "自由線",
+      "en": "Freedom Line"
     },
     "network": "teyvat",
-    "authority": "mondstadt-bureau",
+    "operator": "tr-mondstadt-bureau",
+    "authority": ["union-teyvat", "knights-of-favonius"],
     "colorSlot": 2,
     "lineLabels": [
       ["Teyvat-SFL", "RT"],
@@ -238,13 +241,14 @@
   },
   "L1": {
     "names": {
-      "zhCN": "璃月局·璃沉线",
-      "zhTW": "璃月局·璃沉線",
-      "ja": "璃月沈玉線",
-      "en": "Liyue Chenyu Line"
+      "zhCN": "璃沉线",
+      "zhTW": "璃沉線",
+      "ja": "沈玉線",
+      "en": "Chenyu Line"
     },
     "network": "teyvat",
-    "authority": "liyue-bureau",
+    "operator": "tr-liyue-bureau",
+    "authority": ["union-teyvat", "liyue-ministry-of-civil-affairs"],
     "colorSlot": 3,
     "lineLabels": [
       ["Teyvat-LYS", "LB"],
@@ -284,13 +288,14 @@
   },
   "L2": {
     "names": {
-      "zhCN": "璃月局·沉玉谷线",
-      "zhTW": "璃月局·沉玉谷線",
-      "ja": "璃月沈玉の谷線",
-      "en": "Liyue Chenyu Valley Line"
+      "zhCN": "沉玉谷线",
+      "zhTW": "沉玉谷線",
+      "ja": "沈玉の谷線",
+      "en": "Chenyu Valley Line"
     },
     "network": "teyvat",
-    "authority": "liyue-bureau",
+    "operator": "tr-liyue-bureau",
+    "authority": ["union-teyvat", "liyue-ministry-of-civil-affairs"],
     "colorSlot": 4,
     "lineLabels": [
       ["Teyvat-CWT", "B"],
@@ -346,13 +351,14 @@
   },
   "S1": {
     "names": {
-      "zhCN": "须弥局·须弥南北线",
-      "zhTW": "須彌局·須彌南北線",
-      "ja": "スメール南北線",
-      "en": "Sumeru South-North Line"
+      "zhCN": "须弥南北线",
+      "zhTW": "須彌南北線",
+      "ja": "南北線",
+      "en": "South-North Line"
     },
     "network": "teyvat",
-    "authority": "sumeru-bureau",
+    "operator": "tr-sumeru-bureau",
+    "authority": ["union-teyvat", "sumeru-akademiya"],
     "colorSlot": 5,
     "lineLabels": [
       ["Teyvat-BDH", "RT"],
@@ -380,13 +386,14 @@
   },
   "S2": {
     "names": {
-      "zhCN": "须弥局·须弥环线",
-      "zhTW": "須彌局·須彌環線",
-      "ja": "スメール環状線",
-      "en": "Sumeru Loop Line"
+      "zhCN": "须弥环线",
+      "zhTW": "須彌環線",
+      "ja": "環状線",
+      "en": "Loop Line"
     },
     "network": "teyvat",
-    "authority": "sumeru-bureau",
+    "operator": "tr-sumeru-bureau",
+    "authority": ["union-teyvat", "sumeru-akademiya"],
     "colorSlot": 6,
     "lineLabels": [
       ["Teyvat-APW", "T"],
@@ -427,13 +434,12 @@
   },
   "F1": {
     "names": {
-      "zhCN": "枫丹局·巡轨船·卡雷斯线",
-      "zhTW": "楓丹局·巡軌船·卡雷斯線",
-      "ja": "フォンテーヌ巡水船カーレス線",
-      "en": "Fontaine Aquabus Callas Line"
+      "zhCN": "卡雷斯线",
+      "zhTW": "卡雷斯線",
+      "ja": "カーレス線",
+      "en": "Callas Line"
     },
-    "network": "teyvat",
-    "authority": "court-of-fontaine",
+    "network": "aquabus",
     "colorSlot": 7,
     "lineLabels": [
       ["Teyvat-COF", "R"],
@@ -472,13 +478,12 @@
   },
   "F2": {
     "names": {
-      "zhCN": "枫丹局·巡轨船·娜维娅线",
-      "zhTW": "楓丹局·巡軌船·娜維婭線",
-      "ja": "フォンテーヌ巡水船ナヴィア線",
-      "en": "Fontaine Aquabus Navia Line"
+      "zhCN": "娜维娅线",
+      "zhTW": "娜維婭線",
+      "ja": "ナヴィア線",
+      "en": "Navia Line"
     },
-    "network": "teyvat",
-    "authority": "court-of-fontaine",
+    "network": "aquabus",
     "colorSlot": 8,
     "lineLabels": [
       ["Teyvat-MCT", "T"],
@@ -502,13 +507,12 @@
   },
   "F3": {
     "names": {
-      "zhCN": "枫丹局·巡轨船·克莱门汀线",
-      "zhTW": "楓丹局·巡軌船·克萊門汀線",
-      "ja": "フォンテーヌ巡水船クレメンタイン線",
-      "en": "Fontaine Aquabus Clementine Line"
+      "zhCN": "克莱门汀线",
+      "zhTW": "克萊門汀線",
+      "ja": "クレメンタイン線",
+      "en": "Clementine Line"
     },
-    "network": "teyvat",
-    "authority": "court-of-fontaine",
+    "network": "aquabus",
     "colorSlot": 9,
     "lineLabels": [
       ["Teyvat-RRH", "L"],
@@ -532,13 +536,14 @@
   },
   "N0": {
     "names": {
-      "zhCN": "纳塔局·连接线",
-      "zhTW": "納塔局·連接線",
-      "ja": "ナタ連絡線",
-      "en": "Natlan Connection Line"
+      "zhCN": "连接线",
+      "zhTW": "連接線",
+      "ja": "連絡線",
+      "en": "Connection Line"
     },
     "network": "teyvat",
-    "authority": "natlan-bureau",
+    "operator": "tr-natlan-bureau",
+    "authority": ["union-teyvat", "pyro-archon-office"],
     "colorSlot": 10,
     "lineLabels": [["Teyvat-COE", "RB"]],
     "variants": [
@@ -563,13 +568,14 @@
   },
   "N1": {
     "names": {
-      "zhCN": "纳塔局·赫布里穆线",
-      "zhTW": "納塔局·赫布里穆線",
-      "ja": "ナタハボリム線",
-      "en": "Natlan Haborym Line"
+      "zhCN": "赫布里穆线",
+      "zhTW": "赫布里穆線",
+      "ja": "ハボリム線",
+      "en": "Haborym Line"
     },
     "network": "teyvat",
-    "authority": "natlan-bureau",
+    "operator": "tr-natlan-bureau",
+    "authority": ["union-teyvat", "pyro-archon-office"],
     "colorSlot": 11,
     "lineLabels": [
       ["Teyvat-SFV", "B"],
@@ -605,13 +611,14 @@
   },
   "N2": {
     "names": {
-      "zhCN": "纳塔局·杜麦尼线",
-      "zhTW": "納塔局·杜麥尼線",
-      "ja": "ナタトゥマイニ線",
-      "en": "Natlan Tumaini Line"
+      "zhCN": "杜麦尼线",
+      "zhTW": "杜麥尼線",
+      "ja": "トゥマイニ線",
+      "en": "Tumaini Line"
     },
     "network": "teyvat",
-    "authority": "natlan-bureau",
+    "operator": "tr-natlan-bureau",
+    "authority": ["union-teyvat", "pyro-archon-office"],
     "colorSlot": 12,
     "lineLabels": [
       ["Teyvat-ONT", "L"],
@@ -652,13 +659,14 @@
   },
   "N3": {
     "names": {
-      "zhCN": "纳塔局·卡皮塔诺线",
-      "zhTW": "納塔局·卡皮塔諾線",
-      "ja": "ナタカピターノ線",
-      "en": "Natlan Il Capitano Line"
+      "zhCN": "卡皮塔诺线",
+      "zhTW": "卡皮塔諾線",
+      "ja": "カピターノ線",
+      "en": "Il Capitano Line"
     },
     "network": "teyvat",
-    "authority": "natlan-bureau",
+    "operator": "tr-natlan-bureau",
+    "authority": ["union-teyvat", "pyro-archon-office"],
     "colorSlot": 13,
     "lineLabels": [
       ["Teyvat-SOC", "RT"],
@@ -693,13 +701,12 @@
   },
   "N4": {
     "names": {
-      "zhCN": "纳塔局·悠悠度假村线",
-      "zhTW": "納塔局·悠悠度假村線",
-      "ja": "ナタのびのびリゾート線",
-      "en": "Natlan Easybreeze Holiday Resort Line"
+      "zhCN": "游览线",
+      "zhTW": "遊覽線",
+      "ja": "遊覧線",
+      "en": "Tour Line"
     },
-    "network": "teyvat",
-    "authority": "easybreeze-holiday-resort-management-committee",
+    "network": "easybreeze",
     "colorSlot": 14,
     "lineLabels": [["Teyvat-CFC", "B"]],
     "variants": [
@@ -719,13 +726,14 @@
   },
   "K1": {
     "names": {
-      "zhCN": "挪德卡莱局·希汐岛线",
-      "zhTW": "挪德卡萊局·希汐島線",
-      "ja": "ナド・クライ・ヒーシ島線",
-      "en": "Nod-Krai Hiisi Island Line"
+      "zhCN": "希汐岛线",
+      "zhTW": "希汐島線",
+      "ja": "ヒーシ島線",
+      "en": "Hiisi Island Line"
     },
     "network": "teyvat",
-    "authority": "nod-krai-bureau",
+    "operator": "tr-nod-krai-bureau",
+    "authority": ["union-teyvat", "nod-krai-confederation"],
     "colorSlot": 15,
     "lineLabels": [["Teyvat-NST", "LB"]],
     "variants": [
@@ -750,13 +758,14 @@
   },
   "K2": {
     "names": {
-      "zhCN": "挪德卡莱局·帕哈岛线",
-      "zhTW": "挪德卡萊局·帕哈島線",
-      "ja": "ナド・クライ・パハ島線",
-      "en": "Nod-Krai Paha Isle Line"
+      "zhCN": "帕哈岛线",
+      "zhTW": "帕哈島線",
+      "ja": "パハ島線",
+      "en": "Paha Isle Line"
     },
     "network": "teyvat",
-    "authority": "nod-krai-bureau",
+    "operator": "tr-nod-krai-bureau",
+    "authority": ["union-teyvat", "nod-krai-confederation"],
     "colorSlot": 16,
     "lineLabels": [
       ["Teyvat-NSP", "LB"],
@@ -844,13 +853,14 @@
   },
   "K3": {
     "names": {
-      "zhCN": "挪德卡莱局·挪德卡莱北（至冬连接）线",
-      "zhTW": "挪德卡萊局·挪德卡萊北（至冬連接）線",
-      "ja": "ナド・クライ・北（スネージナヤ連絡）線",
-      "en": "Nod-Krai North (Snezhnaya Connector) Line"
+      "zhCN": "挪德卡莱北（至冬连接）线",
+      "zhTW": "挪德卡萊北（至冬連接）線",
+      "ja": "北（スネージナヤ連絡）線",
+      "en": "North (Snezhnaya Connector) Line"
     },
     "network": "teyvat",
-    "authority": "nod-krai-bureau",
+    "operator": "tr-nod-krai-bureau",
+    "authority": ["union-teyvat", "nod-krai-confederation"],
     "colorSlot": 17,
     "lineLabels": [
       ["Teyvat-VOP", "R"],
@@ -925,12 +935,13 @@
   },
   "NK": {
     "names": {
-      "zhCN": "IR 东稻妻·鸣神岛线",
-      "zhTW": "IR 東稻妻·鳴神島線",
-      "ja": "IR 東稲妻·鳴神島線",
-      "en": "IR East Narukami Line"
+      "zhCN": "鸣神岛线",
+      "zhTW": "鳴神島線",
+      "ja": "鳴神島線",
+      "en": "Narukami Line"
     },
     "network": "inazuma",
+    "operator": "ir-east-inazuma",
     "colorSlot": 0,
     "lineLabels": [
       ["Inazuma-RTU", "T"],
@@ -962,12 +973,13 @@
   },
   "YG": {
     "names": {
-      "zhCN": "IR 东稻妻·影向山环状线",
-      "zhTW": "IR 東稻妻·影向山環狀線",
-      "ja": "IR 東稲妻·影向山環状線",
-      "en": "IR East Mt. Yougou Loop Line"
+      "zhCN": "影向山环状线",
+      "zhTW": "影向山環狀線",
+      "ja": "影向山環状線",
+      "en": "Mt. Yougou Loop Line"
     },
     "network": "inazuma",
+    "operator": "ir-east-inazuma",
     "colorSlot": 1,
     "lineLabels": [["Inazuma-AUM", "LT"]],
     "variants": [
@@ -996,12 +1008,13 @@
   },
   "NW": {
     "names": {
-      "zhCN": "IR 东稻妻·鸣海线",
-      "zhTW": "IR 東稻妻·鳴海線",
-      "ja": "IR 東稲妻·鳴海線",
-      "en": "IR East Inazuma-Watatsumi Line"
+      "zhCN": "鸣海线",
+      "zhTW": "鳴海線",
+      "ja": "鳴海線",
+      "en": "Inazuma-Watatsumi Line"
     },
     "network": "inazuma",
+    "operator": "ir-east-inazuma",
     "colorSlot": 2,
     "lineLabels": [
       ["Inazuma-KJE", "T"],
@@ -1049,12 +1062,13 @@
   },
   "NS": {
     "names": {
-      "zhCN": "IR 东稻妻·鸣神大社线",
-      "zhTW": "IR 東稻妻·鳴神大社線",
-      "ja": "IR 東稲妻·鳴神大社線",
-      "en": "IR East Shrine Line"
+      "zhCN": "鸣神大社线",
+      "zhTW": "鳴神大社線",
+      "ja": "鳴神大社線",
+      "en": "Shrine Line"
     },
     "network": "inazuma",
+    "operator": "ir-east-inazuma",
     "colorSlot": 3,
     "lineLabels": [["Inazuma-IZC", "LB"]],
     "variants": [
@@ -1075,12 +1089,13 @@
   },
   "YS": {
     "names": {
-      "zhCN": "IR 东稻妻·八酝岛线",
-      "zhTW": "IR 東稻妻·八醞島線",
-      "ja": "IR 東稲妻·ヤシオリ島線",
-      "en": "IR East Yashiori Island Line"
+      "zhCN": "八酝岛线",
+      "zhTW": "八醞島線",
+      "ja": "ヤシオリ島線",
+      "en": "Yashiori Island Line"
     },
     "network": "inazuma",
+    "operator": "ir-sangonomiya",
     "colorSlot": 4,
     "lineLabels": [["Inazuma-SPH", "LB"]],
     "variants": [
@@ -1101,13 +1116,14 @@
   },
   "WT": {
     "names": {
-      "zhCN": "IR 珊瑚宫·海祇岛线",
-      "zhTW": "IR 珊瑚宮·海祇島線",
-      "ja": "IR 珊瑚宮·海祇島線",
-      "en": "IR Sangonomiya Watatsumi Island Line"
+      "zhCN": "海祇岛线",
+      "zhTW": "海祇島線",
+      "ja": "海祇島線",
+      "en": "Watatsumi Island Line"
     },
     "network": "inazuma",
     "authority": "watatsumi-sangonomiya-autonomous-government",
+    "operator": "ir-sangonomiya",
     "colorSlot": 5,
     "lineLabels": [["Inazuma-WTE", "LB"]],
     "variants": [
@@ -1143,12 +1159,13 @@
   },
   "TA": {
     "names": {
-      "zhCN": "IR 鹤观·一号线",
-      "zhTW": "IR 鶴觀·一號線",
-      "ja": "IR 鶴観·一番線",
-      "en": "IR Tsurumi Line 1"
+      "zhCN": "一号线",
+      "zhTW": "一號線",
+      "ja": "一番線",
+      "en": "Line 1"
     },
     "network": "inazuma",
+    "operator": "ir-tsurumi",
     "colorSlot": 6,
     "lineLabels": [["Inazuma-ATP", "LT"]],
     "variants": [
@@ -1184,12 +1201,13 @@
   },
   "TB": {
     "names": {
-      "zhCN": "IR 鹤观·二号线",
-      "zhTW": "IR 鶴觀·二號線",
-      "ja": "IR 鶴観·二番線",
-      "en": "IR Tsurumi Line 2"
+      "zhCN": "二号线",
+      "zhTW": "二號線",
+      "ja": "二番線",
+      "en": "Line 2"
     },
     "network": "inazuma",
+    "operator": "ir-tsurumi",
     "colorSlot": 7,
     "lineLabels": [["Inazuma-SKP", "LT"]],
     "variants": [
@@ -1225,10 +1243,10 @@
   },
   "LHM-1": {
     "names": {
-      "zhCN": "璃月港地铁·1号线",
-      "zhTW": "璃月港地鐵·1號線",
-      "ja": "璃月港メトロ1号線",
-      "en": "Liyue Harbor Line 1"
+      "zhCN": "1号线",
+      "zhTW": "1號線",
+      "ja": "1号線",
+      "en": "Line 1"
     },
     "network": "liyue-metro",
     "colorSlot": 0,
@@ -1262,10 +1280,10 @@
   },
   "LHM-2": {
     "names": {
-      "zhCN": "璃月港地铁·2号线",
-      "zhTW": "璃月港地鐵·2號線",
-      "ja": "璃月港メトロ2号線",
-      "en": "Liyue Harbor Line 2"
+      "zhCN": "2号线",
+      "zhTW": "2號線",
+      "ja": "2号線",
+      "en": "Line 2"
     },
     "network": "liyue-metro",
     "colorSlot": 1,
@@ -1300,10 +1318,10 @@
   },
   "LHM-3": {
     "names": {
-      "zhCN": "璃月港地铁·3号线",
-      "zhTW": "璃月港地鐵·3號線",
-      "ja": "璃月港メトロ3号線",
-      "en": "Liyue Harbor Line 3"
+      "zhCN": "3号线",
+      "zhTW": "3號線",
+      "ja": "3号線",
+      "en": "Line 3"
     },
     "network": "liyue-metro",
     "colorSlot": 2,
@@ -1337,10 +1355,10 @@
   },
   "LHM-S1": {
     "names": {
-      "zhCN": "璃月港地铁·S1号线",
-      "zhTW": "璃月港地鐵·S1號線",
-      "ja": "璃月港メトロS1号線",
-      "en": "Liyue Harbor Line S1"
+      "zhCN": "S1号线",
+      "zhTW": "S1號線",
+      "ja": "S1号線",
+      "en": "Line S1"
     },
     "network": "liyue-metro",
     "colorSlot": 3,
@@ -1371,10 +1389,10 @@
   },
   "Trian-1": {
     "names": {
-      "zhCN": "至冬列车大环线",
-      "zhTW": "至冬列車大環線",
-      "ja": "スネージナヤ列車大環状線",
-      "en": "Snezhnaya Large Loop Line"
+      "zhCN": "大环线",
+      "zhTW": "大環線",
+      "ja": "大環状線",
+      "en": "Large Loop Line"
     },
     "network": "snezhnaya",
     "colorSlot": 0,
@@ -1417,10 +1435,10 @@
   },
   "Trian-2": {
     "names": {
-      "zhCN": "至冬列车小环线",
-      "zhTW": "至冬列車小環線",
-      "ja": "スネージナヤ列車小環状線",
-      "en": "Snezhnaya Small Loop Line"
+      "zhCN": "小环线",
+      "zhTW": "小環線",
+      "ja": "小環状線",
+      "en": "Small Loop Line"
     },
     "network": "snezhnaya",
     "colorSlot": 1,
@@ -1462,10 +1480,10 @@
   },
   "Trian-3": {
     "names": {
-      "zhCN": "至冬列车焰羽谷线",
-      "zhTW": "至冬列車焰羽谷線",
-      "ja": "スネージナヤ列車焔翼の谷線",
-      "en": "Snezhnaya Flamefeather Line"
+      "zhCN": "焰羽谷线",
+      "zhTW": "焰羽谷線",
+      "ja": "焔翼の谷線",
+      "en": "Flamefeather Line"
     },
     "network": "snezhnaya",
     "colorSlot": 2,
@@ -1508,10 +1526,10 @@
   },
   "Trian-4": {
     "names": {
-      "zhCN": "至冬列车白冕宫线",
-      "zhTW": "至冬列車白冕宮線",
-      "ja": "スネージナヤ列車ペールクラウンパレス線",
-      "en": "Snezhnaya Pale Crown Palace Line"
+      "zhCN": "白冕宫线",
+      "zhTW": "白冕宮線",
+      "ja": "ペールクラウンパレス線",
+      "en": "Pale Crown Palace Line"
     },
     "network": "snezhnaya",
     "colorSlot": 3,
@@ -1552,6 +1570,7 @@
   "ferry-hgv-wte": {
     "lineType": "ferry",
     "network": "inazuma",
+    "operator": "ir-sangonomiya",
     "variants": [
       {
         "vehicle": "ferry",
@@ -1562,6 +1581,7 @@
   "ferry-izc-tmp": {
     "lineType": "ferry",
     "network": "inazuma",
+    "operator": "ir-tsurumi",
     "variants": [
       {
         "vehicle": "ferry",

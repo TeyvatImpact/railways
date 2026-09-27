@@ -36,7 +36,8 @@ import {
 import { CORE_LOCALES } from './stationNames';
 import type { CoreLocale, NameLocale, Names, StationNames } from './stationNames';
 import { displayNameLines } from './stationNames';
-import { ferryLineNames, sameStationLineNames } from './lineNaming';
+import { ferryLineNames, sameStationLineNames, composeLineNames } from './lineNaming';
+import { BUILTIN_ORGS, REGION_ORGS } from '../config/unionTeyvat.config';
 
 export interface StationData {
   id: string;
@@ -92,10 +93,10 @@ export interface LineData {
   names?: StationNames;
   /** 线路所属体系（`networks.json`）的 id；轨道线路必有，同站换乘禁止写，区域轮渡可选 */
   network?: string;
-  /** 运营公司（`organizations.json` 的 id）；缺省时取体系的同名字段 */
+  /** 运营公司（`organizations.json` 的 id，或内置机构 id）；缺省时取体系的同名字段 */
   operator?: string;
-  /** 运营主体（`organizations.json` 的 id）；缺省同上 */
-  authority?: string;
+  /** 运营主体（`organizations.json` / 内置机构的 id）；**可以写多个**（如 TR 线路 = 联合提瓦特机关 + 该国本地管理方），缺省同上 */
+  authority?: string | string[];
   /** 配色槽位（轨道线路必有）：`linePalette[slot % length]` */
   colorSlot?: number;
   lineLabels?: [string, string][];
@@ -141,17 +142,19 @@ export interface LineVariant {
 }
 
 export interface Line extends Omit<LineData, 'variants' | 'names' | 'operator' | 'authority'> {
-  /** 已解析的线路名：区域线路取数据里的 `names`，轮渡 / 同站换乘由端点站派生 */
+  /** 已解析的线路名（**含机构前缀**）：区域线路取数据里的 `names` 拼上运营公司，轮渡 / 同站换乘由端点站派生 */
   names: StationNames;
+  /** 线路自名（**不含机构前缀**，线路图页头用它）*/
+  selfNames: StationNames;
   /** 已解析的线路名主语言（体系 `primaryLang`，缺省 `zhCN`） */
   primaryLang: CoreLocale;
   /** 渲染字体（体系 `fontFamily`，缺省 `Noto Sans SC`） */
   fontFamily: string;
   /** 主语言非 zhCN 时，`names.zhCN` 那一行用的字体 */
   fontFamilyZh?: string;
-  /** 已解析的运营公司 / 运营主体对象 */
+  /** 已解析的运营公司（单数）/ 运营主体（可多个，顺序 = 数据里的顺序） */
   operator?: OrgInfo;
-  authority?: OrgInfo;
+  authority: OrgInfo[];
   /** 已解析的配音模板 id（线路 → 体系 → `common`） */
   voice: string;
   color: string;
@@ -322,12 +325,34 @@ for (const [id, entry] of Object.entries(organizations)) {
     langs: regionLangs(`机构 ${id}`, entry.nation),
   });
 }
+// 代码内置机构（名字由多级机关名拼接，见 `config/unionTeyvat.config.ts`）与表里的机构同权引用
+for (const org of BUILTIN_ORGS) {
+  orgMap.set(org.id, {
+    names: requireNames(`内置机构 ${org.id}`, org.names),
+    langs: regionLangs(`内置机构 ${org.id}`, org.nation),
+  });
+}
 
 function requireOrg(lineId: string, what: string, orgId: string | undefined): OrgInfo | undefined {
   if (orgId === undefined) return undefined;
   const org = orgMap.get(orgId);
   if (!org) throw new Error(`线路 ${lineId} 的${what} ${orgId} 不存在`);
   return org;
+}
+
+/** 复数机构引用：一个 id 或 id 数组，逐个解析（顺序即展示顺序） */
+function requireOrgs(
+  lineId: string,
+  what: string,
+  orgIds: string | string[] | undefined,
+): OrgInfo[] {
+  if (orgIds === undefined) return [];
+  const ids = Array.isArray(orgIds) ? orgIds : [orgIds];
+  return ids.map((orgId) => {
+    const org = orgMap.get(orgId);
+    if (!org) throw new Error(`线路 ${lineId} 的${what} ${orgId} 不存在`);
+    return org;
+  });
 }
 
 // ================= 3. 体系 =================
@@ -353,6 +378,42 @@ for (const [id, entry] of Object.entries(networks)) {
     authority: requireOrg(id, '运营主体', entry.authority),
     voice: entry.voice ?? DEFAULT_VOICE_TEMPLATE,
   });
+}
+
+// 地区运营方（`config/unionTeyvat.config.ts` 的 `REGION_ORGS`）：线路跨地区时的运营方按**所在地**取。
+// 先看站点所属**区域**（稻妻按岛分家），没有再看国家/地区；键是「地区 → 体系」。
+const regionOrgMap = new Map<string, Map<string, { operator?: OrgInfo; authority: OrgInfo[] }>>();
+for (const [regionId, byNetwork] of Object.entries(REGION_ORGS)) {
+  if (!nationMap.has(regionId) && !areaMap.has(regionId))
+    throw new Error(`地区运营方的地区 ${regionId} 不存在`);
+  const perNetwork = new Map<string, { operator?: OrgInfo; authority: OrgInfo[] }>();
+  for (const [networkId, entry] of Object.entries(byNetwork)) {
+    if (!networkMap.has(networkId))
+      throw new Error(`地区运营方 ${regionId} 的体系 ${networkId} 不存在`);
+    perNetwork.set(networkId, {
+      operator: requireOrg(regionId, '运营公司', entry.operator),
+      authority: requireOrgs(regionId, '运营主体', entry.authority),
+    });
+  }
+  regionOrgMap.set(regionId, perNetwork);
+}
+
+/**
+ * 线路在某个站上的运营方（运营公司 / 运营主体）。
+ *
+ * 运营方是**地域属性**：列车开到哪里，就由哪里的机构运营 —— 所以取**该站所属地区**的运营方
+ * （`REGION_ORGS`，先区域后国家/地区），而不是线路自己归属的局：TR 跨地区时在谁的地界上就由谁运营，
+ * 稻妻按岛分三家 IR 公司。表里没有这个「地区 × 体系」组合时（稻妻 / 枫丹的轮渡、未覆盖的线路）
+ * 用线路自己的运营方。
+ */
+export function operatingOrgs(
+  line: Line,
+  station: Station,
+): { operator?: OrgInfo; authority: OrgInfo[] } {
+  const perNetwork =
+    (station.area && regionOrgMap.get(station.area.id)) ?? regionOrgMap.get(station.nation.id);
+  const region = line.network ? perNetwork?.get(line.network) : undefined;
+  return region ?? { operator: line.operator, authority: line.authority };
 }
 
 // ================= 4. 站点 =================
@@ -555,16 +616,27 @@ export const lines: Line[] = Object.entries(linesFile).map(([id, entry]) => {
 
   const primaryLang = network?.primaryLang ?? DEFAULT_PRIMARY_LANG;
   const fontFamily = network?.fontFamily ?? DEFAULT_NETWORK_FONT;
+  const operator = requireOrg(id, '运营公司', line.operator) ?? network?.operator;
+  const authority =
+    line.authority !== undefined
+      ? requireOrgs(id, '运营主体', line.authority)
+      : network?.authority
+        ? [network.authority]
+        : [];
+
+  const selfNames = resolveLineNames(line);
 
   return {
     ...line,
-    names: resolveLineNames(line),
+    selfNames,
+    // 机构前缀（`运营公司·`）只拼在真实线路上；轮渡 / 同站换乘的名字由端点站派生，不拼前缀
+    names: composeLineNames(selfNames, line.lineType ? undefined : operator?.names),
     network: line.network,
     primaryLang,
     fontFamily,
     fontFamilyZh: primaryLang === 'zhCN' ? undefined : FONT_ZH,
-    operator: requireOrg(id, '运营公司', line.operator) ?? network?.operator,
-    authority: requireOrg(id, '运营主体', line.authority) ?? network?.authority,
+    operator,
+    authority,
     voice: line.voice ?? network?.voice ?? DEFAULT_VOICE_TEMPLATE,
     color:
       line.lineType === 'ferry'

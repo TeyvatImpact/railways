@@ -116,10 +116,12 @@
 import { computed, reactive, watch } from 'vue';
 import { TIMETABLE_COLLAPSED_ROWS } from '../config/render.config';
 import {
+  operatingOrgs,
   stationMap,
   stationLineMap,
   sortLinesForDisplay,
   type Line,
+  type OrgInfo,
 } from '../composables/useMapData';
 import { displayLabel, nameRows } from '../composables/stationNames';
 import { selectLine } from '../composables/useSelection';
@@ -141,15 +143,21 @@ const servingLines = computed<Line[]>(() =>
 
 /** 一个站可能由多条线路服务，机构去重后按「要展示的各语言用 · 连接」列出 */
 function orgList(kind: 'operator' | 'authority'): string {
+  const current = station.value;
+  if (!current) return '—';
   const seen = new Set<string>();
   const out: string[] = [];
   for (const line of servingLines.value) {
-    const org = line[kind];
-    if (!org) continue;
-    const label = displayLabel(org.names, org.langs);
-    if (seen.has(label)) continue;
-    seen.add(label);
-    out.push(label);
+    // 运营方按**站所属地区**取：跨地区的 TR 列车在谁的地界上就由谁运营
+    const { operator, authority } = operatingOrgs(line, current);
+    const orgs: (OrgInfo | undefined)[] = kind === 'operator' ? [operator] : authority;
+    for (const org of orgs) {
+      if (!org) continue;
+      const label = displayLabel(org.names, org.langs);
+      if (seen.has(label)) continue;
+      seen.add(label);
+      out.push(label);
+    }
   }
   return out.join('；') || '—';
 }

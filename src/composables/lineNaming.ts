@@ -1,5 +1,9 @@
-// 轮渡 / 同站换乘这类「虚拟线路」的线路名不写进数据，而是运行时用端点站的四语站名拼出，
-// 这样数据里不会各写一份简繁、也不会随站点改名而漂移。模板只此一处。
+// 线路名的两类运行时拼装：
+// - 「运营公司名 + 线路自名」：`lines.json` 只写线路自己的名字，机构前缀（`蒙德局·` / `枫丹巡轨船·` / `IR xx·`）
+//   一律不硬编码，由 `composeLineNames` 在加载时用该线路运营公司的四语名拼出；
+// - 轮渡 / 同站换乘这类「虚拟线路」的线路名不写进数据，而是用端点站的四语站名拼出，
+//   这样数据里不会各写一份简繁、也不会随站点改名而漂移。模板只此一处。
+import { CORE_LOCALES } from './stationNames';
 import type { CoreLocale, StationNames } from './stationNames';
 
 /**
@@ -72,4 +76,31 @@ export function sameStationLineNames(a: StationNames): StationNames {
     ja: template.ja(plainStationName(a.ja)),
     en: template.en(plainStationName(a.en)),
   };
+}
+
+/**
+ * 「运营公司名 + 线路自名」的句读符（按语言）：中文（简 / 繁）与日文用 `·`，英文用空格 ——
+ * 与地图 / 条带 / 信息面板里既有的「机构·线路」观感一致。
+ */
+export const LINE_NAME_SEPARATORS: Record<CoreLocale, string> = {
+  zhCN: '·',
+  zhTW: '·',
+  ja: '·',
+  en: ' ',
+};
+
+/**
+ * 把线路自名（`lines.json` 的 `names`）与运营公司的四语名拼成展示用线路名：
+ * `蒙德局` + `·` + `自由线` → `蒙德局·自由线`。
+ * `prefix` 缺省（轮渡 / 同站换乘、或机构缺该语言的名字）时原样返回线路自名；
+ * `pronunciationJa` 等非四语字段沿用线路自名。
+ */
+export function composeLineNames(base: StationNames, prefix?: StationNames): StationNames {
+  if (!prefix) return base;
+  const composed: StationNames = { ...base };
+  for (const locale of CORE_LOCALES) {
+    const head = prefix[locale];
+    if (head) composed[locale] = `${head}${LINE_NAME_SEPARATORS[locale]}${base[locale]}`;
+  }
+  return composed;
 }

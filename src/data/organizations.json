@@ -26,13 +26,13 @@
     },
     "nation": "fontaine"
   },
-  "easybreeze-holiday-resort-transit": {
+  "natlan-easybreeze-resort": {
     "names": {
-      "zhCN": "悠悠度假村轨道交通",
-      "zhTW": "悠悠度假村軌道交通",
-      "ja": "のびのびリゾート軌道交通",
-      "en": "Easybreeze Holiday Resort Transit",
-      "sw": "Usafiri wa Mapumziko ya Easybreeze"
+      "zhCN": "纳塔悠悠度假村",
+      "zhTW": "納塔悠悠度假村",
+      "ja": "ナタのびのびリゾート",
+      "en": "Natlan Easybreeze Resort",
+      "sw": "Mapumziko ya Easybreeze ya Natlan"
     },
     "nation": "natlan"
   },
@@ -42,6 +42,33 @@
       "zhTW": "稻妻旅客鐵道株式會社",
       "ja": "稲妻旅客鉄道株式会社",
       "en": "Inazuma Railways"
+    },
+    "nation": "inazuma"
+  },
+  "ir-east-inazuma": {
+    "names": {
+      "zhCN": "IR 东稻妻",
+      "zhTW": "IR 東稻妻",
+      "ja": "IR 東稲妻",
+      "en": "IR East Inazuma"
+    },
+    "nation": "inazuma"
+  },
+  "ir-tsurumi": {
+    "names": {
+      "zhCN": "IR 鹤观",
+      "zhTW": "IR 鶴觀",
+      "ja": "IR 鶴観",
+      "en": "IR Tsurumi"
+    },
+    "nation": "inazuma"
+  },
+  "ir-sangonomiya": {
+    "names": {
+      "zhCN": "IR 珊瑚宫",
+      "zhTW": "IR 珊瑚宮",
+      "ja": "IR 珊瑚宮",
+      "en": "IR Sangonomiya"
     },
     "nation": "inazuma"
   },
@@ -55,52 +82,79 @@
     },
     "nation": "snezhnaya"
   },
-  "mondstadt-bureau": {
+  "tr-mondstadt-bureau": {
     "names": {
-      "zhCN": "蒙德局",
-      "zhTW": "蒙德局",
-      "ja": "モンド局",
-      "en": "Mondstadt Bureau",
-      "de": "Mondstadt-Büro"
+      "zhCN": "TR 蒙德局",
+      "zhTW": "TR 蒙德局",
+      "ja": "TR モンド局",
+      "en": "TR Mondstadt Bureau",
+      "de": "TR Mondstadt-Büro"
     },
     "nation": "mondstadt"
   },
-  "liyue-bureau": {
+  "knights-of-favonius": {
     "names": {
-      "zhCN": "璃月局",
-      "zhTW": "璃月局",
-      "ja": "璃月局",
-      "en": "Liyue Bureau"
+      "zhCN": "西风骑士团",
+      "zhTW": "西風騎士團",
+      "ja": "西風騎士団",
+      "en": "Knights of Favonius"
+    },
+    "nation": "mondstadt"
+  },
+  "tr-liyue-bureau": {
+    "names": {
+      "zhCN": "TR 璃月局",
+      "zhTW": "TR 璃月局",
+      "ja": "TR 璃月局",
+      "en": "TR Liyue Bureau"
     },
     "nation": "liyue"
   },
-  "sumeru-bureau": {
+  "tr-sumeru-bureau": {
     "names": {
-      "zhCN": "须弥局",
-      "zhTW": "須彌局",
-      "ja": "スメール局",
-      "en": "Sumeru Bureau",
-      "sa": "सुमेरु विभाग"
+      "zhCN": "TR 须弥局",
+      "zhTW": "TR 須彌局",
+      "ja": "TR スメール局",
+      "en": "TR Sumeru Bureau",
+      "sa": "TR सुमेरु विभाग"
     },
     "nation": "sumeru"
   },
-  "natlan-bureau": {
+  "sumeru-akademiya": {
     "names": {
-      "zhCN": "纳塔局",
-      "zhTW": "納塔局",
-      "ja": "ナタ局",
-      "en": "Natlan Bureau",
-      "sw": "Idara ya Natlan"
+      "zhCN": "须弥教令院",
+      "zhTW": "須彌教令院",
+      "ja": "スメール教令院",
+      "en": "Sumeru Akademiya"
+    },
+    "nation": "sumeru"
+  },
+  "tr-natlan-bureau": {
+    "names": {
+      "zhCN": "TR 纳塔局",
+      "zhTW": "TR 納塔局",
+      "ja": "TR ナタ局",
+      "en": "TR Natlan Bureau",
+      "sw": "TR Idara ya Natlan"
     },
     "nation": "natlan"
   },
-  "nod-krai-bureau": {
+  "pyro-archon-office": {
     "names": {
-      "zhCN": "挪德卡莱局",
-      "zhTW": "挪德卡萊局",
-      "ja": "ナド・クライ局",
-      "en": "Nod-Krai Bureau",
-      "ru": "Бюро Нод-Край"
+      "zhCN": "火神话事处",
+      "zhTW": "火神話事處",
+      "ja": "火神話事処",
+      "en": "Pyro Archon Office"
+    },
+    "nation": "natlan"
+  },
+  "tr-nod-krai-bureau": {
+    "names": {
+      "zhCN": "TR 挪德卡莱局",
+      "zhTW": "TR 挪德卡萊局",
+      "ja": "TR ナド・クライ局",
+      "en": "TR Nod-Krai Bureau",
+      "ru": "TR Бюро Нод-Край"
     },
     "nation": "nodkrai"
   },
