@@ -84,12 +84,9 @@ function buildInput(
     key: line.id,
     color: line.color,
     cjkFont: line.fontFamily || 'sans-serif',
-    labelLines: nameLabelLines(line.names, line.primaryLang),
+    labelLines: nameLabelLines(line.selfNames, line.primaryLang),
     operator: line.operator
       ? displayNameLines(line.operator.names, line.operator.langs)
-      : undefined,
-    authority: line.authority
-      ? displayNameLines(line.authority.names, line.authority.langs)
       : undefined,
     stations,
     numbers,
@@ -405,11 +402,7 @@ function headBlockH(lineCount: number): number {
 }
 /** 页头行高：色块高度与机构名块取最大（机构最多四行语言，比色块高） */
 function headRowH(s: StripModel): number {
-  return Math.max(
-    HEAD_MIN_H,
-    headBlockH(s.operator?.length ?? 0),
-    headBlockH(s.authority?.length ?? 0),
-  );
+  return Math.max(HEAD_MIN_H, headBlockH(s.operator?.length ?? 0));
 }
 
 function stripStyle(s: StripModel) {
@@ -518,7 +511,7 @@ function cell(col: number) {
           class="strip"
           :class="{ 'strip-dyn': dynState[s.key].on, 'strip-loop': s.loop }"
           :style="stripStyle(s)">
-          <!-- 页头：线路名称色块 → 运营公司 → 运营主体（只写名称本身） -->
+          <!-- 页头：线路名称色块 → 运营公司（只写名称本身）；运营主体不在线路图上展示 -->
           <header class="head">
             <div class="chip">
               <span v-for="l in s.labelLines" :key="l.locale" :class="'chip-' + l.kind">{{
@@ -530,14 +523,6 @@ function cell(col: number) {
                 v-for="(row, i) in s.operator"
                 :key="row.locale"
                 :class="i === 0 ? 'block-name' : 'block-en'"
-                >{{ row.text }}</span
-              >
-            </div>
-            <div v-if="s.authority" class="block">
-              <span
-                v-for="(row, i) in s.authority"
-                :key="row.locale"
-                :class="i === 0 ? 'block-name auth-name' : 'block-en'"
                 >{{ row.text }}</span
               >
             </div>
@@ -698,9 +683,6 @@ function cell(col: number) {
 .block-name {
   font: 700 22px/1.15 var(--cjk-font);
   color: #111;
-}
-.block-name.auth-name {
-  color: #333;
 }
 .block-en {
   font:

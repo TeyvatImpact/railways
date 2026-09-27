@@ -103,9 +103,8 @@ export interface StripInput {
   cjkFont: string;
   /** 页头线路名的各行（主语言行 → 中文行 → 英文行） */
   labelLines: NameLabelLine[];
-  /** 页头运营公司 / 运营主体的各行（要展示的各语言，顺序与去重见 `displayNameLines`） */
+  /** 页头运营公司的各行（要展示的各语言，顺序与去重见 `displayNameLines`）；运营主体不在线路图上展示 */
   operator?: NameTextLine[];
-  authority?: NameTextLine[];
   stations: StripInputStation[];
   /**
    * 每个站圆圈里的编号（与 `stations` 一一对应）；缺省 = 列号 + 1。
@@ -124,9 +123,8 @@ export interface StripModel {
   cjkFont: string;
   /** 页头线路名的各行（主行 / 中文小字 / 英文小字） */
   labelLines: NameLabelLine[];
-  /** 页头运营公司 / 运营主体的各行 */
+  /** 页头运营公司的各行 */
   operator?: NameTextLine[];
-  authority?: NameTextLine[];
   /** 线路名称色块上的文字色 */
   chipTextFill: string;
   /** 主线最后一个站的列号（主线横线的末端列线 = trunkEndCol + 2） */
@@ -344,7 +342,6 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
     cjkFont: input.cjkFont,
     labelLines: input.labelLines,
     operator: input.operator,
-    authority: input.authority,
     chipTextFill: textOn(input.color),
     trunkEndCol,
     lanes,
