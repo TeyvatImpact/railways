@@ -259,7 +259,7 @@ TitleBar                                 顶栏（关于弹窗 / 主题 / 管理
 - `parseTimetable(raw, ctx)` 做全部校验（两种形态互斥、键合法、时间 `HH:mm`、站在站序里、方向合法、车型已知、单向线不能 `down`、虚拟线路不应有时刻表等）。
 - 其它导出：`segmentKey`（无向站对键，与 `connections.json` 同口径）、`intervalAt`、`mergeIntervalSources`（多来源按时刻取 `min` 切段）、`minIntervalOfDay`、`buildSegmentHeadways`。`useMapData.ts` 再导出 `segmentHeadways` 与 `headwayFor(a, b)`（`Infinity` = 不开行，无条目 = 无数据）。
 
-**地图上的列车**（`composables/trainRuns.ts`）：只对写了 `departures` 的变体跑车 —— 每班车摊成 `TrainRun`（首站开出 → 各站到发 → 末站到站 + 停站），按 `useSimClock` 的模拟时刻定位（区间内按折线弧长插值，停站停在站点）。**环线末尾的闭合站照常收尾**（列车开回枢纽站、停够 `dwell` 再消失），而 `stationTimetable.stationDepartures` 的列表里仍不重复出现该站（`buildRun` 复用 `buildTrainRun` 后丢掉最后一行）。画面表现：线路上一个线路色填充 + 站点圈描边的圆点（`TRAIN_DOT_R`，层级在线路之上、站点之下），圆点右上角跟一串极小字号的**车次号**；停站时另在该站站名标签正上方画一排小圆点；点击任一圆点或车次文字 = `useSelection.selectTrain`，右侧 `TrainInfo.vue` 出详情。列车不参与搜索。
+**地图上的列车**（`composables/trainRuns.ts`）：只对写了 `departures` 的变体跑车 —— 每班车摊成 `TrainRun`（首站开出 → 各站到发 → 末站到站 + 停站），按 `useSimClock` 的模拟时刻定位（区间内按折线弧长插值，停站停在站点）。**环线末尾的闭合站照常收尾**（列车开回枢纽站、停够 `dwell` 再消失），而 `stationTimetable.stationDepartures` 的列表里仍不重复出现该站（`buildRun` 复用 `buildTrainRun` 后丢掉最后一行）。画面表现：线路上一个线路色填充 + 站点圈描边的圆点（`TRAIN_DOT_R`，层级在线路之上、站点之下），圆点右上角跟一串极小字号的**车次号**；列车停站时，该站**站名标签正上方**再竖向排开若干行「小圆点 + 车次号」（一行一趟车，整列底边贴标签盒顶边，所以一个站可以同时列出多辆停站车）。点击圆点或任一处车次文字 = `useSelection.selectTrain`，右侧 `TrainInfo.vue` 出详情。列车不参与搜索。
 
 **车次号**（`TrainRun.number`）：`SN-LLL-01` = 体系 id 前两位大写（`snezhnaya` → `SN`）+ 线路英文**自名**（`selfNames.en`）首字母缩写（`Large Loop Line` → `LLL`）+ 当日该线路第几班（含各变体、按开出时刻排序，2 位补零）。时刻表每天重复，所以同一车次号每天都对应同一班。
 

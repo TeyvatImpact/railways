@@ -99,16 +99,30 @@
           </text>
         </g>
 
-        <g v-for="dot in trainLabelDots" :key="dot.key" :opacity="trainOpacity(dot.lineId)">
+        <g
+          v-for="marker in trainStopMarkers"
+          :key="marker.key"
+          :opacity="trainOpacity(marker.lineId)">
           <circle
-            :cx="dot.x"
-            :cy="dot.y"
+            :cx="marker.dotX"
+            :cy="marker.dotY"
             :r="TRAIN_LABEL_DOT_R"
-            :fill="dot.color"
+            :fill="marker.color"
             stroke="var(--color-text)"
             :stroke-width="TRAIN_DOT_STROKE"
             style="cursor: pointer"
-            @click.stop="onTrainClick(dot.trainId)" />
+            @click.stop="onTrainClick(marker.trainId)" />
+          <text
+            :x="marker.textX"
+            :y="marker.textY"
+            :font-size="TRAIN_NUMBER_FONT_SIZE"
+            :font-family="FONT_EN"
+            fill="var(--color-text)"
+            dominant-baseline="central"
+            style="cursor: pointer"
+            @click.stop="onTrainClick(marker.trainId)">
+            {{ marker.number }}
+          </text>
         </g>
 
         <g
@@ -251,9 +265,9 @@ import {
   TRAIN_DOT_STROKE,
   TRAIN_LABEL_DOT_GAP,
   TRAIN_LABEL_DOT_R,
-  TRAIN_LABEL_DOT_SPACING,
   TRAIN_NUMBER_FONT_SIZE,
   TRAIN_NUMBER_GAP,
+  TRAIN_NUMBER_ROW_HEIGHT,
 } from '../config/render.config';
 import { buildBorderPaths } from '../composables/useTerritoryBorders';
 import { useBorderSmoothing } from '../composables/useBorderSmoothing';
@@ -657,8 +671,21 @@ const trainDots = computed<TrainDot[]>(() => {
   return out;
 });
 
-/** 站名标签上方的停站圆点：同一站多辆车横向排开，居中于标签盒顶边之上 */
-const trainLabelDots = computed<TrainDot[]>(() => {
+/** 停站标记的一行：小圆点在左、车次文字在右 */
+interface TrainStopMarker {
+  key: string;
+  trainId: string;
+  lineId: string;
+  color: string;
+  number: string;
+  dotX: number;
+  dotY: number;
+  textX: number;
+  textY: number;
+}
+
+/** 站名标签上方的停站标记：竖向排列（一行一趟停站的车），整列底边贴标签盒顶边 */
+const trainStopMarkers = computed<TrainStopMarker[]>(() => {
   const boxes = new Map(labelBoxes.value.map((box) => [box.id, box]));
   const byStation = new Map<string, ActiveTrain[]>();
   for (const train of trains.value) {
@@ -668,22 +695,23 @@ const trainLabelDots = computed<TrainDot[]>(() => {
     if (list) list.push(train);
     else byStation.set(stationId, [train]);
   }
-  const out: TrainDot[] = [];
+  const out: TrainStopMarker[] = [];
   for (const [stationId, list] of byStation) {
     const box = boxes.get(stationId);
     if (!box) continue;
-    const step = TRAIN_LABEL_DOT_R * 2 + TRAIN_LABEL_DOT_SPACING;
-    const x0 = box.left + box.w / 2 - ((list.length - 1) * step) / 2;
-    const y = box.top - TRAIN_LABEL_DOT_GAP - TRAIN_LABEL_DOT_R;
+    const bottom = box.top - TRAIN_LABEL_DOT_GAP;
     list.forEach((train, i) => {
+      const centerY = bottom - (i + 0.5) * TRAIN_NUMBER_ROW_HEIGHT;
       out.push({
-        key: `label-${train.run.id}`,
+        key: `stop-${train.run.id}`,
         trainId: train.run.id,
         lineId: train.run.line.id,
         color: train.run.line.color,
         number: train.run.number,
-        x: x0 + i * step,
-        y,
+        dotX: box.left + TRAIN_LABEL_DOT_R,
+        dotY: centerY,
+        textX: box.left + TRAIN_LABEL_DOT_R * 2 + TRAIN_NUMBER_GAP,
+        textY: centerY,
       });
     });
   }

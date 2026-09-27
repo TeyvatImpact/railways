@@ -27,10 +27,9 @@ export const LINE_WIDTH = 4;
 export const TRAIN_DOT_R = 4;
 export const TRAIN_DOT_STROKE = 2;
 
-/** 站名标签上方的停站圆点：半径、离标签顶边的间距、同一站多点之间的额外空隙 */
+/** 站名标签上方的停站标记：小圆点半径、整列底边离标签盒顶边的间距；行高/字号见下 */
 export const TRAIN_LABEL_DOT_R = 3;
 export const TRAIN_LABEL_DOT_GAP = 1;
-export const TRAIN_LABEL_DOT_SPACING = 2;
 
 /** 车次号文字：地图上跟随列车的极小字号、单行高度、与圆点的间距 */
 export const TRAIN_NUMBER_FONT_SIZE = 8;
