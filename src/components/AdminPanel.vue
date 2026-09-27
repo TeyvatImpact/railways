@@ -62,16 +62,25 @@
                 <div v-for="line in currentLines" :key="line.id" class="line-group">
                   <div class="line-header">
                     <span class="line-id">{{ line.id }}</span>
-                    <input
-                      v-model="line.names.zhCN"
-                      class="edit-input line-name"
-                      placeholder="zhCN" />
-                    <input
-                      v-model="line.names.zhTW"
-                      class="edit-input line-name"
-                      placeholder="zhTW" />
-                    <input v-model="line.names.ja" class="edit-input line-name" placeholder="ja" />
-                    <input v-model="line.names.en" class="edit-input line-name" placeholder="en" />
+                    <template v-if="line.names">
+                      <input
+                        v-model="line.names.zhCN"
+                        class="edit-input line-name"
+                        placeholder="zhCN" />
+                      <input
+                        v-model="line.names.zhTW"
+                        class="edit-input line-name"
+                        placeholder="zhTW" />
+                      <input
+                        v-model="line.names.ja"
+                        class="edit-input line-name"
+                        placeholder="ja" />
+                      <input
+                        v-model="line.names.en"
+                        class="edit-input line-name"
+                        placeholder="en" />
+                    </template>
+                    <span v-else class="derived-name">线路名由端点站自动生成，不可编辑</span>
                     <select v-model="line.costPreset" class="preset-select">
                       <option v-for="p in presetOptions" :key="p.id" :value="p.id">
                         {{ p.label }}
@@ -480,6 +489,12 @@ async function save() {
 .line-name {
   flex: 1;
   min-width: 80px;
+}
+.derived-name {
+  flex: 1;
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
 }
 .preset-select {
   font-size: 11px;

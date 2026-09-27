@@ -1,5 +1,7 @@
 import { ref, type Ref } from 'vue';
 import { stations, stationMap, lines, lookupDistance, getPreset } from './useMapData';
+import { ferrySegmentNames } from './lineNaming';
+import type { NameLocale } from './stationNames';
 
 export type RouteMetric = 'fare' | 'time' | 'distance';
 
@@ -25,6 +27,8 @@ export interface NodeInfo {
   stationNameEn: string;
   lineName: string;
   lineNameEn: string;
+  /** 线路名的主语言（lineName 就是该语言的名字） */
+  linePrimaryLang: NameLocale;
 }
 
 export interface RouteSegment {
@@ -116,6 +120,7 @@ for (const line of lines) {
           stationNameEn: st.names.en,
           lineName: line.names[line.primaryLang],
           lineNameEn: line.names.en,
+          linePrimaryLang: line.primaryLang,
         });
 
         if (!stationNodeMap.has(sid)) stationNodeMap.set(sid, []);
@@ -322,6 +327,17 @@ export function useRouting() {
           }
         }
       }
+    }
+
+    // 轮渡线路名在结果里按行程方向显示（单向箭头模板），线路自身的名字保持双向箭头
+    for (const seg of segments) {
+      if (!seg.isFerry || seg.nodes.length < 2) continue;
+      const from = stationMap.get(seg.nodes[0].stationId);
+      const to = stationMap.get(seg.nodes[seg.nodes.length - 1].stationId);
+      if (!from || !to) continue;
+      const names = ferrySegmentNames(from.names, to.names);
+      seg.lineName = names[seg.nodes[0].linePrimaryLang];
+      seg.lineNameEn = names.en;
     }
 
     return { segments, pathNodeIds: pathNodes, totalFare, totalTime, totalDistance };

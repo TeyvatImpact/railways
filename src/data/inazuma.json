@@ -616,12 +616,6 @@
     },
     {
       "id": "ferry-hgv-wte",
-      "names": {
-        "zhCN": "绯木村↔海祇东 轮渡",
-        "zhTW": "緋木村↔海祇東 渡輪",
-        "ja": "緋木村↔海祇東 渡輪",
-        "en": "Higi Village ↔ Watatsumi East Ferry"
-      },
       "lineType": "ferry",
       "costPreset": "ferry",
       "variants": [
@@ -632,12 +626,6 @@
     },
     {
       "id": "ferry-izc-tmp",
-      "names": {
-        "zhCN": "稻妻城↔鹤观港 轮渡",
-        "zhTW": "稻妻城↔鶴觀港 渡輪",
-        "ja": "稲妻城↔鶴観港 渡輪",
-        "en": "Inazuma City ↔ Tsurumi Port Ferry"
-      },
       "lineType": "ferry",
       "costPreset": "ferry",
       "variants": [

@@ -25,6 +25,7 @@ import {
 } from '../config/render.config';
 import farePresets from '../config/fare-presets.json';
 import type { NameLocale, OrgNames, StationNames } from './stationNames';
+import { ferryLineNames, sameStationLineNames } from './lineNaming';
 
 export interface StationData {
   id: string;
@@ -76,8 +77,11 @@ export interface LineVariantData {
 
 export interface LineData {
   id: string;
-  /** 线路名：与站点同一套四语键（运营公司 / 运营主体见 `OrgNames`） */
-  names: StationNames;
+  /**
+   * 线路名：与站点同一套四语键（运营公司 / 运营主体见 `OrgNames`）。
+   * 轮渡 / 同站换乘线路不写死名字 —— 运行时由端点站的四语站名派生（`lineNaming.ts`），故此处缺省。
+   */
+  names?: StationNames;
   /** 线路名的主语言；缺省时继承所属区域 config.primaryLang（ferry.json / same.json 无 config → `zhCN`） */
   primaryLang?: NameLocale;
   costPreset: string;
@@ -115,7 +119,9 @@ export interface LineVariant {
   stations: string[];
 }
 
-export interface Line extends Omit<LineData, 'variants'> {
+export interface Line extends Omit<LineData, 'variants' | 'names'> {
+  /** 已解析的线路名：区域线路取数据里的 `names`，轮渡 / 同站换乘由端点站派生 */
+  names: StationNames;
   /** 已解析的线路名主语言（线路对象上的值优先，否则所属区域 config.primaryLang，再否则 `zhCN`） */
   primaryLang: NameLocale;
   color: string;
@@ -421,8 +427,38 @@ for (const { lines: fileLines } of regionLineSets) {
   for (const line of fileLines) if (!line.lineType) fileLineIndex.set(line, index++);
 }
 
+/** 轮渡 / 同站换乘线路名：由端点站的四语站名派生（数据里不写 names），同站换乘取首站 */
+function derivedLineNames(line: LineData): StationNames {
+  const namesOf = (id: string): StationNames => {
+    const st = stationMap.get(id);
+    if (!st) throw new Error(`线路 ${line.id} 引用了不存在的站点：${id}`);
+    return st.names;
+  };
+  const ids = line.variants[0].stations;
+  if (line.lineType === 'ferry') {
+    if (ids.length !== 2)
+      throw new Error(`轮渡 ${line.id} 应有恰好 2 个端点站，实际 ${ids.length} 个`);
+    return ferryLineNames(namesOf(ids[0]), namesOf(ids[1]));
+  }
+  return sameStationLineNames(namesOf(ids[0]));
+}
+
+/** 线路名：区域线路用数据里的四语名，轮渡 / 同站换乘线路名一律派生，数据里写了就是矛盾 */
+function resolveLineNames(line: LineData): StationNames {
+  if (!line.lineType) {
+    if (!line.names) throw new Error(`线路 ${line.id} 缺少 names`);
+    for (const key of ['zhCN', 'zhTW', 'ja', 'en'] as const) {
+      if (!line.names[key]) throw new Error(`线路 ${line.id} 缺少 names.${key}`);
+    }
+    return line.names;
+  }
+  if (line.names) throw new Error(`线路 ${line.id} 的线路名由端点站动态派生，数据里不应写 names`);
+  return derivedLineNames(line);
+}
+
 export const lines: Line[] = parsedLines.map((line) => ({
   ...line,
+  names: resolveLineNames(line),
   // 轮渡 / 同站线路不在 regionLineSets 里，主语言取默认值
   primaryLang: line.primaryLang ?? 'zhCN',
   variants: line.variants.map((variant) => ({

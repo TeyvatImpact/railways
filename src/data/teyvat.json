@@ -2227,12 +2227,6 @@
     },
     {
       "id": "ferry-fnc-vop",
-      "names": {
-        "zhCN": "终夜长茔↔虚海望港 轮渡",
-        "zhTW": "終夜長塋↔虛海望港 渡輪",
-        "ja": "夜明かしの墓↔海を望めぬ峰の港 渡輪",
-        "en": "Final Night Cemetery ↔ Voidsea Outlook Port Ferry"
-      },
       "lineType": "ferry",
       "costPreset": "ferry",
       "variants": [

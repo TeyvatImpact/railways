@@ -4,8 +4,8 @@
  *
  * - 轨道交通线路：ja / zhTW 取自下面的 LINE_NAMES 表（ja 按 `.temp/words.json` 的同族词条拟定，
  *   跨局线去掉机构前缀；zhTW 逐字繁化），en 沿用原值，个别笔误在表里改。
- * - 轮渡 / 同站换乘线路：名称由端点站（同站换乘取首站）的四语站名派生，故简繁不会再漂移；
- *   派生结果会与原有 zh / en 名逐条比对，不一致即报错。
+ * - 轮渡 / 同站换乘线路（含散落在区域文件里的轮渡）：当时也从端点站派生名字，现在改成运行时派生
+ *   （`src/composables/lineNaming.ts`），数据里不再写 `names`，本脚本也不再处理这两类文件。
  * - 运营公司 / 运营主体：ORG_NAMES 按数据里的原 `name` 查表（稻妻的机构名本身就是日文）。
  * - 线路不写 `primaryLang`：运行时继承所属区域 `config.primaryLang`（ferry.json / same.json 无 config → zhCN）。
  *
@@ -148,45 +148,8 @@ const ORG_NAMES = {
   },
 };
 
-/** 轮渡 / 同站换乘：名称由站名派生（两端站 / 首站），顺带消掉原数据里的简繁漂移 */
-const DERIVED = {
-  ferry: {
-    zhCN: (a, b) => `${a}↔${b} 轮渡`,
-    zhTW: (a, b) => `${a}↔${b} 渡輪`,
-    ja: (a, b) => `${a}↔${b} 渡輪`,
-    en: (a, b) => `${a} ↔ ${b} Ferry`,
-  },
-  'same-station': {
-    zhCN: (a) => `${a}同站换乘`,
-    zhTW: (a) => `${a}同站轉乘`,
-    ja: (a) => `${a}同駅乗り換え`,
-    en: (a) => `${a} Same-Station`,
-  },
-};
-
+/** 轮渡 / 同站换乘：数据里不再写 `names`，名字由运行时从端点站派生（`src/composables/lineNaming.ts`） */
 const LOCALES = ['zhCN', 'zhTW', 'ja', 'en'];
-/** 组合线路名用的「朴素」站名：去掉辞书里的引号（「花羽会」/ "Flower-Feather Clan"），多写法只取第一个（曚云神社/曚云港 → 曚云神社） */
-const plain = (s) =>
-  String(s)
-    .split('/')[0]
-    .trim()
-    .replace(/^["'「『]+|["'」』]+$/g, '');
-/**
- * 派生名与原 zh / en 名的已知差异 —— 原数据里的笔误，派生值以站名为准
- * （`inazuma:ferry-hgv-wte` 原写 `Higii Village`，站名是 `Higi Village`；
- *  `inazuma:ferry-*` 的 zh 原作「渡轮」，其余 10 条作「轮渡」，统一取「轮渡」；
- *  `ferry:ferry-*-mus` 原把「曚云神社」的中文写成繁体「曚雲神社」）
- */
-const NAME_FIXES = {
-  // 下面 4 条的 zhCN = 派生值（简体「曚云神社」+「轮渡」），原数据写法有误，故显式列出以便比对
-  'inazuma:ferry-hgv-wte': {
-    en: 'Higi Village ↔ Watatsumi East Ferry',
-    zhCN: '绯木村↔海祇东 轮渡',
-  },
-  'inazuma:ferry-izc-tmp': { zhCN: '稻妻城↔鹤观港 轮渡' },
-  'ferry:ferry-kyn-mus': { zhCN: '客运港南↔曚云神社 轮渡' },
-  'ferry:ferry-pom-mus': { zhCN: '奥摩斯港↔曚云神社 轮渡' },
-};
 
 const readJson = (file) =>
   JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'data', file), 'utf8'));
@@ -197,47 +160,7 @@ const writeJson = (file, data) =>
     'utf8',
   );
 
-// 全站点的四语站名（key = 完整 id），用于派生轮渡 / 同站换乘的线路名
-const stationNames = new Map();
-for (const region of REGION_FILES) {
-  const data = readJson(`${region}.json`);
-  for (const st of data.stations) stationNames.set(`${data.config.name}-${st.id}`, st.names);
-}
-const stationNamesOf = (id) => {
-  const names = stationNames.get(id);
-  if (!names) throw new Error(`找不到站点 ${id}（派生线路名用）`);
-  return names;
-};
-
-/** 轮渡 / 同站换乘线路：从端点站派生，并与原 zh / en 名核对 */
-function deriveNames(line, file, prefix, expectEn) {
-  const ids = (line.variants?.[0]?.stations ?? []).map((id) =>
-    id.includes('-') ? id : `${prefix}-${id}`,
-  );
-  const tpl = DERIVED[line.lineType];
-  const table = LINE_NAMES[`${file}:${line.id}`];
-  if (table) throw new Error(`${file}:${line.id} 是派生名线路，不该出现在 LINE_NAMES 里`);
-  if (line.lineType === 'ferry') {
-    if (ids.length !== 2) throw new Error(`${file}:${line.id} 轮渡应恰好 2 站，实际 ${ids.length}`);
-    const [na, nb] = [stationNamesOf(ids[0]), stationNamesOf(ids[1])];
-    // 名字的书写顺序可能与 stations 数组相反，用 en 名定序
-    const [pa, pb] = [LOCALES.map((l) => plain(na[l])), LOCALES.map((l) => plain(nb[l]))];
-    const wrap = (vals) => LOCALES.reduce((acc, l, i) => ((acc[l] = vals[i]), acc), {});
-    const A = wrap(pa);
-    const B = wrap(pb);
-    const enFwd = tpl.en(A.en, B.en);
-    const [a, b] = enFwd === expectEn ? [A, B] : [B, A];
-    if (tpl.en(a.en, b.en) !== expectEn)
-      throw new Error(`${file}:${line.id} 的站点与 nameEn 对不上：${expectEn}`);
-    return LOCALES.reduce((acc, l) => ((acc[l] = tpl[l](a[l], b[l])), acc), {});
-  }
-  // 同站换乘：名称取首站
-  const a = LOCALES.reduce((acc, l) => ((acc[l] = plain(stationNamesOf(ids[0])[l])), acc), {});
-  return LOCALES.reduce((acc, l) => ((acc[l] = tpl[l](a[l])), acc), {});
-}
-
 let lineCount = 0;
-let derivedCount = 0;
 const usedLineKeys = new Set();
 const usedOrgKeys = new Set();
 /** zhCN 名 → ORG_NAMES 的键（重跑时用已迁移的机构反查，免得误报「没用上」） */
@@ -259,10 +182,9 @@ const migrateOrg = (org, where) => {
   return { names };
 };
 
-for (const file of [...REGION_FILES, 'ferry', 'same']) {
+for (const file of REGION_FILES) {
   const data = readJson(`${file}.json`);
   const primaryLang = data.config?.primaryLang ?? 'zhCN';
-  const prefix = data.config?.name ?? '';
   const isJa = primaryLang === 'ja';
 
   if (data.config?.operator)
@@ -274,35 +196,21 @@ for (const file of [...REGION_FILES, 'ferry', 'same']) {
     const where = `${file}:${line.id}`;
     if (line.operator) line.operator = migrateOrg(line.operator, where);
     if (line.authority) line.authority = migrateOrg(line.authority, where);
+    // 轮渡（散落在区域文件里的那几条）：名字由运行时从端点站派生，数据里不写 names
+    if (line.lineType) return line;
     if (line.names && !line.name) {
       // 幂等：已经迁移过；表键照记，免得重跑时误报「没用上」
       usedLineKeys.add(`${file}:${line.id}`);
       return line;
     }
 
-    let names;
-    if (line.lineType) {
-      names = deriveNames(line, file, prefix, NAME_FIXES[`${file}:${line.id}`]?.en ?? line.nameEn);
-      derivedCount++;
-      // 与原 zh / en 名核对（已知笔误见 NAME_FIXES）
-      const fix = NAME_FIXES[`${file}:${line.id}`] ?? {};
-      const zh = line.nameZh ?? line.name;
-      if (names.zhCN !== (fix.zhCN ?? zh))
-        throw new Error(`${where} 派生的中文名（${names.zhCN}）与原值（${zh}）不一致`);
-      if (names.en !== (fix.en ?? line.nameEn))
-        throw new Error(`${where} 派生的英文名（${names.en}）与原值（${line.nameEn}）不一致`);
-      if (line.nameZh && line.name !== names.ja)
-        throw new Error(`${where} 数据里的 name（${line.name}）与派生的日文名不一致`);
-    } else {
-      const key = `${file}:${line.id}`;
-      const table = LINE_NAMES[key];
-      if (!table) throw new Error(`${where} 不在 LINE_NAMES 里`);
-      usedLineKeys.add(key);
-      names = isJa
-        ? { zhCN: line.nameZh, zhTW: table.zhTW, ja: line.name, en: table.en ?? line.nameEn }
-        : { zhCN: line.name, zhTW: table.zhTW, ja: table.ja, en: table.en ?? line.nameEn };
-      if (isJa && !line.nameZh) throw new Error(`${where} 是主语言为日文的线路，但缺 nameZh`);
-    }
+    const table = LINE_NAMES[where];
+    if (!table) throw new Error(`${where} 不在 LINE_NAMES 里`);
+    usedLineKeys.add(where);
+    const names = isJa
+      ? { zhCN: line.nameZh, zhTW: table.zhTW, ja: line.name, en: table.en ?? line.nameEn }
+      : { zhCN: line.name, zhTW: table.zhTW, ja: table.ja, en: table.en ?? line.nameEn };
+    if (isJa && !line.nameZh) throw new Error(`${where} 是主语言为日文的线路，但缺 nameZh`);
     for (const l of LOCALES) if (!names[l]) throw new Error(`${where} 缺 names.${l}`);
     lineCount++;
     const { id, name, nameZh, nameEn, ...rest } = line;
@@ -319,6 +227,4 @@ if (staleLineKeys.length) throw new Error(`LINE_NAMES 里这些键没用上：${
 const staleOrgKeys = Object.keys(ORG_NAMES).filter((k) => !usedOrgKeys.has(k));
 if (staleOrgKeys.length) throw new Error(`ORG_NAMES 里这些键没用上：${staleOrgKeys.join(', ')}`);
 
-console.log(
-  `线路 ${lineCount} 条（其中轮渡 / 同站换乘派生 ${derivedCount} 条）/ 机构 ${usedOrgKeys.size} 个`,
-);
+console.log(`线路 ${lineCount} 条 / 机构 ${usedOrgKeys.size} 个`);
