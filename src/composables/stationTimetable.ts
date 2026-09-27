@@ -102,10 +102,22 @@ function stationName(line: Line, stationId: string): string {
 }
 
 /**
+ * 环线判据：数据把闭合站写在末尾（首尾同站），扣掉重复站后还要至少剩 3 站 —— 与 `/display` 的
+ * `loopStrip.isLoop` 同一口径（`A → B → A` 这种往返不是环线）。
+ */
+function isLoopStations(stations: string[]): boolean {
+  return stations.length > 3 && stations[0] === stations[stations.length - 1];
+}
+
+/**
  * 把一条发车记录铺成一趟车的全部停站：按方向站序开行，每站加上区间耗时（`pairCost`，含车型排点冗余）
  * 与停站时间（`dwell`）；`turnback` 的车到该方向终点后停站再原路开回发车站（一趟车既是上行也是下行）。
+ *
+ * 停站行只有两种：区间行「到站 + 停站后开出」，终点行「只到站」——所以起点站只出现开出、终点站只出现到站。
+ * 环线末尾那个闭合用的重复站不是停站（它只是把环画回去），只用来给上一站当「开往」方向。
  */
 function buildRun(line: Line, variant: LineVariant, dep: TimetableDeparture): RawStop[] {
+  const loop = isLoopStations(variant.stations);
   const order = dep.direction === 'up' ? variant.stations : [...variant.stations].reverse();
   const startIndex = order.indexOf(dep.station);
   if (startIndex < 0) return [];
@@ -121,32 +133,35 @@ function buildRun(line: Line, variant: LineVariant, dep: TimetableDeparture): Ra
     turnback: false,
   });
 
-  const travel = (path: string[], returnTrip: boolean) => {
+  /**
+   * `end` 决定末站怎么收尾：`terminus` = 本趟车的终点（只到站）；`turnback` = 折返点（同样只到站，
+   * 但标出来并照常推进停站时间，因为原路返回的那半趟还要用这个时刻）；`closure` = 环线闭合站（不生成停站行）。
+   */
+  const travel = (path: string[], end: 'terminus' | 'turnback' | 'closure') => {
     for (let i = 1; i < path.length; i++) {
       time += pairCost(dep.vehicle, path[i - 1], path[i]).time;
       const arrival = time;
       const atEnd = i === path.length - 1;
+      if (atEnd && end === 'closure') break;
       const from = stationName(line, path[i - 1]);
-      if (atEnd && !returnTrip) {
-        stops.push({ stationId: path[i], arrival, from, turnback: false });
+      time += dwellAt(variant.timetable.dwell, path[i]) ?? 0;
+      if (atEnd) {
+        stops.push({ stationId: path[i], arrival, from, turnback: end === 'turnback' });
         continue;
       }
-      time += dwellAt(variant.timetable.dwell, path[i]) ?? 0;
-      const isTurnback = atEnd;
       stops.push({
         stationId: path[i],
         arrival,
         departure: time,
         from,
-        // 折返点：开出方向就是原路返回，下一站即来时的上一站
-        to: stationName(line, isTurnback ? path[i - 1] : path[i + 1]),
-        turnback: isTurnback,
+        to: stationName(line, path[i + 1]),
+        turnback: false,
       });
     }
   };
 
-  travel(leg, dep.turnback === true);
-  if (dep.turnback) travel([...leg].reverse(), false);
+  travel(leg, loop ? 'closure' : dep.turnback ? 'turnback' : 'terminus');
+  if (dep.turnback) travel([...leg].reverse(), 'terminus');
   return stops;
 }
 
