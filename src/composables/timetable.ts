@@ -27,11 +27,26 @@ export interface TimetableWindow {
   vehicle: string;
 }
 
+/** 一个时段内的固定间隔（分钟）：整段作用于变体的所有区间 */
+export interface TimetableIntervalBand {
+  from: string;
+  /** `to <= from` 视为跨天（+24h），同时间窗发车 */
+  to: string;
+  /** 分钟，正数 */
+  interval: number;
+}
+
 export interface VariantTimetable {
-  /** 固定间隔（分钟）：作用于整条变体的所有区间 */
-  interval?: number;
+  /**
+   * 只写间隔、不含逐条发车信息：按时段给不同间隔。
+   * 元素可为 `null` —— `null` 表示「任何时间的间隔都是无限大」，出现即压过同数组里的有限时段。
+   * 与 `departures` 互斥 —— 写间隔的时刻表只能写时段间隔。
+   */
+  interval?: (TimetableIntervalBand | null)[];
   departures: (TimetableDeparture | TimetableWindow)[];
 }
+
+const BAND_KEYS = new Set(['from', 'to', 'interval']);
 
 /** 判别：有时间窗（`every`）即为时间窗发车，否则是逐个时间点 */
 export function isWindow(d: TimetableDeparture | TimetableWindow): d is TimetableWindow {
@@ -69,10 +84,30 @@ export function parseTimetable(raw: unknown, ctx: TimetableContext): VariantTime
   const data = raw as Record<string, unknown>;
 
   const out: VariantTimetable = { departures: [] };
+  if (data.interval !== undefined && data.departures !== undefined)
+    throw new Error(`${p}时刻表只能二选一：只写间隔的 interval 或逐条发车的 departures`);
+
   if (data.interval !== undefined) {
-    if (typeof data.interval !== 'number' || !(data.interval > 0))
-      throw new Error(`${p}时刻表 interval 必须是正数`);
-    out.interval = data.interval;
+    if (!Array.isArray(data.interval) || data.interval.length === 0)
+      throw new Error(`${p}时刻表 interval 必须是非空数组（按时段给间隔）`);
+    out.interval = data.interval.map((entry, i) => {
+      if (entry === null) return null;
+      if (typeof entry !== 'object' || Array.isArray(entry))
+        throw new Error(`${p}第 ${i} 段间隔必须是对象或 null`);
+      const b = entry as Record<string, unknown>;
+      for (const key of Object.keys(b))
+        if (!BAND_KEYS.has(key))
+          throw new Error(`${p}第 ${i} 段间隔只能写 from / to / interval，多写了 ${key}`);
+      const from = b.from;
+      const to = b.to;
+      if (typeof from !== 'string' || !TIME_RE.test(from))
+        throw new Error(`${p}第 ${i} 段间隔 from ${from} 不是 HH:mm`);
+      if (typeof to !== 'string' || !TIME_RE.test(to))
+        throw new Error(`${p}第 ${i} 段间隔 to ${to} 不是 HH:mm`);
+      if (typeof b.interval !== 'number' || !(b.interval > 0))
+        throw new Error(`${p}第 ${i} 段间隔 interval 必须是正数`);
+      return { from, to, interval: b.interval };
+    });
   }
 
   const departures = data.departures;
@@ -158,7 +193,10 @@ export function segmentKey(a: string, b: string): string {
   return [a, b].sort().join('|');
 }
 
-/** 每条区间的最小固定间隔（分钟）：凡 `interval` 有值的变体，对其站序里每对相邻站取 `min` */
+/**
+ * 每条区间的最小固定间隔（分钟）：凡写了时段间隔的变体，对其站序里每对相邻站取所有时段 interval 的 `min`。
+ * `interval` 里出现 `null` 的变体 —— 它声明「任何时间间隔无限大」—— 该变体的间隔视为 `Infinity`（压过自己的有限时段）。
+ */
 export function buildSegmentHeadways(
   lines: readonly {
     variants: { stations: string[]; timetable: VariantTimetable }[];
@@ -167,12 +205,21 @@ export function buildSegmentHeadways(
   const map = new Map<string, number>();
   for (const line of lines) {
     for (const variant of line.variants) {
-      const interval = variant.timetable.interval;
-      if (interval === undefined) continue;
+      const bands = variant.timetable.interval;
+      if (bands === undefined) continue;
+      let headway: number | undefined;
+      for (const band of bands) {
+        if (band === null) {
+          headway = Infinity;
+          break;
+        }
+        headway = headway === undefined ? band.interval : Math.min(headway, band.interval);
+      }
+      if (headway === undefined) continue;
       for (let i = 0; i < variant.stations.length - 1; i++) {
         const key = segmentKey(variant.stations[i], variant.stations[i + 1]);
         const cur = map.get(key);
-        map.set(key, cur === undefined ? interval : Math.min(cur, interval));
+        map.set(key, cur === undefined ? headway : Math.min(cur, headway));
       }
     }
   }

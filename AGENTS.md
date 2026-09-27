@@ -208,11 +208,20 @@ All data is JSON stored in `src/data/`. No CSV files.
 
 ### Timetable (`composables/timetable.ts`)
 
-变体可带一个可选的 `timetable`（本阶段**不写任何真实时刻表数据**，只做数据形态、校验与纯函数派生）：
+变体可带一个可选的 `timetable`（本阶段**不写任何真实时刻表数据**，只做数据形态、校验与纯函数派生）。两种形态**互斥**，一个 `timetable` 只能二选一：
 
 ```jsonc
+// ① 只写间隔、没有逐条发车信息：按时段给间隔（只能写 from / to / interval）
 "timetable": {
-  "interval": 12,                                       // 固定间隔（分钟）：作用于整条变体的所有区间
+  "interval": [
+    { "from": "05:30", "to": "07:00", "interval": 15 },
+    { "from": "07:00", "to": "09:30", "interval": 5 },
+    { "from": "22:00", "to": "01:00", "interval": 20 }
+  ]
+}
+
+// ② 逐条发车信息：单点 / 时间窗混排
+"timetable": {
   "departures": [
     { "time": "07:30", "station": "Teyvat-SFL", "direction": "up" },
     { "from": "18:00", "to": "02:00", "every": 20, "station": "Teyvat-SFL", "direction": "down", "vehicle": "aquabus" }
@@ -220,11 +229,13 @@ All data is JSON stored in `src/data/`. No CSV files.
 }
 ```
 
-- `direction`：`up` = 变体站序方向，`down` = 逆站序；`oneWay` 线不能有 `down`。`vehicle` 省略 = 该变体的车型。
+- **① 时段间隔**：`interval` = **非空数组**，每段 `{ from, to, interval }` —— 段内固定间隔（分钟，正数）作用于整条变体的所有区间；`to <= from` 视为跨天（+24h）。段对象**只能写这三个键**（多写 `station` / `direction` / `vehicle` 之类直接报错）；段内不发车时刻、不区分站与方向，所以 `expandDepartures` 对它输出 `[]`。
+- **① 的 `null` 元素**：数组元素可以是 `null` —— 含义是「任何时间的间隔都是无限大」（该变体全线没有有限间隔，如无服务 / 间隔未知）。它在同一数组里**压过**有限时段（`[null, { from: "07:00", to: "09:00", interval: 5 }]` 也算无限大）；派生出的区间间隔因此是 `Infinity`（跨变体聚合仍是 `min`，所以别的变体有有限间隔时该区间的值不变）。
+- **② 逐条发车**：`direction`：`up` = 变体站序方向，`down` = 逆站序；`oneWay` 线不能有 `down`。`vehicle` 省略 = 该变体的车型。
 - `time` / `from` / `to`：`"HH:mm"`；时间窗自 `from` 起每 `every` 分钟发一辆、发的时刻 ≤ `to`（**去尾**）；`to <= from` 视为跨天（+24h），如 `18:00 → 02:00` 每 20 分 = 25 班。
 - 判别：有 `time` = 单点，有 `every` = 时间窗；两者在同一条 `departures` 数组里混排。
-- `parseTimetable(raw, ctx)` 校验（信息带 `线路 X 的变体 #i`）：interval 正数、departures 数组、单点 / 时间窗二选一、时间 `HH:mm`、every 正整数、发车站在该变体站序里、方向合法、单向线不能 `down`、车型已知、虚拟线路不应有时刻表。
-- `expandDepartures(t)` → 逐个时刻（按绝对分钟升序，跨天不折回）；`segmentKey(a, b)` = 无向站对键（与 `connections.json` 同口径）；`buildSegmentHeadways(lines)` → 每区间的最小 `interval`。`useMapData.ts` 导出 `segmentHeadways` 与 `headwayFor(a, b)`（当前无消费方）。
+- `parseTimetable(raw, ctx)` 校验（信息带 `线路 X 的变体 #i`）：`interval` 非空数组、元素是 `null` 或只含 `from` / `to` / `interval` 的对象、段 `interval` 正数、`departures` 数组、`interval` 与 `departures` 互斥、单点 / 时间窗二选一、时间 `HH:mm`、every 正整数、发车站在该变体站序里、方向合法、单向线不能 `down`、车型已知、虚拟线路不应有时刻表。
+- `expandDepartures(t)` → 逐个时刻（按绝对分钟升序，跨天不折回）；`segmentKey(a, b)` = 无向站对键（与 `connections.json` 同口径）；`buildSegmentHeadways(lines)` → 每区间在所有时段里的最小 `interval`（变体的 `interval` 里有 `null` 则该变体为 `Infinity`）。`useMapData.ts` 导出 `segmentHeadways` 与 `headwayFor(a, b)`（当前无消费方）。
 
 ### Connections file (`connections.json`)
 
