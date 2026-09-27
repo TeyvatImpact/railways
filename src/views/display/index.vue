@@ -751,9 +751,9 @@ function cell(col: number) {
 .strip-loop .track::after {
   left: 100%;
 }
-/* 动态模式里底色整体变灰，延伸段跟着灰 */
-.strip-dyn.strip-loop .track::before,
-.strip-dyn.strip-loop .track::after {
+/* 动态模式里起点侧那段虚线在列车身后（跟底色一起灰）；终点侧一直保持线路色 ——
+   它指向的是这一圈接下来要走的方向，和末尾那列站一样常态高亮 */
+.strip-dyn.strip-loop .track::before {
   background: repeating-linear-gradient(90deg, var(--dyn-gray) 0 4px, transparent 4px 8px);
 }
 

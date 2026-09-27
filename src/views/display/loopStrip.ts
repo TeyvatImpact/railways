@@ -55,9 +55,10 @@ function interval(i: number): RouteSpan {
  * `order` 是运行方向上的环序（`ringOrder` 的结果，站名只用于步骤标签）。
  *
  * 与直线的 `buildProgress` 不同：环线上没有「不在本趟行程上」的站，条带永远只画
- * 「接缝站 + 前方一整圈」，于是站色只有三档 —— 接缝站（首末两列）灰；到站的那一站（第 1 列）
- * 原色 + 闪站名；其余全亮。当前区间永远是滚动后条带的第一段（0 → 1）：区间状态下它正在
- * 一段一段点亮，到站状态下它已经是刚走完的那一段（因此不亮）。
+ * 「刚经过的接缝站 + 前方一整圈」，于是站色只有三档 —— 首列（刚经过的接缝站）灰；
+ * 到站的那一站（第 1 列）原色 + 闪站名；**第 2 列到末尾全亮**（末尾那一列虽然与首列同站，
+ * 但它是这一圈最后要到的站，所以照样亮）。当前区间永远是滚动后条带的第一段（0 → 1）：
+ * 区间状态下它正在一段一段点亮，到站状态下它已经是刚走完的那一段（因此不亮，两端之间其余整圈都亮）。
  */
 export function buildLoopProgress(
   order: { id: string; name: string }[],
@@ -105,15 +106,11 @@ export function buildLoopProgress(
   // 于是到站的那一站落在第二列（= 当前站，闪站名）。
   const seam = atStation ? order[(k - 1 + n) % n] : order[k];
 
-  // 滚动后的条带有 n + 1 列：首末两列都是接缝站（刚经过 → 灰）
+  // 滚动后的条带有 n + 1 列：首列是刚经过的接缝站（灰）；从第 2 列到末尾一律常态高亮 ——
+  // 末尾那一列虽然与首列同站，但它是这一圈最后要到的站，所以照样亮
   const states: Record<number, StationState> = {};
   for (let i = 0; i <= n; i++) {
-    states[i] =
-      i === 0 || i === n
-        ? 'dim'
-        : atStation && i === 1
-          ? 'current' // 到站的那一站：原色 + 闪站名
-          : 'lit';
+    states[i] = i === 0 ? 'dim' : atStation && i === 1 ? 'current' : 'lit';
   }
   const intervals: RouteSpan[] = Array.from({ length: n }, (_, i) => interval(i));
 
