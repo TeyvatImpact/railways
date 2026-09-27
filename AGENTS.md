@@ -30,8 +30,9 @@ src/main.ts → src/style.css（Tailwind 入口，先导入）
 ```
 TitleBar                                 顶栏（关于弹窗 / 主题 / 管理面板）
 ├─ .app-body（flex row）
-│  ├─ .map-area（flex:1）→ RailwayMap     地图；内部渲染 MapControls
-│  └─ RoutePanel                         右侧面板（320px）：搜索 + StationInfo / LineInfo + 路径规划
+│  ├─ .map-area（flex:1）→ RailwayMap     地图（含列车层）；内部渲染 MapControls
+│  │                      SimClock       左上角时钟浮层
+│  └─ RoutePanel                         右侧面板（320px）：搜索 + StationInfo / LineInfo / TrainInfo + 路径规划
 ├─ InfoDialog                            模态：渲染 intro.md
 └─ AdminPanel                            模态：仅开发模式的数据编辑器
 ```
@@ -52,51 +53,55 @@ TitleBar                                 顶栏（关于弹窗 / 主题 / 管理
 
 ### 文件与职责
 
-| 文件                                                  | 职责                                                                         |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `main.ts`                                             | 挂载 `App.vue`，先导入 `style.css`                                           |
-| `App.vue`                                             | 只渲染 `<router-view />`                                                     |
-| `router/index.ts`                                     | 两条路由：`/`、`/display`（懒加载）；history base 为 `/tr`                   |
-| `views/HomeView.vue`                                  | 地图页：TitleBar +（地图 \| RoutePanel）+ 两个模态；首次访问弹介绍           |
-| `views/display/index.vue`                             | `/display` 条带图；读 `useMapData`，用 CSS 网格排版                          |
-| `views/display/stripModel.ts`                         | 条带纯模型：并集列、文本、徽章行、位移钳制、支线跨列                         |
-| `views/display/variantStrip.ts`                       | 变体选择：主线变体 + 支线拆分                                                |
-| `views/display/loopStrip.ts`                          | 环线：环序、滚动、环线进度模型                                               |
-| `views/display/dynamicStrip.ts`                       | 动态模式进度纯模型                                                           |
-| `views/display/announce.ts`                           | 配音模板注册表与播报拼装（纯逻辑）                                           |
-| `views/display/voiceTemplates.ts`                     | 装配语音模板 + 校验模板 id 引用                                              |
-| `views/display/VoicePanel.vue`、`AnnounceLog.vue`     | 吸顶语音面板、播报日志                                                       |
-| `components/TitleBar.vue`                             | 顶栏 + 关于按钮                                                              |
-| `components/InfoDialog.vue`                           | 渲染 `intro.md`（`markdown-exit` + `github-markdown-css`）                   |
-| `components/DialogWindow.vue`                         | 通用模态外壳                                                                 |
-| `components/RailwayMap.vue`                           | SVG 地图：平移缩放、网格、归属边界、线段、站点、标签、标注；点击分发         |
-| `components/RoutePanel.vue`                           | 右侧面板：搜索、信息展示、路径规划                                           |
-| `components/MapControls.vue`                          | 左下角缩放按钮、鼠标坐标读数、边界平滑切换                                   |
-| `components/StationInfo.vue`、`LineInfo.vue`          | 站点 / 线路信息（含间隔、发车、线路全览）                                    |
-| `components/RouteTimeline.vue`、`TransitTimeline.vue` | 路径详情；通用竖向时间线（两条时间线共用）                                   |
-| `components/AdminPanel.vue`                           | 开发模式数据编辑器（六个页签，写回 JSON）                                    |
-| `composables/useMapData.ts`                           | 加载解析全部数据表；导出 `stations` / `lines` / `pairCost` / `headwayFor` 等 |
-| `composables/useMapInteraction.ts`                    | 拖拽 / 滚轮 / 触摸缩放；视口落 localStorage                                  |
-| `composables/useTheme.ts`                             | 明暗主题（Varlet StyleProvider），落 localStorage                            |
-| `composables/useRenderMode.ts`                        | 线段形态 `straight` / `curve`；未接入 UI                                     |
-| `composables/useBorderSmoothing.ts`                   | 边界平滑方式的运行时 ref（不落盘）                                           |
-| `composables/useCurveGeometry.ts`                     | 向心 Catmull–Rom 曲线控制点                                                  |
-| `composables/useTerritoryBorders.ts`                  | 由站点归属算 Voronoi 边界 SVG path（纯几何）                                 |
-| `composables/useLabelPlacement.ts`                    | 标签盒布局与引线（`@chenglou/pretext`），并提供 `measureText`                |
-| `composables/stationNames.ts`                         | 名称类型与语言规则（标签行、展示行、信息面板名称行）                         |
-| `composables/formatTime.ts`                           | 时长格式化（展示层专用）                                                     |
-| `composables/lineNaming.ts`                           | 线路名拼装（机构前缀 + 自名）与轮渡 / 同站换乘派生                           |
-| `composables/useRouting.ts`                           | 图构建 + Dijkstra + 站点 / 线路模糊搜索                                      |
-| `composables/useSelection.ts`                         | 「选中了什么」的唯一来源                                                     |
-| `composables/timetable.ts`                            | 时刻表纯模块（解析、间隔查询、发车展开、间隔汇总）                           |
-| `composables/stationTimetable.ts`                     | 站点级派生：间隔分段 + 实际发车                                              |
-| `composables/useSpeech.ts`                            | 语音引擎单例（`speechSynthesis`）                                            |
-| `config/render.config.ts`                             | 渲染常量（字体、调色板、间距、描边、网格步长）                               |
-| `config/vehicles.ts`                                  | 车型：时速、票价系数、加减速、冗余系数、计算公式                             |
-| `config/announce.config.ts`                           | 语音引擎常量                                                                 |
-| `config/unionTeyvat.config.ts`                        | 代码内置机构名与地区 → 运营方表                                              |
-| `scripts/migrate-data-v3.cjs`                         | 一次性数据迁移脚本（已完成，无需再跑）                                       |
-| `vite.config.ts`                                      | Vite 配置 + Admin 数据读写中间件                                             |
+| 文件                                                  | 职责                                                                                      |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `main.ts`                                             | 挂载 `App.vue`，先导入 `style.css`                                                        |
+| `App.vue`                                             | 只渲染 `<router-view />`                                                                  |
+| `router/index.ts`                                     | 两条路由：`/`、`/display`（懒加载）；history base 为 `/tr`                                |
+| `views/HomeView.vue`                                  | 地图页：TitleBar +（地图 \| RoutePanel）+ 两个模态；首次访问弹介绍                        |
+| `views/display/index.vue`                             | `/display` 条带图；读 `useMapData`，用 CSS 网格排版                                       |
+| `views/display/stripModel.ts`                         | 条带纯模型：并集列、文本、徽章行、位移钳制、支线跨列                                      |
+| `views/display/variantStrip.ts`                       | 变体选择：主线变体 + 支线拆分                                                             |
+| `views/display/loopStrip.ts`                          | 环线：环序、滚动、环线进度模型                                                            |
+| `views/display/dynamicStrip.ts`                       | 动态模式进度纯模型                                                                        |
+| `views/display/announce.ts`                           | 配音模板注册表与播报拼装（纯逻辑）                                                        |
+| `views/display/voiceTemplates.ts`                     | 装配语音模板 + 校验模板 id 引用                                                           |
+| `views/display/VoicePanel.vue`、`AnnounceLog.vue`     | 吸顶语音面板、播报日志                                                                    |
+| `components/TitleBar.vue`                             | 顶栏 + 关于按钮                                                                           |
+| `components/InfoDialog.vue`                           | 渲染 `intro.md`（`markdown-exit` + `github-markdown-css`）                                |
+| `components/DialogWindow.vue`                         | 通用模态外壳                                                                              |
+| `components/RailwayMap.vue`                           | SVG 地图：平移缩放、网格、归属边界、线段、站点、标签、标注；点击分发                      |
+| `components/RoutePanel.vue`                           | 右侧面板：搜索、信息展示、路径规划                                                        |
+| `components/MapControls.vue`                          | 左下角缩放按钮、鼠标坐标读数、边界平滑切换                                                |
+| `components/SimClock.vue`                             | `/` 左上角模拟时钟：h:m:s 逐位上下调整、暂停 / 倍速；状态在 `useSimClock`，地图列车读它   |
+| `components/TrainInfo.vue`                            | 列车详情：线路 / 发车 / 方向 / 车型 / 实时状态 + 本趟停站到发时刻（点击地图上的列车打开） |
+| `components/StationInfo.vue`、`LineInfo.vue`          | 站点 / 线路信息（含间隔、发车、线路全览）                                                 |
+| `components/RouteTimeline.vue`、`TransitTimeline.vue` | 路径详情；通用竖向时间线（两条时间线共用）                                                |
+| `components/AdminPanel.vue`                           | 开发模式数据编辑器（六个页签，写回 JSON）                                                 |
+| `composables/useMapData.ts`                           | 加载解析全部数据表；导出 `stations` / `lines` / `pairCost` / `headwayFor` 等              |
+| `composables/useMapInteraction.ts`                    | 拖拽 / 滚轮 / 触摸缩放；视口落 localStorage                                               |
+| `composables/useTheme.ts`                             | 明暗主题（Varlet StyleProvider），落 localStorage                                         |
+| `composables/useRenderMode.ts`                        | 线段形态 `straight` / `curve`；未接入 UI                                                  |
+| `composables/useBorderSmoothing.ts`                   | 边界平滑方式的运行时 ref（不落盘）                                                        |
+| `composables/useSimClock.ts`                          | 模拟时钟模块级单例：`secondsOfDay` / `playing` / `rate` / `minutesOfDay` + 启动 rAF       |
+| `composables/trainRuns.ts`                            | 列车运行模型：把 `departures` 摊成 `TrainRun`，回答「某时刻这趟车在哪」（纯逻辑）         |
+| `composables/useCurveGeometry.ts`                     | 向心 Catmull–Rom 曲线控制点                                                               |
+| `composables/useTerritoryBorders.ts`                  | 由站点归属算 Voronoi 边界 SVG path（纯几何）                                              |
+| `composables/useLabelPlacement.ts`                    | 标签盒布局与引线（`@chenglou/pretext`），并提供 `measureText`                             |
+| `composables/stationNames.ts`                         | 名称类型与语言规则（标签行、展示行、信息面板名称行）                                      |
+| `composables/formatTime.ts`                           | 时长格式化（展示层专用）                                                                  |
+| `composables/lineNaming.ts`                           | 线路名拼装（机构前缀 + 自名）与轮渡 / 同站换乘派生                                        |
+| `composables/useRouting.ts`                           | 图构建 + Dijkstra + 站点 / 线路模糊搜索                                                   |
+| `composables/useSelection.ts`                         | 「选中了什么」的唯一来源                                                                  |
+| `composables/timetable.ts`                            | 时刻表纯模块（解析、间隔查询、发车展开、间隔汇总）                                        |
+| `composables/stationTimetable.ts`                     | 站点级派生：间隔分段 + 实际发车                                                           |
+| `composables/useSpeech.ts`                            | 语音引擎单例（`speechSynthesis`）                                                         |
+| `config/render.config.ts`                             | 渲染常量（字体、调色板、间距、描边、网格步长）                                            |
+| `config/vehicles.ts`                                  | 车型：时速、票价系数、加减速、冗余系数、计算公式                                          |
+| `config/announce.config.ts`                           | 语音引擎常量                                                                              |
+| `config/unionTeyvat.config.ts`                        | 代码内置机构名与地区 → 运营方表                                                           |
+| `scripts/migrate-data-v3.cjs`                         | 一次性数据迁移脚本（已完成，无需再跑）                                                    |
+| `vite.config.ts`                                      | Vite 配置 + Admin 数据读写中间件                                                          |
 
 ## 数据
 
@@ -253,6 +258,8 @@ TitleBar                                 顶栏（关于弹窗 / 主题 / 管理
 - `dwell`（可选）：`{ default, stations }`，分钟、非负，逐站覆盖。**只作数据与派生**（`dwellAt`），不影响行程时间（`pairCost` / 路由时间）。
 - `parseTimetable(raw, ctx)` 做全部校验（两种形态互斥、键合法、时间 `HH:mm`、站在站序里、方向合法、车型已知、单向线不能 `down`、虚拟线路不应有时刻表等）。
 - 其它导出：`segmentKey`（无向站对键，与 `connections.json` 同口径）、`intervalAt`、`mergeIntervalSources`（多来源按时刻取 `min` 切段）、`minIntervalOfDay`、`buildSegmentHeadways`。`useMapData.ts` 再导出 `segmentHeadways` 与 `headwayFor(a, b)`（`Infinity` = 不开行，无条目 = 无数据）。
+
+**地图上的列车**（`composables/trainRuns.ts`）：只对写了 `departures` 的变体跑车 —— 每班车摊成 `TrainRun`（首站开出 → 各站到发 → 末站到站 + 停站），按 `useSimClock` 的模拟时刻定位（区间内按折线弧长插值，停站停在站点）。**环线末尾的闭合站照常收尾**（列车开回枢纽站、停够 `dwell` 再消失），而 `stationTimetable.stationDepartures` 的列表里仍不重复出现该站（`buildRun` 复用 `buildTrainRun` 后丢掉最后一行）。画面表现：线路上一个线路色填充 + 站点圈描边的圆点（`TRAIN_DOT_R`，层级在线路之上、站点之下），停站时另在该站站名标签正上方横排小圆点；点击任一圆点 = `useSelection.selectTrain`，右侧 `TrainInfo.vue` 出详情。列车不参与搜索。
 
 ### `connections.json`
 

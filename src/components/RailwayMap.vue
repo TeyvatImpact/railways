@@ -75,6 +75,31 @@
           style="cursor: pointer"
           @click.stop="onSegmentClick(seg.lineId)" />
 
+        <!-- 列车：线路之上、站点之下；停站的列车另在站名标签上方画一排圆点 -->
+        <g v-for="dot in trainDots" :key="dot.key" :opacity="trainOpacity(dot.lineId)">
+          <circle
+            :cx="dot.x"
+            :cy="dot.y"
+            :r="TRAIN_DOT_R"
+            :fill="dot.color"
+            stroke="var(--color-text)"
+            :stroke-width="TRAIN_DOT_STROKE"
+            style="cursor: pointer"
+            @click.stop="onTrainClick(dot.trainId)" />
+        </g>
+
+        <g v-for="dot in trainLabelDots" :key="dot.key" :opacity="trainOpacity(dot.lineId)">
+          <circle
+            :cx="dot.x"
+            :cy="dot.y"
+            :r="TRAIN_LABEL_DOT_R"
+            :fill="dot.color"
+            stroke="var(--color-text)"
+            :stroke-width="TRAIN_DOT_STROKE"
+            style="cursor: pointer"
+            @click.stop="onTrainClick(dot.trainId)" />
+        </g>
+
         <g
           v-for="lb in segLabels"
           :key="lb.key"
@@ -211,6 +236,11 @@ import {
   FERRY_COLOR_HIGHLIGHT,
   NATION_BORDER_COLOR,
   NATION_BORDER_WIDTH,
+  TRAIN_DOT_R,
+  TRAIN_DOT_STROKE,
+  TRAIN_LABEL_DOT_GAP,
+  TRAIN_LABEL_DOT_R,
+  TRAIN_LABEL_DOT_SPACING,
 } from '../config/render.config';
 import { buildBorderPaths } from '../composables/useTerritoryBorders';
 import { useBorderSmoothing } from '../composables/useBorderSmoothing';
@@ -222,6 +252,7 @@ import {
   transferStationIds,
   renderSegments,
   pairSegmentIds,
+  segmentPolyline,
   type RenderSegment,
   markerPaths,
   markerTexts,
@@ -237,7 +268,21 @@ import { buildCurveSegments, type CurveSegment } from '../composables/useCurveGe
 import MapControls from './MapControls.vue';
 import type { RouteResult } from '../composables/useRouting';
 import { selectTarget } from '../composables/useRouting';
-import { clearSelection, selectLine, selectStation, selection } from '../composables/useSelection';
+import {
+  clearSelection,
+  selectLine,
+  selectStation,
+  selectTrain,
+  selection,
+} from '../composables/useSelection';
+import { useSimClock } from '../composables/useSimClock';
+import {
+  activeTrainsAt,
+  pointAlong,
+  stopPoint,
+  trainById,
+  type ActiveTrain,
+} from '../composables/trainRuns';
 
 const props = defineProps<{
   routeResult: RouteResult | null;
@@ -347,11 +392,15 @@ function segStroke(seg: { id: string; lineId: string; color: string }): string {
 
 const DIM_OPACITY = 0.12;
 
-// --- 高亮：唯一来源是 useSelection 的选中项 —— 选中线路 = 该线；选中站点 = 服务它的线路 ---
+// --- 高亮：唯一来源是 useSelection 的选中项 —— 选中线路 = 该线；选中站点 = 服务它的线路；选中列车 = 它跑的那条线 ---
 const highlightedLineIds = computed(() => {
   const sel = selection.value;
   if (!sel) return new Set<string>();
   if (sel.kind === 'line') return new Set([sel.id]);
+  if (sel.kind === 'train') {
+    const run = trainById(sel.id);
+    return new Set(run ? [run.line.id] : []);
+  }
   return new Set((stationLineMap.get(sel.id) ?? []).map((line) => line.id));
 });
 
@@ -548,6 +597,93 @@ function onStationClick(stationId: string) {
 function stationRadius(id: string): number {
   if (selectedStationId.value === id) return 9;
   return transferStationIds.has(id) ? 7 : 5;
+}
+
+// --- 列车：按模拟时钟沿线路移动的圆点；停站的列车另在站名标签上方画一排圆点 ---
+const { minutesOfDay } = useSimClock();
+
+interface TrainDot {
+  key: string;
+  trainId: string;
+  lineId: string;
+  color: string;
+  x: number;
+  y: number;
+}
+
+const trains = computed(() => activeTrainsAt(minutesOfDay.value));
+
+/** 线上圆点：区间中按弧长比例取点，停站取该站停靠点 */
+const trainDots = computed<TrainDot[]>(() => {
+  const out: TrainDot[] = [];
+  for (const train of trains.value) {
+    const stops = train.run.stops;
+    let point: { x: number; y: number } | null;
+    if (train.phase.kind === 'dwell') {
+      point = stopPoint(train.run.line.id, stops, train.phase.index);
+    } else {
+      const polyline = segmentPolyline(
+        train.run.line.id,
+        stops[train.phase.index].stationId,
+        stops[train.phase.index + 1].stationId,
+      );
+      point = polyline ? pointAlong(polyline, train.phase.t) : null;
+    }
+    if (!point) continue;
+    out.push({
+      key: train.run.id,
+      trainId: train.run.id,
+      lineId: train.run.line.id,
+      color: train.run.line.color,
+      ...point,
+    });
+  }
+  return out;
+});
+
+/** 站名标签上方的停站圆点：同一站多辆车横向排开，居中于标签盒顶边之上 */
+const trainLabelDots = computed<TrainDot[]>(() => {
+  const boxes = new Map(labelBoxes.value.map((box) => [box.id, box]));
+  const byStation = new Map<string, ActiveTrain[]>();
+  for (const train of trains.value) {
+    if (train.phase.kind !== 'dwell') continue;
+    const stationId = train.run.stops[train.phase.index].stationId;
+    const list = byStation.get(stationId);
+    if (list) list.push(train);
+    else byStation.set(stationId, [train]);
+  }
+  const out: TrainDot[] = [];
+  for (const [stationId, list] of byStation) {
+    const box = boxes.get(stationId);
+    if (!box) continue;
+    const step = TRAIN_LABEL_DOT_R * 2 + TRAIN_LABEL_DOT_SPACING;
+    const x0 = box.left + box.w / 2 - ((list.length - 1) * step) / 2;
+    const y = box.top - TRAIN_LABEL_DOT_GAP - TRAIN_LABEL_DOT_R;
+    list.forEach((train, i) => {
+      out.push({
+        key: `label-${train.run.id}`,
+        trainId: train.run.id,
+        lineId: train.run.line.id,
+        color: train.run.line.color,
+        x: x0 + i * step,
+        y,
+      });
+    });
+  }
+  return out;
+});
+
+/** 列车跟随所在线路的明暗：导航结果 / 高亮里有该线才亮 */
+function trainOpacity(lineId: string): number {
+  if (props.routeResult) return routeLineIds.value.has(lineId) ? 1 : DIM_OPACITY;
+  if (isHighlightActive()) return highlightedLineIds.value.has(lineId) ? 1 : DIM_OPACITY;
+  return 1;
+}
+
+/** 点列车 = 选中列车（选起点 / 终点模式下不抢这个点击，与线段一致） */
+function onTrainClick(trainId: string) {
+  if (selectTarget.value) return;
+  selectTrain(trainId);
 }
 </script>
 

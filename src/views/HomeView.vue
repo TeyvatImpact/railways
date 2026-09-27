@@ -7,6 +7,7 @@
   <div class="app-body">
     <div class="map-area">
       <RailwayMap :route-result="routeResult" @station-click="onStationClick" />
+      <SimClock />
     </div>
     <RoutePanel ref="panel" @result-change="onResultChange" />
   </div>
@@ -18,6 +19,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useTheme } from '../composables/useTheme';
 import RailwayMap from '../components/RailwayMap.vue';
+import SimClock from '../components/SimClock.vue';
 import TitleBar from '../components/TitleBar.vue';
 import RoutePanel from '../components/RoutePanel.vue';
 import InfoDialog from '../components/InfoDialog.vue';

@@ -23,6 +23,15 @@ export const stationR = 8;
 /** 线路的描边宽度（px） */
 export const LINE_WIDTH = 4;
 
+/** 线路上的列车圆点：半径略宽于 LINE_WIDTH / 2；描边与站点圆圈同一口径 */
+export const TRAIN_DOT_R = 4;
+export const TRAIN_DOT_STROKE = 2;
+
+/** 站名标签上方的停站圆点：半径、离标签顶边的间距、同一站多点之间的额外空隙 */
+export const TRAIN_LABEL_DOT_R = 3;
+export const TRAIN_LABEL_DOT_GAP = 1;
+export const TRAIN_LABEL_DOT_SPACING = 2;
+
 /** 基础 7 色（红橙黄绿青蓝紫），即 linePalette 的前 7 项 */
 const LINE_COLORS_BASE = [
   '#e6194b', // 红

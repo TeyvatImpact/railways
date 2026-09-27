@@ -50,7 +50,11 @@
             v-if="selection.kind === 'station'"
             :station-id="selection.id"
             @close="clearSelection()" />
-          <LineInfo v-else :line-id="selection.id" @close="clearSelection()" />
+          <LineInfo
+            v-else-if="selection.kind === 'line'"
+            :line-id="selection.id"
+            @close="clearSelection()" />
+          <TrainInfo v-else :train-id="selection.id" @close="clearSelection()" />
         </div>
       </section>
 
@@ -169,6 +173,7 @@ import { clearSelection, selectLine, selectStation, selection } from '../composa
 import RouteTimeline from './RouteTimeline.vue';
 import StationInfo from './StationInfo.vue';
 import LineInfo from './LineInfo.vue';
+import TrainInfo from './TrainInfo.vue';
 
 interface RouteOption {
   metric: RouteMetric;

@@ -1,7 +1,6 @@
 // 站点级时刻表派生（无 Vue 依赖，读 useMapData 的数据）：
 // ①「间隔时间」= 本站各线路按时间顺序的生效间隔分段；②「时刻表发车」= 本站实际的车次到站 / 开出时刻。
 import {
-  dwellAt,
   expandDepartures,
   mergeIntervalSources,
   type IntervalSegment,
@@ -9,13 +8,14 @@ import {
   type TimetableDeparture,
 } from './timetable';
 import {
-  pairCost,
   stationLineMap,
   stationMap,
   sortLinesForDisplay,
   type Line,
   type LineVariant,
 } from './useMapData';
+import { formatClock } from './formatTime';
+import { buildTrainRun } from './trainRuns';
 
 /** 一条线路在某个站点的间隔时间：按时间顺序、相邻同值合并的段 */
 export interface StationHeadway {
@@ -88,15 +88,7 @@ interface RawStop {
   turnback: boolean;
 }
 
-/** 分钟数 → `HH:mm`（跨天加「次日」前缀）；只在展示层取整 */
-function clockText(minutes: number): string {
-  const rounded = Math.round(minutes);
-  const day = Math.floor(rounded / 1440);
-  const inDay = ((rounded % 1440) + 1440) % 1440;
-  const text = `${String(Math.floor(inDay / 60)).padStart(2, '0')}:${String(inDay % 60).padStart(2, '0')}`;
-  return day > 0 ? `次日 ${text}` : text;
-}
-
+/** 站点在该线路主语言下的名字 */
 function stationName(line: Line, stationId: string): string {
   return stationMap.get(stationId)?.names[line.primaryLang] ?? stationId;
 }
@@ -110,59 +102,34 @@ function isLoopStations(stations: string[]): boolean {
 }
 
 /**
- * 把一条发车记录铺成一趟车的全部停站：按方向站序开行，每站加上区间耗时（`pairCost`，含车型排点冗余）
- * 与停站时间（`dwell`）；`turnback` 的车到该方向终点后停站再原路开回发车站（一趟车既是上行也是下行）。
+ * 把一条发车记录铺成一趟车的全部停站（站名形态，供「本站时刻表」列表用）——
+ * 时刻推算复用 `trainRuns.buildTrainRun`（地图上的列车走同一份实现）。
  *
- * 停站行只有两种：区间行「到站 + 停站后开出」，终点行「只到站」——所以起点站只出现开出、终点站只出现到站。
- * 环线末尾那个闭合用的重复站不是停站（它只是把环画回去），只用来给上一站当「开往」方向。
+ * 地图上环线末尾的闭合站要收尾（列车开回枢纽站、停站），但本站列表里不重复出现同一个站的到站行，
+ * 所以这里把闭合站那一行丢掉 —— 与旧实现逐字一致。
  */
-function buildRun(line: Line, variant: LineVariant, dep: TimetableDeparture): RawStop[] {
+function buildRun(
+  line: Line,
+  variant: LineVariant,
+  dep: TimetableDeparture,
+  index: number,
+): RawStop[] {
+  const run = buildTrainRun(line, variant, dep, index);
+  if (!run) return [];
+  const full = run.stops;
+  const rows = full.map((stop, i) => ({
+    stationId: stop.stationId,
+    ...(stop.arrival === undefined ? {} : { arrival: stop.arrival }),
+    ...(stop.departure === undefined ? {} : { departure: stop.departure }),
+    ...(i > 0 ? { from: stationName(line, full[i - 1].stationId) } : {}),
+    // 折返点不写「开往」：它在列表里的走向是「来自 X」，写上下一个站会变成「X → X」
+    ...(i < full.length - 1 && !stop.turnback
+      ? { to: stationName(line, full[i + 1].stationId) }
+      : {}),
+    turnback: stop.turnback,
+  }));
   const loop = isLoopStations(variant.stations);
-  const order = dep.direction === 'up' ? variant.stations : [...variant.stations].reverse();
-  const startIndex = order.indexOf(dep.station);
-  if (startIndex < 0) return [];
-  const leg = order.slice(startIndex);
-  if (leg.length === 0) return [];
-  const stops: RawStop[] = [];
-  let time = dep.minutes;
-
-  stops.push({
-    stationId: leg[0],
-    departure: time,
-    ...(leg.length > 1 ? { to: stationName(line, leg[1]) } : {}),
-    turnback: false,
-  });
-
-  /**
-   * `end` 决定末站怎么收尾：`terminus` = 本趟车的终点（只到站）；`turnback` = 折返点（同样只到站，
-   * 但标出来并照常推进停站时间，因为原路返回的那半趟还要用这个时刻）；`closure` = 环线闭合站（不生成停站行）。
-   */
-  const travel = (path: string[], end: 'terminus' | 'turnback' | 'closure') => {
-    for (let i = 1; i < path.length; i++) {
-      time += pairCost(dep.vehicle, path[i - 1], path[i]).time;
-      const arrival = time;
-      const atEnd = i === path.length - 1;
-      if (atEnd && end === 'closure') break;
-      const from = stationName(line, path[i - 1]);
-      time += dwellAt(variant.timetable.dwell, path[i]) ?? 0;
-      if (atEnd) {
-        stops.push({ stationId: path[i], arrival, from, turnback: end === 'turnback' });
-        continue;
-      }
-      stops.push({
-        stationId: path[i],
-        arrival,
-        departure: time,
-        from,
-        to: stationName(line, path[i + 1]),
-        turnback: false,
-      });
-    }
-  };
-
-  travel(leg, loop ? 'closure' : dep.turnback ? 'turnback' : 'terminus');
-  if (dep.turnback) travel([...leg].reverse(), 'terminus');
-  return stops;
+  return loop && !dep.turnback ? rows.slice(0, -1) : rows;
 }
 
 /**
@@ -174,15 +141,15 @@ export function stationDepartures(stationId: string): StationDepartures[] {
   for (const line of sortLinesForDisplay(stationLineMap.get(stationId) ?? [])) {
     const timed: { stop: StationStop; minutes: number }[] = [];
     for (const variant of line.variants) {
-      for (const dep of expandDepartures(variant.timetable)) {
-        for (const stop of buildRun(line, variant, dep)) {
+      for (const [index, dep] of expandDepartures(variant.timetable).entries()) {
+        for (const stop of buildRun(line, variant, dep, index)) {
           if (stop.stationId !== stationId) continue;
           timed.push({
             stop: {
               ...(stop.from === undefined ? {} : { from: stop.from }),
               ...(stop.to === undefined ? {} : { to: stop.to }),
-              ...(stop.arrival === undefined ? {} : { arrival: clockText(stop.arrival) }),
-              ...(stop.departure === undefined ? {} : { departure: clockText(stop.departure) }),
+              ...(stop.arrival === undefined ? {} : { arrival: formatClock(stop.arrival) }),
+              ...(stop.departure === undefined ? {} : { departure: formatClock(stop.departure) }),
               turnback: stop.turnback,
             },
             minutes: stop.arrival ?? stop.departure ?? 0,

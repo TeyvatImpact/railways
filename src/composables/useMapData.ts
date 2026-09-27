@@ -879,6 +879,9 @@ function polylineKey(pts: { x: number; y: number }[]): string {
 /** `${lineId}|${stationA}|${stationB}` → 该站间区间各渲染段的 id（两个方向都登记）；用于线路高亮定位 */
 export const pairSegmentIds = new Map<string, string[]>();
 
+/** `${lineId}|${有序站点 a}|${有序站点 b}` → 该区间的序号与方向（a 即 `linePairs` 的规范起点时 forward = true） */
+const pairIndexByStations = new Map<string, { pairIndex: number; forward: boolean }>();
+
 interface RawSegment {
   id: string;
   /** 整条站间折线的几何签名，用于平行轨道分组 */
@@ -973,6 +976,8 @@ for (const line of lines) {
     }
     pairSegmentIds.set(`${line.id}|${aId}|${bId}`, ids);
     pairSegmentIds.set(`${line.id}|${bId}|${aId}`, ids);
+    pairIndexByStations.set(`${line.id}|${aId}|${bId}`, { pairIndex: i, forward: true });
+    pairIndexByStations.set(`${line.id}|${bId}|${aId}`, { pairIndex: i, forward: false });
   }
 }
 
@@ -1031,4 +1036,35 @@ for (const polylines of groups) {
       });
     }
   }
+}
+
+// ================= 7. 站间折线（列车定位用） =================
+
+/** `${lineId}|${pairIndex}` → 该区间的屏幕折线（已含并行偏移），按 `partIndex` 顺序首尾相接 */
+const pairPolylines = new Map<string, { x: number; y: number }[]>();
+for (const seg of renderSegments) {
+  const key = `${seg.lineId}|${seg.pairIndex}`;
+  let pts = pairPolylines.get(key);
+  if (!pts) {
+    pts = [];
+    pairPolylines.set(key, pts);
+  }
+  if (pts.length === 0) pts.push({ x: seg.x1, y: seg.y1 });
+  pts.push({ x: seg.x2, y: seg.y2 });
+}
+
+/**
+ * 某线路某**有序**站对（`fromId → toId`）在屏幕坐标里的折线（已含并行轨道偏移）；
+ * 没登记这个站对 = `null`。列车沿线插值、停站取端点都走它。
+ */
+export function segmentPolyline(
+  lineId: string,
+  fromId: string,
+  toId: string,
+): { x: number; y: number }[] | null {
+  const info = pairIndexByStations.get(`${lineId}|${fromId}|${toId}`);
+  if (!info) return null;
+  const pts = pairPolylines.get(`${lineId}|${info.pairIndex}`);
+  if (!pts) return null;
+  return info.forward ? pts : [...pts].reverse();
 }
