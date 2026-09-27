@@ -3,7 +3,7 @@
  *
  * 取代旧的 `fare-presets.json`：旧配置只有「每公里票价 / 每公里分钟」两个系数，
  * 现在拆成「设计时速」（推导时间）与「票价系数」（推导票价），并允许整段覆写计算公式。
- * 加/减速度与可载人数是预留字段，当前未参与任何计算（现有车型也都没填）。
+ * 加/减速度与可载人数是预留字段，当前未参与任何计算。
  */
 
 export interface Vehicle {
@@ -42,44 +42,53 @@ export function defaultCompute(distance: number, vehicle: Vehicle): { time: numb
 export const DEFAULT_VEHICLE_ID = 'standard';
 
 /**
- * 全部车型。设计时速由旧的「每公里分钟」换算：时速 = 60 / minutesPerKm（km/h）；
- * 票价系数就是旧的 farePerKm（摩拉/千米）。
+ * 全部车型。票价系数 = 摩拉/千米；设计时速与加/减速度按各线路的设定手工取值。
  */
 export const VEHICLES: Vehicle[] = [
   {
     id: 'standard',
-    name: '提瓦特铁路标准',
-    nameEn: 'Teyvat Railway Standard',
-    designSpeed: 60,
+    name: '提瓦特铁路标准列车',
+    nameEn: 'Teyvat Railway Standard Train',
+    designSpeed: 80,
     fareCoefficient: 100,
+    acceleration: 0.8,
+    deceleration: 1,
   },
   {
     id: 'aquabus',
     name: '枫丹巡轨船',
     nameEn: 'Fontaine Aquabus',
-    designSpeed: 30,
+    designSpeed: 40,
     fareCoefficient: 80,
+    acceleration: 0.5,
+    deceleration: 1.5,
   },
   {
     id: 'natlan-resort',
-    name: '纳塔度假村',
-    nameEn: 'Natlan Resort Line',
+    name: '纳塔度假村专用列车',
+    nameEn: 'Natlan Resort Train',
     designSpeed: 30,
     fareCoefficient: 0,
+    acceleration: 0.5,
+    deceleration: 0.8,
   },
   {
     id: 'inazuma',
     name: '稻妻铁道',
     nameEn: 'Inazuma Railway',
-    designSpeed: 60 / 0.7,
-    fareCoefficient: 150,
+    designSpeed: 100,
+    fareCoefficient: 180,
+    acceleration: 1.2,
+    deceleration: 1.5,
   },
   {
     id: 'liyue-metro',
     name: '璃月港地铁',
     nameEn: 'Liyue Harbor Metro',
-    designSpeed: 50,
+    designSpeed: 100,
     fareCoefficient: 80,
+    acceleration: 1,
+    deceleration: 1.2,
   },
   {
     id: 'ferry',
@@ -87,6 +96,8 @@ export const VEHICLES: Vehicle[] = [
     nameEn: 'Ferry',
     designSpeed: 15,
     fareCoefficient: 50,
+    acceleration: 0.05,
+    deceleration: 0.2,
   },
   {
     // 同站换乘是虚拟线路、不是真实运具；保留一个配置项只为沿用旧费用口径
@@ -95,6 +106,8 @@ export const VEHICLES: Vehicle[] = [
     nameEn: 'Same-Station Transfer',
     designSpeed: 5,
     fareCoefficient: 0,
+    acceleration: Infinity,
+    deceleration: Infinity,
   },
 ];
 
