@@ -2,6 +2,7 @@ import dataR from '../data/teyvat.json';
 import dataI from '../data/inazuma.json';
 import dataL from '../data/liyue.json';
 import dataS from '../data/snezhnaya.json';
+import regionsData from '../data/regions.json';
 import markersData from '../data/mark.json';
 import ferryData from '../data/ferry.json';
 import sameData from '../data/same.json';
@@ -108,7 +109,17 @@ export function getPreset(id: string): PresetConfig {
   return presetsMap.get(id) ?? presetsMap.get('standard')!;
 }
 
+/** regions.json 的一级划分（「国家/地区」或「区域」）：稳定 id + 四语名称 */
+export interface Territory {
+  id: string;
+  names: StationNames;
+}
+
 export interface Station extends StationData {
+  /** 所属「国家/地区」（regions.json 的 `nations`）；每个站点必有 */
+  nation: Territory;
+  /** 所属「区域」（regions.json 的 `areas`）；该站不属于任何区域时缺省 */
+  area?: Territory;
   cx: number;
   cy: number;
 }
@@ -253,6 +264,63 @@ const parsedStations: StationData[] = [
   ...parsedS.stations,
 ];
 
+/**
+ * regions.json —— 站点归属：「国家/地区」（七国 + 至冬国挪德卡莱自治区）必有，
+ * 「区域」可选。归属与数据文件无关：teyvat.json 一册里就横跨六个国家/地区。
+ */
+interface RegionsFile {
+  nations: Record<string, { names: StationNames }>;
+  areas: Record<string, { names: StationNames; nation: string }>;
+  /** 完整站点 id → 归属 */
+  stations: Record<string, { nation: string; area?: string }>;
+}
+
+const regionsFile = regionsData as unknown as RegionsFile;
+
+function requireNames(what: string, names: StationNames | undefined): StationNames {
+  for (const key of ['zhCN', 'zhTW', 'ja', 'en'] as const) {
+    if (!names?.[key]) throw new Error(`${what} 缺少 names.${key}`);
+  }
+  return names!;
+}
+
+const nationMap = new Map<string, Territory>();
+for (const [id, entry] of Object.entries(regionsFile.nations)) {
+  nationMap.set(id, { id, names: requireNames(`国家/地区 ${id}`, entry.names) });
+}
+
+const areaMap = new Map<string, Territory>();
+for (const [id, entry] of Object.entries(regionsFile.areas)) {
+  if (!nationMap.has(entry.nation))
+    throw new Error(`区域 ${id} 的国家/地区 ${entry.nation} 不存在`);
+  areaMap.set(id, { id, names: requireNames(`区域 ${id}`, entry.names) });
+}
+
+const stationIdSet = new Set(parsedStations.map((s) => s.id));
+const stationTerritory = new Map<string, { nation: Territory; area?: Territory }>();
+for (const [id, entry] of Object.entries(regionsFile.stations)) {
+  if (!stationIdSet.has(id)) throw new Error(`regions.json 引用了不存在的站点：${id}`);
+  const nation = nationMap.get(entry.nation);
+  if (!nation) throw new Error(`站点 ${id} 的国家/地区 ${entry.nation} 不存在`);
+  if (entry.area) {
+    const area = areaMap.get(entry.area);
+    if (!area) throw new Error(`站点 ${id} 的区域 ${entry.area} 不存在`);
+    if (regionsFile.areas[entry.area].nation !== entry.nation)
+      throw new Error(`站点 ${id} 的区域 ${entry.area} 不属于国家/地区 ${entry.nation}`);
+  }
+  stationTerritory.set(id, {
+    nation,
+    area: entry.area ? areaMap.get(entry.area) : undefined,
+  });
+}
+
+/** 取站点归属；regions.json 必须覆盖每个站点（一个点至少属于某个国家/地区） */
+function territoryOf(stationId: string): { nation: Territory; area?: Territory } {
+  const territory = stationTerritory.get(stationId);
+  if (!territory) throw new Error(`regions.json 缺少站点 ${stationId} 的归属`);
+  return territory;
+}
+
 const parsedLinesR = dataR.lines as unknown as LineData[];
 const parsedLinesI = dataI.lines as unknown as LineData[];
 const parsedLinesL = dataL.lines as unknown as LineData[];
@@ -357,6 +425,7 @@ const translateY = (maxY + minY) / 2;
 
 export const stations: Station[] = parsedStations.map((s) => ({
   ...s,
+  ...territoryOf(s.id),
   cx: (s.x + width / 2 - translateX) * BLOCK_SIZE,
   cy: (s.y + height / 2 - translateY) * BLOCK_SIZE,
 }));

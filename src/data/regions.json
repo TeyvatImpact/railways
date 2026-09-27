@@ -1,0 +1,868 @@
+{
+  "nations": {
+    "mondstadt": {
+      "names": {
+        "zhCN": "蒙德",
+        "zhTW": "蒙德",
+        "ja": "モンド",
+        "en": "Mondstadt"
+      }
+    },
+    "liyue": {
+      "names": {
+        "zhCN": "璃月",
+        "zhTW": "璃月",
+        "ja": "璃月",
+        "en": "Liyue"
+      }
+    },
+    "inazuma": {
+      "names": {
+        "zhCN": "稻妻",
+        "zhTW": "稻妻",
+        "ja": "稲妻",
+        "en": "Inazuma"
+      }
+    },
+    "sumeru": {
+      "names": {
+        "zhCN": "须弥",
+        "zhTW": "須彌",
+        "ja": "スメール",
+        "en": "Sumeru"
+      }
+    },
+    "fontaine": {
+      "names": {
+        "zhCN": "枫丹",
+        "zhTW": "楓丹",
+        "ja": "フォンテーヌ",
+        "en": "Fontaine"
+      }
+    },
+    "natlan": {
+      "names": {
+        "zhCN": "纳塔",
+        "zhTW": "納塔",
+        "ja": "ナタ",
+        "en": "Natlan"
+      }
+    },
+    "snezhnaya": {
+      "names": {
+        "zhCN": "至冬",
+        "zhTW": "至冬",
+        "ja": "スネージナヤ",
+        "en": "Snezhnaya"
+      }
+    },
+    "nodkrai": {
+      "names": {
+        "zhCN": "至冬国挪德卡莱自治区",
+        "zhTW": "至冬國挪德卡萊自治區",
+        "ja": "至冬国ノド＝クライ自治区",
+        "en": "Nod-Krai Autonomous Region of Snezhnaya"
+      }
+    }
+  },
+  "areas": {
+    "dragonspine": {
+      "names": {
+        "zhCN": "龙脊雪山",
+        "zhTW": "龍脊雪山",
+        "ja": "ドラゴンスパイン",
+        "en": "Dragonspine"
+      },
+      "nation": "mondstadt"
+    },
+    "chenyu-vale": {
+      "names": {
+        "zhCN": "沉玉谷",
+        "zhTW": "沉玉谷",
+        "ja": "沈玉の谷",
+        "en": "Chenyu Vale"
+      },
+      "nation": "liyue"
+    },
+    "liyue-harbor-outskirts": {
+      "names": {
+        "zhCN": "璃月港城郊",
+        "zhTW": "璃月港城郊",
+        "ja": "璃月港郊外",
+        "en": "Liyue Harbor Outskirts"
+      },
+      "nation": "liyue"
+    },
+    "liyue-harbor-urban": {
+      "names": {
+        "zhCN": "璃月港城区",
+        "zhTW": "璃月港城區",
+        "ja": "璃月港市街地",
+        "en": "Liyue Harbor Urban Area"
+      },
+      "nation": "liyue"
+    },
+    "narukami-island": {
+      "names": {
+        "zhCN": "鸣神岛",
+        "zhTW": "鳴神島",
+        "ja": "鳴神島",
+        "en": "Narukami Island"
+      },
+      "nation": "inazuma"
+    },
+    "kannazuka": {
+      "names": {
+        "zhCN": "神无冢",
+        "zhTW": "神無塚",
+        "ja": "神無塚",
+        "en": "Kannazuka"
+      },
+      "nation": "inazuma"
+    },
+    "yashiori-island": {
+      "names": {
+        "zhCN": "八酝岛",
+        "zhTW": "八醞島",
+        "ja": "八酝島",
+        "en": "Yashiori Island"
+      },
+      "nation": "inazuma"
+    },
+    "watatsumi-island": {
+      "names": {
+        "zhCN": "海祇岛",
+        "zhTW": "海祇島",
+        "ja": "海祇島",
+        "en": "Watatsumi Island"
+      },
+      "nation": "inazuma"
+    },
+    "tsurumi-island": {
+      "names": {
+        "zhCN": "鹤观岛",
+        "zhTW": "鶴觀島",
+        "ja": "鶴観島",
+        "en": "Tsurumi Island"
+      },
+      "nation": "inazuma"
+    },
+    "great-red-sand": {
+      "names": {
+        "zhCN": "大赤沙海（沙漠）",
+        "zhTW": "大赤沙海（沙漠）",
+        "ja": "大赤砂海（砂漠）",
+        "en": "Great Red Sand (Desert)"
+      },
+      "nation": "sumeru"
+    },
+    "rainforest": {
+      "names": {
+        "zhCN": "雨林",
+        "zhTW": "雨林",
+        "ja": "雨林",
+        "en": "Rainforest"
+      },
+      "nation": "sumeru"
+    },
+    "easybreeze-resort": {
+      "names": {
+        "zhCN": "悠悠度假村",
+        "zhTW": "悠悠度假村",
+        "ja": "悠悠リゾート",
+        "en": "Easybreeze Resort"
+      },
+      "nation": "natlan"
+    },
+    "lempo-island": {
+      "names": {
+        "zhCN": "伦波岛",
+        "zhTW": "倫波島",
+        "ja": "レンポ島",
+        "en": "Lempo Island"
+      },
+      "nation": "nodkrai"
+    },
+    "hiisi-island": {
+      "names": {
+        "zhCN": "希汐岛",
+        "zhTW": "希汐島",
+        "ja": "ヒイシ島",
+        "en": "Hiisi Island"
+      },
+      "nation": "nodkrai"
+    },
+    "paha-isle": {
+      "names": {
+        "zhCN": "帕哈岛",
+        "zhTW": "帕哈島",
+        "ja": "パハ島",
+        "en": "Paha Isle"
+      },
+      "nation": "nodkrai"
+    },
+    "north-nodkrai": {
+      "names": {
+        "zhCN": "挪德卡莱北",
+        "zhTW": "挪德卡萊北",
+        "ja": "ノド＝クライ北部",
+        "en": "North Nod-Krai"
+      },
+      "nation": "nodkrai"
+    }
+  },
+  "stations": {
+    "Inazuma-AKI": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-ATP": {
+      "nation": "inazuma",
+      "area": "tsurumi-island"
+    },
+    "Inazuma-AUM": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-BKP": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-BRV": {
+      "nation": "inazuma",
+      "area": "watatsumi-island"
+    },
+    "Inazuma-CJF": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-CRS": {
+      "nation": "inazuma",
+      "area": "tsurumi-island"
+    },
+    "Inazuma-FFT": {
+      "nation": "inazuma",
+      "area": "yashiori-island"
+    },
+    "Inazuma-GNS": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-HGV": {
+      "nation": "inazuma",
+      "area": "yashiori-island"
+    },
+    "Inazuma-HMZ": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-IZC": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-JTM": {
+      "nation": "inazuma",
+      "area": "yashiori-island"
+    },
+    "Inazuma-KDV": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-KJE": {
+      "nation": "inazuma",
+      "area": "kannazuka"
+    },
+    "Inazuma-KNZ": {
+      "nation": "inazuma",
+      "area": "kannazuka"
+    },
+    "Inazuma-KSE": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-MCS": {
+      "nation": "inazuma",
+      "area": "tsurumi-island"
+    },
+    "Inazuma-MKN": {
+      "nation": "inazuma",
+      "area": "tsurumi-island"
+    },
+    "Inazuma-MSG": {
+      "nation": "inazuma",
+      "area": "yashiori-island"
+    },
+    "Inazuma-MUS": {
+      "nation": "inazuma",
+      "area": "watatsumi-island"
+    },
+    "Inazuma-NCB": {
+      "nation": "inazuma",
+      "area": "kannazuka"
+    },
+    "Inazuma-NIT": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-ONB": {
+      "nation": "inazuma",
+      "area": "tsurumi-island"
+    },
+    "Inazuma-RTP": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-RTU": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Inazuma-SGM": {
+      "nation": "inazuma",
+      "area": "watatsumi-island"
+    },
+    "Inazuma-SKP": {
+      "nation": "inazuma",
+      "area": "tsurumi-island"
+    },
+    "Inazuma-SPH": {
+      "nation": "inazuma",
+      "area": "yashiori-island"
+    },
+    "Inazuma-TMP": {
+      "nation": "inazuma",
+      "area": "tsurumi-island"
+    },
+    "Inazuma-WKS": {
+      "nation": "inazuma",
+      "area": "tsurumi-island"
+    },
+    "Inazuma-WTE": {
+      "nation": "inazuma",
+      "area": "watatsumi-island"
+    },
+    "Inazuma-YGN": {
+      "nation": "inazuma",
+      "area": "narukami-island"
+    },
+    "Liyue-BCM": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-CHY": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-FYP": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-GYG": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Liyue-GYX": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Liyue-HET": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-HJW": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Liyue-HYC": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Liyue-HYG": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-KYB": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-KYN": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-LHC": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Liyue-LYB": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Liyue-LYG": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Liyue-LYN": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-NCM": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-PSC": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-YHT": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-YJT": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Liyue-YLQ": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Liyue-YLY": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Snezhnaya-Flamefeather": {
+      "nation": "snezhnaya"
+    },
+    "Snezhnaya-Morepesok": {
+      "nation": "snezhnaya"
+    },
+    "Snezhnaya-PaleCrown": {
+      "nation": "snezhnaya"
+    },
+    "Snezhnaya-Snezhnaya": {
+      "nation": "snezhnaya"
+    },
+    "Snezhnaya-Sretomorozsk": {
+      "nation": "snezhnaya"
+    },
+    "Snezhnaya-Svetloledovka": {
+      "nation": "snezhnaya"
+    },
+    "Snezhnaya-Zorya": {
+      "nation": "snezhnaya"
+    },
+    "Teyvat-APW": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-ARV": {
+      "nation": "sumeru",
+      "area": "great-red-sand"
+    },
+    "Teyvat-AST": {
+      "nation": "natlan"
+    },
+    "Teyvat-AVT": {
+      "nation": "nodkrai",
+      "area": "north-nodkrai"
+    },
+    "Teyvat-AYW": {
+      "nation": "natlan"
+    },
+    "Teyvat-BAL": {
+      "nation": "nodkrai",
+      "area": "lempo-island"
+    },
+    "Teyvat-BDH": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-BMB": {
+      "nation": "nodkrai",
+      "area": "lempo-island"
+    },
+    "Teyvat-CBC": {
+      "nation": "liyue"
+    },
+    "Teyvat-CFC": {
+      "nation": "natlan",
+      "area": "easybreeze-resort"
+    },
+    "Teyvat-CHH": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-CHM": {
+      "nation": "liyue"
+    },
+    "Teyvat-CJS": {
+      "nation": "liyue"
+    },
+    "Teyvat-CKC": {
+      "nation": "nodkrai",
+      "area": "lempo-island"
+    },
+    "Teyvat-CLR": {
+      "nation": "fontaine"
+    },
+    "Teyvat-COE": {
+      "nation": "natlan"
+    },
+    "Teyvat-COF": {
+      "nation": "fontaine"
+    },
+    "Teyvat-COP": {
+      "nation": "natlan"
+    },
+    "Teyvat-CTC": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-CVR": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-CWC": {
+      "nation": "nodkrai",
+      "area": "north-nodkrai"
+    },
+    "Teyvat-CWF": {
+      "nation": "natlan"
+    },
+    "Teyvat-CWT": {
+      "nation": "liyue",
+      "area": "chenyu-vale"
+    },
+    "Teyvat-CZW": {
+      "nation": "liyue",
+      "area": "chenyu-vale"
+    },
+    "Teyvat-DHM": {
+      "nation": "liyue"
+    },
+    "Teyvat-DOM": {
+      "nation": "sumeru",
+      "area": "great-red-sand"
+    },
+    "Teyvat-DSC": {
+      "nation": "mondstadt",
+      "area": "dragonspine"
+    },
+    "Teyvat-DSM": {
+      "nation": "nodkrai",
+      "area": "north-nodkrai"
+    },
+    "Teyvat-DTM": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-DWW": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-DYR": {
+      "nation": "liyue"
+    },
+    "Teyvat-EBM": {
+      "nation": "natlan",
+      "area": "easybreeze-resort"
+    },
+    "Teyvat-EBP": {
+      "nation": "natlan",
+      "area": "easybreeze-resort"
+    },
+    "Teyvat-ENS": {
+      "nation": "fontaine"
+    },
+    "Teyvat-FCR": {
+      "nation": "fontaine"
+    },
+    "Teyvat-FFC": {
+      "nation": "natlan"
+    },
+    "Teyvat-FFP": {
+      "nation": "fontaine"
+    },
+    "Teyvat-FME": {
+      "nation": "nodkrai",
+      "area": "hiisi-island"
+    },
+    "Teyvat-FNC": {
+      "nation": "nodkrai",
+      "area": "paha-isle"
+    },
+    "Teyvat-FNK": {
+      "nation": "nodkrai",
+      "area": "north-nodkrai"
+    },
+    "Teyvat-FOA": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-FRI": {
+      "nation": "fontaine"
+    },
+    "Teyvat-FSF": {
+      "nation": "natlan"
+    },
+    "Teyvat-GHV": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-GLP": {
+      "nation": "liyue"
+    },
+    "Teyvat-HZH": {
+      "nation": "natlan"
+    },
+    "Teyvat-JDM": {
+      "nation": "liyue",
+      "area": "chenyu-vale"
+    },
+    "Teyvat-KEE": {
+      "nation": "nodkrai",
+      "area": "paha-isle"
+    },
+    "Teyvat-KEW": {
+      "nation": "nodkrai",
+      "area": "paha-isle"
+    },
+    "Teyvat-KMC": {
+      "nation": "nodkrai",
+      "area": "north-nodkrai"
+    },
+    "Teyvat-LCU": {
+      "nation": "fontaine"
+    },
+    "Teyvat-LDH": {
+      "nation": "fontaine"
+    },
+    "Teyvat-LPV": {
+      "nation": "liyue"
+    },
+    "Teyvat-LSA": {
+      "nation": "liyue"
+    },
+    "Teyvat-LYH": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Teyvat-LYN": {
+      "nation": "liyue",
+      "area": "liyue-harbor-outskirts"
+    },
+    "Teyvat-LYS": {
+      "nation": "liyue",
+      "area": "liyue-harbor-urban"
+    },
+    "Teyvat-MAE": {
+      "nation": "fontaine"
+    },
+    "Teyvat-MAT": {
+      "nation": "fontaine"
+    },
+    "Teyvat-MCT": {
+      "nation": "fontaine"
+    },
+    "Teyvat-MES": {
+      "nation": "fontaine"
+    },
+    "Teyvat-MIL": {
+      "nation": "liyue"
+    },
+    "Teyvat-MKD": {
+      "nation": "sumeru",
+      "area": "great-red-sand"
+    },
+    "Teyvat-MMY": {
+      "nation": "liyue",
+      "area": "chenyu-vale"
+    },
+    "Teyvat-MNW": {
+      "nation": "natlan"
+    },
+    "Teyvat-MSC": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-MSG": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-MXL": {
+      "nation": "liyue",
+      "area": "chenyu-vale"
+    },
+    "Teyvat-MYV": {
+      "nation": "liyue"
+    },
+    "Teyvat-NSP": {
+      "nation": "nodkrai",
+      "area": "lempo-island"
+    },
+    "Teyvat-NST": {
+      "nation": "nodkrai",
+      "area": "lempo-island"
+    },
+    "Teyvat-NTM": {
+      "nation": "liyue"
+    },
+    "Teyvat-NTP": {
+      "nation": "nodkrai",
+      "area": "lempo-island"
+    },
+    "Teyvat-NWW": {
+      "nation": "natlan"
+    },
+    "Teyvat-ONT": {
+      "nation": "natlan"
+    },
+    "Teyvat-OPE": {
+      "nation": "fontaine"
+    },
+    "Teyvat-PDD": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-PHI": {
+      "nation": "nodkrai",
+      "area": "paha-isle"
+    },
+    "Teyvat-PLM": {
+      "nation": "fontaine"
+    },
+    "Teyvat-POI": {
+      "nation": "fontaine"
+    },
+    "Teyvat-POM": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-POS": {
+      "nation": "natlan"
+    },
+    "Teyvat-PRM": {
+      "nation": "nodkrai",
+      "area": "north-nodkrai"
+    },
+    "Teyvat-QCV": {
+      "nation": "liyue"
+    },
+    "Teyvat-QYV": {
+      "nation": "liyue",
+      "area": "chenyu-vale"
+    },
+    "Teyvat-ROD": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-RRH": {
+      "nation": "fontaine"
+    },
+    "Teyvat-SAA": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-SCP": {
+      "nation": "mondstadt",
+      "area": "dragonspine"
+    },
+    "Teyvat-SFL": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-SFV": {
+      "nation": "natlan"
+    },
+    "Teyvat-SMC": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-SOC": {
+      "nation": "natlan"
+    },
+    "Teyvat-SPV": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-SSF": {
+      "nation": "natlan"
+    },
+    "Teyvat-STG": {
+      "nation": "liyue"
+    },
+    "Teyvat-STL": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-STR": {
+      "nation": "nodkrai",
+      "area": "north-nodkrai"
+    },
+    "Teyvat-TGG": {
+      "nation": "liyue"
+    },
+    "Teyvat-TLI": {
+      "nation": "natlan",
+      "area": "easybreeze-resort"
+    },
+    "Teyvat-TMM": {
+      "nation": "sumeru",
+      "area": "great-red-sand"
+    },
+    "Teyvat-TPB": {
+      "nation": "natlan"
+    },
+    "Teyvat-TPP": {
+      "nation": "natlan"
+    },
+    "Teyvat-TPR": {
+      "nation": "natlan"
+    },
+    "Teyvat-TQV": {
+      "nation": "liyue"
+    },
+    "Teyvat-VKO": {
+      "nation": "sumeru",
+      "area": "great-red-sand"
+    },
+    "Teyvat-VMV": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-VNA": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    },
+    "Teyvat-VOP": {
+      "nation": "nodkrai",
+      "area": "north-nodkrai"
+    },
+    "Teyvat-WDR": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-WLD": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-WRV": {
+      "nation": "mondstadt",
+      "area": "dragonspine"
+    },
+    "Teyvat-WSI": {
+      "nation": "liyue"
+    },
+    "Teyvat-WSV": {
+      "nation": "sumeru",
+      "area": "great-red-sand"
+    },
+    "Teyvat-WSW": {
+      "nation": "mondstadt"
+    },
+    "Teyvat-WVB": {
+      "nation": "natlan",
+      "area": "easybreeze-resort"
+    },
+    "Teyvat-WWL": {
+      "nation": "fontaine"
+    },
+    "Teyvat-YLW": {
+      "nation": "liyue",
+      "area": "chenyu-vale"
+    },
+    "Teyvat-YNM": {
+      "nation": "sumeru",
+      "area": "rainforest"
+    }
+  }
+}
