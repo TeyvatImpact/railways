@@ -64,7 +64,7 @@ Panel anatomy: a line-coloured frame, a top-left header (线路名称 badge left
 | UI          | `composables/useTheme.ts`            | Light/dark theme ref, Varlet MD3 StyleProvider swap, persisted to localStorage                                                                                                                                                                                                                                                                                                                                          |
 | UI          | `composables/useRenderMode.ts`       | Line-connection mode ref; `straight` (default) / `curve` (Catmull-Rom). Dormant: no UI control, no persistence                                                                                                                                                                                                                                                                                                          |
 | Render      | `composables/useCurveGeometry.ts`    | Chains station pairs per line and converts each pair to a centripetal Catmull-Rom cubic; returns one entry per renderSegment, index-aligned                                                                                                                                                                                                                                                                             |
-| Borders     | `composables/useTerritoryBorders.ts` | 站点归属 → 边界线：按「离哪个站点最近」把平面划给该站的归属单位，再插值出等值线，分成国家/地区边界（粗）与区域边界（细）两类 SVG path（纯模块，无 Vue 依赖）                                                                                                                                                                                                                                                            |
+| Borders     | `composables/useTerritoryBorders.ts` | 站点归属 → 边界线：Delaunay 三角剖分 + marching triangles 求相邻归属单位之间的 Voronoi 边界，输出国家/地区边界（粗实线）与区域边界（细虚线）两类 SVG path（纯模块，无 Vue 依赖；精确解，无栅格无容差）                                                                                                                                                                                                                  |
 | UI          | `components/DialogWindow.vue`        | Shared modal shell used by InfoDialog and AdminPanel                                                                                                                                                                                                                                                                                                                                                                    |
 | Labels      | `composables/useLabelPlacement.ts`   | Label box layout + leader lines via `@chenglou/pretext`                                                                                                                                                                                                                                                                                                                                                                 |
 | Labels      | `composables/stationNames.ts`        | 四语名称类型（`NameLocale` / `StationNames` / `OrgNames` / `NameLabelLine`）与标签行规则 `nameLabelLines`（主语言行 → 中文行 → 英文行，站点与线路共用）；纯模块，无 Vue 依赖                                                                                                                                                                                                                                            |
@@ -191,15 +191,23 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 
 ### Territory borders (`useTerritoryBorders.ts`)
 
-`regions.json` 说「每个站点属于谁」，`useTerritoryBorders.ts` 把它变成地图上的两种线。划分规则是**最近站点优先**：平面上每一点取最近的站点，用它的归属单位（国家/地区 × 区域；同一国家里「没有区域」的站点自成一档）作为该点的归属 —— 于是每条边界就是相邻两个归属单位之间的 Voronoi 边界，站点坐标或归属一改，边界自动跟着变（模块加载时算一次，本机约 0.1s）。
+`regions.json` 说「每个站点属于谁」，`useTerritoryBorders.ts` 把它变成地图上的两种线。划分规则是**最近站点优先**：平面上每一点取最近的站点，用它的归属单位（国家/地区 × 区域；同一国家里「没有区域」的站点自成一档）作为该点的归属 —— 边界就是相邻归属单位之间的 **Voronoi 边界**，站点坐标或归属一改，边界自动跟着变（模块加载时算一次，本机约 10ms）。
 
-求法：在站点外接框上铺 `BORDER_GRID_STEP`（0.2 数据单位 = 10px）的网格，记每个格点最近的两个归属单位及其距离，用 `d(近) - d(次近)`（按单位序号定符号）构造有符号场，再用 marching squares 沿格边线性插值出零等值线；每段碎线按两侧归属分类 —— **国家/地区不同 = 国家/地区边界线（粗、实线）**，**同国不同区域（含「无区域」那一档）= 区域边界线（细、虚线）** —— 同类碎线接成折线、Douglas–Peucker 去掉栅格锯齿后输出地图像素坐标的 SVG path。
+算法是 **Delaunay 三角剖分 + marching triangles**（精确解：无栅格、无容差、无平滑）：
 
-导出 `nationBorderPaths` / `areaBorderPaths`（`{ id, d }[]`），`RailwayMap.vue` 在网格之后、线路之前铺这两层（`pointer-events="none"`，不吃点击），描边取自 `render.config.ts` 的 `NATION_BORDER_*` / `AREA_BORDER_*`。几条**刻意**的取舍：
+1. 对全部站点做 Delaunay 三角剖分（Bowyer–Watson 建网，再用 Lawson 翻边把共圆退化修正成合法 Delaunay）；
+2. 只保留**两端归属单位不同**的 Delaunay 边 —— 它的 Voronoi 边就是这两个单位之间的那段边界；
+3. Voronoi 边 = 该 Delaunay 边两侧三角形**外心之间的那截垂直平分线**（凸包边只有一侧有三角形，那里是一条射线：从外心朝远离站点的一侧射出，裁到凸包为止）。**不要**写成「站间边中点 → 外心」：三角形一扁，第三个站会离中点更近，那截线根本不是 Voronoi 边；
+4. 边的类别由它两端站点决定：国家/地区不同 = 国家/地区边界线（粗、实线），同国不同区域（含「无区域」这一档）= 区域边界线（细、虚线）；
+5. 相邻三角形共用同一条 Delaunay 边 ⇒ 共用同一个外心交点，边界天然**无缝、无重叠、无双线**；节点度数只有 1（凸包上收口）/ 2（穿过）/ ≥3（多个单位交汇，共圆格点会给出 4 度点）；
+6. 每条 Voronoi 边裁到站点凸包内（凸包外的射线不画），同类线段按交点坐标接成折线、去掉共线中间点，输出地图像素空间的 SVG path。
 
-- 只画**相邻归属之间**的边界；站点云最外圈（凸包之外）不画，所以国家的「海岸线」不会凭空出现。
-- 三个归属单位交汇的格点附近，等值线会绕出碎线甚至小圈，落到两格以内的直接丢弃（缺口感官不可见）；这类格子两侧归属不定，按多数偏移投票定类，两类都投出票的丢掉。
-- 边界是运行时纯几何推导，**不进任何数据文件**（与 `mark.json` 那种手画标注不同）；`mark.json` 仍是最上层的手绘覆盖。
+导出 `nationBorderPaths` / `areaBorderPaths`（`{ id, d }[]`），`RailwayMap.vue` 在网格之后、线路之前铺这两层（`pointer-events="none"`，不吃点击），描边取自 `render.config.ts` 的 `NATION_BORDER_*` / `AREA_BORDER_*`。要点：
+
+- 只画**相邻归属之间**的边界；站点云最外圈不画「海岸线」，凸包边上的边界正好在凸包上收口。
+- 共圆（1 单位格点布局里很常见）会让相邻三角形外心重合，重合的 Voronoi 边只画一次；`MIN_SEGMENT`（0.01 单位 = 0.5px）丢掉凸包裁剪留下的亚像素碎段 —— 它们短于 path 的 0.1px 输出精度，会退化成零长自环。
+- 边界是运行时纯几何推导，**不进任何数据文件**；`mark.json` 仍是最上层的手绘覆盖。
+- 可复算的校验口径：Delaunay 满足欧拉公式且空圆违例 0；每条输出线段的中点与「最近两个站点」等距（偏差 0）；0.1 细网格上「相邻格归属不同」的接触点 100% 被覆盖（国家 2283/2283、区域 2184/2184）；分类错误 0（当前 7 条国家边界折线 + 14 条区域边界折线）。
 
 ### Annotation file (`mark.json`)
 
@@ -322,7 +330,7 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 - Because the map graph is built per variant, a route that changes variant (branch → main, 小交路 → 大交路) is reported as a transfer at the shared station; a ride entirely inside one variant stays a single segment. `RouteSegment` / `NodeInfo` carry `variantIndex` / `variantName` / `variantNameEn`, and `segmentLineName()` renders `帕哈岛线（支线）`-style labels.
 - Transfer-station circles count **lines**, not variants: `transferStationIds` uses the per-line station union, so `K2`/`K3` trunk stations stopped being transfer stations when `K2-B`/`K3-B` merged (those also served by `K1` or a ferry kept it).
 - Line colours come from the line's index in the flattened line list, so adding/removing a line entry (e.g. folding `K2-B`/`K3-B` away) shifts the palette for every line after it.
-- 归属边界（`useTerritoryBorders.ts`）只在**相邻归属单位**之间生成：站点云外圈、两国互不接壤的地方都没有线；`BORDER_GRID_STEP` 越小越贴合 Voronoi，代价是格点数（及其加载耗时）按平方增长。数据侧无需改动 —— 站点坐标或 `regions.json` 一变，边界下次加载自动重算。
+- 归属边界（`useTerritoryBorders.ts`）是 Delaunay/marching triangles 算出的**精确 Voronoi 边界**：只在**相邻归属单位**之间生成，站点云外圈没有线；共圆退化靠 Lawson 翻边与「外心重合只画一次」处理，没有可调分辨率或平滑参数。站点坐标或 `regions.json` 一变，边界下次加载自动重算，数据侧无需改动。
 - Curve mode (`useCurveGeometry.ts`, implemented but not surfaced in the UI) deliberately **ignores waypoints** — its vertices are the pair's two stations, taken from the first part's start and the last part's end.
 - `/display` draws **rail lines only** (`lines.filter((l) => !l.lineType)`), so all 12 ferries and 3 same-station links are absent there; the 换乘徽章 likewise only list rail lines (a station reachable only by ferry shows no badge). To include them, drop that filter in `views/display/index.vue`.
 - `/display` badge labels are the **last `·` segment** of the other line's `names[primaryLang]` (`蒙德局·自由线` → `自由线`, `璃月港地铁·1号线` → `1号线`, names without `·` stay whole), so several lines of one operator can render as bare numbers — the colour carries the rest of the identity.
