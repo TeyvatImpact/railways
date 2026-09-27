@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue';
-import { stations, stationMap, lines, lookupDistance, getPreset } from './useMapData';
+import { stations, stationMap, lines, pairCost } from './useMapData';
 import { ferrySegmentNames } from './lineNaming';
 import type { NameLocale } from './stationNames';
 
@@ -59,6 +59,14 @@ export interface StationSuggestion {
   name: string;
   nameEn: string;
   lines: { id: string; name: string; nameEn: string }[];
+}
+
+/** 线路搜索结果：`name` = 线路名的主语言写法，`nameEn` = 英文名 */
+export interface LineSuggestion {
+  id: string;
+  name: string;
+  nameEn: string;
+  color: string;
 }
 
 interface EdgeMetrics {
@@ -134,10 +142,7 @@ for (const line of lines) {
       const aSt = stationMap.get(aId);
       const bSt = stationMap.get(bId);
       if (!aSt || !bSt) continue;
-      const dist = lookupDistance(aId, bId);
-      const preset = getPreset(line.costPreset);
-      const fare = Math.round(dist * preset.farePerKm);
-      const time = Math.round(dist * preset.minutesPerKm);
+      const { fare, time, distance } = pairCost(line.costPreset, aId, bId);
       addEdge(
         nodeIdFor(aId, line.id, vi),
         nodeIdFor(bId, line.id, vi),
@@ -145,7 +150,7 @@ for (const line of lines) {
         {
           fare,
           time,
-          distance: dist,
+          distance,
         },
         line.oneWay === true,
       );
@@ -196,6 +201,29 @@ export function useRouting() {
         name: st.names[st.primaryLang],
         nameEn: st.names.en,
         lines: lineInfo,
+      });
+    }
+
+    return results.slice(0, 20);
+  }
+
+  /** 线路搜索：四语线路名 + 线路 id（轮渡 / 同站换乘的名字是运行时派生的，照样能搜到） */
+  function searchLines(query: string): LineSuggestion[] {
+    if (!query || query.trim().length === 0) return [];
+    const q = query.toLowerCase().trim();
+    const results: LineSuggestion[] = [];
+
+    for (const line of lines) {
+      const nameMatch = [line.names.zhCN, line.names.zhTW, line.names.ja, line.names.en].some((n) =>
+        n.toLowerCase().includes(q),
+      );
+      if (!nameMatch && !line.id.toLowerCase().includes(q)) continue;
+
+      results.push({
+        id: line.id,
+        name: line.names[line.primaryLang],
+        nameEn: line.names.en,
+        color: line.color,
       });
     }
 
@@ -420,6 +448,7 @@ export function useRouting() {
   return {
     selectTarget,
     searchStations,
+    searchLines,
     findRoute,
     findRoutes,
     formatRoute,

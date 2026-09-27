@@ -33,3 +33,24 @@ export function nameLabelLines(names: StationNames, primaryLang: NameLocale): Na
     text: names[locale],
   }));
 }
+
+/**
+ * 「中文 · 英文（· 额外语言）」的一行显示，用于信息面板里的机构名与归属单位名
+ * （站点 / 归属单位是 `StationNames`，机构是 `OrgNames` —— 后者可能多一种语言）。
+ */
+export function bilingualLabel(names: StationNames & { ru?: string }): string {
+  return [names.zhCN, names.en, names.ru].filter(Boolean).join(' · ');
+}
+
+/** 信息面板里的四语名称行（只列有值的）：标签 + 值，日语行带上假名读音 */
+export function nameRows(
+  names: StationNames,
+): { label: string; value: string; pronunciation?: string }[] {
+  const rows: { label: string; value: string; pronunciation?: string }[] = [
+    { label: '中文', value: names.zhCN },
+    { label: '繁體', value: names.zhTW },
+    { label: '日本語', value: names.ja, pronunciation: names.pronunciationJa },
+    { label: 'English', value: names.en },
+  ];
+  return rows.filter((r) => r.value);
+}

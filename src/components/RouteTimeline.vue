@@ -23,65 +23,12 @@
       </div>
     </div>
 
-    <div class="mt-2 py-2 h-full overflow-y-auto">
-      <div v-for="(block, i) in blocks" :key="i" class="flex">
-        <div class="w-12 shrink-0 flex flex-col items-center">
-          <template v-if="block.type === 'station'">
-            <div
-              v-if="block.lineInColor"
-              class="flex-1 w-1 min-h-2"
-              :style="{ background: block.lineInColor }" />
-            <div v-else class="flex-1" />
-            <div
-              class="w-4 h-4 rounded-full shrink-0 z-10 bg-white"
-              :style="{
-                border: `4px solid ${block.lineOutColor || block.lineInColor || '#999'}`,
-              }" />
-            <div
-              v-if="block.lineOutColor"
-              class="flex-1 w-1 min-h-2"
-              :style="{ background: block.lineOutColor }" />
-            <div v-else class="flex-1" />
-          </template>
-          <template v-if="block.type === 'process'">
-            <div class="flex-1 w-1" :style="{ background: block.lineColor }" />
-          </template>
-        </div>
-
-        <!-- Content -->
-        <div class="flex-1 pr-1 min-w-0 py-1">
-          <template v-if="block.type === 'station'">
-            <div class="text-base font-bold leading-tight">
-              {{ block.stationName }}
-            </div>
-            <div class="text-xs mt-0.5 font-en">
-              {{ block.stationNameEn }}
-            </div>
-          </template>
-          <template v-if="block.type === 'process'">
-            <div class="text-sm mb-2">
-              <span class="font-semibold">
-                {{ block.lineName
-                }}<span v-if="block.variantName">（{{ block.variantName }}）</span>
-                <span v-if="block.isFerry" class="text-xs font-normal">(轮渡)</span>
-              </span>
-              <br />
-              <span v-if="!block.isSameStation" class="text-xs truncate"
-                >{{ block.direction }} 方向</span
-              >
-              <span class="text-xs ml-2"
-                >({{ block.fare }} 摩拉 {{ block.time }} 分钟 {{ block.distance }} 千米)</span
-              >
-            </div>
-            <div v-if="block.intermediates.length > 0" class="space-y-1">
-              <div v-for="n in block.intermediates" :key="n.stationName" class="leading-tight">
-                <div class="text-xs">{{ n.stationName }}</div>
-                <div class="text-xs font-en">{{ n.stationNameEn }}</div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
+    <div class="mt-2 py-2">
+      <TransitTimeline
+        :items="items"
+        metrics-placement="leg"
+        clickable-stations
+        @station-click="selectStation" />
     </div>
   </div>
 </template>
@@ -89,7 +36,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { lineColorMap } from '../composables/useMapData';
-import type { RouteResult } from '../composables/useRouting';
+import { segmentLineName, type RouteResult } from '../composables/useRouting';
+import { selectStation } from '../composables/useSelection';
+import TransitTimeline, { type TimelineItem } from './TransitTimeline.vue';
 
 const props = defineProps<{
   result: RouteResult;
@@ -99,136 +48,91 @@ defineEmits<{
   (e: 'close'): void;
 }>();
 
-interface StationBlock {
-  type: 'station';
-  stationName: string;
-  stationNameEn: string;
-  isStart: boolean;
-  isEnd: boolean;
-  lineInColor: string | null;
-  lineOutColor: string | null;
-}
-
-interface ProcessBlock {
-  type: 'process';
-  lineName: string;
-  lineNameEn: string;
-  variantName: string;
-  isFerry: boolean;
-  isSameStation: boolean;
-  direction: string;
-  intermediates: { stationName: string; stationNameEn: string }[];
-  lineColor: string;
-  fare: number;
-  time: number;
-  distance: number;
-}
-
-type Block = StationBlock | ProcessBlock;
-
 function getLineColor(lineId: string): string {
   return lineColorMap.get(lineId) ?? '#999';
 }
 
-const blocks = computed<Block[]>(() => {
+/**
+ * 路径结果 → 时间线：每到一站插一个站点行，每个乘车段前面插一个区间行（线路名 + 方向 + 费用 + 途经站）。
+ * 上车站与上一段的到达站同名时沿用同一个站点行（同站换乘只是换色，不再插一行）。
+ */
+const items = computed<TimelineItem[]>(() => {
   const segs = props.result.segments;
-  const result: Block[] = [];
+  const out: TimelineItem[] = [];
 
-  function lastBlock() {
-    return result[result.length - 1];
-  }
-
-  function isLastStation(name: string): boolean {
-    const lb = lastBlock();
-    return lb?.type === 'station' && (lb as StationBlock).stationName === name;
-  }
+  const lastStop = (): Extract<TimelineItem, { kind: 'stop' }> | undefined => {
+    const last = out[out.length - 1];
+    return last?.kind === 'stop' ? last : undefined;
+  };
 
   for (let i = 0; i < segs.length; i++) {
     const seg = segs[i];
     const color = getLineColor(seg.lineId);
+    const first = seg.nodes[0];
+    const stop = lastStop();
 
-    if (i === 0) {
-      result.push({
-        type: 'station',
-        stationName: seg.nodes[0].stationName,
-        stationNameEn: seg.nodes[0].stationNameEn,
-        isStart: true,
-        isEnd: false,
-        lineInColor: null,
-        lineOutColor: color,
-      });
+    if (stop && stop.name === first.stationName) {
+      stop.outColor = color;
     } else {
-      const prevColor = getLineColor(segs[i - 1].lineId);
-      if (!isLastStation(seg.nodes[0].stationName)) {
-        result.push({
-          type: 'station',
-          stationName: seg.nodes[0].stationName,
-          stationNameEn: seg.nodes[0].stationNameEn,
-          isStart: false,
-          isEnd: false,
-          lineInColor: prevColor,
-          lineOutColor: color,
-        });
-      } else {
-        (lastBlock() as StationBlock).lineOutColor = color;
-      }
+      out.push({
+        kind: 'stop',
+        id: first.stationId,
+        name: first.stationName,
+        nameEn: first.stationNameEn,
+        inColor: i === 0 ? null : getLineColor(segs[i - 1].lineId),
+        outColor: color,
+      });
     }
 
     if (seg.nodes.length > 1) {
-      result.push({
-        type: 'process',
-        lineName: seg.lineName,
-        lineNameEn: seg.lineNameEn,
-        variantName: seg.variantName,
-        isFerry: seg.isFerry,
-        isSameStation: seg.isSameStation,
-        direction: seg.nodes[seg.nodes.length - 1].stationName,
-        intermediates: seg.nodes.slice(1, -1).map((n) => ({
-          stationName: n.stationName,
-          stationNameEn: n.stationNameEn,
+      const last = seg.nodes[seg.nodes.length - 1];
+      // 同站换乘不产生位移，0 费用也就不用显示
+      const showCost = !seg.isSameStation && !(seg.fare === 0 && seg.distance === 0);
+      out.push({
+        kind: 'leg',
+        color,
+        title: segmentLineName(seg.lineName, seg.variantName),
+        note: seg.isFerry ? '轮渡' : undefined,
+        detail: seg.isSameStation ? undefined : `${last.stationName} 方向`,
+        metrics: showCost ? `(${seg.fare} 摩拉 ${seg.time} 分钟 ${seg.distance} 千米)` : undefined,
+        stops: seg.nodes.slice(1, -1).map((n) => ({
+          name: n.stationName,
+          nameEn: n.stationNameEn,
         })),
-        lineColor: color,
-        fare: seg.fare,
-        time: seg.time,
-        distance: seg.distance,
       });
     }
   }
 
   const segLast = segs[segs.length - 1];
-  const lastNode = segLast.nodes[segLast.nodes.length - 1];
-  if (!isLastStation(lastNode.stationName)) {
-    result.push({
-      type: 'station',
-      stationName: lastNode.stationName,
-      stationNameEn: lastNode.stationNameEn,
-      isStart: false,
-      isEnd: true,
-      lineInColor: getLineColor(segLast.lineId),
-      lineOutColor: null,
-    });
+  const nodes = segLast.nodes;
+  const lastNode = nodes[nodes.length - 1];
+  const stop = lastStop();
+  if (stop && stop.name === lastNode.stationName) {
+    stop.outColor = null;
   } else {
-    (lastBlock() as StationBlock).isEnd = true;
-    (lastBlock() as StationBlock).lineInColor = getLineColor(segLast.lineId);
-    (lastBlock() as StationBlock).lineOutColor = null;
+    out.push({
+      kind: 'stop',
+      id: lastNode.stationId,
+      name: lastNode.stationName,
+      nameEn: lastNode.stationNameEn,
+      inColor: getLineColor(segLast.lineId),
+      outColor: null,
+    });
   }
 
-  return result;
+  return out;
 });
 
-const startName = computed(() => {
-  const b = blocks.value[0];
-  return b.type === 'station' ? b.stationName : '';
-});
-
+const startName = computed(() => props.result.segments[0].nodes[0].stationName);
 const endName = computed(() => {
-  const b = blocks.value[blocks.value.length - 1];
-  return b.type === 'station' ? b.stationName : '';
+  const segs = props.result.segments;
+  const nodes = segs[segs.length - 1].nodes;
+  return nodes[nodes.length - 1].stationName;
 });
 
-const firstSeg = computed(() => props.result.segments[0]);
-const firstLineColor = computed(() => getLineColor(firstSeg.value.lineId));
-
-const lastSeg = computed(() => props.result.segments[props.result.segments.length - 1]);
-const lastLineColor = computed(() => getLineColor(lastSeg.value.lineId));
+const firstLineColor = computed(() => getLineColor(props.result.segments[0].lineId));
+const lastLineColor = computed(() => {
+  const segs = props.result.segments;
+  return getLineColor(segs[segs.length - 1].lineId);
+});
 </script>

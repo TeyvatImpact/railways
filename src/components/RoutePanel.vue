@@ -1,92 +1,148 @@
 <template>
   <div class="flex">
     <div
-      class="bg-(--color-body) flex flex-col overflow-hidden gap-2 border-l border-l-(--color-outline) transition-all duration-200"
+      class="bg-(--color-body) flex flex-col gap-2 border-l border-l-(--color-outline) transition-all duration-200 panel"
       :class="collapsed ? 'w-0' : 'w-80 p-4'">
-      <h2 class="mb-4">路径规划</h2>
-      <template v-if="!selectedRoute">
+      <!-- 板块一：搜索 + 信息展示 -->
+      <section class="shrink-0">
+        <h2 class="mb-2">搜索</h2>
         <div class="relative">
           <var-input
-            v-model="startInput"
-            placeholder="起点站（输入站名 / 编号搜索）"
+            v-model="query"
+            placeholder="搜索站点 / 线路（名称或编号）"
             variant="outlined"
             clearable
-            @focus="onStartFocus"
-            @blur="onStartBlur"
-            @update:model-value="onStartInput" />
-          <div v-if="startFocused && startSuggestions.length > 0" class="suggest-panel">
-            <button
-              v-for="s in startSuggestions"
-              :key="s.value.id"
-              type="button"
-              class="suggest-item"
-              @mousedown.prevent="selectStart(s.value)">
-              <span class="suggest-name">{{ s.label }}</span>
-              <span class="suggest-lines">{{ s.value.lines.map((l) => l.name).join(' · ') }}</span>
-            </button>
+            @focus="onSearchFocus"
+            @blur="onSearchBlur"
+            @update:model-value="onSearchInput" />
+          <div v-if="suggestOpen" class="suggest-panel">
+            <template v-if="stationHits.length > 0">
+              <div class="suggest-group">站点</div>
+              <button
+                v-for="s in stationHits"
+                :key="s.id"
+                type="button"
+                class="suggest-item"
+                @mousedown.prevent="selectStation(s.id)">
+                <span class="suggest-name">{{ s.name }} ({{ s.id }})</span>
+                <span class="suggest-lines">{{ s.lines.map((l) => l.name).join(' · ') }}</span>
+              </button>
+            </template>
+            <template v-if="lineHits.length > 0">
+              <div class="suggest-group">线路</div>
+              <button
+                v-for="l in lineHits"
+                :key="l.id"
+                type="button"
+                class="suggest-item"
+                @mousedown.prevent="selectLine(l.id)">
+                <span class="suggest-name">
+                  <span class="suggest-dot" :style="{ background: l.color }" />{{ l.name }}
+                </span>
+                <span class="suggest-lines">{{ l.nameEn }}</span>
+              </button>
+            </template>
           </div>
         </div>
-        <var-button class="mb-4" @click="togglePick('start')">
-          {{ selectTarget === 'start' ? '请点击站点选择' : '选择起点站' }}
-        </var-button>
-        <div class="relative">
-          <var-input
-            v-model="endInput"
-            placeholder="终点站（输入站名 / 编号搜索）"
-            variant="outlined"
-            clearable
-            @focus="onEndFocus"
-            @blur="onEndBlur"
-            @update:model-value="onEndInput" />
-          <div v-if="endFocused && endSuggestions.length > 0" class="suggest-panel">
-            <button
-              v-for="s in endSuggestions"
-              :key="s.value.id"
-              type="button"
-              class="suggest-item"
-              @mousedown.prevent="selectEnd(s.value)">
-              <span class="suggest-name">{{ s.label }}</span>
-              <span class="suggest-lines">{{ s.value.lines.map((l) => l.name).join(' · ') }}</span>
-            </button>
+
+        <div v-if="selection" class="mt-3">
+          <StationInfo
+            v-if="selection.kind === 'station'"
+            :station-id="selection.id"
+            @close="clearSelection()" />
+          <LineInfo v-else :line-id="selection.id" @close="clearSelection()" />
+        </div>
+      </section>
+
+      <var-divider />
+
+      <!-- 板块二：路径规划 -->
+      <section class="shrink-0">
+        <h2 class="mb-4">路径规划</h2>
+        <template v-if="!selectedRoute">
+          <div class="relative mb-4">
+            <var-input
+              v-model="startInput"
+              placeholder="起点站（输入站名 / 编号搜索）"
+              variant="outlined"
+              clearable
+              @focus="onStartFocus"
+              @blur="onStartBlur"
+              @update:model-value="onStartInput" />
+            <div v-if="startFocused && startSuggestions.length > 0" class="suggest-panel">
+              <button
+                v-for="s in startSuggestions"
+                :key="s.value.id"
+                type="button"
+                class="suggest-item"
+                @mousedown.prevent="selectStart(s.value)">
+                <span class="suggest-name">{{ s.label }}</span>
+                <span class="suggest-lines">{{
+                  s.value.lines.map((l) => l.name).join(' · ')
+                }}</span>
+              </button>
+            </div>
           </div>
-        </div>
-        <var-button class="mb-4" @click="togglePick('end')">
-          {{ selectTarget === 'end' ? '请点击站点选择' : '选择终点站' }}
-        </var-button>
-        <var-button :disabled="!startSelected || !endSelected" @click="calculate">
-          计算路线
-        </var-button>
-
-        <var-divider></var-divider>
-
-        <div v-if="routeError" class="result error px-4 py-4">{{ routeError }}</div>
-
-        <div v-else-if="routeOptions.length > 0" class="flex flex-col gap-2">
-          <var-card
-            v-for="opt in routeOptions"
-            :key="opt.metric"
-            @click="selectRoute(opt)"
-            class="cursor-pointer">
-            <div>
-              <span>{{ opt.label }}</span>
+          <var-button block class="mb-4" @click="togglePick('start')">
+            {{ selectTarget === 'start' ? '请点击站点选择' : '选择起点站' }}
+          </var-button>
+          <div class="relative mb-4">
+            <var-input
+              v-model="endInput"
+              placeholder="终点站（输入站名 / 编号搜索）"
+              variant="outlined"
+              clearable
+              @focus="onEndFocus"
+              @blur="onEndBlur"
+              @update:model-value="onEndInput" />
+            <div v-if="endFocused && endSuggestions.length > 0" class="suggest-panel">
+              <button
+                v-for="s in endSuggestions"
+                :key="s.value.id"
+                type="button"
+                class="suggest-item"
+                @mousedown.prevent="selectEnd(s.value)">
+                <span class="suggest-name">{{ s.label }}</span>
+                <span class="suggest-lines">{{
+                  s.value.lines.map((l) => l.name).join(' · ')
+                }}</span>
+              </button>
             </div>
-            <div>
-              <span>换乘 {{ opt.result.segments.length }} 次</span>
-              <span>·</span>
-              <span>{{ opt.result.totalFare }} 摩拉</span>
-              <span>·</span>
-              <span>{{ opt.result.totalTime }} 分钟</span>
-              <span>·</span>
-              <span>{{ opt.result.totalDistance }} 千米</span>
-            </div>
-          </var-card>
-        </div>
-      </template>
-      <RouteTimeline
-        v-if="selectedRoute"
-        class="h-full overflow-y-hidden"
-        :result="selectedRoute.result"
-        @close="clearResults" />
+          </div>
+          <var-button block class="mb-4" @click="togglePick('end')">
+            {{ selectTarget === 'end' ? '请点击站点选择' : '选择终点站' }}
+          </var-button>
+          <var-button block :disabled="!startSelected || !endSelected" @click="calculate">
+            计算路线
+          </var-button>
+
+          <var-divider></var-divider>
+
+          <div v-if="routeError" class="result error px-4 py-4">{{ routeError }}</div>
+
+          <div v-else-if="routeOptions.length > 0" class="flex flex-col gap-2">
+            <var-card
+              v-for="opt in routeOptions"
+              :key="opt.metric"
+              @click="selectRoute(opt)"
+              class="cursor-pointer">
+              <div>
+                <span>{{ opt.label }}</span>
+              </div>
+              <div>
+                <span>换乘 {{ opt.result.segments.length }} 次</span>
+                <span>·</span>
+                <span>{{ opt.result.totalFare }} 摩拉</span>
+                <span>·</span>
+                <span>{{ opt.result.totalTime }} 分钟</span>
+                <span>·</span>
+                <span>{{ opt.result.totalDistance }} 千米</span>
+              </div>
+            </var-card>
+          </div>
+        </template>
+        <RouteTimeline v-if="selectedRoute" :result="selectedRoute.result" @close="clearResults" />
+      </section>
     </div>
     <button
       class="panel-toggle shrink-0"
@@ -99,15 +155,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   useRouting,
   METRIC_LABELS,
   type RouteMetric,
   type StationSuggestion,
+  type LineSuggestion,
   type RouteResult,
 } from '../composables/useRouting';
+import { clearSelection, selectLine, selectStation, selection } from '../composables/useSelection';
 import RouteTimeline from './RouteTimeline.vue';
+import StationInfo from './StationInfo.vue';
+import LineInfo from './LineInfo.vue';
 
 interface RouteOption {
   metric: RouteMetric;
@@ -119,8 +179,48 @@ const emit = defineEmits<{
   (e: 'result-change', v: RouteResult | null): void;
 }>();
 
-const { selectTarget, searchStations, findRoutes } = useRouting();
+const { selectTarget, searchStations, searchLines, findRoutes } = useRouting();
 
+/** 面板折叠状态（地图上点选信息时会自动展开） */
+const collapsed = ref(false);
+
+// --- 站点 / 线路搜索 ---
+const query = ref('');
+const searchFocused = ref(false);
+const stationHits = ref<StationSuggestion[]>([]);
+const lineHits = ref<LineSuggestion[]>([]);
+
+const suggestOpen = computed(
+  () => searchFocused.value && (stationHits.value.length > 0 || lineHits.value.length > 0),
+);
+
+function onSearchInput(value: string) {
+  stationHits.value = searchStations(value);
+  lineHits.value = searchLines(value);
+  searchFocused.value = true;
+}
+
+function onSearchFocus() {
+  searchFocused.value = true;
+  if (stationHits.value.length === 0 && lineHits.value.length === 0) onSearchInput(query.value);
+}
+
+function onSearchBlur() {
+  setTimeout(() => {
+    searchFocused.value = false;
+  }, 200);
+}
+
+// 选中项（无论来自搜索结果还是地图点击）都由 useSelection 统一持有；这里只负责收起搜索框、展开面板
+watch(selection, () => {
+  query.value = '';
+  stationHits.value = [];
+  lineHits.value = [];
+  searchFocused.value = false;
+  if (selection.value) collapsed.value = false;
+});
+
+// --- 路径规划 ---
 const startInput = ref('');
 const endInput = ref('');
 const startFocused = ref(false);
@@ -132,7 +232,6 @@ const endSelected = ref<StationSuggestion | null>(null);
 const routeOptions = ref<RouteOption[]>([]);
 const selectedRoute = ref<RouteOption | null>(null);
 const routeError = ref('');
-const collapsed = ref(false);
 
 function togglePick(target: 'start' | 'end') {
   if (selectTarget.value === target) {
@@ -235,6 +334,7 @@ function clearResults() {
   emit('result-change', null);
 }
 
+/** 地图点击站点：只在「选择起点 / 终点」模式下消费，其余情况由 useSelection 直接打开信息 */
 function onStationClick(stationId: string) {
   const suggestions = searchStations(stationId);
   const match = suggestions.find((s) => s.id === stationId);
@@ -253,6 +353,10 @@ defineExpose({ onStationClick });
 </script>
 
 <style scoped>
+.panel {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 .suggest-panel {
   position: absolute;
   left: 0;
@@ -265,6 +369,15 @@ defineExpose({ onStationClick });
   border: 1px solid var(--color-outline);
   border-radius: 4px;
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.18);
+}
+.suggest-group {
+  padding: 4px 10px 2px;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.6;
+  position: sticky;
+  top: 0;
+  background: var(--color-surface-container-high);
 }
 .suggest-item {
   display: flex;
@@ -282,6 +395,15 @@ defineExpose({ onStationClick });
 }
 .suggest-name {
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.suggest-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 .suggest-lines {
   font-size: 11px;

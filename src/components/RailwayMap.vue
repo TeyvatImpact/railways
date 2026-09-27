@@ -117,10 +117,10 @@
           <circle
             :cx="station.cx"
             :cy="station.cy"
-            :r="transferStationIds.has(station.id) ? 7 : 5"
+            :r="stationRadius(station.id)"
+            :stroke-width="selectedStationId === station.id ? 3 : 2"
             fill="var(--color-body)"
             stroke="var(--color-text)"
-            stroke-width="2"
             style="cursor: pointer"
             @click.stop="onStationClick(station.id)" />
         </g>
@@ -223,7 +223,7 @@ import {
   markerTexts,
   minX,
   minY,
-  lines,
+  stationLineMap,
 } from '../composables/useMapData';
 import { useMapInteraction } from '../composables/useMapInteraction';
 import { useLabelPlacement } from '../composables/useLabelPlacement';
@@ -232,6 +232,7 @@ import { buildCurveSegments, type CurveSegment } from '../composables/useCurveGe
 import MapControls from './MapControls.vue';
 import type { RouteResult } from '../composables/useRouting';
 import { selectTarget } from '../composables/useRouting';
+import { clearSelection, selectLine, selectStation, selection } from '../composables/useSelection';
 
 const props = defineProps<{
   routeResult: RouteResult | null;
@@ -330,20 +331,17 @@ function segStroke(seg: { id: string; lineId: string; color: string }): string {
 
 const DIM_OPACITY = 0.12;
 
-// --- highlight state ---
-const highlightedLineIds = ref<Set<string>>(new Set());
+// --- 高亮：唯一来源是 useSelection 的选中项 —— 选中线路 = 该线；选中站点 = 服务它的线路 ---
+const highlightedLineIds = computed(() => {
+  const sel = selection.value;
+  if (!sel) return new Set<string>();
+  if (sel.kind === 'line') return new Set([sel.id]);
+  return new Set((stationLineMap.get(sel.id) ?? []).map((line) => line.id));
+});
 
-const stationToLineIds = new Map<string, string[]>();
-for (const line of lines) {
-  for (const sid of line.stations) {
-    let arr = stationToLineIds.get(sid);
-    if (!arr) {
-      arr = [];
-      stationToLineIds.set(sid, arr);
-    }
-    arr.push(line.id);
-  }
-}
+const selectedStationId = computed(() =>
+  selection.value?.kind === 'station' ? selection.value.id : null,
+);
 
 const DRAG_THRESHOLD = 5;
 const mouseDownPos = { x: 0, y: 0 };
@@ -354,15 +352,17 @@ function onSvgMouseDown(e: MouseEvent) {
   onMouseDown(e);
 }
 
+/** 点线路 = 选中线路（选站点做起点 / 终点时不抢这个点击） */
 function onSegmentClick(lineId: string) {
-  highlightedLineIds.value = new Set([lineId]);
+  if (selectTarget.value) return;
+  selectLine(lineId);
 }
 
 function onBackgroundClick(e: MouseEvent) {
   const dx = e.clientX - mouseDownPos.x;
   const dy = e.clientY - mouseDownPos.y;
   if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) return;
-  highlightedLineIds.value = new Set();
+  clearSelection();
 }
 
 function isHighlightActive() {
@@ -372,7 +372,7 @@ function isHighlightActive() {
 watch(
   () => props.routeResult,
   (val) => {
-    if (val) highlightedLineIds.value = new Set();
+    if (val) clearSelection();
   },
 );
 
@@ -381,8 +381,9 @@ function stationOpacity(id: string): number {
     return !routeStationIds.value.size || routeStationIds.value.has(id) ? 1 : DIM_OPACITY;
   }
   if (isHighlightActive()) {
-    const lineIds = stationToLineIds.get(id);
-    return lineIds && lineIds.some((lid) => highlightedLineIds.value.has(lid)) ? 1 : DIM_OPACITY;
+    return stationLineMap.get(id)?.some((line) => highlightedLineIds.value.has(line.id))
+      ? 1
+      : DIM_OPACITY;
   }
   return 1;
 }
@@ -518,12 +519,19 @@ function onSvgMouseLeave() {
   mouseCoord.value = null;
 }
 
+/** 点站点：选起点 / 终点模式下交给面板，否则直接选中该站（信息面板与高亮统一走 useSelection） */
 function onStationClick(stationId: string) {
-  if (!selectTarget.value) {
-    const lineIds = stationToLineIds.get(stationId);
-    highlightedLineIds.value = lineIds ? new Set(lineIds) : new Set();
+  if (selectTarget.value) {
+    emit('station-click', stationId);
+    return;
   }
-  emit('station-click', stationId);
+  selectStation(stationId);
+}
+
+/** 选中站点的圆圈略大一点，作为「当前选中的站」的标记 */
+function stationRadius(id: string): number {
+  if (selectedStationId.value === id) return 9;
+  return transferStationIds.has(id) ? 7 : 5;
 }
 </script>
 

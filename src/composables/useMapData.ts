@@ -472,6 +472,27 @@ export function lookupDistance(aId: string, bId: string): number {
   return lookupConnection(aId, bId)?.distance ?? DEFAULT_CONNECTION_DISTANCE;
 }
 
+/** 一段站间行程的费用（摩拉 / 分钟 / 千米） */
+export interface PairCost {
+  fare: number;
+  time: number;
+  distance: number;
+}
+
+/**
+ * 线路在某站对上的一程费用：`distance × preset`，四舍五入到整数。
+ * 渲染段的标签、路由图的边权、信息面板的区间费用都走这一个函数。
+ */
+export function pairCost(costPreset: string, aId: string, bId: string): PairCost {
+  const distance = lookupDistance(aId, bId);
+  const preset = getPreset(costPreset);
+  return {
+    fare: Math.round(distance * preset.farePerKm),
+    time: Math.round(distance * preset.minutesPerKm),
+    distance,
+  };
+}
+
 /** 所有变体站点的并集（按首次出现顺序） */
 function unionStations(variants: { stations: string[] }[]): string[] {
   const seen = new Set<string>();
@@ -554,6 +575,16 @@ export const lines: Line[] = parsedLines.map((line) => ({
 }));
 
 export const lineColorMap = new Map(lines.map((l) => [l.id, l.color]));
+
+/** 站点 → 服务它的线路（按 `lines` 顺序；站点信息面板与地图高亮共用一份） */
+export const stationLineMap = new Map<string, Line[]>();
+for (const line of lines) {
+  for (const sid of line.stations) {
+    const arr = stationLineMap.get(sid);
+    if (arr) arr.push(line);
+    else stationLineMap.set(sid, [line]);
+  }
+}
 
 function transformPathD(d: string, fn: (x: number, y: number) => [number, number]): string {
   return d.replace(/([MLCQHVAZ])([^MLCQHVAZ]*)/gi, (_, cmd, rest) => {
@@ -778,10 +809,7 @@ for (const line of parsedLines) {
     const sb = stationMap.get(bId);
     if (!sa || !sb) continue;
 
-    const dist = lookupDistance(aId, bId);
-    const preset = getPreset(line.costPreset);
-    const fare = Math.round(dist * preset.farePerKm);
-    const time = Math.round(dist * preset.minutesPerKm);
+    const { fare, time, distance } = pairCost(line.costPreset, aId, bId);
 
     const verts = connectionVertices(sa, sb);
     const groupKey = polylineKey(verts);
@@ -803,7 +831,7 @@ for (const line of parsedLines) {
         dasharray: dash,
         fare,
         time,
-        distance: dist,
+        distance,
         showLabel: k === 0,
       });
     }
