@@ -104,6 +104,9 @@ export const MARKER_TEXT_FILL = '#777';
 /** 重点标注（`emphasis: true`）的文字颜色 */
 export const MARKER_EMPHASIS_FILL = '#3f3f3f';
 
+/** 深色模式下重点标注的文字颜色（浅色那支贴在深底上看不见，换成浅灰） */
+export const MARKER_EMPHASIS_FILL_DARK = '#aeaeae';
+
 /** 标注文字默认字体 */
 export const MARKER_FONT_FAMILY = 'sans-serif';
 

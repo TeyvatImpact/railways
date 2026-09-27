@@ -19,9 +19,7 @@ import {
   MARKER_STROKE_WIDTH,
   MARKER_FILL,
   MARKER_FONT_SIZES,
-  MARKER_EMPHASIS_FILL,
   MARKER_LINE_GAP,
-  MARKER_TEXT_FILL,
   MARKER_FONT_FAMILY,
   MARKER_FONT_FAMILY_JA,
   type MarkerSize,
@@ -197,7 +195,8 @@ export interface MarkerPath {
 
 /**
  * 标注文字的一行 —— `mark.json` 里一条标识的 `names` / `subNames` 在渲染时会被摊平成若干行，
- * 每行一个实例（字号、颜色、字体由标识的类别与开关决定）。
+ * 每行一个实例（字号、字体由标识的类别与开关决定）。颜色不在这里定：浅色 / 深色两套在
+ * `render.config.ts`，由 `RailwayMap.vue` 按主题挑（`emphasis` 决定用哪一对）。
  */
 export interface MarkerTextLine {
   id: string;
@@ -205,7 +204,8 @@ export interface MarkerTextLine {
   x: number;
   y: number;
   fontSize: number;
-  fill: string;
+  /** 重点标识：渲染时用重点色（比普通标注更重） */
+  emphasis: boolean;
   fontFamily: string;
 }
 
@@ -683,7 +683,7 @@ interface MarkTextData {
   size?: string;
   names: Names;
   subNames?: Names;
-  /** 重点标识：文字用 `MARKER_EMPHASIS_FILL` */
+  /** 重点标识：文字用重点色（浅色 `MARKER_EMPHASIS_FILL` / 深色 `MARKER_EMPHASIS_FILL_DARK`） */
   emphasis?: boolean;
   /** 日文标识：用日语字体 `MARKER_FONT_FAMILY_JA`（语言顺序由 `region` 的优先语言决定） */
   ja?: boolean;
@@ -724,7 +724,6 @@ export const markerPaths: MarkerPath[] = markerPathsData.map((p, i) => ({
  */
 export const markerTexts: MarkerTextLine[] = markerTextsData.flatMap((t, i) => {
   const sizes = MARKER_FONT_SIZES[t.size === 'large' ? 'large' : 'small'];
-  const fill = t.emphasis ? MARKER_EMPHASIS_FILL : MARKER_TEXT_FILL;
   const fontFamily = t.ja ? MARKER_FONT_FAMILY_JA : MARKER_FONT_FAMILY;
   const x = (t.x - minX) * BLOCK_SIZE;
   const langs = regionLangs(`标注 ${i}`, t.region);
@@ -754,7 +753,7 @@ export const markerTexts: MarkerTextLine[] = markerTextsData.flatMap((t, i) => {
       x,
       y: (y - minY) * BLOCK_SIZE,
       fontSize,
-      fill,
+      emphasis: t.emphasis === true,
       fontFamily,
     });
   });

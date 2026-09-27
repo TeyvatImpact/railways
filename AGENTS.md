@@ -310,7 +310,7 @@ All data is JSON stored in `src/data/`. No CSV files.
       "region": string,           // 该标识属于哪个地区（territories.json 的 nation 或 area id）→ 决定展示语言
       "names": Names,             // 主文字；它的 x/y 就是整条标识的锚点（数据坐标单位，同 station.x/y）
       "subNames"?: Names,         // 副文字（如机构 → 上级机关，璃月港地铁 → 璃月总务司）
-      "emphasis"?: boolean,       // 重点标识：文字用 MARKER_EMPHASIS_FILL (#3f3f3f)，否则 MARKER_TEXT_FILL (#777)
+      "emphasis"?: boolean,       // 重点标识：文字用重点色（浅色 #3f3f3f / 深色 #aeaeae），否则 MARKER_TEXT_FILL (#777)
       "ja"?: boolean,             // 用日语字体 MARKER_FONT_FAMILY_JA（语言顺序由 region 的优先语言决定）
       "x": number,
       "y": number
@@ -326,7 +326,7 @@ All data is JSON stored in `src/data/`. No CSV files.
 | `large` 大标识 | 32     | 24        | 24              | 16                     |
 | `small` 小标识 | 24     | 16        | 16              | 12                     |
 
-行距是**继承式**的：第 n 行的 y = 第 n-1 行的 y + **第 n 行自己的**字号 / `BLOCK_SIZE` + `MARKER_LINE_GAP`（0.1 数据单位）—— 逐行累加，所以第一行之后的每一行都会再额外多 0.1。`useMapData.ts` 把每条标识摊平成 `markerTexts: MarkerTextLine[]`（一行一个实例，带算好的 x/y、字号、颜色、字体），`RailwayMap.vue` 只做 `v-for` 渲染 —— 行数、行距与字体规则全部在纯模块里，可脚本化断言。标识的 `ja` 字体是**无衬线**的 `"Noto Sans JP"`，与地图上稻妻站名标签用的 `"Noto Serif JP"` 无关；标注的 `names` 照抄该单位在 `territories.json` / `organizations.json` 里的名称（机构标签多一个 `TR ` 前缀，语言表与地区表的同一份保持一致），`region` 写它对应的 nation / area id。
+行距是**继承式**的：第 n 行的 y = 第 n-1 行的 y + **第 n 行自己的**字号 / `BLOCK_SIZE` + `MARKER_LINE_GAP`（0.1 数据单位）—— 逐行累加，所以第一行之后的每一行都会再额外多 0.1。`useMapData.ts` 把每条标识摊平成 `markerTexts: MarkerTextLine[]`（一行一个实例，带算好的 x/y、字号、字体与 `emphasis`；**颜色不在这里定** —— 浅色 / 深色两套在 `render.config.ts`，`RailwayMap.vue` 按当前主题挑），`RailwayMap.vue` 只做 `v-for` 渲染 —— 行数、行距与字体规则全部在纯模块里，可脚本化断言。标识的 `ja` 字体是**无衬线**的 `"Noto Sans JP"`，与地图上稻妻站名标签用的 `"Noto Serif JP"` 无关；标注文字是地图里唯一不跟着 Varlet 主题变量走的文字 —— 重点标识在深色模式下换成 `MARKER_EMPHASIS_FILL_DARK` (#aeaeae)，普通标注仍是 `MARKER_TEXT_FILL` (#777)；标注的 `names` 照抄该单位在 `territories.json` / `organizations.json` 里的名称（机构标签多一个 `TR ` 前缀，语言表与地区表的同一份保持一致），`region` 写它对应的 nation / area id。
 
 现有内容：8 个国家/地区标签（大）、9 条运输机构标签（大 + 重点，璃月有 `提瓦特铁路·璃月局` 与 `璃月港地铁` 两条）、16 条区域标签（小，`璃月港城郊` 重复两次），坐标是按各自站点云质心算出来的初值，供手工微调。
 

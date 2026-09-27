@@ -189,7 +189,7 @@
           :x="mt.x"
           :y="mt.y"
           :font-size="mt.fontSize"
-          :fill="mt.fill"
+          :fill="markerFill(mt)"
           :font-family="mt.fontFamily">
           {{ mt.text }}
         </text>
@@ -205,12 +205,16 @@ import {
   AREA_BORDER_DASH,
   AREA_BORDER_WIDTH,
   BLOCK_SIZE,
+  MARKER_EMPHASIS_FILL,
+  MARKER_EMPHASIS_FILL_DARK,
+  MARKER_TEXT_FILL,
   FERRY_COLOR_HIGHLIGHT,
   NATION_BORDER_COLOR,
   NATION_BORDER_WIDTH,
 } from '../config/render.config';
 import { buildBorderPaths } from '../composables/useTerritoryBorders';
 import { useBorderSmoothing } from '../composables/useBorderSmoothing';
+import { useTheme } from '../composables/useTheme';
 import {
   svgWidth,
   svgHeight,
@@ -238,6 +242,17 @@ import { clearSelection, selectLine, selectStation, selection } from '../composa
 const props = defineProps<{
   routeResult: RouteResult | null;
 }>();
+
+const { theme } = useTheme();
+
+/**
+ * 地图标注文字的颜色：其余文字都走 Varlet 的主题变量，只有标注是配置里的固定色 —— 浅色的重点色
+ * （`MARKER_EMPHASIS_FILL`）贴在深色底上看不见，深色模式下换成 `MARKER_EMPHASIS_FILL_DARK`。
+ */
+function markerFill(line: (typeof markerTexts)[number]): string {
+  if (!line.emphasis) return MARKER_TEXT_FILL;
+  return theme.value === 'dark' ? MARKER_EMPHASIS_FILL_DARK : MARKER_EMPHASIS_FILL;
+}
 
 const emit = defineEmits<{
   (e: 'station-click', stationId: string): void;
