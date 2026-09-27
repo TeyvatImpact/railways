@@ -24,17 +24,19 @@ import {
   MARKER_FONT_FAMILY,
 } from '../config/render.config';
 import farePresets from '../config/fare-presets.json';
+import type { NameLocale, OrgNames, StationNames } from './stationNames';
 
 export interface StationData {
   id: string;
   prefix: string;
-  name: string;
-  nameZh?: string;
-  nameEn: string;
+  names: StationNames;
+  /** 本站名的「主语言」= 所属区域 config.primaryLang；标签主行、搜索结果、路由站名都用它 */
+  primaryLang: NameLocale;
   x: number;
   y: number;
   labelDir?: string;
   fontFamily: string;
+  /** 主语言非 zhCN 时，names.zhCN 那一行用的字体 */
   fontFamilyZh?: string;
 }
 
@@ -59,11 +61,9 @@ export interface PresetConfig {
 /** 途经点：链式增量，单位为数据坐标单位（与 station.x/y 同尺度）。第 1 个点相对区间起点站，之后每个点相对前一个点 */
 export type Waypoints = [number, number][];
 
-/** 运营公司 / 运营主体：中文主行 + 英文小字，`nameAlt` 为可选的第三行小字（如至冬的俄文） */
-export interface OperatorInfo {
-  name: string;
-  nameEn: string;
-  nameAlt?: string;
+/** 运营公司 / 运营主体：与线路一样把名称放在 `names` 下（未来可加别的字段） */
+export interface OrgInfo {
+  names: OrgNames;
 }
 
 export interface LineVariantData {
@@ -76,9 +76,10 @@ export interface LineVariantData {
 
 export interface LineData {
   id: string;
-  name: string;
-  nameZh?: string;
-  nameEn: string;
+  /** 线路名：与站点同一套四语键（运营公司 / 运营主体见 `OrgNames`） */
+  names: StationNames;
+  /** 线路名的主语言；缺省时继承所属区域 config.primaryLang（ferry.json / same.json 无 config → `zhCN`） */
+  primaryLang?: NameLocale;
   costPreset: string;
   lineLabels?: [string, string][];
   /** 同一线路的多个交路（支线 / 大小交路），至少一个；变体之间共用线路名与颜色 */
@@ -88,9 +89,9 @@ export interface LineData {
   fontFamily?: string;
   fontFamilyZh?: string;
   /** 运营公司；缺省时取所属区域文件 config 的同名字段 */
-  operator?: OperatorInfo;
-  /** 运营主体（提瓦特铁路xx局 / 稻妻幕府 / 枫丹庭 …）；缺省同上 */
-  authority?: OperatorInfo;
+  operator?: OrgInfo;
+  /** 运营主体（提瓦特铁路xx局 / 稻妻幕府 / 枫丹廷 …）；缺省同上 */
+  authority?: OrgInfo;
   lineType?: 'ferry' | 'same-station';
 }
 
@@ -115,6 +116,8 @@ export interface LineVariant {
 }
 
 export interface Line extends Omit<LineData, 'variants'> {
+  /** 已解析的线路名主语言（线路对象上的值优先，否则所属区域 config.primaryLang，再否则 `zhCN`） */
+  primaryLang: NameLocale;
   color: string;
   variants: LineVariant[];
   /** 派生：所有变体站点的并集（按首次出现顺序），用于「站 ↔ 线路」查询 */
@@ -165,14 +168,15 @@ interface RegionFile {
     y: number;
     name: string;
     fontFamily?: string;
+    /** 本文件站名与线路名的「主语言」：inazuma = 'ja'，其余 = 'zhCN' */
+    primaryLang?: NameLocale;
     /** 该文件所有线路的默认运营公司 / 运营主体，线路对象可各自覆盖 */
-    operator?: OperatorInfo;
-    authority?: OperatorInfo;
+    operator?: OrgInfo;
+    authority?: OrgInfo;
   };
   stations: {
     id: string;
-    nameCn: string;
-    nameEn: string;
+    names: StationNames;
     x: number;
     y: number;
     labelDir?: string;
@@ -188,26 +192,39 @@ function parseStationsJson(data: RegionFile): {
   stations: StationData[];
   prefix: string;
   fontFamily: string;
-  operator?: OperatorInfo;
-  authority?: OperatorInfo;
+  primaryLang: NameLocale;
+  operator?: OrgInfo;
+  authority?: OrgInfo;
 } {
   const { config, stations: entries } = data;
   const prefix = config.name;
   const fontFamily = config.fontFamily || 'sans-serif';
   const fontFamilyZh = 'Noto Serif SC';
-  const stations = entries.map((e) => ({
-    id: prefix + '-' + e.id,
+  const primaryLang: NameLocale = config.primaryLang ?? 'zhCN';
+  const stations = entries.map((e) => {
+    for (const key of ['zhCN', 'zhTW', 'ja', 'en'] as const) {
+      if (!e.names?.[key]) throw new Error(`站点 ${prefix}-${e.id} 缺少 names.${key}`);
+    }
+    return {
+      id: prefix + '-' + e.id,
+      prefix,
+      names: e.names,
+      primaryLang,
+      x: e.x + config.x,
+      y: e.y + config.y,
+      labelDir: e.labelDir,
+      fontFamily,
+      fontFamilyZh: primaryLang === 'zhCN' ? undefined : fontFamilyZh,
+    };
+  });
+  return {
+    stations,
     prefix,
-    name: e.nameCn,
-    nameZh: (e as any).nameZh || undefined,
-    nameEn: e.nameEn,
-    x: e.x + config.x,
-    y: e.y + config.y,
-    labelDir: e.labelDir,
     fontFamily,
-    fontFamilyZh: (e as any).nameZh ? fontFamilyZh : undefined,
-  }));
-  return { stations, prefix, fontFamily, operator: config.operator, authority: config.authority };
+    primaryLang,
+    operator: config.operator,
+    authority: config.authority,
+  };
 }
 
 /**
@@ -239,14 +256,15 @@ const regionLineSets: {
   lines: LineData[];
   prefix: string;
   fontFamily: string;
-  hasZh?: boolean;
-  operator?: OperatorInfo;
-  authority?: OperatorInfo;
+  primaryLang: NameLocale;
+  operator?: OrgInfo;
+  authority?: OrgInfo;
 }[] = [
   {
     lines: parsedLinesR,
     prefix: parsedR.prefix,
     fontFamily: parsedR.fontFamily,
+    primaryLang: parsedR.primaryLang,
     operator: parsedR.operator,
     authority: parsedR.authority,
   },
@@ -254,7 +272,7 @@ const regionLineSets: {
     lines: parsedLinesI,
     prefix: parsedI.prefix,
     fontFamily: parsedI.fontFamily,
-    hasZh: true,
+    primaryLang: parsedI.primaryLang,
     operator: parsedI.operator,
     authority: parsedI.authority,
   },
@@ -262,6 +280,7 @@ const regionLineSets: {
     lines: parsedLinesL,
     prefix: parsedL.prefix,
     fontFamily: parsedL.fontFamily,
+    primaryLang: parsedL.primaryLang,
     operator: parsedL.operator,
     authority: parsedL.authority,
   },
@@ -269,6 +288,7 @@ const regionLineSets: {
     lines: parsedLinesS,
     prefix: parsedS.prefix,
     fontFamily: parsedS.fontFamily,
+    primaryLang: parsedS.primaryLang,
     operator: parsedS.operator,
     authority: parsedS.authority,
   },
@@ -284,7 +304,7 @@ function assertVariants(line: LineData): void {
   }
 }
 
-for (const { lines, prefix, fontFamily, hasZh, operator, authority } of regionLineSets) {
+for (const { lines, prefix, fontFamily, primaryLang, operator, authority } of regionLineSets) {
   for (const line of lines) {
     assertVariants(line);
     for (const variant of line.variants) {
@@ -293,7 +313,8 @@ for (const { lines, prefix, fontFamily, hasZh, operator, authority } of regionLi
     if (line.lineLabels)
       line.lineLabels = line.lineLabels.map(([id, dir]) => [regionStationId(prefix, id), dir]);
     line.fontFamily = fontFamily;
-    if (hasZh && line.nameZh) line.fontFamilyZh = 'Noto Serif SC';
+    if (primaryLang !== 'zhCN') line.fontFamilyZh = 'Noto Serif SC';
+    line.primaryLang = line.primaryLang ?? primaryLang;
     // 运营公司 / 运营主体：线路对象上的值优先，否则落到本文件的默认值
     if (!line.operator) line.operator = operator;
     if (!line.authority) line.authority = authority;
@@ -402,6 +423,8 @@ for (const { lines: fileLines } of regionLineSets) {
 
 export const lines: Line[] = parsedLines.map((line) => ({
   ...line,
+  // 轮渡 / 同站线路不在 regionLineSets 里，主语言取默认值
+  primaryLang: line.primaryLang ?? 'zhCN',
   variants: line.variants.map((variant) => ({
     name: variant.name ?? '',
     nameEn: variant.nameEn ?? '',

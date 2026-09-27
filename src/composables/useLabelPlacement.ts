@@ -18,9 +18,23 @@ import {
   stationMap,
   lines as allLines,
 } from './useMapData';
+import { nameLabelLines } from './stationNames';
 
 export const FONT_EN = 'Barlow';
 export const FONT_ZH = 'Noto Serif SC';
+
+/** 标签的样式档：主行（大字号 + 区域字体）/ 中文小字 / 英文小字 */
+type LabelKind = 'name' | 'zh' | 'en';
+
+/** 标签的一行（坐标与样式档已定） */
+export interface LabelBoxLine {
+  /** v-for 的 key：站点标签用 locale，线路标签用 'name' | 'zh' | 'en' */
+  key: string;
+  text: string;
+  kind: LabelKind;
+  x: number;
+  y: number;
+}
 
 export interface Box {
   id: string;
@@ -30,12 +44,7 @@ export interface Box {
   cy: number;
   left: number;
   top: number;
-  cnX: number;
-  zhX: number;
-  enX: number;
-  name: string;
-  nameZh: string;
-  nameEn: string;
+  lines: LabelBoxLine[];
   fontFamily: string;
   fontFamilyZh: string;
   fontFamilyEn: string;
@@ -52,12 +61,7 @@ export interface LineLabelBox {
   cy: number;
   left: number;
   top: number;
-  cnX: number;
-  zhX: number;
-  enX: number;
-  name: string;
-  nameZh: string;
-  nameEn: string;
+  lines: LabelBoxLine[];
   color: string;
   fontFamily: string;
   fontFamilyZh: string;
@@ -99,24 +103,40 @@ function getLabelPosition(cx: number, cy: number, w: number, h: number, dir: str
   return { left, top };
 }
 
+/** 多行标签的每行基线：第 i 行 = top + Σ_{k<i}(1.2·size_k + textGap) + 1.1·size_i，最后一行固定 top + h - pad
+ *  （等价于旧实现里三行的 top + fCN*1.1 / top + fCN*1.2 + textGap + fEN*1.1 / top + h - pad） */
+function lineBaselines(sizes: number[], top: number, h: number): number[] {
+  const out: number[] = [];
+  let cursor = 0;
+  sizes.forEach((size, i) => {
+    out.push(i === sizes.length - 1 ? top + h - pad : top + cursor + 1.1 * size);
+    cursor += 1.2 * size + textGap;
+  });
+  return out;
+}
+
 // ---- station label boxes ----
 
 function computeAllBoxes(fsCN_: number, fsEN_: number): Box[] {
   return allStations.map((s) => {
     const ff = s.fontFamily;
     const fZh = s.fontFamilyZh || FONT_ZH;
-    const hasZh = !!s.nameZh;
-    const wCN = measureText(s.name, fsCN_, true, ff);
-    const wZh = hasZh ? measureText(s.nameZh!, fsEN_, true, fZh) : 0;
-    const wEN = measureText(s.nameEn, fsEN_, true, FONT_EN);
-    const w = Math.max(wCN, wZh, wEN) + pad * 2;
-    const h = hasZh
-      ? fsCN_ * 1.2 + textGap + fsEN_ * 1.2 + textGap + fsEN_ * 1.2
-      : fsCN_ * 1.2 + textGap + fsEN_ * 1.2;
+    const lines = nameLabelLines(s.names, s.primaryLang);
+    const sizeOf = (kind: LabelKind) => (kind === 'name' ? fsCN_ : fsEN_);
+    const fontOf = (kind: LabelKind) => (kind === 'name' ? ff : kind === 'zh' ? fZh : FONT_EN);
+    const widths = lines.map((l) => measureText(l.text, sizeOf(l.kind), true, fontOf(l.kind)));
+    const w = Math.max(...widths) + pad * 2;
+    const h =
+      lines.reduce((sum, l) => sum + 1.2 * sizeOf(l.kind), 0) + textGap * (lines.length - 1);
     const dir = s.labelDir || 'R';
     const { left, top } = getLabelPosition(s.cx, s.cy, w, h, dir);
     const textAreaStart = left + pad;
-    const textAreaWidth = Math.max(wCN, wZh, wEN);
+    const textAreaWidth = Math.max(...widths);
+    const baselines = lineBaselines(
+      lines.map((l) => sizeOf(l.kind)),
+      top,
+      h,
+    );
     return {
       id: s.id,
       w,
@@ -125,12 +145,13 @@ function computeAllBoxes(fsCN_: number, fsEN_: number): Box[] {
       cy: s.cy,
       left,
       top,
-      cnX: textAreaStart + (textAreaWidth - wCN) / 2,
-      zhX: hasZh ? textAreaStart + (textAreaWidth - wZh) / 2 : textAreaStart,
-      enX: textAreaStart + (textAreaWidth - wEN) / 2,
-      name: s.name,
-      nameZh: s.nameZh || '',
-      nameEn: s.nameEn,
+      lines: lines.map((l, i) => ({
+        key: l.locale,
+        text: l.text,
+        kind: l.kind,
+        x: textAreaStart + (textAreaWidth - widths[i]) / 2,
+        y: baselines[i],
+      })),
       fontFamily: ff,
       fontFamilyZh: fZh,
       fontFamilyEn: FONT_EN,
@@ -154,17 +175,23 @@ function computeLineLabels(): LineLabelBox[] {
       if (!st) continue;
       const ff = line.fontFamily || 'sans-serif';
       const fZh = line.fontFamilyZh || FONT_ZH;
-      const hasZh = !!line.nameZh;
-      const wCN = measureText(line.name, fCN, true, ff);
-      const wZh = hasZh ? measureText(line.nameZh!, fEN, true, fZh) : 0;
-      const wEN = measureText(line.nameEn, fEN, true, FONT_EN);
-      const w = Math.max(wCN, wZh, wEN) + pad * 2 + 6;
-      const h = hasZh
-        ? fCN * 1.2 + textGap + fEN * 1.2 + textGap + fEN * 1.2
-        : fCN * 1.2 + textGap + fEN * 1.2;
+      const lines = nameLabelLines(line.names, line.primaryLang);
+      // 线路标签比站点标签在左上多留 6px（保持旧排版）
+      const xOffset = 6;
+      const sizeOf = (kind: LabelKind) => (kind === 'name' ? fCN : fEN);
+      const fontOf = (kind: LabelKind) => (kind === 'name' ? ff : kind === 'zh' ? fZh : FONT_EN);
+      const widths = lines.map((l) => measureText(l.text, sizeOf(l.kind), true, fontOf(l.kind)));
+      const w = Math.max(...widths) + pad * 2 + xOffset;
+      const h =
+        lines.reduce((sum, l) => sum + 1.2 * sizeOf(l.kind), 0) + textGap * (lines.length - 1);
       const { left, top } = getLabelPosition(st.cx, st.cy, w, h, dir || 'R');
-      const textAreaStart = left + pad + 6;
-      const textAreaWidth = Math.max(wCN, wZh, wEN);
+      const textAreaStart = left + pad + xOffset;
+      const textAreaWidth = Math.max(...widths);
+      const baselines = lineBaselines(
+        lines.map((l) => sizeOf(l.kind)),
+        top,
+        h,
+      );
       boxes.push({
         id: `line-label-${line.id}-${sid}`,
         lineId: line.id,
@@ -174,12 +201,13 @@ function computeLineLabels(): LineLabelBox[] {
         cy: st.cy,
         left,
         top,
-        cnX: textAreaStart + (textAreaWidth - wCN) / 2,
-        zhX: hasZh ? textAreaStart + (textAreaWidth - wZh) / 2 : textAreaStart,
-        enX: textAreaStart + (textAreaWidth - wEN) / 2,
-        name: line.name,
-        nameZh: line.nameZh || '',
-        nameEn: line.nameEn,
+        lines: lines.map((l, i) => ({
+          key: l.locale,
+          text: l.text,
+          kind: l.kind,
+          x: textAreaStart + (textAreaWidth - widths[i]) / 2,
+          y: baselines[i],
+        })),
         color: line.color,
         fontFamily: ff,
         fontFamilyZh: fZh,

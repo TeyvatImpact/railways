@@ -5,67 +5,106 @@
     "name": "Snezhnaya",
     "fontFamily": "Noto Sans SC",
     "operator": {
-      "name": "至冬皇家铁路",
-      "nameEn": "Snezhnaya Royal Railway"
+      "names": {
+        "zhCN": "至冬皇家铁路",
+        "zhTW": "至冬皇家鐵路",
+        "ja": "スネージナヤ皇立鉄道",
+        "en": "Snezhnaya Royal Railway"
+      }
     },
     "authority": {
-      "name": "至冬皇家轨道运输局",
-      "nameEn": "Snezhnaya Royal Railway Transport Bureau",
-      "nameAlt": "Королевское управление железнодорожного транспорта Снежной"
-    }
+      "names": {
+        "zhCN": "至冬皇家轨道运输局",
+        "zhTW": "至冬皇家軌道運輸局",
+        "ja": "スネージナヤ皇立軌道運輸局",
+        "en": "Snezhnaya Royal Railway Transport Bureau",
+        "ru": "Королевское управление железнодорожного транспорта Снежной"
+      }
+    },
+    "primaryLang": "zhCN"
   },
   "stations": [
     {
       "id": "Snezhnaya",
-      "nameCn": "列车总站",
-      "nameEn": "Central Station",
+      "names": {
+        "zhCN": "列车总站",
+        "zhTW": "列車總站",
+        "ja": "セントラルステーション",
+        "en": "Central Station"
+      },
       "x": 0,
       "y": 0,
       "labelDir": "RT"
     },
     {
       "id": "Svetloledovka",
-      "nameCn": "彩冰镇",
-      "nameEn": "Svetloledovka",
+      "names": {
+        "zhCN": "彩冰镇",
+        "zhTW": "彩冰鎮",
+        "ja": "スヴェトロレドフカ",
+        "en": "Svetloledovka"
+      },
       "x": 1,
       "y": 2
     },
     {
       "id": "Sretomorozsk",
-      "nameCn": "凝露镇",
-      "nameEn": "Sretomorozsk",
+      "names": {
+        "zhCN": "凝露镇",
+        "zhTW": "凝露鎮",
+        "ja": "スレトモロスク",
+        "en": "Sretomorozsk"
+      },
       "x": -2,
       "y": 5,
       "labelDir": "B"
     },
     {
       "id": "Zorya",
-      "nameCn": "曙光车站",
-      "nameEn": "Rankova Zorya",
+      "names": {
+        "zhCN": "曙光车站",
+        "zhTW": "曙光車站",
+        "ja": "ザーリャ駅",
+        "en": "Rankova Zorya",
+        "pronunciationJa": "ザーリャえき"
+      },
       "x": -3,
       "y": 2,
       "labelDir": "LB"
     },
     {
       "id": "Morepesok",
-      "nameCn": "海屑镇",
-      "nameEn": "Morepesok",
+      "names": {
+        "zhCN": "海屑镇",
+        "zhTW": "海屑鎮",
+        "ja": "モレペソク",
+        "en": "Morepesok"
+      },
       "x": -2,
       "y": -1,
       "labelDir": "T"
     },
     {
       "id": "Flamefeather",
-      "nameCn": "焰羽谷",
-      "nameEn": "Flamefeather Valley",
+      "names": {
+        "zhCN": "焰羽谷",
+        "zhTW": "焰羽谷",
+        "ja": "焔翼の谷",
+        "en": "Flamefeather Valley",
+        "pronunciationJa": "えんよくのたに"
+      },
       "x": -4,
       "y": 0,
       "labelDir": "L"
     },
     {
       "id": "PaleCrown",
-      "nameCn": "白冕宫",
-      "nameEn": "Pale Crown Palace",
+      "names": {
+        "zhCN": "白冕宫",
+        "zhTW": "白冕宮",
+        "ja": "ペールクラウンパレス",
+        "en": "Pale Crown Palace"
+      },
       "x": 3,
       "y": -2,
       "labelDir": "R"
@@ -74,8 +113,12 @@
   "lines": [
     {
       "id": "Trian-1",
-      "name": "至冬列车大环线",
-      "nameEn": "Snezhnaya Large Loop Line",
+      "names": {
+        "zhCN": "至冬列车大环线",
+        "zhTW": "至冬列車大環線",
+        "ja": "スネージナヤ列車大環状線",
+        "en": "Snezhnaya Large Loop Line"
+      },
       "oneWay": true,
       "lineLabels": [],
       "variants": [
@@ -92,8 +135,12 @@
     },
     {
       "id": "Trian-2",
-      "name": "至冬列车小环线",
-      "nameEn": "Snezhnaya Small Loop Line",
+      "names": {
+        "zhCN": "至冬列车小环线",
+        "zhTW": "至冬列車小環線",
+        "ja": "スネージナヤ列車小環状線",
+        "en": "Snezhnaya Small Loop Line"
+      },
       "oneWay": true,
       "lineLabels": [],
       "variants": [
@@ -109,8 +156,12 @@
     },
     {
       "id": "Trian-3",
-      "name": "至冬列车焰羽谷线",
-      "nameEn": "Snezhnaya Flamefeather Line",
+      "names": {
+        "zhCN": "至冬列车焰羽谷线",
+        "zhTW": "至冬列車焰羽谷線",
+        "ja": "スネージナヤ列車焔翼の谷線",
+        "en": "Snezhnaya Flamefeather Line"
+      },
       "oneWay": true,
       "lineLabels": [],
       "variants": [
@@ -127,8 +178,12 @@
     },
     {
       "id": "Trian-4",
-      "name": "至冬列车白冕宫线",
-      "nameEn": "Snezhnaya Pale Crown Palace Line",
+      "names": {
+        "zhCN": "至冬列车白冕宫线",
+        "zhTW": "至冬列車白冕宮線",
+        "ja": "スネージナヤ列車ペールクラウンパレス線",
+        "en": "Snezhnaya Pale Crown Palace Line"
+      },
       "lineLabels": [],
       "variants": [
         {
@@ -138,8 +193,12 @@
     },
     {
       "id": "Trian-5",
-      "name": "至冬列车·挪德卡莱连接线",
-      "nameEn": "Snezhnaya Railway Nod-Krai Connector",
+      "names": {
+        "zhCN": "至冬列车·挪德卡莱连接线",
+        "zhTW": "至冬列車·挪德卡萊連接線",
+        "ja": "スネージナヤ列車・ナド・クライ連絡線",
+        "en": "Snezhnaya Railway Nod-Krai Connector"
+      },
       "costPreset": "standard",
       "lineLabels": [],
       "variants": [

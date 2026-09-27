@@ -29,22 +29,26 @@
                   <thead>
                     <tr>
                       <th class="col-id">ID</th>
-                      <th>Name (JP/CN)</th>
-                      <th>Name (ZH)</th>
-                      <th>Name (EN)</th>
+                      <th>zhCN</th>
+                      <th>zhTW</th>
+                      <th>ja</th>
+                      <th>en</th>
+                      <th>读音</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="st in currentStations" :key="st.id">
                       <td class="col-id">{{ st.id }}</td>
-                      <td><input v-model="st.nameCn" class="edit-input" /></td>
+                      <td><input v-model="st.names.zhCN" class="edit-input" /></td>
+                      <td><input v-model="st.names.zhTW" class="edit-input" /></td>
+                      <td><input v-model="st.names.ja" class="edit-input" /></td>
+                      <td><input v-model="st.names.en" class="edit-input" /></td>
                       <td>
                         <input
-                          v-model="st.nameZh"
+                          v-model="st.names.pronunciationJa"
                           class="edit-input"
-                          :placeholder="activeFile === 'inazuma' ? '中文译名' : ''" />
+                          placeholder="可选" />
                       </td>
-                      <td><input v-model="st.nameEn" class="edit-input" /></td>
                     </tr>
                   </tbody>
                 </table>
@@ -58,12 +62,16 @@
                 <div v-for="line in currentLines" :key="line.id" class="line-group">
                   <div class="line-header">
                     <span class="line-id">{{ line.id }}</span>
-                    <input v-model="line.name" class="edit-input line-name" />
                     <input
-                      v-model="line.nameZh"
+                      v-model="line.names.zhCN"
                       class="edit-input line-name"
-                      :placeholder="activeFile === 'inazuma' ? '中文名' : ''" />
-                    <input v-model="line.nameEn" class="edit-input line-name" />
+                      placeholder="zhCN" />
+                    <input
+                      v-model="line.names.zhTW"
+                      class="edit-input line-name"
+                      placeholder="zhTW" />
+                    <input v-model="line.names.ja" class="edit-input line-name" placeholder="ja" />
+                    <input v-model="line.names.en" class="edit-input line-name" placeholder="en" />
                     <select v-model="line.costPreset" class="preset-select">
                       <option v-for="p in presetOptions" :key="p.id" :value="p.id">
                         {{ p.label }}
@@ -175,7 +183,7 @@ const stationNameMap = computed(() => {
     if (!data?.config?.name || !data.stations) continue;
     const prefix = data.config.name;
     for (const st of data.stations) {
-      map.set(`${prefix}-${st.id}`, st.nameCn);
+      map.set(`${prefix}-${st.id}`, st.names?.zhCN ?? '');
     }
   }
   return map;
@@ -185,7 +193,7 @@ function stationName(stationId: string, fileKey?: string): string {
   const data = fileKey ? filesData[fileKey] : null;
   if (data?.stations) {
     const st = data.stations.find((s: any) => s.id === stationId);
-    if (st) return `${st.nameCn} / ${st.nameEn}`;
+    if (st) return `${st.names?.zhCN ?? ''} / ${st.names?.en ?? ''}`;
   }
   const name = stationNameMap.value.get(stationId);
   if (name) return name;
@@ -197,7 +205,7 @@ function distStationName(id: string): string {
   const data = filesData[fileKey];
   if (data?.stations) {
     const st = data.stations.find((s: any) => s.id === id);
-    if (st) return `${st.nameCn} / ${st.nameEn} (${id})`;
+    if (st) return `${st.names?.zhCN ?? ''} / ${st.names?.en ?? ''} (${id})`;
   }
   const fullName = stationNameMap.value.get(id);
   if (fullName) return `${fullName} (${id})`;

@@ -8,6 +8,7 @@ import {
   type Station,
 } from '../../composables/useMapData';
 import { measureText } from '../../composables/useLabelPlacement';
+import { nameLabelLines } from '../../composables/stationNames';
 import { splitVariants, type DivergentBranch } from './variantStrip';
 import { buildStrip, EDGE, type MeasureFn, type StripInput, type StripModel } from './stripModel';
 import {
@@ -18,7 +19,12 @@ import {
   type ProgressStep,
   type RouteSpan,
 } from './dynamicStrip';
-import { buildAnnouncement, shortLineName, type AnnounceContext, type NamedText } from './announce';
+import {
+  buildAnnouncement,
+  shortLineName,
+  type AnnounceContext,
+  type StationText,
+} from './announce';
 import { useSpeech } from '../../composables/useSpeech';
 import { PROGRESS_STATES, type AnnounceKind } from '../../config/announce.config';
 import VoicePanel from './VoicePanel.vue';
@@ -40,16 +46,16 @@ for (const line of railLines) {
 const measure: MeasureFn = (text, size, weight, family) =>
   measureText(text, size, weight >= 600, family);
 
-/** 站名三行（中文 / 稻妻中译 / 英文）要用的字段 */
+/** 站名标签行：主语言行 + 中文行（主语言非中文时）+ 英文行 */
 function stationLabel(station: Station) {
-  return { id: station.id, name: station.name, nameZh: station.nameZh, nameEn: station.nameEn };
+  return { id: station.id, lines: nameLabelLines(station.names, station.primaryLang) };
 }
 
 /** 本站换乘的其他轨道交通线路徽章 */
 function badgesFor(line: Line, stationId: string) {
   return (stationLines.get(stationId) ?? [])
     .filter((other) => other.id !== line.id)
-    .map((other) => ({ label: shortLineName(other.name), fill: other.color }));
+    .map((other) => ({ label: shortLineName(other.names[other.primaryLang]), fill: other.color }));
 }
 
 function buildInput(
@@ -66,11 +72,9 @@ function buildInput(
     key: line.id,
     color: line.color,
     cjkFont: line.fontFamily || 'sans-serif',
-    name: line.name,
-    nameZh: line.nameZh,
-    nameEn: line.nameEn,
-    operator: line.operator,
-    authority: line.authority,
+    labelLines: nameLabelLines(line.names, line.primaryLang),
+    operator: line.operator?.names,
+    authority: line.authority?.names,
     stations,
     // 支线独占站只画车道上的圆圈与站名，不带换乘徽章（徽章行在主线之上，引线要横穿主线）
     branches: branches.map((b) => ({
@@ -181,8 +185,8 @@ function buildContext(
   const terminus = terminusId ? (stationMap.get(terminusId) ?? null) : null;
   const branches = lineVariants.get(key)?.branches ?? [];
 
-  let station: NamedText | null = null;
-  let next: NamedText | null = null;
+  let station: StationText | null = null;
+  let next: StationText | null = null;
   if (step?.kind === 'station') {
     station = stationMap.get(step.stationId) ?? null;
     if (!station) return null;
@@ -197,7 +201,7 @@ function buildContext(
   const transfers = transferStation
     ? (stationLines.get(transferStation.id) ?? [])
         .filter((other) => other.id !== key)
-        .map((other) => ({ name: other.name, nameEn: other.nameEn }))
+        .map((other) => ({ names: other.names }))
     : [];
   // 支线换乘提示：仅当「下一站是分岔站」
   const nextBranches = next
@@ -208,7 +212,7 @@ function buildContext(
 
   return {
     kind,
-    line: { name: line.name, nameZh: line.nameZh, nameEn: line.nameEn, stationIds: line.stations },
+    line: { names: line.names, stationIds: line.stations },
     direction: dynState[key].dir,
     variant: { name: variant.name, nameEn: variant.nameEn },
     terminus,
@@ -251,8 +255,10 @@ function dirLabel(s: StripModel, dir: Direction): string {
   const firstId = stations[0];
   const lastId = stations[stations.length - 1];
   if (firstId === lastId) return `${head}（${dir === 'up' ? '顺行' : '逆行'}）`;
-  const first = stationMap.get(firstId)?.name;
-  const last = stationMap.get(lastId)?.name;
+  const firstSt = stationMap.get(firstId);
+  const lastSt = stationMap.get(lastId);
+  const first = firstSt?.names[firstSt.primaryLang];
+  const last = lastSt?.names[lastSt.primaryLang];
   if (!first || !last) return head;
   return `${head}（${dir === 'up' ? `${first} → ${last}` : `${last} → ${first}`}）`;
 }
@@ -395,18 +401,18 @@ function cell(col: number) {
           <!-- 页头：线路名称色块 → 运营公司 → 运营主体（只写名称本身） -->
           <header class="head">
             <div class="chip">
-              <span class="chip-name">{{ s.name }}</span>
-              <span v-if="s.nameZh" class="chip-zh">{{ s.nameZh }}</span>
-              <span class="chip-en">{{ s.nameEn }}</span>
+              <span v-for="l in s.labelLines" :key="l.locale" :class="'chip-' + l.kind">{{
+                l.text
+              }}</span>
             </div>
-            <div v-if="s.operator?.name" class="block">
-              <span class="block-name">{{ s.operator.name }}</span>
-              <span v-if="s.operator.nameEn" class="block-en">{{ s.operator.nameEn }}</span>
+            <div v-if="s.operator" class="block">
+              <span class="block-name">{{ s.operator.zhCN }}</span>
+              <span class="block-en">{{ s.operator.en }}</span>
             </div>
-            <div v-if="s.authority?.name" class="block">
-              <span class="block-name auth-name">{{ s.authority.name }}</span>
-              <span v-if="s.authority.nameEn" class="block-en">{{ s.authority.nameEn }}</span>
-              <span v-if="s.authority.nameAlt" class="block-en">{{ s.authority.nameAlt }}</span>
+            <div v-if="s.authority" class="block">
+              <span class="block-name auth-name">{{ s.authority.zhCN }}</span>
+              <span class="block-en">{{ s.authority.en }}</span>
+              <span v-if="s.authority.ru" class="block-en">{{ s.authority.ru }}</span>
             </div>
           </header>
 
@@ -491,7 +497,7 @@ function cell(col: number) {
               'dyn-dim': dyn(s.key).states[st.col] === 'dim',
             }"
             :style="{ ...cell(st.col), '--label-shift': st.labelShift + 'px' }">
-            <div v-for="(l, k) in st.label" :key="k" :class="'st-' + l.kind">{{ l.text }}</div>
+            <div v-for="l in st.lines" :key="l.locale" :class="'st-' + l.kind">{{ l.text }}</div>
           </div>
         </div>
       </div>

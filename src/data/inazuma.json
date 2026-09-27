@@ -5,307 +5,442 @@
     "name": "Inazuma",
     "fontFamily": "Noto Serif JP",
     "operator": {
-      "name": "稲妻旅客鉄道株式会社",
-      "nameEn": "Inazuma Railways"
+      "names": {
+        "zhCN": "稻妻旅客铁道株式会社",
+        "zhTW": "稻妻旅客鐵道株式會社",
+        "ja": "稲妻旅客鉄道株式会社",
+        "en": "Inazuma Railways"
+      }
     },
     "authority": {
-      "name": "稲妻幕府",
-      "nameEn": "Inazuma Shogunate"
-    }
+      "names": {
+        "zhCN": "稻妻幕府",
+        "zhTW": "稻妻幕府",
+        "ja": "稲妻幕府",
+        "en": "Inazuma Shogunate"
+      }
+    },
+    "primaryLang": "ja"
   },
   "stations": [
     {
       "id": "RTP",
-      "nameCn": "離島港",
-      "nameZh": "离岛港",
-      "nameEn": "Ritou Port",
+      "names": {
+        "zhCN": "离岛港",
+        "zhTW": "離島港",
+        "ja": "離島港",
+        "en": "Ritou Port"
+      },
       "x": 0,
       "y": 0,
       "labelDir": "B"
     },
     {
       "id": "RTU",
-      "nameCn": "離島",
-      "nameZh": "离岛",
-      "nameEn": "Ritou",
+      "names": {
+        "zhCN": "离岛",
+        "zhTW": "離島",
+        "ja": "離島",
+        "en": "Ritou",
+        "pronunciationJa": "りとう"
+      },
       "x": 1,
       "y": 0,
       "labelDir": "B"
     },
     {
       "id": "KDV",
-      "nameCn": "紺田村",
-      "nameZh": "绀田村",
-      "nameEn": "Konda Village",
+      "names": {
+        "zhCN": "绀田村",
+        "zhTW": "紺田村",
+        "ja": "紺田村",
+        "en": "Konda Village",
+        "pronunciationJa": "こんだむら"
+      },
       "x": 3,
       "y": 1,
       "labelDir": "L"
     },
     {
       "id": "BKP",
-      "nameCn": "白狐の野",
-      "nameZh": "白狐之野",
-      "nameEn": "Byakko Plain",
+      "names": {
+        "zhCN": "白狐之野",
+        "zhTW": "白狐之野",
+        "ja": "白狐の野",
+        "en": "Byakko Plain",
+        "pronunciationJa": "びゃっこのや"
+      },
       "x": 4,
       "y": 2,
       "labelDir": "L"
     },
     {
       "id": "HMZ",
-      "nameCn": "花見坂",
-      "nameZh": "花见坂",
-      "nameEn": "Hanamizaka",
+      "names": {
+        "zhCN": "花见坂",
+        "zhTW": "花見坂",
+        "ja": "花見坂",
+        "en": "Hanamizaka"
+      },
       "x": 5,
       "y": 3,
       "labelDir": "RT"
     },
     {
       "id": "IZC",
-      "nameCn": "稲妻城",
-      "nameZh": "稻妻城",
-      "nameEn": "Inazuma City",
+      "names": {
+        "zhCN": "稻妻城",
+        "zhTW": "稻妻城",
+        "ja": "稲妻城",
+        "en": "Inazuma City",
+        "pronunciationJa": "いなずまじょう"
+      },
       "x": 6,
       "y": 4,
       "labelDir": "RT"
     },
     {
       "id": "NIT",
-      "nameCn": "鳴神島・天守",
-      "nameZh": "鸣神岛·天守",
-      "nameEn": "Narukami Island: Tenshukaku",
+      "names": {
+        "zhCN": "鸣神岛·天守",
+        "zhTW": "鳴神島·天守",
+        "ja": "鳴神島・天守",
+        "en": "Narukami Island: Tenshukaku",
+        "pronunciationJa": "なるかみじま・てんしゅ"
+      },
       "x": 7,
       "y": 5,
       "labelDir": "RT"
     },
     {
       "id": "AUM",
-      "nameCn": "荒海",
-      "nameZh": "荒海",
-      "nameEn": "Araumi",
+      "names": {
+        "zhCN": "荒海",
+        "zhTW": "荒海",
+        "ja": "荒海",
+        "en": "Araumi",
+        "pronunciationJa": "あらうみ"
+      },
       "x": 4,
       "y": -2,
       "labelDir": "RT"
     },
     {
       "id": "YGN",
-      "nameCn": "影向山北",
-      "nameZh": "影向山北",
-      "nameEn": "Mt. Yougou North",
+      "names": {
+        "zhCN": "影向山北",
+        "zhTW": "影向山北",
+        "ja": "影向山北",
+        "en": "Mt. Yougou North"
+      },
       "x": 6,
       "y": -2,
       "labelDir": "RT"
     },
     {
       "id": "KSE",
-      "nameCn": "神里屋敷",
-      "nameZh": "神里屋敷",
-      "nameEn": "Kamisato Estate",
+      "names": {
+        "zhCN": "神里屋敷",
+        "zhTW": "神里屋敷",
+        "ja": "神里屋敷",
+        "en": "Kamisato Estate",
+        "pronunciationJa": "かみさとやしき"
+      },
       "x": 7,
       "y": 0
     },
     {
       "id": "CJF",
-      "nameCn": "鎮守の森",
-      "nameZh": "镇守之森",
-      "nameEn": "Chinju Forest",
+      "names": {
+        "zhCN": "镇守之森",
+        "zhTW": "鎮守之森",
+        "ja": "鎮守の森",
+        "en": "Chinju Forest",
+        "pronunciationJa": "ちんじゅのもり"
+      },
       "x": 6,
       "y": 1,
       "labelDir": "RB"
     },
     {
       "id": "GNS",
-      "nameCn": "鳴神大社",
-      "nameZh": "鸣神大社",
-      "nameEn": "Grand Narukami Shrine",
+      "names": {
+        "zhCN": "鸣神大社",
+        "zhTW": "鳴神大社",
+        "ja": "鳴神大社",
+        "en": "Grand Narukami Shrine",
+        "pronunciationJa": "なるかみおおやしろ"
+      },
       "x": 5,
       "y": 0,
       "labelDir": "T"
     },
     {
       "id": "AKI",
-      "nameCn": "甘金島",
-      "nameZh": "甘金岛",
-      "nameEn": "Amakane Island",
+      "names": {
+        "zhCN": "甘金岛",
+        "zhTW": "甘金島",
+        "ja": "甘金島",
+        "en": "Amakane Island",
+        "pronunciationJa": "あまかねじま"
+      },
       "x": 3,
       "y": 3,
       "labelDir": "RB"
     },
     {
       "id": "KJE",
-      "nameCn": "九条陣屋",
-      "nameZh": "九条阵屋",
-      "nameEn": "Kujou Encampment",
+      "names": {
+        "zhCN": "九条阵屋",
+        "zhTW": "九條陣屋",
+        "ja": "九条陣屋",
+        "en": "Kujou Encampment",
+        "pronunciationJa": "くじょうじんや"
+      },
       "x": 0,
       "y": 4,
       "labelDir": "RB"
     },
     {
       "id": "KNZ",
-      "nameCn": "神無塚",
-      "nameZh": "神无塚",
-      "nameEn": "Kannazuka",
+      "names": {
+        "zhCN": "神无冢",
+        "zhTW": "神無冢",
+        "ja": "神無塚",
+        "en": "Kannazuka",
+        "pronunciationJa": "かんなづか"
+      },
       "x": -2,
       "y": 5,
       "labelDir": "RB"
     },
     {
       "id": "NCB",
-      "nameCn": "名椎の浜",
-      "nameZh": "名椎滩",
-      "nameEn": "Nazuchi Beach",
+      "names": {
+        "zhCN": "名椎滩",
+        "zhTW": "名椎灘",
+        "ja": "名椎の浜",
+        "en": "Nazuchi Beach",
+        "pronunciationJa": "なづちのはま"
+      },
       "x": -4,
       "y": 5,
       "labelDir": "T"
     },
     {
       "id": "MSG",
-      "nameCn": "無想刃狭間",
-      "nameZh": "无想刃狭间",
-      "nameEn": "Musoujin Gorge",
+      "names": {
+        "zhCN": "无想刃狭间",
+        "zhTW": "無想刃狹間",
+        "ja": "無想刃狭間",
+        "en": "Musoujin Gorge",
+        "pronunciationJa": "むそうじんはざま"
+      },
       "x": -6,
       "y": 5,
       "labelDir": "T"
     },
     {
       "id": "HGV",
-      "nameCn": "緋木村",
-      "nameZh": "绯木村",
-      "nameEn": "Higi Village",
+      "names": {
+        "zhCN": "绯木村",
+        "zhTW": "緋木村",
+        "ja": "緋木村",
+        "en": "Higi Village",
+        "pronunciationJa": "ひぎむら"
+      },
       "x": -8,
       "y": 6,
       "labelDir": "R"
     },
     {
       "id": "FFT",
-      "nameCn": "藤兜砦",
-      "nameZh": "藤兜砦",
-      "nameEn": "Fort Fujitou",
+      "names": {
+        "zhCN": "藤兜砦",
+        "zhTW": "藤兜砦",
+        "ja": "藤兜砦",
+        "en": "Fort Fujitou",
+        "pronunciationJa": "ふじとうとりで"
+      },
       "x": -9,
       "y": 5,
       "labelDir": "RT"
     },
     {
       "id": "SPH",
-      "nameCn": "蛇神の首",
-      "nameZh": "蛇神之首",
-      "nameEn": "Serpent's Head",
+      "names": {
+        "zhCN": "蛇神之首",
+        "zhTW": "蛇神之首",
+        "ja": "蛇神の首",
+        "en": "Serpent's Head",
+        "pronunciationJa": "へびがみのくび"
+      },
       "x": -7,
       "y": 7,
       "labelDir": "RT"
     },
     {
       "id": "JTM",
-      "nameCn": "蛇骨鉱坑",
-      "nameZh": "蛇骨矿坑",
-      "nameEn": "Jakotsu Mine",
+      "names": {
+        "zhCN": "蛇骨矿洞",
+        "zhTW": "蛇骨礦洞",
+        "ja": "蛇骨鉱坑",
+        "en": "Jakotsu Mine",
+        "pronunciationJa": "じゃこつこうこう"
+      },
       "x": -6,
       "y": 8,
       "labelDir": "RT"
     },
     {
       "id": "WTE",
-      "nameCn": "海祇東",
-      "nameZh": "海祇东",
-      "nameEn": "Watatsumi East",
+      "names": {
+        "zhCN": "海祇东",
+        "zhTW": "海祇東",
+        "ja": "海祇東",
+        "en": "Watatsumi East"
+      },
       "x": -10,
       "y": 7,
       "labelDir": "RT"
     },
     {
       "id": "BRV",
-      "nameCn": "望瀧村",
-      "nameZh": "望泷村",
-      "nameEn": "Bourou Village",
+      "names": {
+        "zhCN": "望泷村",
+        "zhTW": "望瀧村",
+        "ja": "望瀧村",
+        "en": "Bourou Village",
+        "pronunciationJa": "ぼうろうむら"
+      },
       "x": -11,
       "y": 6,
       "labelDir": "T"
     },
     {
       "id": "SGM",
-      "nameCn": "珊瑚宮",
-      "nameZh": "珊瑚宫",
-      "nameEn": "Sangonomiya",
+      "names": {
+        "zhCN": "珊瑚宫",
+        "zhTW": "珊瑚宮",
+        "ja": "珊瑚宮",
+        "en": "Sangonomiya Shrine",
+        "pronunciationJa": "さんごのみや"
+      },
       "x": -13,
       "y": 6,
       "labelDir": "T"
     },
     {
       "id": "MUS",
-      "nameCn": "曚雲神社/曚雲港",
-      "nameZh": "曚云神社/曚云港",
-      "nameEn": "Mouun Shrine / Mouun Port",
+      "names": {
+        "zhCN": "曚云神社/曚云港",
+        "zhTW": "曚雲神社/曚雲港",
+        "ja": "曚雲神社/曚雲港",
+        "en": "Mouun Shrine / Mouun Port"
+      },
       "x": -14,
       "y": 6,
       "labelDir": "LT"
     },
     {
       "id": "SKP",
-      "nameCn": "シリコロ山",
-      "nameZh": "知比山",
-      "nameEn": "Shirikoro Peak",
+      "names": {
+        "zhCN": "知比山",
+        "zhTW": "知比山",
+        "ja": "シリコロ山",
+        "en": "Shirikoro Peak",
+        "pronunciationJa": "シリコロやま"
+      },
       "x": -4,
       "y": 11,
       "labelDir": "RT"
     },
     {
       "id": "ONB",
-      "nameCn": "オイナ海岸",
-      "nameZh": "笈名海滨",
-      "nameEn": "Oina Beach",
+      "names": {
+        "zhCN": "笈名海滨",
+        "zhTW": "笈名海濱",
+        "ja": "オイナ海岸",
+        "en": "Oina Beach",
+        "pronunciationJa": "オイナかいがん"
+      },
       "x": -3,
       "y": 12,
       "labelDir": "RT"
     },
     {
       "id": "CRS",
-      "nameCn": "チライ社殿",
-      "nameZh": "千来神祠",
-      "nameEn": "Chirai Shrine",
+      "names": {
+        "zhCN": "千来神祠",
+        "zhTW": "千來神祠",
+        "ja": "チライ社殿",
+        "en": "Chirai Shrine",
+        "pronunciationJa": "チライしゃでん"
+      },
       "x": -1,
       "y": 12,
       "labelDir": "RT"
     },
     {
       "id": "MCS",
-      "nameCn": "モシリ祭場",
-      "nameZh": "茂知祭场",
-      "nameEn": "Moshiri Ceremonial Site",
+      "names": {
+        "zhCN": "茂知祭场",
+        "zhTW": "茂知祭場",
+        "ja": "モシリ祭場",
+        "en": "Moshiri Ceremonial Site",
+        "pronunciationJa": "モシリさいじょう"
+      },
       "x": -1,
       "y": 13,
       "labelDir": "RB"
     },
     {
       "id": "WKS",
-      "nameCn": "ワクカウ浜",
-      "nameZh": "惑饲滩",
-      "nameEn": "Wakukau Shoal",
+      "names": {
+        "zhCN": "惑饲滩",
+        "zhTW": "惑飼灘",
+        "ja": "ワクカウ浜",
+        "en": "Wakukau Shoal",
+        "pronunciationJa": "ワクカウはま"
+      },
       "x": -2,
       "y": 14,
       "labelDir": "RB"
     },
     {
       "id": "TMP",
-      "nameCn": "鶴観港",
-      "nameZh": "鹤观港",
-      "nameEn": "Tsurumi Port",
+      "names": {
+        "zhCN": "鹤观港",
+        "zhTW": "鶴觀港",
+        "ja": "鶴観港",
+        "en": "Tsurumi Port"
+      },
       "x": 1,
       "y": 12,
       "labelDir": "B"
     },
     {
       "id": "MKN",
-      "nameCn": "カンナ山",
-      "nameZh": "菅名山",
-      "nameEn": "Mt. Kanna",
+      "names": {
+        "zhCN": "菅名山",
+        "zhTW": "菅名山",
+        "ja": "カンナ山",
+        "en": "Mt. Kanna",
+        "pronunciationJa": "カンナざん"
+      },
       "x": -3,
       "y": 13,
       "labelDir": "B"
     },
     {
       "id": "ATP",
-      "nameCn": "アウタケ平原",
-      "nameZh": "逢岳之野",
-      "nameEn": "Autake Plains",
+      "names": {
+        "zhCN": "逢岳之野",
+        "zhTW": "逢嶽之野",
+        "ja": "アウタケ平原",
+        "en": "Autake Plains",
+        "pronunciationJa": "アウタケへいげん"
+      },
       "x": -5,
       "y": 13,
       "labelDir": "B"
@@ -314,9 +449,12 @@
   "lines": [
     {
       "id": "NK",
-      "name": "IR 東稲妻·鳴神島線",
-      "nameZh": "IR 东稻妻·鸣神岛线",
-      "nameEn": "IR East Narukami Line",
+      "names": {
+        "zhCN": "IR 东稻妻·鸣神岛线",
+        "zhTW": "IR 東稻妻·鳴神島線",
+        "ja": "IR 東稲妻·鳴神島線",
+        "en": "IR East Narukami Line"
+      },
       "lineLabels": [
         ["RTU", "T"],
         ["NIT", "B"]
@@ -338,9 +476,12 @@
     },
     {
       "id": "YG",
-      "name": "IR 東稲妻·影向山環状線",
-      "nameZh": "IR 东稻妻·影向山环状线",
-      "nameEn": "IR East Mt. Yougou Loop Line",
+      "names": {
+        "zhCN": "IR 东稻妻·影向山环状线",
+        "zhTW": "IR 東稻妻·影向山環狀線",
+        "ja": "IR 東稲妻·影向山環状線",
+        "en": "IR East Mt. Yougou Loop Line"
+      },
       "lineLabels": [["AUM", "LT"]],
       "variants": [
         {
@@ -359,9 +500,12 @@
     },
     {
       "id": "NW",
-      "name": "IR 東稲妻·鳴海線",
-      "nameZh": "IR 东稻妻·鸣海线",
-      "nameEn": "IR East Inazuma-Watatsumi Line",
+      "names": {
+        "zhCN": "IR 东稻妻·鸣海线",
+        "zhTW": "IR 東稻妻·鳴海線",
+        "ja": "IR 東稲妻·鳴海線",
+        "en": "IR East Inazuma-Watatsumi Line"
+      },
       "lineLabels": [
         ["KJE", "T"],
         ["NCB", "B"]
@@ -384,9 +528,12 @@
     },
     {
       "id": "NS",
-      "name": "IR 東稲妻·鳴神大社線",
-      "nameZh": "IR 东稻妻·鸣神大社线",
-      "nameEn": "IR East Shrine Line",
+      "names": {
+        "zhCN": "IR 东稻妻·鸣神大社线",
+        "zhTW": "IR 東稻妻·鳴神大社線",
+        "ja": "IR 東稲妻·鳴神大社線",
+        "en": "IR East Shrine Line"
+      },
       "lineLabels": [["IZC", "LB"]],
       "variants": [
         {
@@ -397,9 +544,12 @@
     },
     {
       "id": "YS",
-      "name": "IR 東稲妻·ヤシオリ島線",
-      "nameZh": "IR 东稻妻·八酝岛线",
-      "nameEn": "IR East Yashiori Island Line",
+      "names": {
+        "zhCN": "IR 东稻妻·八酝岛线",
+        "zhTW": "IR 東稻妻·八醞島線",
+        "ja": "IR 東稲妻·ヤシオリ島線",
+        "en": "IR East Yashiori Island Line"
+      },
       "lineLabels": [["SPH", "LB"]],
       "variants": [
         {
@@ -410,12 +560,19 @@
     },
     {
       "id": "WT",
-      "name": "IR 珊瑚宮·海祇島線",
-      "nameZh": "IR 珊瑚宫·海祇岛线",
-      "nameEn": "IR Sangonomiya Watatsumi Island Line",
+      "names": {
+        "zhCN": "IR 珊瑚宫·海祇岛线",
+        "zhTW": "IR 珊瑚宮·海祇島線",
+        "ja": "IR 珊瑚宮·海祇島線",
+        "en": "IR Sangonomiya Watatsumi Island Line"
+      },
       "authority": {
-        "name": "稲妻国海祇島珊瑚宮自治政府",
-        "nameEn": "Watatsumi Sangonomiya Autonomous Government"
+        "names": {
+          "zhCN": "稻妻国海祇岛珊瑚宫自治政府",
+          "zhTW": "稻妻國海祇島珊瑚宮自治政府",
+          "ja": "稲妻国海祇島珊瑚宮自治政府",
+          "en": "Watatsumi Sangonomiya Autonomous Government"
+        }
       },
       "lineLabels": [["WTE", "LB"]],
       "variants": [
@@ -427,9 +584,12 @@
     },
     {
       "id": "TA",
-      "name": "IR 鶴観·一番線",
-      "nameZh": "IR 鹤观·一号线",
-      "nameEn": "IR Tsurumi Line 1",
+      "names": {
+        "zhCN": "IR 鹤观·一号线",
+        "zhTW": "IR 鶴觀·一號線",
+        "ja": "IR 鶴観·一番線",
+        "en": "IR Tsurumi Line 1"
+      },
       "lineLabels": [["ATP", "LT"]],
       "variants": [
         {
@@ -440,9 +600,12 @@
     },
     {
       "id": "TB",
-      "name": "IR 鶴観·二番線",
-      "nameZh": "IR 鹤观·二号线",
-      "nameEn": "IR Tsurumi Line 2",
+      "names": {
+        "zhCN": "IR 鹤观·二号线",
+        "zhTW": "IR 鶴觀·二號線",
+        "ja": "IR 鶴観·二番線",
+        "en": "IR Tsurumi Line 2"
+      },
       "lineLabels": [["SKP", "LT"]],
       "variants": [
         {
@@ -453,9 +616,12 @@
     },
     {
       "id": "ferry-hgv-wte",
-      "name": "緋木村↔海祇東 渡輪",
-      "nameZh": "绯木村↔海祇东 渡轮",
-      "nameEn": "Higii Village ↔ Watatsumi East Ferry",
+      "names": {
+        "zhCN": "绯木村↔海祇东 轮渡",
+        "zhTW": "緋木村↔海祇東 渡輪",
+        "ja": "緋木村↔海祇東 渡輪",
+        "en": "Higi Village ↔ Watatsumi East Ferry"
+      },
       "lineType": "ferry",
       "costPreset": "ferry",
       "variants": [
@@ -466,9 +632,12 @@
     },
     {
       "id": "ferry-izc-tmp",
-      "name": "稲妻城↔鶴観港 渡輪",
-      "nameZh": "稻妻城↔鹤观港 渡轮",
-      "nameEn": "Inazuma City ↔ Tsurumi Port Ferry",
+      "names": {
+        "zhCN": "稻妻城↔鹤观港 轮渡",
+        "zhTW": "稻妻城↔鶴觀港 渡輪",
+        "ja": "稲妻城↔鶴観港 渡輪",
+        "en": "Inazuma City ↔ Tsurumi Port Ferry"
+      },
       "lineType": "ferry",
       "costPreset": "ferry",
       "variants": [

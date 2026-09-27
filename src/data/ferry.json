@@ -2,8 +2,12 @@
   "lines": [
     {
       "id": "ferry-kyb-rtp",
-      "name": "客运港北↔离岛港 轮渡",
-      "nameEn": "Passenger Port North ↔ Ritou Port Ferry",
+      "names": {
+        "zhCN": "客运港北↔离岛港 轮渡",
+        "zhTW": "客運港北↔離島港 渡輪",
+        "ja": "旅客港北↔離島港 渡輪",
+        "en": "Passenger Port North ↔ Ritou Port Ferry"
+      },
       "lineType": "ferry",
       "variants": [
         {
@@ -14,8 +18,12 @@
     },
     {
       "id": "ferry-kyn-mus",
-      "name": "客运港南↔曚雲神社 轮渡",
-      "nameEn": "Passenger Port South ↔ Mouun Shrine Ferry",
+      "names": {
+        "zhCN": "客运港南↔曚云神社 轮渡",
+        "zhTW": "客運港南↔曚雲神社 渡輪",
+        "ja": "旅客港南↔曚雲神社 渡輪",
+        "en": "Passenger Port South ↔ Mouun Shrine Ferry"
+      },
       "lineType": "ferry",
       "variants": [
         {
@@ -26,8 +34,12 @@
     },
     {
       "id": "ferry-pom-mus",
-      "name": "奥摩斯港↔曚雲神社 轮渡",
-      "nameEn": "Port Ormos ↔ Mouun Shrine Ferry",
+      "names": {
+        "zhCN": "奥摩斯港↔曚云神社 轮渡",
+        "zhTW": "奧摩斯港↔曚雲神社 渡輪",
+        "ja": "オルモス港↔曚雲神社 渡輪",
+        "en": "Port Ormos ↔ Mouun Shrine Ferry"
+      },
       "lineType": "ferry",
       "variants": [
         {
@@ -38,8 +50,12 @@
     },
     {
       "id": "ferry-bdh-rrh",
-      "name": "拜达港↔海露港 轮渡",
-      "nameEn": "Bayda Harbor ↔ Romaritime Harbor Ferry",
+      "names": {
+        "zhCN": "拜达港↔海露港 轮渡",
+        "zhTW": "拜達港↔海露港 渡輪",
+        "ja": "バイダ港↔ロマリタイムハーバー 渡輪",
+        "en": "Bayda Harbor ↔ Romaritime Harbor Ferry"
+      },
       "lineType": "ferry",
       "variants": [
         {
@@ -50,8 +66,12 @@
     },
     {
       "id": "ferry-vko-rrh",
-      "name": "甘露花海↔海露港 轮渡",
-      "nameEn": "Vourukasha Oasis ↔ Romaritime Harbor Ferry",
+      "names": {
+        "zhCN": "甘露花海↔海露港 轮渡",
+        "zhTW": "甘露花海↔海露港 渡輪",
+        "ja": "甘露花海↔ロマリタイムハーバー 渡輪",
+        "en": "Vourukasha Oasis ↔ Romaritime Harbor Ferry"
+      },
       "lineType": "ferry",
       "variants": [
         {
@@ -62,8 +82,12 @@
     },
     {
       "id": "ferry-rrh-nsp",
-      "name": "海露港↔那夏港 轮渡",
-      "nameEn": "Romaritime Harbor ↔ Nasha Port Ferry",
+      "names": {
+        "zhCN": "海露港↔那夏港 轮渡",
+        "zhTW": "海露港↔那夏港 渡輪",
+        "ja": "ロマリタイムハーバー↔ナシャ港 渡輪",
+        "en": "Romaritime Harbor ↔ Nasha Port Ferry"
+      },
       "lineType": "ferry",
       "variants": [
         {
@@ -74,8 +98,12 @@
     },
     {
       "id": "ferry-ffc-nsp",
-      "name": "花羽会↔那夏港 轮渡",
-      "nameEn": "Flower-Feather Clan ↔ Nasha Port Ferry",
+      "names": {
+        "zhCN": "花羽会↔那夏港 轮渡",
+        "zhTW": "花羽會↔那夏港 渡輪",
+        "ja": "花翼の集↔ナシャ港 渡輪",
+        "en": "Flower-Feather Clan ↔ Nasha Port Ferry"
+      },
       "lineType": "ferry",
       "variants": [
         {
@@ -86,8 +114,12 @@
     },
     {
       "id": "ferry-ffc-ebp",
-      "name": "花羽会↔悠悠港 轮渡",
-      "nameEn": "Flower-Feather Clan ↔ Easybreeze Port Ferry",
+      "names": {
+        "zhCN": "花羽会↔悠悠港 轮渡",
+        "zhTW": "花羽會↔悠悠港 渡輪",
+        "ja": "花翼の集↔のびのび港 渡輪",
+        "en": "Flower-Feather Clan ↔ Easybreeze Port Ferry"
+      },
       "lineType": "ferry",
       "variants": [
         {
@@ -98,8 +130,12 @@
     },
     {
       "id": "ferry-ylw-ldh",
-      "name": "遗珑埠↔柔灯港 轮渡",
-      "nameEn": "Yilong Wharf ↔ Lumidouce Harbor Ferry",
+      "names": {
+        "zhCN": "遗珑埠↔柔灯港 轮渡",
+        "zhTW": "遺瓏埠↔柔燈港 渡輪",
+        "ja": "遺瓏埠↔ルミドゥースハーバー 渡輪",
+        "en": "Yilong Wharf ↔ Lumidouce Harbor Ferry"
+      },
       "lineType": "ferry",
       "variants": [
         {

@@ -2,8 +2,12 @@
   "lines": [
     {
       "id": "same-lyh-lyg",
-      "name": "璃月港同站换乘",
-      "nameEn": "Liyue Harbor Same-Station",
+      "names": {
+        "zhCN": "璃月港同站换乘",
+        "zhTW": "璃月港同站轉乘",
+        "ja": "璃月港同駅乗り換え",
+        "en": "Liyue Harbor Same-Station"
+      },
       "lineType": "same-station",
       "variants": [
         {
@@ -14,8 +18,12 @@
     },
     {
       "id": "same-lys-lyn",
-      "name": "璃月港南同站换乘",
-      "nameEn": "Liyue Harbor South Same-Station",
+      "names": {
+        "zhCN": "璃月港南同站换乘",
+        "zhTW": "璃月港南同站轉乘",
+        "ja": "璃月港南同駅乗り換え",
+        "en": "Liyue Harbor South Same-Station"
+      },
       "lineType": "same-station",
       "variants": [
         {
@@ -26,8 +34,12 @@
     },
     {
       "id": "same-lyh-lyb",
-      "name": "璃月港北同站换乘",
-      "nameEn": "Liyue Harbor North Same-Station",
+      "names": {
+        "zhCN": "璃月港北同站换乘",
+        "zhTW": "璃月港北同站轉乘",
+        "ja": "璃月港北同駅乗り換え",
+        "en": "Liyue Harbor North Same-Station"
+      },
       "lineType": "same-station",
       "variants": [
         {

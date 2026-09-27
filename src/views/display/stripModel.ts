@@ -2,6 +2,8 @@
 // 排版本身全部交给 index.vue 的 CSS（grid + flex + rotate），这里不做像素定位；
 // 只有下列常量与 CSS 对应，用来按真实字宽决定徽章换行与站名左移。
 
+import type { NameLabelLine, OrgNames } from '../../composables/stationNames';
+
 export type MeasureFn = (text: string, size: number, weight: number, family: string) => number;
 
 /** 英文小字字体（与地图标签同一套：Barlow 只装了 400） */
@@ -35,12 +37,6 @@ const COS45 = Math.SQRT1_2;
 /** 支线站名与「支线」标签块的红（参考图：主线站名黑、支线站名红） */
 const BRANCH_LABEL_COLOR = '#c0392b';
 
-/** 一行站名：样式由 CSS 类按 kind 决定 */
-export interface StripLabelLine {
-  text: string;
-  kind: 'name' | 'zh' | 'en';
-}
-
 export interface StripBadgeModel {
   label: string;
   fill: string;
@@ -49,12 +45,11 @@ export interface StripBadgeModel {
   row: 0 | 1;
 }
 
-/** 一个站点在条带上要画的文字（主线段与支线段共用） */
+/** 一个站点在条带上要画的文字（主线段与支线段共用）：标签行由 stationLabelLines 产出 */
 export interface StripStationBase {
   id: string;
-  name: string;
-  nameZh?: string;
-  nameEn: string;
+  /** 站名标签行（顺序即渲染顺序；第一行是主语言行） */
+  lines: NameLabelLine[];
 }
 
 export interface StripStationModel extends StripStationBase {
@@ -64,7 +59,8 @@ export interface StripStationModel extends StripStationBase {
   index: number;
   /** 0 = 主线车道，1 起算 = 第几条支线车道（CSS 网格行 = 7 + lane） */
   lane: number;
-  label: StripLabelLine[];
+  /** 主语言站名（= lines[0].text，进度 / 播报标签用） */
+  name: string;
   /** 站名块的横向左移量（px，≤ 0）：靠右的车站斜排会顶出面板，用它压回来 */
   labelShift: number;
   /** 徽章簇的横向修正量（px）：簇以本站为中心，顶到内容区边缘时用它挤回来 */
@@ -82,13 +78,6 @@ export interface StripLaneModel {
   lastCol: number;
   /** 车道末端的支线名标签块；末站后面没有列时为 null（此时不画标签） */
   tag: { text: string; textEn: string; col: number } | null;
-}
-
-/** 运营公司 / 运营主体：中文主行 + 英文小字 + 可选第三行小字 */
-export interface StripOperator {
-  name?: string;
-  nameEn?: string;
-  nameAlt?: string;
 }
 
 export interface StripInputStation extends StripStationBase {
@@ -112,11 +101,10 @@ export interface StripInput {
   color: string;
   /** 线路所属区域的中日文字体 */
   cjkFont: string;
-  name: string;
-  nameZh?: string;
-  nameEn: string;
-  operator?: StripOperator;
-  authority?: StripOperator;
+  /** 页头线路名的各行（主语言行 → 中文行 → 英文行） */
+  labelLines: NameLabelLine[];
+  operator?: OrgNames;
+  authority?: OrgNames;
   stations: StripInputStation[];
   /** 与主线分岔的支线（纯子集的小交路不算），无支线时传空数组 */
   branches: StripBranchInput[];
@@ -126,11 +114,10 @@ export interface StripModel {
   key: string;
   color: string;
   cjkFont: string;
-  name: string;
-  nameZh?: string;
-  nameEn: string;
-  operator?: StripOperator;
-  authority?: StripOperator;
+  /** 页头线路名的各行（主行 / 中文小字 / 英文小字） */
+  labelLines: NameLabelLine[];
+  operator?: OrgNames;
+  authority?: OrgNames;
   /** 线路名称色块上的文字色 */
   chipTextFill: string;
   /** 主线最后一个站的列号（主线横线的末端列线 = trunkEndCol + 2） */
@@ -278,12 +265,17 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
   const contentRight = PANEL_W - BORDER - PAD_X;
 
   const stations: StripStationModel[] = cols.map(({ station, lane, badges }, i) => {
-    const wName = measure(station.name, LABEL_NAME_SIZE, 700, input.cjkFont);
-    const wZh = station.nameZh ? measure(station.nameZh, LABEL_SUB_SIZE, 700, FONT_ZH) : 0;
-    const wEn = measure(station.nameEn, LABEL_SUB_SIZE, 400, FONT_EN);
-    const blockW = Math.max(wName, wZh, wEn);
-    const blockH =
-      LABEL_LINE_RATIO * (LABEL_NAME_SIZE + LABEL_SUB_SIZE + (station.nameZh ? LABEL_SUB_SIZE : 0));
+    const sizes = station.lines.map((l) => (l.kind === 'name' ? LABEL_NAME_SIZE : LABEL_SUB_SIZE));
+    const widths = station.lines.map((l, k) =>
+      measure(
+        l.text,
+        sizes[k],
+        l.kind === 'en' ? 400 : 700,
+        l.kind === 'name' ? input.cjkFont : l.kind === 'zh' ? FONT_ZH : FONT_EN,
+      ),
+    );
+    const blockW = Math.max(...widths);
+    const blockH = LABEL_LINE_RATIO * sizes.reduce((a, b) => a + b, 0);
     // 45° 斜排的块占 (W+H)/√2；锚点就在本站（首末站因此离边缘各 EDGE）
     const extent = COS45 * (blockW + blockH);
     const anchorX = BORDER + PAD_X + EDGE + i * colW;
@@ -305,14 +297,8 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
       col: i,
       index: i + 1,
       lane,
-      name: station.name,
-      nameZh: station.nameZh,
-      nameEn: station.nameEn,
-      label: [
-        { text: station.name, kind: 'name' },
-        ...(station.nameZh ? [{ text: station.nameZh, kind: 'zh' as const }] : []),
-        { text: station.nameEn, kind: 'en' },
-      ],
+      name: station.lines[0].text,
+      lines: station.lines,
       labelShift,
       badgeShift,
       badges: badges.map((b) => ({
@@ -345,9 +331,7 @@ export function buildStrip(input: StripInput, measure: MeasureFn): StripModel {
     key: input.key,
     color: input.color,
     cjkFont: input.cjkFont,
-    name: input.name,
-    nameZh: input.nameZh,
-    nameEn: input.nameEn,
+    labelLines: input.labelLines,
     operator: input.operator,
     authority: input.authority,
     chipTextFill: textOn(input.color),

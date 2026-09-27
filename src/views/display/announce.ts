@@ -18,33 +18,32 @@ import {
 } from '../../config/announce.config';
 import { ANNOUNCE_SCRIPTS, type AnnounceScript, type ScriptTexts } from './announceScript';
 import type { Direction } from './dynamicStrip';
+import type { StationNames } from '../../composables/stationNames';
 
 export interface Announcement {
   lang: AnnounceLang;
   text: string;
 }
 
-/** 站 / 线共用的命名字段（Station 就是这个形状，多带的字段无所谓） */
-export interface NamedText {
+/** 站点名：四语齐全，按播报语言取 names */
+export interface StationText {
   id: string;
-  name: string;
-  nameZh?: string;
-  nameEn: string;
+  names: StationNames;
 }
 
 export interface AnnounceContext {
   kind: AnnounceKind;
   /** 线路：线路级事件的语言看它；`stationIds[0]` 的前缀 = 线路所属地区 */
-  line: { name: string; nameZh?: string; nameEn: string; stationIds: string[] };
+  line: { names: StationNames; stationIds: string[] };
   direction: Direction;
   /** 当前变体（`{ name: '', nameEn: '' }` = 全线交路） */
   variant: { name: string; nameEn: string };
-  terminus: NamedText | null;
+  terminus: StationText | null;
   /** station = 到达站；enter = 出发站；leave = 下一站 */
-  station: NamedText | null;
-  next: NamedText | null;
+  station: StationText | null;
+  next: StationText | null;
   /** station 用本站、enter / leave 用下一站的换乘线路（已排除本线；空 = 不播换乘句） */
-  transfers: { name: string; nameEn: string }[];
+  transfers: { names: StationNames }[];
   /** 下一站是分岔站时，从该站分出的支线（空 = 不是分岔站） */
   branches: { name: string; nameEn: string }[];
   /** 本趟行程是否走在支线上（决定 branchHint 用哪句） */
@@ -79,25 +78,28 @@ const REQUIRED: Partial<Record<AtomKey, string[]>> = {
   branchHintBranch: ['branch'],
 };
 
-function nameFor(
-  obj: { name: string; nameZh?: string; nameEn: string },
-  lang: AnnounceLang,
-): string {
-  if (lang === 'en') return obj.nameEn;
-  if (lang === 'ja') return obj.name;
-  return obj.nameZh ?? obj.name;
+/** 站名 / 线名：按播报语言取 names（站点与线路都四语齐全） */
+function localNameFor(obj: { names: StationNames }, lang: AnnounceLang): string {
+  if (lang === 'en') return obj.names.en;
+  if (lang === 'ja') return obj.names.ja;
+  return obj.names.zhCN;
+}
+
+/** 变体名（数据里只有中文名 + 英文名，日文走 VARIANT_NAMES_JA） */
+function variantNameFor(variant: { name: string; nameEn: string }, lang: AnnounceLang): string {
+  if (lang === 'en') return variant.nameEn || FULL_SERVICE_NAME.en;
+  if (lang === 'ja')
+    return VARIANT_NAMES_JA[variant.name] ?? (variant.name || FULL_SERVICE_NAME.ja);
+  return variant.name || FULL_SERVICE_NAME.zh;
 }
 
 function variantName(ctx: AnnounceContext, lang: AnnounceLang): string {
-  if (lang === 'en') return ctx.variant.nameEn || FULL_SERVICE_NAME.en;
-  if (lang === 'ja')
-    return VARIANT_NAMES_JA[ctx.variant.name] ?? (ctx.variant.name || FULL_SERVICE_NAME.ja);
-  return ctx.variant.name || FULL_SERVICE_NAME.zh;
+  return variantNameFor(ctx.variant, lang);
 }
 
 /** 换乘线路：最多列 TRANSFER_LIMIT 条，多出来的用 TRANSFER_OVERFLOW 收尾 */
 function transferName(ctx: AnnounceContext, lang: AnnounceLang): string {
-  const names = ctx.transfers.map((line) => shortLineName(lang === 'en' ? line.nameEn : line.name));
+  const names = ctx.transfers.map((line) => shortLineName(localNameFor(line, lang)));
   const shown = names.slice(0, TRANSFER_LIMIT);
   const rest = names.length - shown.length;
   const head = shown.join(TRANSFER_JOIN[lang]);
@@ -108,9 +110,11 @@ function branchName(ctx: AnnounceContext, lang: AnnounceLang): string {
   return ctx.branches
     .slice(0, TRANSFER_LIMIT)
     .map((branch) =>
-      lang === 'en'
-        ? branch.nameEn || FALLBACK_BRANCH_NAME.en
-        : branch.name || FALLBACK_BRANCH_NAME[lang],
+      branch.name
+        ? variantNameFor(branch, lang)
+        : lang === 'en'
+          ? FALLBACK_BRANCH_NAME.en
+          : FALLBACK_BRANCH_NAME[lang],
     )
     .join(TRANSFER_JOIN[lang]);
 }
@@ -145,7 +149,7 @@ function localLang(ctx: AnnounceContext): AnnounceLang {
 }
 
 /** 脚本归属的站点：站点级档位看目标站（station = 到达站，enter / leave = 下一站），线路级档位没有站点 */
-function scriptTarget(ctx: AnnounceContext): NamedText | null {
+function scriptTarget(ctx: AnnounceContext): StationText | null {
   if (ctx.kind === 'station') return ctx.station;
   if (ctx.kind === 'enter' || ctx.kind === 'leave') return ctx.next;
   return null;
@@ -161,13 +165,13 @@ function pickRandom<T>(list: T[], rand: () => number): T {
  *  每段都取 langs 里存在的语言版本（至冬只有 zh，补 en 即自动中英对照） */
 function scriptedAnnouncement(
   script: AnnounceScript,
-  station: NamedText,
+  station: StationText,
   local: AnnounceLang,
   langs: AnnounceLang[],
   rand: () => number,
 ): Announcement[] {
   const entry = script.stations.find((it) => it.id === station.id) ?? null;
-  const vars = { station: entry?.announceName ?? nameFor(station, local) };
+  const vars = { station: entry?.announceName ?? localNameFor(station, local) };
   const parts: (ScriptTexts | undefined)[] = [script.templates.arrival, script.templates.prepare];
   if (entry?.texts.length) parts.push(pickRandom(entry.texts, rand).text);
   const out: Announcement[] = [];
@@ -186,10 +190,10 @@ function fill(template: string, vars: Record<string, string>): string {
 
 function varsFor(ctx: AnnounceContext, lang: AnnounceLang): Record<string, string> {
   return {
-    line: nameFor(ctx.line, lang),
-    terminus: ctx.terminus ? nameFor(ctx.terminus, lang) : '',
-    station: ctx.station ? nameFor(ctx.station, lang) : '',
-    next: ctx.next ? nameFor(ctx.next, lang) : '',
+    line: localNameFor(ctx.line, lang),
+    terminus: ctx.terminus ? localNameFor(ctx.terminus, lang) : '',
+    station: ctx.station ? localNameFor(ctx.station, lang) : '',
+    next: ctx.next ? localNameFor(ctx.next, lang) : '',
     variant: variantName(ctx, lang),
     transfers: transferName(ctx, lang),
     branch: branchName(ctx, lang),

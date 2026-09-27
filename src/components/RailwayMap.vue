@@ -104,64 +104,50 @@
 
         <g v-for="lb in labelBoxes" :key="lb.id" :opacity="stationOpacity(lb.id)">
           <text
-            :x="lb.cnX"
-            :y="lb.top + lb.fCN * 1.1"
-            fill="var(--color-text, #333)"
+            v-for="ln in lb.lines"
+            :key="ln.key"
+            :x="ln.x"
+            :y="ln.y"
+            :fill="
+              ln.kind === 'name'
+                ? 'var(--color-text, #333)'
+                : 'var(--color-on-surface-variant, #555)'
+            "
             font-weight="bold"
-            :font-size="lb.fCN"
-            :font-family="lb.fontFamily">
-            {{ lb.name }}
-          </text>
-          <text
-            v-if="lb.nameZh"
-            :x="lb.zhX"
-            :y="lb.top + lb.fCN * 1.2 + textGap + lb.fEN * 1.1"
-            fill="var(--color-on-surface-variant, #555)"
-            font-weight="bold"
-            :font-size="lb.fEN"
-            :font-family="lb.fontFamilyZh">
-            {{ lb.nameZh }}
-          </text>
-          <text
-            :x="lb.enX"
-            :y="lb.top + lb.h - pad"
-            fill="var(--color-on-surface-variant, #555)"
-            font-weight="bold"
-            :font-size="lb.fEN"
-            :font-family="lb.fontFamilyEn">
-            {{ lb.nameEn }}
+            :font-size="ln.kind === 'name' ? lb.fCN : lb.fEN"
+            :font-family="
+              ln.kind === 'name'
+                ? lb.fontFamily
+                : ln.kind === 'zh'
+                  ? lb.fontFamilyZh
+                  : lb.fontFamilyEn
+            ">
+            {{ ln.text }}
           </text>
         </g>
 
         <g v-for="lb in lineLabels" :key="lb.id" :opacity="lineLabelOpacity(lb.id)">
           <rect :x="lb.left" :y="lb.top" :width="4" :height="lb.h" :fill="lb.color" rx="2" />
           <text
-            :x="lb.cnX"
-            :y="lb.top + lb.fCN * 1.1"
-            fill="var(--color-text, #333)"
+            v-for="ln in lb.lines"
+            :key="ln.key"
+            :x="ln.x"
+            :y="ln.y"
+            :fill="
+              ln.kind === 'name'
+                ? 'var(--color-text, #333)'
+                : 'var(--color-on-surface-variant, #555)'
+            "
             font-weight="bold"
-            :font-size="lb.fCN"
-            :font-family="lb.fontFamily">
-            {{ lb.name }}
-          </text>
-          <text
-            v-if="lb.nameZh"
-            :x="lb.zhX"
-            :y="lb.top + lb.fCN * 1.2 + textGap + lb.fEN * 1.1"
-            fill="var(--color-on-surface-variant, #555)"
-            font-weight="bold"
-            :font-size="lb.fEN"
-            :font-family="lb.fontFamilyZh">
-            {{ lb.nameZh }}
-          </text>
-          <text
-            :x="lb.enX"
-            :y="lb.top + lb.h - pad"
-            fill="var(--color-on-surface-variant, #555)"
-            font-weight="bold"
-            :font-size="lb.fEN"
-            :font-family="lb.fontFamilyEn">
-            {{ lb.nameEn }}
+            :font-size="ln.kind === 'name' ? lb.fCN : lb.fEN"
+            :font-family="
+              ln.kind === 'name'
+                ? lb.fontFamily
+                : ln.kind === 'zh'
+                  ? lb.fontFamilyZh
+                  : lb.fontFamilyEn
+            ">
+            {{ ln.text }}
           </text>
         </g>
 
@@ -191,7 +177,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { BLOCK_SIZE, pad, textGap, FERRY_COLOR_HIGHLIGHT } from '../config/render.config';
+import { BLOCK_SIZE, FERRY_COLOR_HIGHLIGHT } from '../config/render.config';
 import {
   svgWidth,
   svgHeight,

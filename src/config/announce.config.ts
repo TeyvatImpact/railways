@@ -2,8 +2,8 @@
 // 地区专用报站脚本在 src/data/<地区>.announce.json（查表见 views/display/announceScript.ts，拼装在 announce.ts）。
 // 结构：ATOMS = 原子句（句子级最小单位，每句三语各写一份）；COMPOSITION = 组合表（每次播报按顺序念哪几句）。
 // 占位符：{line} {terminus} {station} {next} {variant} {transfers} {branch} {n}
-// 名称字段按语言取：zh → nameZh ?? name、ja → name、en → nameEn
-// （稻妻数据里 name 本身就是日文、nameZh 才是中译；其他地区的站点没有日文名，日语音色会按汉字读，属已知降级）
+// 站名与线名都四语齐全（见 composables/stationNames.ts），按语言取 names：zh → names.zhCN、ja → names.ja、en → names.en
+// 变体名（支线 / 小交路）数据里只有中文名 + 英文名，日文走 VARIANT_NAMES_JA
 
 export type AnnounceLang = 'zh' | 'ja' | 'en';
 export type AnnounceKind = 'on' | 'direction' | 'variant' | 'station' | 'enter' | 'leave';

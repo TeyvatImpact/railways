@@ -112,10 +112,10 @@ for (const line of lines) {
           variantIndex: vi,
           variantName: variant.name,
           variantNameEn: variant.nameEn,
-          stationName: st.name,
-          stationNameEn: st.nameEn,
-          lineName: line.name,
-          lineNameEn: line.nameEn,
+          stationName: st.names[st.primaryLang],
+          stationNameEn: st.names.en,
+          lineName: line.names[line.primaryLang],
+          lineNameEn: line.names.en,
         });
 
         if (!stationNodeMap.has(sid)) stationNodeMap.set(sid, []);
@@ -166,13 +166,14 @@ export function useRouting() {
     const results: StationSuggestion[] = [];
 
     for (const st of stations) {
-      const nameMatch = st.name.toLowerCase().includes(q);
-      const nameEnMatch = st.nameEn.toLowerCase().includes(q);
+      const nameMatch = [st.names.zhCN, st.names.zhTW, st.names.ja, st.names.en].some((n) =>
+        n.toLowerCase().includes(q),
+      );
       const idMatch = st.id.toLowerCase().includes(q);
       const shortId = st.id.split('-').slice(1).join('-').toLowerCase();
       const shortIdMatch = shortId.includes(q);
 
-      if (!nameMatch && !nameEnMatch && !idMatch && !shortIdMatch) continue;
+      if (!nameMatch && !idMatch && !shortIdMatch) continue;
 
       const lineNodes = stationNodeMap.get(st.id) || [];
       const seenLines = new Set<string>();
@@ -185,7 +186,12 @@ export function useRouting() {
         }
       }
 
-      results.push({ id: st.id, name: st.name, nameEn: st.nameEn, lines: lineInfo });
+      results.push({
+        id: st.id,
+        name: st.names[st.primaryLang],
+        nameEn: st.names.en,
+        lines: lineInfo,
+      });
     }
 
     return results.slice(0, 20);

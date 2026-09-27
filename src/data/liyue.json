@@ -5,177 +5,278 @@
     "name": "Liyue",
     "fontFamily": "Noto Sans SC",
     "operator": {
-      "name": "璃月港地铁",
-      "nameEn": "Liyue Harbor Metro"
+      "names": {
+        "zhCN": "璃月港地铁",
+        "zhTW": "璃月港地鐵",
+        "ja": "璃月港メトロ",
+        "en": "Liyue Harbor Metro"
+      }
     },
     "authority": {
-      "name": "璃月总务司",
-      "nameEn": "Liyue Ministry of Civil Affairs"
-    }
+      "names": {
+        "zhCN": "璃月总务司",
+        "zhTW": "璃月總務司",
+        "ja": "璃月総務司",
+        "en": "Liyue Ministry of Civil Affairs"
+      }
+    },
+    "primaryLang": "zhCN"
   },
   "stations": [
     {
       "id": "LYG",
-      "nameCn": "璃月港站",
-      "nameEn": "Liyue Harbor Station",
+      "names": {
+        "zhCN": "璃月港站",
+        "zhTW": "璃月港站",
+        "ja": "璃月港駅",
+        "en": "Liyue Harbor Station"
+      },
       "x": 0,
       "y": 0,
       "labelDir": "L"
     },
     {
       "id": "HET",
-      "nameCn": "荷塘",
-      "nameEn": "Lotus Pond",
+      "names": {
+        "zhCN": "荷塘",
+        "zhTW": "荷塘",
+        "ja": "荷塘",
+        "en": "Lotus Pond"
+      },
       "x": 2,
       "y": 2,
       "labelDir": "RT"
     },
     {
       "id": "FYP",
-      "nameCn": "绯云坡",
-      "nameEn": "Feiyun Slope",
+      "names": {
+        "zhCN": "绯云坡",
+        "zhTW": "緋雲坡",
+        "ja": "緋雲の丘",
+        "en": "Feiyun Slope",
+        "pronunciationJa": "ひうんのおか"
+      },
       "x": 2,
       "y": 4,
       "labelDir": "T"
     },
     {
       "id": "LYN",
-      "nameCn": "璃月港南站",
-      "nameEn": "Feiyun Harbor South Station",
+      "names": {
+        "zhCN": "璃月港南站",
+        "zhTW": "璃月港南站",
+        "ja": "璃月港南駅",
+        "en": "Liyue Harbor South Station"
+      },
       "x": 2,
       "y": 6,
       "labelDir": "T"
     },
     {
       "id": "PSC",
-      "nameCn": "喷水池",
-      "nameEn": "The Fountain",
+      "names": {
+        "zhCN": "喷水池",
+        "zhTW": "噴水池",
+        "ja": "噴水池",
+        "en": "The Fountain"
+      },
       "x": 3,
       "y": 7,
       "labelDir": "LB"
     },
     {
       "id": "CHY",
-      "nameCn": "吃虎岩",
-      "nameEn": "Chihu Rock",
+      "names": {
+        "zhCN": "吃虎岩",
+        "zhTW": "吃虎巖",
+        "ja": "チ虎岩",
+        "en": "Chihu Rock",
+        "pronunciationJa": "ちこがん"
+      },
       "x": 4,
       "y": 8,
       "labelDir": "B"
     },
     {
       "id": "HYG",
-      "nameCn": "货运港",
-      "nameEn": "Cargo Port",
+      "names": {
+        "zhCN": "货运港",
+        "zhTW": "貨運港",
+        "ja": "貨物港",
+        "en": "Cargo Port"
+      },
       "x": 6,
       "y": 8,
       "labelDir": "B"
     },
     {
       "id": "HYC",
-      "nameCn": "黑岩厂",
-      "nameEn": "Blackcliff Forge",
+      "names": {
+        "zhCN": "黑岩厂",
+        "zhTW": "黑巖廠",
+        "ja": "黒岩場",
+        "en": "Blackcliff Forge",
+        "pronunciationJa": "こくがんじょう"
+      },
       "x": 0,
       "y": 8,
       "labelDir": "B"
     },
     {
       "id": "NCM",
-      "nameCn": "南城门",
-      "nameEn": "South Gate",
+      "names": {
+        "zhCN": "南城门",
+        "zhTW": "南城門",
+        "ja": "南城門",
+        "en": "South Gate"
+      },
       "x": 1,
       "y": 7,
       "labelDir": "L"
     },
     {
       "id": "KYN",
-      "nameCn": "客运港南",
-      "nameEn": "Passenger Port South",
+      "names": {
+        "zhCN": "客运港南",
+        "zhTW": "客運港南",
+        "ja": "旅客港南",
+        "en": "Passenger Port South"
+      },
       "x": 4,
       "y": 6
     },
     {
       "id": "KYB",
-      "nameCn": "客运港北",
-      "nameEn": "Passenger Port North",
+      "names": {
+        "zhCN": "客运港北",
+        "zhTW": "客運港北",
+        "ja": "旅客港北",
+        "en": "Passenger Port North"
+      },
       "x": 4,
       "y": 4
     },
     {
       "id": "BCM",
-      "nameCn": "北城门",
-      "nameEn": "North Gate",
+      "names": {
+        "zhCN": "北城门",
+        "zhTW": "北城門",
+        "ja": "北城門",
+        "en": "North Gate"
+      },
       "x": 4,
       "y": 2,
       "labelDir": "RB"
     },
     {
       "id": "YLQ",
-      "nameCn": "云来新区",
-      "nameEn": "Yunlai New District",
+      "names": {
+        "zhCN": "云来新区",
+        "zhTW": "雲來新區",
+        "ja": "雲来新区",
+        "en": "Yunlai New District"
+      },
       "x": 4,
       "y": 0,
       "labelDir": "L"
     },
     {
       "id": "LYB",
-      "nameCn": "璃月港北站",
-      "nameEn": "Liyue Harbor North Station",
+      "names": {
+        "zhCN": "璃月港北站",
+        "zhTW": "璃月港北站",
+        "ja": "璃月港北駅",
+        "en": "Liyue Harbor North Station"
+      },
       "x": 4,
       "y": -2,
       "labelDir": "T"
     },
     {
       "id": "HJW",
-      "nameCn": "黄金屋",
-      "nameEn": "Golden House",
+      "names": {
+        "zhCN": "黄金屋",
+        "zhTW": "黃金屋",
+        "ja": "黄金屋",
+        "en": "Golden House",
+        "pronunciationJa": "おうごんや"
+      },
       "x": 2,
       "y": 8,
       "labelDir": "B"
     },
     {
       "id": "YJT",
-      "nameCn": "玉京台",
-      "nameEn": "Yujing Terrace",
+      "names": {
+        "zhCN": "玉京台",
+        "zhTW": "玉京臺",
+        "ja": "玉京台",
+        "en": "Yujing Terrace",
+        "pronunciationJa": "ぎょくけいだい"
+      },
       "x": 0,
       "y": 6,
       "labelDir": "L"
     },
     {
       "id": "YHT",
-      "nameCn": "月海亭",
-      "nameEn": "Yuehai Pavilion",
+      "names": {
+        "zhCN": "月海亭",
+        "zhTW": "月海亭",
+        "ja": "月海亭",
+        "en": "Yuehai Pavilion",
+        "pronunciationJa": "げつかいてい"
+      },
       "x": 0,
       "y": 4,
       "labelDir": "LB"
     },
     {
       "id": "YLY",
-      "nameCn": "云来崖",
-      "nameEn": "Yunlai Cliff",
+      "names": {
+        "zhCN": "云来崖",
+        "zhTW": "雲來崖",
+        "ja": "雲来崖",
+        "en": "Yunlai Cliff"
+      },
       "x": 6,
       "y": -2,
       "labelDir": "T"
     },
     {
       "id": "LHC",
-      "nameCn": "渌华池",
-      "nameEn": "Luhua Pool",
+      "names": {
+        "zhCN": "渌华池",
+        "zhTW": "淥華池",
+        "ja": "漉華の池",
+        "en": "Luhua Pool",
+        "pronunciationJa": "ろくかのいけ"
+      },
       "x": 2,
       "y": -3,
       "labelDir": "RT"
     },
     {
       "id": "GYX",
-      "nameCn": "孤云阁西",
-      "nameEn": "Guyun Stone Forest West",
+      "names": {
+        "zhCN": "孤云阁西",
+        "zhTW": "孤雲閣西",
+        "ja": "孤雲閣西",
+        "en": "Guyun Stone Forest West"
+      },
       "x": 8,
       "y": -2,
       "labelDir": "T"
     },
     {
       "id": "GYG",
-      "nameCn": "孤云阁",
-      "nameEn": "Guyun Stone Forest",
+      "names": {
+        "zhCN": "孤云阁",
+        "zhTW": "孤雲閣",
+        "ja": "孤雲閣",
+        "en": "Guyun Stone Forest",
+        "pronunciationJa": "こうんかく"
+      },
       "x": 10,
       "y": -2,
       "labelDir": "T"
@@ -184,8 +285,12 @@
   "lines": [
     {
       "id": "LHM-1",
-      "name": "璃月港地铁·1号线",
-      "nameEn": "Lyue Harbor Line 1",
+      "names": {
+        "zhCN": "璃月港地铁·1号线",
+        "zhTW": "璃月港地鐵·1號線",
+        "ja": "璃月港メトロ1号線",
+        "en": "Liyue Harbor Line 1"
+      },
       "lineLabels": [
         ["LYG", "RT"],
         ["HYG", "T"]
@@ -207,8 +312,12 @@
     },
     {
       "id": "LHM-2",
-      "name": "璃月港地铁·2号线",
-      "nameEn": "Lyue Harbor Line 2",
+      "names": {
+        "zhCN": "璃月港地铁·2号线",
+        "zhTW": "璃月港地鐵·2號線",
+        "ja": "璃月港メトロ2号線",
+        "en": "Liyue Harbor Line 2"
+      },
       "lineLabels": [
         ["HYC", "LT"],
         ["LYB", "LB"]
@@ -231,8 +340,12 @@
     },
     {
       "id": "LHM-3",
-      "name": "璃月港地铁·3号线",
-      "nameEn": "Lyue Harbor Line 3",
+      "names": {
+        "zhCN": "璃月港地铁·3号线",
+        "zhTW": "璃月港地鐵·3號線",
+        "ja": "璃月港メトロ3号線",
+        "en": "Liyue Harbor Line 3"
+      },
       "lineLabels": [
         ["YHT", "LT"],
         ["BCM", "RT"]
@@ -254,8 +367,12 @@
     },
     {
       "id": "LHM-S1",
-      "name": "璃月港地铁·S1号线",
-      "nameEn": "Lyue Harbor Line S1",
+      "names": {
+        "zhCN": "璃月港地铁·S1号线",
+        "zhTW": "璃月港地鐵·S1號線",
+        "ja": "璃月港メトロS1号線",
+        "en": "Liyue Harbor Line S1"
+      },
       "lineLabels": [
         ["LHC", "LT"],
         ["GYG", "B"]

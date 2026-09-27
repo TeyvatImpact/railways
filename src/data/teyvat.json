@@ -5,942 +5,1509 @@
     "name": "Teyvat",
     "fontFamily": "Noto Sans SC",
     "operator": {
-      "name": "提瓦特铁路",
-      "nameEn": "Teyvat Railway"
-    }
+      "names": {
+        "zhCN": "提瓦特铁路",
+        "zhTW": "提瓦特鐵路",
+        "ja": "テイワット鉄道",
+        "en": "Teyvat Railway"
+      }
+    },
+    "primaryLang": "zhCN"
   },
   "stations": [
     {
       "id": "LYH",
-      "nameCn": "璃月港",
-      "nameEn": "Liyue Harbor",
+      "names": {
+        "zhCN": "璃月港",
+        "zhTW": "璃月港",
+        "ja": "璃月港",
+        "en": "Liyue Harbor",
+        "pronunciationJa": "リーユェこう"
+      },
       "x": 0,
       "y": 0,
       "labelDir": "L"
     },
     {
       "id": "LYS",
-      "nameCn": "璃月港南",
-      "nameEn": "Liyue Harbor South",
+      "names": {
+        "zhCN": "璃月港南",
+        "zhTW": "璃月港南",
+        "ja": "璃月港南",
+        "en": "Liyue Harbor South"
+      },
       "x": 2,
       "y": 1,
       "labelDir": "T"
     },
     {
       "id": "DYR",
-      "nameCn": "遁玉陵",
-      "nameEn": "Dunyu Ruins",
+      "names": {
+        "zhCN": "遁玉陵",
+        "zhTW": "遁玉陵",
+        "ja": "遁玉の丘",
+        "en": "Dunyu Ruins",
+        "pronunciationJa": "とんぎょくのおか"
+      },
       "x": -2,
       "y": -2,
       "labelDir": "RT"
     },
     {
       "id": "TQV",
-      "nameCn": "天遒谷",
-      "nameEn": "Tianqiu Valley",
+      "names": {
+        "zhCN": "天遒谷",
+        "zhTW": "天遒谷",
+        "ja": "天穹の谷",
+        "en": "Tianqiu Valley",
+        "pronunciationJa": "てんきゅうのたに"
+      },
       "x": -3,
       "y": -3,
       "labelDir": "L"
     },
     {
       "id": "NTM",
-      "nameCn": "南天门",
-      "nameEn": "Nantianmen",
+      "names": {
+        "zhCN": "南天门",
+        "zhTW": "南天門",
+        "ja": "南天門",
+        "en": "Nantianmen",
+        "pronunciationJa": "なんてんもん"
+      },
       "x": -4,
       "y": -4,
       "labelDir": "L"
     },
     {
       "id": "MIL",
-      "nameCn": "珉林",
-      "nameEn": "Minlin",
+      "names": {
+        "zhCN": "珉林",
+        "zhTW": "珉林",
+        "ja": "珉林",
+        "en": "Minlin",
+        "pronunciationJa": "みんりん"
+      },
       "x": -4,
       "y": -6,
       "labelDir": "LB"
     },
     {
       "id": "MXL",
-      "nameCn": "悬练山",
-      "nameEn": "Mt. Xuanlian",
+      "names": {
+        "zhCN": "悬练山",
+        "zhTW": "懸練山",
+        "ja": "懸練山",
+        "en": "Mt. Xuanlian",
+        "pronunciationJa": "けんれんざん"
+      },
       "x": -4,
       "y": -7,
       "labelDir": "LB"
     },
     {
       "id": "CZW",
-      "nameCn": "赤璋城垣",
-      "nameEn": "Chizhang Wall",
+      "names": {
+        "zhCN": "赤璋城垣",
+        "zhTW": "赤璋城垣",
+        "ja": "赤璋の石垣",
+        "en": "Chizhang Wall",
+        "pronunciationJa": "せきしょうのいしがき"
+      },
       "x": -5,
       "y": -8,
       "labelDir": "LB"
     },
     {
       "id": "JDM",
-      "nameCn": "宝玦口",
-      "nameEn": "Jademouth",
+      "names": {
+        "zhCN": "宝玦口",
+        "zhTW": "寶玦口",
+        "ja": "宝玦の口",
+        "en": "Jademouth",
+        "pronunciationJa": "ほうけつのくち"
+      },
       "x": -6,
       "y": -10,
       "labelDir": "R"
     },
     {
       "id": "YLW",
-      "nameCn": "遗珑埠",
-      "nameEn": "Yilong Wharf",
+      "names": {
+        "zhCN": "遗珑埠",
+        "zhTW": "遺瓏埠",
+        "ja": "遺瓏埠",
+        "en": "Yilong Wharf",
+        "pronunciationJa": "いろうふ"
+      },
       "x": -6,
       "y": -12,
       "labelDir": "RB"
     },
     {
       "id": "CWT",
-      "nameCn": "赤望台",
-      "nameEn": "Chiwang Terrace",
+      "names": {
+        "zhCN": "赤望台",
+        "zhTW": "赤望臺",
+        "ja": "赤望台",
+        "en": "Chiwang Terrace",
+        "pronunciationJa": "せきぼうだい"
+      },
       "x": -8,
       "y": -8,
       "labelDir": "LT"
     },
     {
       "id": "MMY",
-      "nameCn": "暝垣山",
-      "nameEn": "Mt. Mingyuan",
+      "names": {
+        "zhCN": "暝垣山",
+        "zhTW": "暝垣山",
+        "ja": "暝垣山",
+        "en": "Mt. Mingyuan",
+        "pronunciationJa": "めいえんさん"
+      },
       "x": -7,
       "y": -11,
       "labelDir": "LT"
     },
     {
       "id": "QYV",
-      "nameCn": "翘英庄",
-      "nameEn": "Qiaoying Village",
+      "names": {
+        "zhCN": "翘英庄",
+        "zhTW": "翹英莊",
+        "ja": "翹英荘",
+        "en": "Qiaoying Village",
+        "pronunciationJa": "ぎょうえいそう"
+      },
       "x": -3,
       "y": -11,
       "labelDir": "RT"
     },
     {
       "id": "QCV",
-      "nameCn": "轻策庄",
-      "nameEn": "Qingce Village",
+      "names": {
+        "zhCN": "轻策庄",
+        "zhTW": "輕策莊",
+        "ja": "軽策荘",
+        "en": "Qingce Village",
+        "pronunciationJa": "けいさくそう"
+      },
       "x": -1,
       "y": -10,
       "labelDir": "RT"
     },
     {
       "id": "DHM",
-      "nameCn": "荻花洲",
-      "nameEn": "Dihua Marsh",
+      "names": {
+        "zhCN": "荻花洲",
+        "zhTW": "荻花洲",
+        "ja": "荻花洲",
+        "en": "Dihua Marsh",
+        "pronunciationJa": "てきかしゅう"
+      },
       "x": 1,
       "y": -8,
       "labelDir": "RB"
     },
     {
       "id": "WSI",
-      "nameCn": "望舒客栈",
-      "nameEn": "Wangshu Inn",
+      "names": {
+        "zhCN": "望舒客栈",
+        "zhTW": "望舒客棧",
+        "ja": "望舒旅館",
+        "en": "Wangshu Inn",
+        "pronunciationJa": "ぼうじょりょかん"
+      },
       "x": 1,
       "y": -6,
       "labelDir": "R"
     },
     {
       "id": "SAA",
-      "nameCn": "风神像",
-      "nameEn": "Statue of Anemo Archon",
+      "names": {
+        "zhCN": "风神像",
+        "zhTW": "風神像",
+        "ja": "風神像",
+        "en": "Statue of Anemo Archon"
+      },
       "x": 6,
       "y": -14,
       "labelDir": "LB"
     },
     {
       "id": "MSC",
-      "nameCn": "蒙德城",
-      "nameEn": "Mondstadt City",
+      "names": {
+        "zhCN": "蒙德城",
+        "zhTW": "蒙德城",
+        "ja": "モンド城",
+        "en": "Mondstadt City"
+      },
       "x": 7,
       "y": -13,
       "labelDir": "LB"
     },
     {
       "id": "MSG",
-      "nameCn": "蒙德城门",
-      "nameEn": "Mondstadt City Gate",
+      "names": {
+        "zhCN": "蒙德城门",
+        "zhTW": "蒙德城門",
+        "ja": "モンド城門",
+        "en": "Mondstadt City Gate"
+      },
       "x": 8,
       "y": -12
     },
     {
       "id": "SPV",
-      "nameCn": "清泉镇",
-      "nameEn": "Springvale",
+      "names": {
+        "zhCN": "清泉镇",
+        "zhTW": "清泉鎮",
+        "ja": "清泉町",
+        "en": "Springvale",
+        "pronunciationJa": "きよいずみちょう"
+      },
       "x": 7,
       "y": -11,
       "labelDir": "LT"
     },
     {
       "id": "DWW",
-      "nameCn": "晨曦酒庄",
-      "nameEn": "Dawn Winery",
+      "names": {
+        "zhCN": "晨曦酒庄",
+        "zhTW": "晨曦酒莊",
+        "ja": "アカツキワイナリー",
+        "en": "Dawn Winery"
+      },
       "x": 4,
       "y": -10,
       "labelDir": "LT"
     },
     {
       "id": "STG",
-      "nameCn": "石门",
-      "nameEn": "Stone Gate",
+      "names": {
+        "zhCN": "石门",
+        "zhTW": "石門",
+        "ja": "石門",
+        "en": "Stone Gate",
+        "pronunciationJa": "せきもん"
+      },
       "x": 2,
       "y": -9,
       "labelDir": "RB"
     },
     {
       "id": "GLP",
-      "nameCn": "归离原",
-      "nameEn": "Guili Plains",
+      "names": {
+        "zhCN": "归离原",
+        "zhTW": "歸離原",
+        "ja": "帰離原",
+        "en": "Guili Plains",
+        "pronunciationJa": "きりはら"
+      },
       "x": 1,
       "y": -4,
       "labelDir": "RB"
     },
     {
       "id": "LYN",
-      "nameCn": "璃月港北",
-      "nameEn": "Liyue Harbor North",
+      "names": {
+        "zhCN": "璃月港北",
+        "zhTW": "璃月港北",
+        "ja": "璃月港北",
+        "en": "Liyue Harbor North"
+      },
       "x": 1,
       "y": -1,
       "labelDir": "LT"
     },
     {
       "id": "LSA",
-      "nameCn": "璃沙郊",
-      "nameEn": "Lisha",
+      "names": {
+        "zhCN": "璃沙郊",
+        "zhTW": "璃沙郊",
+        "ja": "璃沙郊",
+        "en": "Lisha",
+        "pronunciationJa": "りしゃこう"
+      },
       "x": -1,
       "y": 1,
       "labelDir": "B"
     },
     {
       "id": "CHM",
-      "nameCn": "层岩巨渊",
-      "nameEn": "The Chasm",
+      "names": {
+        "zhCN": "层岩巨渊",
+        "zhTW": "層岩巨淵",
+        "ja": "層岩巨淵",
+        "en": "The Chasm",
+        "pronunciationJa": "そうがんきょえん"
+      },
       "x": -4,
       "y": 1,
       "labelDir": "RB"
     },
     {
       "id": "CBC",
-      "nameCn": "丹砂崖",
-      "nameEn": "Cinnabar Cliff",
+      "names": {
+        "zhCN": "丹砂崖",
+        "zhTW": "丹砂崖",
+        "ja": "丹砂崖",
+        "en": "Cinnabar Cliff",
+        "pronunciationJa": "たんしゃがい"
+      },
       "x": -6,
       "y": 1,
       "labelDir": "T"
     },
     {
       "id": "GHV",
-      "nameCn": "化城郭",
-      "nameEn": "Gandharva Ville",
+      "names": {
+        "zhCN": "化城郭",
+        "zhTW": "化城郭",
+        "ja": "ガンダルヴァー村",
+        "en": "Gandharva Ville",
+        "pronunciationJa": "ガンダルヴァーむら"
+      },
       "x": -8,
       "y": 1,
       "labelDir": "LB"
     },
     {
       "id": "SMC",
-      "nameCn": "须弥城",
-      "nameEn": "Sumeru City",
+      "names": {
+        "zhCN": "须弥城",
+        "zhTW": "須彌城",
+        "ja": "スメールシティ",
+        "en": "Sumeru City"
+      },
       "x": -10,
       "y": 0,
       "labelDir": "LT"
     },
     {
       "id": "PDD",
-      "nameCn": "禅那园",
-      "nameEn": "Pardis Dhyai",
+      "names": {
+        "zhCN": "禅那园",
+        "zhTW": "禪那園",
+        "ja": "パルディスディアイ",
+        "en": "Pardis Dhyai"
+      },
       "x": -12,
       "y": 1,
       "labelDir": "LT"
     },
     {
       "id": "CVR",
-      "nameCn": "喀万驿",
-      "nameEn": "Caravan Ribat",
+      "names": {
+        "zhCN": "喀万驿",
+        "zhTW": "喀萬驛",
+        "ja": "キャラバン宿駅",
+        "en": "Caravan Ribat",
+        "pronunciationJa": "キャラバンしゅくえき"
+      },
       "x": -14,
       "y": 3,
       "labelDir": "LT"
     },
     {
       "id": "ARV",
-      "nameCn": "阿如村",
-      "nameEn": "Aaru Village",
+      "names": {
+        "zhCN": "阿如村",
+        "zhTW": "阿如村",
+        "ja": "アアル村",
+        "en": "Aaru Village",
+        "pronunciationJa": "アアルむら"
+      },
       "x": -17,
       "y": 5,
       "labelDir": "B"
     },
     {
       "id": "MKD",
-      "nameCn": "赤王陵",
-      "nameEn": "The Mausoleum of King Deshret",
+      "names": {
+        "zhCN": "赤王陵",
+        "zhTW": "赤王陵",
+        "ja": "キングデシェレトの霊廟",
+        "en": "The Mausoleum of King Deshret",
+        "pronunciationJa": "キングデシェレトのれいびょう"
+      },
       "x": -22,
       "y": 5,
       "labelDir": "B"
     },
     {
       "id": "DOM",
-      "nameCn": "千壑沙地",
-      "nameEn": "Desert of Hadramaveth",
+      "names": {
+        "zhCN": "千壑沙地",
+        "zhTW": "千壑沙地",
+        "ja": "千尋の砂漠",
+        "en": "Desert of Hadramaveth",
+        "pronunciationJa": "せんじんのさばく"
+      },
       "x": -24,
       "y": 3,
       "labelDir": "RT"
     },
     {
       "id": "WSV",
-      "nameCn": "折断胫谷",
-      "nameEn": "Wounded Shin Valley",
+      "names": {
+        "zhCN": "折胫谷",
+        "zhTW": "折脛谷",
+        "ja": "失脚の谷",
+        "en": "Wounded Shin Valley",
+        "pronunciationJa": "しっきゃくのたに"
+      },
       "x": -24,
       "y": 0,
       "labelDir": "R"
     },
     {
       "id": "TMM",
-      "nameCn": "铁穆山",
-      "nameEn": "Temir Mountains",
+      "names": {
+        "zhCN": "铁穆山",
+        "zhTW": "鐵穆山",
+        "ja": "鉄和山",
+        "en": "Temir Mountains",
+        "pronunciationJa": "てつなざん"
+      },
       "x": -24,
       "y": -3,
       "labelDir": "R"
     },
     {
       "id": "VKO",
-      "nameCn": "甘露花海",
-      "nameEn": "Vourukasha Oasis",
+      "names": {
+        "zhCN": "甘露花海",
+        "zhTW": "甘露花海",
+        "ja": "甘露花海",
+        "en": "Vourukasha Oasis",
+        "pronunciationJa": "かんろかかい"
+      },
       "x": -22,
       "y": -4
     },
     {
       "id": "STL",
-      "nameCn": "风龙废墟",
-      "nameEn": "Stormterror's Lair",
+      "names": {
+        "zhCN": "风龙废墟",
+        "zhTW": "風龍廢墟",
+        "ja": "風龍廃墟",
+        "en": "Stormterror's Lair",
+        "pronunciationJa": "ふうりゅうはいきょ"
+      },
       "x": 3,
       "y": -14,
       "labelDir": "L"
     },
     {
       "id": "WLD",
-      "nameCn": "奔狼岭",
-      "nameEn": "Wolvendom",
+      "names": {
+        "zhCN": "奔狼岭",
+        "zhTW": "奔狼嶺",
+        "ja": "奔狼領",
+        "en": "Wolvendom",
+        "pronunciationJa": "ほうろうりょう"
+      },
       "x": 4,
       "y": -12,
       "labelDir": "L"
     },
     {
       "id": "MYV",
-      "nameCn": "明蕴镇",
-      "nameEn": "Mingyun Village",
+      "names": {
+        "zhCN": "明蕴镇",
+        "zhTW": "明蘊鎮",
+        "ja": "明蘊町",
+        "en": "Mingyun Village",
+        "pronunciationJa": "めいうんちょう"
+      },
       "x": 4,
       "y": -6,
       "labelDir": "RB"
     },
     {
       "id": "CJS",
-      "nameCn": "翠玦坡",
-      "nameEn": "Cuijue Slope",
+      "names": {
+        "zhCN": "翠玦坡",
+        "zhTW": "翠玦坡",
+        "ja": "翠決坡",
+        "en": "Cuijue Slope",
+        "pronunciationJa": "すいけつざか"
+      },
       "x": -1,
       "y": -4,
       "labelDir": "B"
     },
     {
       "id": "LPV",
-      "nameCn": "采樵谷",
-      "nameEn": "Lumberpick Valley",
+      "names": {
+        "zhCN": "采樵谷",
+        "zhTW": "採樵谷",
+        "ja": "採樵の谷",
+        "en": "Lumberpick Valley",
+        "pronunciationJa": "さいしょうのたに"
+      },
       "x": -4,
       "y": -1
     },
     {
       "id": "TGG",
-      "nameCn": "天工峡",
-      "nameEn": "Tiangong Gorge",
+      "names": {
+        "zhCN": "天工峡",
+        "zhTW": "天工峽",
+        "ja": "天工峡",
+        "en": "Tiangong Gorge",
+        "pronunciationJa": "てんこうきょう"
+      },
       "x": -5,
       "y": 2,
       "labelDir": "B"
     },
     {
       "id": "DTM",
-      "nameCn": "降诸魔山",
-      "nameEn": "Devantaka Mountain",
+      "names": {
+        "zhCN": "降诸魔山",
+        "zhTW": "降諸魔山",
+        "ja": "デーヴァーンタカ山",
+        "en": "Devantaka Mountain",
+        "pronunciationJa": "デーヴァーンタカやま"
+      },
       "x": -8,
       "y": 3,
       "labelDir": "LT"
     },
     {
       "id": "POM",
-      "nameCn": "奥摩斯港",
-      "nameEn": "Port Ormos",
+      "names": {
+        "zhCN": "奥摩斯港",
+        "zhTW": "奧摩斯港",
+        "ja": "オルモス港",
+        "en": "Port Ormos",
+        "pronunciationJa": "オルモスこう"
+      },
       "x": -10,
       "y": 5,
       "labelDir": "B"
     },
     {
       "id": "SFL",
-      "nameCn": "星落湖",
-      "nameEn": "Starfell Lake",
+      "names": {
+        "zhCN": "星落湖",
+        "zhTW": "星落湖",
+        "ja": "星落としの湖",
+        "en": "Starfell Lake",
+        "pronunciationJa": "ほしおとしのみずうみ"
+      },
       "x": 10,
       "y": -14,
       "labelDir": "RB"
     },
     {
       "id": "WSW",
-      "nameCn": "低语森林",
-      "nameEn": "Whispering Woods",
+      "names": {
+        "zhCN": "低语森林",
+        "zhTW": "低語森林",
+        "ja": "囁きの森",
+        "en": "Whispering Woods",
+        "pronunciationJa": "ささやきのもり"
+      },
       "x": 9,
       "y": -13,
       "labelDir": "RB"
     },
     {
       "id": "WDR",
-      "nameCn": "风起地",
-      "nameEn": "Windrise",
+      "names": {
+        "zhCN": "风起地",
+        "zhTW": "風起地",
+        "ja": "風立ちの地",
+        "en": "Windrise",
+        "pronunciationJa": "かぜたちのち"
+      },
       "x": 9,
       "y": -11
     },
     {
       "id": "DSC",
-      "nameCn": "龙脊雪山营地",
-      "nameEn": "Dragonspine Camp",
+      "names": {
+        "zhCN": "龙脊雪山营地",
+        "zhTW": "龍脊雪山營地",
+        "ja": "ドラゴンスパインのキャンプ",
+        "en": "Dragonspine Camp"
+      },
       "x": 8,
       "y": -9,
       "labelDir": "RB"
     },
     {
       "id": "SCP",
-      "nameCn": "覆雪之路",
-      "nameEn": "Snow-Covered Path",
+      "names": {
+        "zhCN": "覆雪之路",
+        "zhTW": "覆雪之路",
+        "ja": "積雪の道",
+        "en": "Snow-Covered Path",
+        "pronunciationJa": "せきせつのみち"
+      },
       "x": 7,
       "y": -8,
       "labelDir": "RB"
     },
     {
       "id": "WRV",
-      "nameCn": "眠龙谷",
-      "nameEn": "Wyrmrest Valley",
+      "names": {
+        "zhCN": "眠龙谷",
+        "zhTW": "眠龍谷",
+        "ja": "龍眠の谷",
+        "en": "Wyrmrest Valley",
+        "pronunciationJa": "りゅうみんのたに"
+      },
       "x": 5,
       "y": -8,
       "labelDir": "RB"
     },
     {
       "id": "BDH",
-      "nameCn": "拜达港",
-      "nameEn": "Bayda Harbor",
+      "names": {
+        "zhCN": "拜达港",
+        "zhTW": "拜達港",
+        "ja": "バイダ港",
+        "en": "Bayda Harbor",
+        "pronunciationJa": "バイダこう"
+      },
       "x": -12,
       "y": -5,
       "labelDir": "LB"
     },
     {
       "id": "CTC",
-      "nameCn": "茸蕈窟",
-      "nameEn": "Chatrakam Cave",
+      "names": {
+        "zhCN": "茸蕈窟",
+        "zhTW": "茸蕈窟",
+        "ja": "チャトラカム洞窟",
+        "en": "Chatrakam Cave",
+        "pronunciationJa": "チャトラカムどうくつ"
+      },
       "x": -10,
       "y": -3,
       "labelDir": "RT"
     },
     {
       "id": "VMV",
-      "nameCn": "维摩庄",
-      "nameEn": "Vimara Village",
+      "names": {
+        "zhCN": "维摩庄",
+        "zhTW": "維摩莊",
+        "ja": "ヴィマラ村",
+        "en": "Vimara Village",
+        "pronunciationJa": "ヴィマラむら"
+      },
       "x": -10,
       "y": 3,
       "labelDir": "LB"
     },
     {
       "id": "CHH",
-      "nameCn": "香醉坡",
-      "nameEn": "Gandha Hill",
+      "names": {
+        "zhCN": "香醉坡",
+        "zhTW": "香醉坡",
+        "ja": "ガンダ丘",
+        "en": "Gandha Hill",
+        "pronunciationJa": "ガンダおか"
+      },
       "x": -8,
       "y": -2,
       "labelDir": "R"
     },
     {
       "id": "APW",
-      "nameCn": "水天丛林",
-      "nameEn": "Apam Woods",
+      "names": {
+        "zhCN": "水天丛林",
+        "zhTW": "水天叢林",
+        "ja": "アパーム叢林",
+        "en": "Apam Woods",
+        "pronunciationJa": "アパームそうりん"
+      },
       "x": -12,
       "y": 5,
       "labelDir": "B"
     },
     {
       "id": "ROD",
-      "nameCn": "荼诃之座",
-      "nameEn": "Ruins of Dahri",
+      "names": {
+        "zhCN": "荼诃之座",
+        "zhTW": "荼訶之座",
+        "ja": "ダーリ遺跡",
+        "en": "Ruins of Dahri",
+        "pronunciationJa": "ダーリいせき"
+      },
       "x": -14,
       "y": 4,
       "labelDir": "RT"
     },
     {
       "id": "YNM",
-      "nameCn": "谒颂幽境",
-      "nameEn": "Yasna Monument",
+      "names": {
+        "zhCN": "谒颂幽境",
+        "zhTW": "謁頌幽境",
+        "ja": "ヤスナ幽境",
+        "en": "Yasna Monument",
+        "pronunciationJa": "ヤスナゆうきょう"
+      },
       "x": -14,
       "y": 1,
       "labelDir": "L"
     },
     {
       "id": "FOA",
-      "nameCn": "觉王之殿",
-      "nameEn": "Fane of Ashvattha",
+      "names": {
+        "zhCN": "觉王之殿",
+        "zhTW": "覺王之殿",
+        "ja": "アシュヴァッタ神殿",
+        "en": "Fane of Ashvattha",
+        "pronunciationJa": "アシュヴァッタしんでん"
+      },
       "x": -14,
       "y": -1,
       "labelDir": "L"
     },
     {
       "id": "VNA",
-      "nameCn": "桓那兰那",
-      "nameEn": "Vanarana",
+      "names": {
+        "zhCN": "桓那兰那",
+        "zhTW": "桓那蘭那",
+        "ja": "ヴァナラーナ",
+        "en": "Vanarana"
+      },
       "x": -13,
       "y": -3,
       "labelDir": "LT"
     },
     {
       "id": "COF",
-      "nameCn": "枫丹廷",
-      "nameEn": "Court of Fontaine",
+      "names": {
+        "zhCN": "枫丹廷",
+        "zhTW": "楓丹廷",
+        "ja": "フォンテーヌ廷",
+        "en": "Court of Fontaine",
+        "pronunciationJa": "フォンテーヌてい"
+      },
       "x": -19,
       "y": -14,
       "labelDir": "L"
     },
     {
       "id": "PLM",
-      "nameCn": "沫芒宫",
-      "nameEn": "Palais Mermonia",
+      "names": {
+        "zhCN": "沫芒宫",
+        "zhTW": "沫芒宮",
+        "ja": "パレ・メルモニア",
+        "en": "Palais Mermonia"
+      },
       "x": -20,
       "y": -15,
       "labelDir": "L"
     },
     {
       "id": "FRI",
-      "nameCn": "新枫丹科学院",
-      "nameEn": "New Fontaine Research Institute",
+      "names": {
+        "zhCN": "新枫丹科学院",
+        "zhTW": "新楓丹科學院",
+        "ja": "新フォンテーヌ科学院",
+        "en": "New Fontaine Research Institute"
+      },
       "x": -18,
       "y": -19,
       "labelDir": "T"
     },
     {
       "id": "CLR",
-      "nameCn": "中央实验室遗址",
-      "nameEn": "Central Laboratory Ruins",
+      "names": {
+        "zhCN": "中央实验室遗址",
+        "zhTW": "中央實驗室遺址",
+        "ja": "中央実験室跡地",
+        "en": "Central Laboratory Ruins",
+        "pronunciationJa": "ちゅうおうじっけんしつあとち"
+      },
       "x": -16,
       "y": -19,
       "labelDir": "RT"
     },
     {
       "id": "LCU",
-      "nameCn": "优兰尼娅湖",
-      "nameEn": "Loch Urania",
+      "names": {
+        "zhCN": "优兰尼娅湖",
+        "zhTW": "優蘭尼婭湖",
+        "ja": "ウラニア湖",
+        "en": "Loch Urania"
+      },
       "x": -13,
       "y": -18,
       "labelDir": "RT"
     },
     {
       "id": "WWL",
-      "nameCn": "湖中垂柳",
-      "nameEn": "Weeping Willow of the Lake",
+      "names": {
+        "zhCN": "湖中垂柳",
+        "zhTW": "湖中垂柳",
+        "ja": "湖中のウィーピングウィロー",
+        "en": "Weeping Willow of the Lake"
+      },
       "x": -12,
       "y": -17
     },
     {
       "id": "FFP",
-      "nameCn": "幽林雾道",
-      "nameEn": "Foggy Forest Path",
+      "names": {
+        "zhCN": "幽林雾道",
+        "zhTW": "幽林霧道",
+        "ja": "霧の幽林道",
+        "en": "Foggy Forest Path",
+        "pronunciationJa": "きりのゆうりんどう"
+      },
       "x": -12,
       "y": -15,
       "labelDir": "RT"
     },
     {
       "id": "FCR",
-      "nameCn": "卡布狄斯堡遗迹",
-      "nameEn": "Fort Charybdis Ruins",
+      "names": {
+        "zhCN": "卡布狄斯堡遗迹",
+        "zhTW": "卡布狄斯堡遺蹟",
+        "ja": "カリュブディス砦跡",
+        "en": "Fort Charybdis Ruins"
+      },
       "x": -12,
       "y": -13,
       "labelDir": "RB"
     },
     {
       "id": "MAE",
-      "nameCn": "秋分山东",
-      "nameEn": "Mont Automnequi East",
+      "names": {
+        "zhCN": "秋分山东",
+        "zhTW": "秋分山東",
+        "ja": "モン・オトンヌキ東",
+        "en": "Mont Automnequi East"
+      },
       "x": -15,
       "y": -11,
       "labelDir": "RB"
     },
     {
       "id": "MAT",
-      "nameCn": "秋分山",
-      "nameEn": "Mont Automnequi",
+      "names": {
+        "zhCN": "秋分山",
+        "zhTW": "秋分山",
+        "ja": "モン・オトンヌキ",
+        "en": "Mont Automnequi"
+      },
       "x": -17,
       "y": -11,
       "labelDir": "RB"
     },
     {
       "id": "POI",
-      "nameCn": "白淞镇",
-      "nameEn": "Poisson",
+      "names": {
+        "zhCN": "白淞镇",
+        "zhTW": "白淞鎮",
+        "ja": "ポワソン町",
+        "en": "Poisson",
+        "pronunciationJa": "ポワソンちょう"
+      },
       "x": -18,
       "y": -11,
       "labelDir": "LB"
     },
     {
       "id": "ENS",
-      "nameCn": "厄里那斯",
-      "nameEn": "Elynas",
+      "names": {
+        "zhCN": "厄里那斯",
+        "zhTW": "厄裡那斯",
+        "ja": "エリナス",
+        "en": "Elynas"
+      },
       "x": -21,
       "y": -12,
       "labelDir": "L"
     },
     {
       "id": "MCT",
-      "nameCn": "茉洁",
-      "nameEn": "Marcotte",
+      "names": {
+        "zhCN": "茉洁",
+        "zhTW": "茉潔",
+        "ja": "マルコット",
+        "en": "Marcotte"
+      },
       "x": -16,
       "y": -16,
       "labelDir": "B"
     },
     {
       "id": "OPE",
-      "nameCn": "欧庇克莱歌剧院",
-      "nameEn": "Opera Epiclese",
+      "names": {
+        "zhCN": "欧庇克莱歌剧院",
+        "zhTW": "歐庇克萊歌劇院",
+        "ja": "エピクレシス歌劇場",
+        "en": "Opera Epiclese",
+        "pronunciationJa": "エピクレシスかげきじょう"
+      },
       "x": -14,
       "y": -15,
       "labelDir": "B"
     },
     {
       "id": "LDH",
-      "nameCn": "柔灯港",
-      "nameEn": "Lumidouce Harbor",
+      "names": {
+        "zhCN": "柔灯港",
+        "zhTW": "柔燈港",
+        "ja": "ルミドゥースハーバー",
+        "en": "Lumidouce Harbor"
+      },
       "x": -9,
       "y": -14,
       "labelDir": "LB"
     },
     {
       "id": "RRH",
-      "nameCn": "海露港",
-      "nameEn": "Romaritime Harbor",
+      "names": {
+        "zhCN": "海露港",
+        "zhTW": "海露港",
+        "ja": "ロマリタイムハーバー",
+        "en": "Romaritime Harbor"
+      },
       "x": -18,
       "y": -8
     },
     {
       "id": "MES",
-      "nameCn": "芒索斯山东麓",
-      "nameEn": "Mont Esus East",
+      "names": {
+        "zhCN": "芒索斯山东麓",
+        "zhTW": "芒索斯山東麓",
+        "ja": "イースト・エスス山麓",
+        "en": "Mont Esus East"
+      },
       "x": -23,
       "y": -19,
       "labelDir": "R"
     },
     {
       "id": "COE",
-      "nameCn": "「回声之子」",
-      "nameEn": "Children of Echoes",
+      "names": {
+        "zhCN": "「回声之子」",
+        "zhTW": "「回聲之子」",
+        "ja": "「こだまの子」",
+        "en": "\"Children of Echoes\"",
+        "pronunciationJa": "こだまのこ"
+      },
       "x": -27,
       "y": 3,
       "labelDir": "T"
     },
     {
       "id": "SFV",
-      "nameCn": "硫晶支脉",
-      "nameEn": "Sulfurous Veins",
+      "names": {
+        "zhCN": "硫晶支脉",
+        "zhTW": "硫晶支脈",
+        "ja": "硫晶の支脈",
+        "en": "Sulfurous Veins",
+        "pronunciationJa": "りゅうしょうのしみゃく"
+      },
       "x": -30,
       "y": 3,
       "labelDir": "T"
     },
     {
       "id": "CWF",
-      "nameCn": "楚汶市集",
-      "nameEn": "Chuwen Fair",
+      "names": {
+        "zhCN": "楚汶市集",
+        "zhTW": "楚汶市集",
+        "ja": "チュエンマーケット",
+        "en": "Chuwen Fair"
+      },
       "x": -33,
       "y": 4,
       "labelDir": "RB"
     },
     {
       "id": "NWW",
-      "nameCn": "巡夜者战争纪念碑",
-      "nameEn": "Night Warden Wars Memorial",
+      "names": {
+        "zhCN": "巡夜者战争纪念碑",
+        "zhTW": "巡夜者戰爭紀念碑",
+        "ja": "夜巡者の戦争記念碑",
+        "en": "Night Warden Wars Memorial"
+      },
       "x": -35,
       "y": 5,
       "labelDir": "L"
     },
     {
       "id": "COP",
-      "nameCn": "「沃陆之邦」",
-      "nameEn": "Collective of Plenty",
+      "names": {
+        "zhCN": "「沃陆之邦」",
+        "zhTW": "「沃陸之邦」",
+        "ja": "「豊穣の邦」",
+        "en": "\"Collective of Plenty\"",
+        "pronunciationJa": "ほうじょうのくに"
+      },
       "x": -38,
       "y": 8,
       "labelDir": "B"
     },
     {
       "id": "FSF",
-      "nameCn": "石火坠陨处",
-      "nameEn": "Fallingstart Fields",
+      "names": {
+        "zhCN": "石火坠陨处",
+        "zhTW": "石火墜隕處",
+        "ja": "星岩の墜落地",
+        "en": "Fallingstart Fields",
+        "pronunciationJa": "せいがんのついらくち"
+      },
       "x": -40,
       "y": 7,
       "labelDir": "LB"
     },
     {
       "id": "ONT",
-      "nameCn": "奥奇卡纳塔",
-      "nameEn": "Ochkanatlan",
+      "names": {
+        "zhCN": "奥奇卡纳塔",
+        "zhTW": "奧奇卡納塔",
+        "ja": "オシカ・ナタ",
+        "en": "Ochkanatlan"
+      },
       "x": -38,
       "y": -2
     },
     {
       "id": "FFC",
-      "nameCn": "「花羽会」",
-      "nameEn": "Flower-Feather Clan",
+      "names": {
+        "zhCN": "「花羽会」",
+        "zhTW": "「花羽會」",
+        "ja": "「花翼の集」",
+        "en": "\"Flower-Feather Clan\"",
+        "pronunciationJa": "かよくのつどい"
+      },
       "x": -36,
       "y": 1,
       "labelDir": "B"
     },
     {
       "id": "HZH",
-      "nameCn": "柴薪之丘",
-      "nameEn": "Huitztli Hill",
+      "names": {
+        "zhCN": "柴薪之丘",
+        "zhTW": "柴薪之丘",
+        "ja": "ウィッツトリの丘",
+        "en": "Huitztli Hill",
+        "pronunciationJa": "ウィッツトリのおか"
+      },
       "x": -33,
       "y": 3,
       "labelDir": "LB"
     },
     {
       "id": "SSF",
-      "nameCn": "圣火竞技场",
-      "nameEn": "Stadium of the Sacred Flame",
+      "names": {
+        "zhCN": "圣火竞技场",
+        "zhTW": "聖火競技場",
+        "ja": "聖火競技場",
+        "en": "Stadium of the Sacred Flame",
+        "pronunciationJa": "せいかきょうぎじょう"
+      },
       "x": -33,
       "y": 5,
       "labelDir": "LB"
     },
     {
       "id": "POS",
-      "nameCn": "「流泉之众」",
-      "nameEn": "People of the Springs",
+      "names": {
+        "zhCN": "「流泉之众」",
+        "zhTW": "「流泉之眾」",
+        "ja": "「流泉の衆」",
+        "en": "\"People of the Springs\"",
+        "pronunciationJa": "りゅうせんのしゅう"
+      },
       "x": -33,
       "y": 9,
       "labelDir": "LT"
     },
     {
       "id": "AYW",
-      "nameCn": "溶水域",
-      "nameEn": "Ameyalco Waters",
+      "names": {
+        "zhCN": "溶水域",
+        "zhTW": "溶水域",
+        "ja": "アメヤルコの水域",
+        "en": "Ameyalco Waters",
+        "pronunciationJa": "アメヤルコのすいいき"
+      },
       "x": -32,
       "y": 8,
       "labelDir": "RB"
     },
     {
       "id": "TPP",
-      "nameCn": "彩石顶",
-      "nameEn": "Teticpac Peak",
+      "names": {
+        "zhCN": "彩石顶",
+        "zhTW": "彩石頂",
+        "ja": "彩晶の頂",
+        "en": "Teticpac Peak",
+        "pronunciationJa": "さいしょうのいただき"
+      },
       "x": -30,
       "y": 7,
       "labelDir": "B"
     },
     {
       "id": "AST",
-      "nameCn": "祖遗庙宇",
-      "nameEn": "Ancestral Temple",
+      "names": {
+        "zhCN": "祖遗庙宇",
+        "zhTW": "祖遺廟宇",
+        "ja": "先人の神殿",
+        "en": "Ancestral Temple",
+        "pronunciationJa": "せんじんのしんでん"
+      },
       "x": -29,
       "y": 7,
       "labelDir": "RB"
     },
     {
       "id": "TPR",
-      "nameCn": "隆崛坡",
-      "nameEn": "Tepeacac Rise",
+      "names": {
+        "zhCN": "隆崛坡",
+        "zhTW": "隆崛坡",
+        "ja": "テペアカク坂",
+        "en": "Tepeacac Rise",
+        "pronunciationJa": "テペアカクざか"
+      },
       "x": -28,
       "y": 5
     },
     {
       "id": "SOC",
-      "nameCn": "「悬木人」",
-      "nameEn": "Scions of the Canopy",
+      "names": {
+        "zhCN": "「悬木人」",
+        "zhTW": "「懸木人」",
+        "ja": "「懸木の民」",
+        "en": "\"Scions of the Canopy\"",
+        "pronunciationJa": "かがりぎのたみ"
+      },
       "x": -31,
       "y": 6,
       "labelDir": "LB"
     },
     {
       "id": "MNW",
-      "nameCn": "「烟谜主」",
-      "nameEn": "Masters of the Night-Wind",
+      "names": {
+        "zhCN": "「烟谜主」",
+        "zhTW": "「煙謎主」",
+        "ja": "「謎煙の主」",
+        "en": "\"Masters of the Night-Wind\"",
+        "pronunciationJa": "めいえんのあるじ"
+      },
       "x": -37,
       "y": 4,
       "labelDir": "T"
     },
     {
       "id": "TPB",
-      "nameCn": "浮羽之湾",
-      "nameEn": "Tecoloapan Bay",
+      "names": {
+        "zhCN": "浮羽之湾",
+        "zhTW": "浮羽之灣",
+        "ja": "テコロアパン湾",
+        "en": "Tecoloapan Bay",
+        "pronunciationJa": "テコロアパンわん"
+      },
       "x": -39,
       "y": 4,
       "labelDir": "T"
     },
     {
       "id": "EBP",
-      "nameCn": "悠悠港",
-      "nameEn": "Easybreeze Port",
+      "names": {
+        "zhCN": "悠悠港",
+        "zhTW": "悠悠港",
+        "ja": "のびのび港",
+        "en": "Easybreeze Port"
+      },
       "x": -44,
       "y": 0,
       "labelDir": "RT"
     },
     {
       "id": "EBM",
-      "nameCn": "悠悠集市",
-      "nameEn": "Easybreeze Market",
+      "names": {
+        "zhCN": "悠悠集市",
+        "zhTW": "悠悠集市",
+        "ja": "のびのびマーケット",
+        "en": "Easybreeze Market",
+        "pronunciationJa": "カラフルどうくつ"
+      },
       "x": -45,
       "y": -2,
       "labelDir": "RT"
     },
     {
       "id": "CFC",
-      "nameCn": "彩彩崖",
-      "nameEn": "Colorfall Cliffs",
+      "names": {
+        "zhCN": "彩彩崖",
+        "zhTW": "彩彩崖",
+        "ja": "カラフル崖",
+        "en": "Colorfall Cliffs",
+        "pronunciationJa": "カラフルがけ"
+      },
       "x": -47,
       "y": -3,
       "labelDir": "RT"
     },
     {
       "id": "WVB",
-      "nameCn": "浪浪湾",
-      "nameEn": "Wavey Bay",
+      "names": {
+        "zhCN": "浪浪湾",
+        "zhTW": "浪浪灣",
+        "ja": "ざぶざぶ湾",
+        "en": "Wavey Bay",
+        "pronunciationJa": "ざぶざぶわん"
+      },
       "x": -49,
       "y": -3,
       "labelDir": "RT"
     },
     {
       "id": "TLI",
-      "nameCn": "提提岛",
-      "nameEn": "Tele Isle",
+      "names": {
+        "zhCN": "提提岛",
+        "zhTW": "提提島",
+        "ja": "ティティ島",
+        "en": "Tele Isle",
+        "pronunciationJa": "ティティとう"
+      },
       "x": -51,
       "y": -5,
       "labelDir": "RT"
     },
     {
       "id": "NSP",
-      "nameCn": "那夏港",
-      "nameEn": "Nasha Port",
+      "names": {
+        "zhCN": "那夏港",
+        "zhTW": "那夏港",
+        "ja": "ナシャ港",
+        "en": "Nasha Port"
+      },
       "x": -36,
       "y": -6,
       "labelDir": "R"
     },
     {
       "id": "NST",
-      "nameCn": "那夏镇",
-      "nameEn": "Nasha Town",
+      "names": {
+        "zhCN": "那夏镇",
+        "zhTW": "那夏鎮",
+        "ja": "ナシャタウン",
+        "en": "Nasha Town"
+      },
       "x": -36,
       "y": -7
     },
     {
       "id": "CKC",
-      "nameCn": "叮铃哐啷蛋卷工坊",
-      "nameEn": "Clink-Clank Krumkake Craftshop",
+      "names": {
+        "zhCN": "叮铃哐啷蛋卷工坊",
+        "zhTW": "叮鈴哐啷蛋卷工坊",
+        "ja": "カチャカチャ・クルムカケ工房",
+        "en": "Clink-Clank Krumkake Craftshop",
+        "pronunciationJa": "カチャカチャ・クルムカケこうぼう"
+      },
       "x": -38,
       "y": -8,
       "labelDir": "B"
     },
     {
       "id": "FME",
-      "nameCn": "霜月之坊",
-      "nameEn": "Frostmoon Enclave",
+      "names": {
+        "zhCN": "霜月之坊",
+        "zhTW": "霜月之坊",
+        "ja": "霜月の里",
+        "en": "Frostmoon Enclave",
+        "pronunciationJa": "そうげつのさと"
+      },
       "x": -40,
       "y": -9,
       "labelDir": "T"
     },
     {
       "id": "BMB",
-      "nameCn": "苔骨荒原",
-      "nameEn": "Barrowmoss Barrens",
+      "names": {
+        "zhCN": "苔骨荒原",
+        "zhTW": "苔骨荒原",
+        "ja": "ボーンモス荒原",
+        "en": "Barrowmoss Barrens",
+        "pronunciationJa": "ボーンモスこうげん"
+      },
       "x": -35,
       "y": -9
     },
     {
       "id": "BAL",
-      "nameCn": "蓝珀湖",
-      "nameEn": "Blue Amber Lake",
+      "names": {
+        "zhCN": "蓝珀湖",
+        "zhTW": "藍珀湖",
+        "ja": "青い琥珀",
+        "en": "Blue Amber Lake",
+        "pronunciationJa": "あおいこはく"
+      },
       "x": -34,
       "y": -10
     },
     {
       "id": "NTP",
-      "nameCn": "空寂走廊",
-      "nameEn": "Nothing Passage",
+      "names": {
+        "zhCN": "空寂走廊",
+        "zhTW": "空寂走廊",
+        "ja": "空寂の回廊",
+        "en": "Nothing Passage",
+        "pronunciationJa": "くうじゃくのかいろう"
+      },
       "x": -34,
       "y": -12
     },
     {
       "id": "PHI",
-      "nameCn": "帕哈岛",
-      "nameEn": "Paha Isle",
+      "names": {
+        "zhCN": "帕哈岛",
+        "zhTW": "帕哈島",
+        "ja": "パハ島",
+        "en": "Paha Isle",
+        "pronunciationJa": "パハとう"
+      },
       "x": -34,
       "y": -14
     },
     {
       "id": "KEE",
-      "nameCn": "月矩力试验设计局·东",
-      "nameEn": "Kuuvahki Experimental Design Bureau East",
+      "names": {
+        "zhCN": "月矩力试验设计局·东",
+        "zhTW": "月矩力試驗設計局·東",
+        "ja": "クーヴァキ実験設計局・東",
+        "en": "Kuuvahki Experimental Design Bureau East"
+      },
       "x": -36,
       "y": -14,
       "labelDir": "B"
     },
     {
       "id": "KEW",
-      "nameCn": "月矩力试验设计局·西",
-      "nameEn": "Kuuvahki Experimental Design Bureau West",
+      "names": {
+        "zhCN": "月矩力试验设计局·西",
+        "zhTW": "月矩力試驗設計局·西",
+        "ja": "クーヴァキ実験設計局・西",
+        "en": "Kuuvahki Experimental Design Bureau West"
+      },
       "x": -38,
       "y": -14,
       "labelDir": "T"
     },
     {
       "id": "FNC",
-      "nameCn": "终夜长茔",
-      "nameEn": "Final Night Cemetery",
+      "names": {
+        "zhCN": "终夜长茔",
+        "zhTW": "終夜長塋",
+        "ja": "夜明かしの墓",
+        "en": "Final Night Cemetery",
+        "pronunciationJa": "よあかしのはか"
+      },
       "x": -34,
       "y": -15
     },
     {
       "id": "VOP",
-      "nameCn": "虚海望港",
-      "nameEn": "Voidsea Outlook Port",
+      "names": {
+        "zhCN": "虚海望港",
+        "zhTW": "虛海望港",
+        "ja": "海を望めぬ峰の港",
+        "en": "Voidsea Outlook Port"
+      },
       "x": -34,
       "y": -16
     },
     {
       "id": "PRM",
-      "nameCn": "皮拉米达城",
-      "nameEn": "Piramida",
+      "names": {
+        "zhCN": "皮拉米达城",
+        "zhTW": "皮拉米達城",
+        "ja": "ピラミダ",
+        "en": "Piramida"
+      },
       "x": -34,
       "y": -19
     },
     {
       "id": "DSM",
-      "nameCn": "噩影泽地",
-      "nameEn": "Dreadshade Mire",
+      "names": {
+        "zhCN": "噩影泽地",
+        "zhTW": "噩影澤地",
+        "ja": "厄影の沼地",
+        "en": "Dreadshade Mire",
+        "pronunciationJa": "やくえいのぬまち"
+      },
       "x": -34,
       "y": -21
     },
     {
       "id": "FNK",
-      "nameCn": "西风戍垒",
-      "nameEn": "Favonius Keep",
+      "names": {
+        "zhCN": "西风戍垒",
+        "zhTW": "西風戍壘",
+        "ja": "西風の砦",
+        "en": "Favonius Keep",
+        "pronunciationJa": "エピュロスのとりで"
+      },
       "x": -35,
       "y": -23,
       "labelDir": "RT"
     },
     {
       "id": "CWC",
-      "nameCn": "望崖营壁",
-      "nameEn": "Cliffwatch Camp",
+      "names": {
+        "zhCN": "望崖营壁",
+        "zhTW": "望崖營壁",
+        "ja": "クリフサイド・キャンプ",
+        "en": "Cliffwatch Camp"
+      },
       "x": -36,
       "y": -25,
       "labelDir": "R"
     },
     {
       "id": "KMC",
-      "nameCn": "苦壑崖",
-      "nameEn": "Kipumaki Cliff",
+      "names": {
+        "zhCN": "苦壑崖",
+        "zhTW": "苦壑崖",
+        "ja": "キプマキの崖",
+        "en": "Kipumaki Cliff",
+        "pronunciationJa": "キプマキのがけ"
+      },
       "x": -36,
       "y": -26,
       "labelDir": "R"
     },
     {
       "id": "AVT",
-      "nameCn": "安瓦蒂尼尔湖",
-      "nameEn": "Armvartnir",
+      "names": {
+        "zhCN": "安瓦蒂尼尔湖",
+        "zhTW": "安瓦蒂尼爾湖",
+        "ja": "アームスヴァルトニル湖",
+        "en": "Armvartnir",
+        "pronunciationJa": "アームスヴァルトニルこ"
+      },
       "x": -34,
       "y": -25,
       "labelDir": "RB"
     },
     {
       "id": "STR",
-      "nameCn": "特辖地研究所",
-      "nameEn": "Special Territory Research Institute",
+      "names": {
+        "zhCN": "特辖地研究所",
+        "zhTW": "特轄地研究所",
+        "ja": "特別管轄区研究所",
+        "en": "Special Territory Research Institute",
+        "pronunciationJa": "とくべつかんかつくけんけんきゅうじょ"
+      },
       "x": -33,
       "y": -27,
       "labelDir": "R"
@@ -949,11 +1516,19 @@
   "lines": [
     {
       "id": "A",
-      "name": "跨局·原初线",
-      "nameEn": "Original Line",
+      "names": {
+        "zhCN": "跨局·原初线",
+        "zhTW": "跨局·原初線",
+        "ja": "げんしょ線",
+        "en": "Primordial Line"
+      },
       "authority": {
-        "name": "跨局",
-        "nameEn": "Cross-Bureau"
+        "names": {
+          "zhCN": "跨局",
+          "zhTW": "跨局",
+          "ja": "クロスビューロー",
+          "en": "Cross-Bureau"
+        }
       },
       "lineLabels": [
         ["SAA", "RT"],
@@ -1018,11 +1593,19 @@
     },
     {
       "id": "B",
-      "name": "跨局·风岩草线",
-      "nameEn": "Anemo-Geo-Dendro Line",
+      "names": {
+        "zhCN": "跨局·风岩草线",
+        "zhTW": "跨局·風岩草線",
+        "ja": "風岩草線",
+        "en": "Anemo-Geo-Dendro Line"
+      },
       "authority": {
-        "name": "跨局",
-        "nameEn": "Cross-Bureau"
+        "names": {
+          "zhCN": "跨局",
+          "zhTW": "跨局",
+          "ja": "クロスビューロー",
+          "en": "Cross-Bureau"
+        }
       },
       "lineLabels": [
         ["STL", "RT"],
@@ -1053,11 +1636,19 @@
     },
     {
       "id": "M1",
-      "name": "蒙德局·自由线",
-      "nameEn": "Mondstadt Freedom Line",
+      "names": {
+        "zhCN": "蒙德局·自由线",
+        "zhTW": "蒙德局·自由線",
+        "ja": "モンド自由線",
+        "en": "Mondstadt Freedom Line"
+      },
       "authority": {
-        "name": "蒙德局",
-        "nameEn": "Mondstadt Bureau"
+        "names": {
+          "zhCN": "蒙德局",
+          "zhTW": "蒙德局",
+          "ja": "モンド局",
+          "en": "Mondstadt Bureau"
+        }
       },
       "lineLabels": [
         ["SFL", "RT"],
@@ -1085,11 +1676,19 @@
     },
     {
       "id": "L1",
-      "name": "璃月局·璃沉线",
-      "nameEn": "Liyue Liyue-Chenyu Line",
+      "names": {
+        "zhCN": "璃月局·璃沉线",
+        "zhTW": "璃月局·璃沉線",
+        "ja": "璃月沈玉線",
+        "en": "Liyue Chenyu Line"
+      },
       "authority": {
-        "name": "璃月局",
-        "nameEn": "Liyue Bureau"
+        "names": {
+          "zhCN": "璃月局",
+          "zhTW": "璃月局",
+          "ja": "璃月局",
+          "en": "Liyue Bureau"
+        }
       },
       "lineLabels": [
         ["LYS", "LB"],
@@ -1116,11 +1715,19 @@
     },
     {
       "id": "L2",
-      "name": "璃月局·沉玉谷线",
-      "nameEn": "Liyue Chenyu Valley Line",
+      "names": {
+        "zhCN": "璃月局·沉玉谷线",
+        "zhTW": "璃月局·沉玉谷線",
+        "ja": "璃月沈玉の谷線",
+        "en": "Liyue Chenyu Valley Line"
+      },
       "authority": {
-        "name": "璃月局",
-        "nameEn": "Liyue Bureau"
+        "names": {
+          "zhCN": "璃月局",
+          "zhTW": "璃月局",
+          "ja": "璃月局",
+          "en": "Liyue Bureau"
+        }
       },
       "lineLabels": [
         ["CWT", "B"],
@@ -1149,11 +1756,19 @@
     },
     {
       "id": "S1",
-      "name": "须弥局·须弥南北线",
-      "nameEn": "Sumeru South-North Line",
+      "names": {
+        "zhCN": "须弥局·须弥南北线",
+        "zhTW": "須彌局·須彌南北線",
+        "ja": "スメール南北線",
+        "en": "Sumeru South-North Line"
+      },
       "authority": {
-        "name": "须弥局",
-        "nameEn": "Sumeru Bureau"
+        "names": {
+          "zhCN": "须弥局",
+          "zhTW": "須彌局",
+          "ja": "スメール局",
+          "en": "Sumeru Bureau"
+        }
       },
       "lineLabels": [
         ["BDH", "RT"],
@@ -1168,11 +1783,19 @@
     },
     {
       "id": "S2",
-      "name": "须弥局·须弥环线",
-      "nameEn": "Sumeru Loop Line",
+      "names": {
+        "zhCN": "须弥局·须弥环线",
+        "zhTW": "須彌局·須彌環線",
+        "ja": "スメール環状線",
+        "en": "Sumeru Loop Line"
+      },
       "authority": {
-        "name": "须弥局",
-        "nameEn": "Sumeru Bureau"
+        "names": {
+          "zhCN": "须弥局",
+          "zhTW": "須彌局",
+          "ja": "スメール局",
+          "en": "Sumeru Bureau"
+        }
       },
       "lineLabels": [
         ["APW", "T"],
@@ -1200,15 +1823,27 @@
     },
     {
       "id": "F1",
-      "name": "枫丹局·巡轨船·卡雷斯线",
-      "nameEn": "Fontaine Aquabus Callas Line",
+      "names": {
+        "zhCN": "枫丹局·巡轨船·卡雷斯线",
+        "zhTW": "楓丹局·巡軌船·卡雷斯線",
+        "ja": "フォンテーヌ巡水船カーレス線",
+        "en": "Fontaine Aquabus Callas Line"
+      },
       "operator": {
-        "name": "枫丹巡轨船",
-        "nameEn": "Fontaine Aquabus"
+        "names": {
+          "zhCN": "枫丹巡轨船",
+          "zhTW": "楓丹巡軌船",
+          "ja": "フォンテーヌ巡水船",
+          "en": "Fontaine Aquabus"
+        }
       },
       "authority": {
-        "name": "枫丹庭",
-        "nameEn": "Court of Fontaine"
+        "names": {
+          "zhCN": "枫丹廷",
+          "zhTW": "楓丹廷",
+          "ja": "フォンテーヌ廷",
+          "en": "Court of Fontaine"
+        }
       },
       "lineLabels": [
         ["COF", "R"],
@@ -1238,15 +1873,27 @@
     },
     {
       "id": "F2",
-      "name": "枫丹局·巡轨船·娜维娅线",
-      "nameEn": "Fontaine Aquabus Navia Line",
+      "names": {
+        "zhCN": "枫丹局·巡轨船·娜维娅线",
+        "zhTW": "楓丹局·巡軌船·娜維婭線",
+        "ja": "フォンテーヌ巡水船ナヴィア線",
+        "en": "Fontaine Aquabus Navia Line"
+      },
       "operator": {
-        "name": "枫丹巡轨船",
-        "nameEn": "Fontaine Aquabus"
+        "names": {
+          "zhCN": "枫丹巡轨船",
+          "zhTW": "楓丹巡軌船",
+          "ja": "フォンテーヌ巡水船",
+          "en": "Fontaine Aquabus"
+        }
       },
       "authority": {
-        "name": "枫丹庭",
-        "nameEn": "Court of Fontaine"
+        "names": {
+          "zhCN": "枫丹廷",
+          "zhTW": "楓丹廷",
+          "ja": "フォンテーヌ廷",
+          "en": "Court of Fontaine"
+        }
       },
       "lineLabels": [
         ["MCT", "T"],
@@ -1261,15 +1908,27 @@
     },
     {
       "id": "F3",
-      "name": "枫丹局·巡轨船·克莱门汀线",
-      "nameEn": "Fontaine Aquabus Clementine Line",
+      "names": {
+        "zhCN": "枫丹局·巡轨船·克莱门汀线",
+        "zhTW": "楓丹局·巡軌船·克萊門汀線",
+        "ja": "フォンテーヌ巡水船クレメンタイン線",
+        "en": "Fontaine Aquabus Clementine Line"
+      },
       "operator": {
-        "name": "枫丹巡轨船",
-        "nameEn": "Fontaine Aquabus"
+        "names": {
+          "zhCN": "枫丹巡轨船",
+          "zhTW": "楓丹巡軌船",
+          "ja": "フォンテーヌ巡水船",
+          "en": "Fontaine Aquabus"
+        }
       },
       "authority": {
-        "name": "枫丹庭",
-        "nameEn": "Court of Fontaine"
+        "names": {
+          "zhCN": "枫丹廷",
+          "zhTW": "楓丹廷",
+          "ja": "フォンテーヌ廷",
+          "en": "Court of Fontaine"
+        }
       },
       "lineLabels": [
         ["RRH", "L"],
@@ -1284,11 +1943,19 @@
     },
     {
       "id": "N0",
-      "name": "纳塔局·连接线",
-      "nameEn": "Natlan Connection Line",
+      "names": {
+        "zhCN": "纳塔局·连接线",
+        "zhTW": "納塔局·連接線",
+        "ja": "ナタ連絡線",
+        "en": "Natlan Connection Line"
+      },
       "authority": {
-        "name": "纳塔局",
-        "nameEn": "Natlan Bureau"
+        "names": {
+          "zhCN": "纳塔局",
+          "zhTW": "納塔局",
+          "ja": "ナタ局",
+          "en": "Natlan Bureau"
+        }
       },
       "lineLabels": [["COE", "RB"]],
       "variants": [
@@ -1300,11 +1967,19 @@
     },
     {
       "id": "N1",
-      "name": "纳塔局·赫布里穆线",
-      "nameEn": "Natlan Haborym Line",
+      "names": {
+        "zhCN": "纳塔局·赫布里穆线",
+        "zhTW": "納塔局·赫布里穆線",
+        "ja": "ナタハボリム線",
+        "en": "Natlan Haborym Line"
+      },
       "authority": {
-        "name": "纳塔局",
-        "nameEn": "Natlan Bureau"
+        "names": {
+          "zhCN": "纳塔局",
+          "zhTW": "納塔局",
+          "ja": "ナタ局",
+          "en": "Natlan Bureau"
+        }
       },
       "lineLabels": [
         ["SFV", "B"],
@@ -1326,11 +2001,19 @@
     },
     {
       "id": "N2",
-      "name": "纳塔局·杜麦尼线",
-      "nameEn": "Natlan Tumaini Line",
+      "names": {
+        "zhCN": "纳塔局·杜麦尼线",
+        "zhTW": "納塔局·杜麥尼線",
+        "ja": "ナタトゥマイニ線",
+        "en": "Natlan Tumaini Line"
+      },
       "authority": {
-        "name": "纳塔局",
-        "nameEn": "Natlan Bureau"
+        "names": {
+          "zhCN": "纳塔局",
+          "zhTW": "納塔局",
+          "ja": "ナタ局",
+          "en": "Natlan Bureau"
+        }
       },
       "lineLabels": [
         ["ONT", "L"],
@@ -1358,11 +2041,19 @@
     },
     {
       "id": "N3",
-      "name": "纳塔局·卡皮塔诺线",
-      "nameEn": "Natlan Il Capitano Line",
+      "names": {
+        "zhCN": "纳塔局·卡皮塔诺线",
+        "zhTW": "納塔局·卡皮塔諾線",
+        "ja": "ナタカピターノ線",
+        "en": "Natlan Il Capitano Line"
+      },
       "authority": {
-        "name": "纳塔局",
-        "nameEn": "Natlan Bureau"
+        "names": {
+          "zhCN": "纳塔局",
+          "zhTW": "納塔局",
+          "ja": "ナタ局",
+          "en": "Natlan Bureau"
+        }
       },
       "lineLabels": [
         ["SOC", "RT"],
@@ -1384,15 +2075,27 @@
     },
     {
       "id": "N4",
-      "name": "纳塔局·悠悠度假村线",
-      "nameEn": "Natlan Easybreeze Holiday Resort Line",
+      "names": {
+        "zhCN": "纳塔局·悠悠度假村线",
+        "zhTW": "納塔局·悠悠度假村線",
+        "ja": "ナタのびのびリゾート線",
+        "en": "Natlan Easybreeze Holiday Resort Line"
+      },
       "operator": {
-        "name": "悠悠度假村轨道交通",
-        "nameEn": "Easybreeze Holiday Resort Transit"
+        "names": {
+          "zhCN": "悠悠度假村轨道交通",
+          "zhTW": "悠悠度假村軌道交通",
+          "ja": "のびのびリゾート軌道交通",
+          "en": "Easybreeze Holiday Resort Transit"
+        }
       },
       "authority": {
-        "name": "悠悠度假村管理委员会",
-        "nameEn": "Easybreeze Holiday Resort Management Committee"
+        "names": {
+          "zhCN": "悠悠度假村管理委员会",
+          "zhTW": "悠悠度假村管理委員會",
+          "ja": "のびのびリゾート管理委員会",
+          "en": "Easybreeze Holiday Resort Management Committee"
+        }
       },
       "lineLabels": [["EBM", "LB"]],
       "variants": [
@@ -1404,11 +2107,19 @@
     },
     {
       "id": "K1",
-      "name": "挪德卡莱局·希汐岛线",
-      "nameEn": "Nod-Krai Hiisi Island Line",
+      "names": {
+        "zhCN": "挪德卡莱局·希汐岛线",
+        "zhTW": "挪德卡萊局·希汐島線",
+        "ja": "ナド・クライ・ヒーシ島線",
+        "en": "Nod-Krai Hiisi Island Line"
+      },
       "authority": {
-        "name": "挪德卡莱局",
-        "nameEn": "Nod-Krai Bureau"
+        "names": {
+          "zhCN": "挪德卡莱局",
+          "zhTW": "挪德卡萊局",
+          "ja": "ナド・クライ局",
+          "en": "Nod-Krai Bureau"
+        }
       },
       "lineLabels": [["NST", "LB"]],
       "variants": [
@@ -1420,11 +2131,19 @@
     },
     {
       "id": "K2",
-      "name": "挪德卡莱局·帕哈岛线",
-      "nameEn": "Nod-Krai Paha Isle Line",
+      "names": {
+        "zhCN": "挪德卡莱局·帕哈岛线",
+        "zhTW": "挪德卡萊局·帕哈島線",
+        "ja": "ナド・クライ・パハ島線",
+        "en": "Nod-Krai Paha Isle Line"
+      },
       "authority": {
-        "name": "挪德卡莱局",
-        "nameEn": "Nod-Krai Bureau"
+        "names": {
+          "zhCN": "挪德卡莱局",
+          "zhTW": "挪德卡萊局",
+          "ja": "ナド・クライ局",
+          "en": "Nod-Krai Bureau"
+        }
       },
       "lineLabels": [
         ["NSP", "LB"],
@@ -1461,11 +2180,19 @@
     },
     {
       "id": "K3",
-      "name": "挪德卡莱局·虚海望线",
-      "nameEn": "Nod-Krai Voidsea Outlook Line",
+      "names": {
+        "zhCN": "挪德卡莱局·虚海望线",
+        "zhTW": "挪德卡莱局·虛海望線",
+        "ja": "ナド・クライ・海を望めぬ峰線",
+        "en": "Nod-Krai Voidsea Outlook Line"
+      },
       "authority": {
-        "name": "挪德卡莱局",
-        "nameEn": "Nod-Krai Bureau"
+        "names": {
+          "zhCN": "挪德卡莱局",
+          "zhTW": "挪德卡萊局",
+          "ja": "ナド・クライ局",
+          "en": "Nod-Krai Bureau"
+        }
       },
       "lineLabels": [
         ["VOP", "LT"],
@@ -1500,8 +2227,12 @@
     },
     {
       "id": "ferry-fnc-vop",
-      "name": "终夜长茔↔虚海望港 轮渡",
-      "nameEn": "Final Night Cemetery ↔ Voidsea Outlook Port Ferry",
+      "names": {
+        "zhCN": "终夜长茔↔虚海望港 轮渡",
+        "zhTW": "終夜長塋↔虛海望港 渡輪",
+        "ja": "夜明かしの墓↔海を望めぬ峰の港 渡輪",
+        "en": "Final Night Cemetery ↔ Voidsea Outlook Port Ferry"
+      },
       "lineType": "ferry",
       "costPreset": "ferry",
       "variants": [
