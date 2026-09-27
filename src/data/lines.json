@@ -844,10 +844,10 @@
   },
   "K3": {
     "names": {
-      "zhCN": "挪德卡莱局·虚海望线",
-      "zhTW": "挪德卡莱局·虛海望線",
-      "ja": "ナド・クライ・海を望めぬ峰線",
-      "en": "Nod-Krai Voidsea Outlook Line"
+      "zhCN": "挪德卡莱局·挪德卡莱北（至冬连接）线",
+      "zhTW": "挪德卡萊局·挪德卡萊北（至冬連接）線",
+      "ja": "ナド・クライ・北（スネージナヤ連絡）線",
+      "en": "Nod-Krai North (Snezhnaya Connector) Line"
     },
     "network": "teyvat",
     "authority": "nod-krai-bureau",
@@ -865,7 +865,8 @@
           "Teyvat-DSM",
           "Teyvat-FNK",
           "Teyvat-AVT",
-          "Teyvat-STR"
+          "Teyvat-STR",
+          "Snezhnaya-Sretomorozsk"
         ],
         "timetable": {
           "interval": [
@@ -1533,26 +1534,6 @@
             "stations": {
               "Snezhnaya-Snezhnaya": 5
             }
-          }
-        }
-      }
-    ]
-  },
-  "Trian-5": {
-    "names": {
-      "zhCN": "至冬列车·挪德卡莱连接线",
-      "zhTW": "至冬列車·挪德卡萊連接線",
-      "ja": "スネージナヤ列車・ナド・クライ連絡線",
-      "en": "Snezhnaya Railway Nod-Krai Connector"
-    },
-    "network": "snezhnaya",
-    "colorSlot": 4,
-    "variants": [
-      {
-        "stations": ["Snezhnaya-Sretomorozsk", "Teyvat-STR"],
-        "timetable": {
-          "dwell": {
-            "default": 2
           }
         }
       }

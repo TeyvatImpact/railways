@@ -365,7 +365,10 @@
       "from": "Snezhnaya-Sretomorozsk",
       "to": "Teyvat-STR",
       "distance": 30,
-      "waypoints": [[-3, 3]]
+      "waypoints": [
+        [-2, 2],
+        [-3, 0]
+      ]
     },
     {
       "from": "Teyvat-APW",
