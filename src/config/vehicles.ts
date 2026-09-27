@@ -25,19 +25,27 @@ export interface Vehicle {
   /** 可载人数；当前未使用 */
   capacity?: number;
   /**
+   * 时刻表冗余系数函数：在 `travelMinutes` 算出行程时间之后再作用一次（`(分钟, 本车型) => 分钟`），
+   * 表示排点时给运行图留的冗余 —— 可以是加常数、乘系数或两者兼有。省略 = 不加冗余。
+   * 只在缺省公式里生效；整段覆写 `compute` 时由覆写方自己决定。
+   */
+  schedulePadding?: (minutes: number, vehicle: Vehicle) => number;
+  /**
    * 数据计算公式：`(距离(km), 本车型配置) => { time: 分钟, fare: 摩拉 }`。
-   * 缺省 = `defaultCompute`：票价 = 距离 × 票价系数，时间见 `travelMinutes`（有加/减速度时含加减速过程）。
+   * 缺省 = `defaultCompute`：票价 = 距离 × 票价系数，时间见 `travelMinutes`（有加/减速度时含加减速过程），
+   * 再乘上 `schedulePadding`（若有）。
    */
   compute?: (distance: number, vehicle: Vehicle) => { time: number; fare: number };
 }
 
 /**
- * 缺省计算公式：时间由设计时速（若配了正数的加/减速度，则按含加减速的梯形速度曲线）推出，
+ * 缺省计算公式：时间由设计时速（若配了正数的加/减速度，则按含加减速的梯形速度曲线）推出、再乘时刻表冗余，
  * 票价 = 距离 × 票价系数。
  */
 export function defaultCompute(distance: number, vehicle: Vehicle): { time: number; fare: number } {
+  const time = travelMinutes(distance, vehicle);
   return {
-    time: travelMinutes(distance, vehicle),
+    time: vehicle.schedulePadding ? vehicle.schedulePadding(time, vehicle) : time,
     fare: distance * vehicle.fareCoefficient,
   };
 }
@@ -78,6 +86,8 @@ export const DEFAULT_VEHICLE_ID = 'standard';
 /**
  * 全部车型。票价系数 = 摩拉/千米；设计时速与加/减速度按各线路的设定手工取值，
  * 加/减速度取 `Infinity` 表示「瞬时达速 / 瞬时停住」（结果与纯匀速一致，如虚拟的同站换乘）。
+ * `schedulePadding` 是各车型的时刻表冗余：提瓦特 / 巡轨船 +2 分、度假村 +1 分、稻妻 ×1.05 + 0.25 分、
+ * 璃月港地铁 +0.5 分、轮渡 ×1.1；同站换乘是虚拟线路，不给冗余。
  */
 export const VEHICLES: Vehicle[] = [
   {
@@ -88,6 +98,7 @@ export const VEHICLES: Vehicle[] = [
     fareCoefficient: 100,
     acceleration: 0.8,
     deceleration: 1,
+    schedulePadding: (minutes) => minutes + 2,
   },
   {
     id: 'aquabus',
@@ -97,6 +108,7 @@ export const VEHICLES: Vehicle[] = [
     fareCoefficient: 80,
     acceleration: 0.5,
     deceleration: 1.5,
+    schedulePadding: (minutes) => minutes + 2,
   },
   {
     id: 'natlan-resort',
@@ -106,6 +118,7 @@ export const VEHICLES: Vehicle[] = [
     fareCoefficient: 0,
     acceleration: 0.5,
     deceleration: 0.8,
+    schedulePadding: (minutes) => minutes + 1,
   },
   {
     id: 'inazuma',
@@ -115,6 +128,7 @@ export const VEHICLES: Vehicle[] = [
     fareCoefficient: 180,
     acceleration: 1.2,
     deceleration: 1.5,
+    schedulePadding: (minutes) => minutes * 1.05 + 0.25,
   },
   {
     id: 'liyue-metro',
@@ -124,6 +138,7 @@ export const VEHICLES: Vehicle[] = [
     fareCoefficient: 80,
     acceleration: 1,
     deceleration: 1.2,
+    schedulePadding: (minutes) => minutes + 0.5,
   },
   {
     id: 'ferry',
@@ -133,9 +148,10 @@ export const VEHICLES: Vehicle[] = [
     fareCoefficient: 50,
     acceleration: 0.05,
     deceleration: 0.2,
+    schedulePadding: (minutes) => minutes * 1.1,
   },
   {
-    // 同站换乘是虚拟线路、不是真实运具；保留一个配置项只为沿用旧费用口径
+    // 同站换乘是虚拟线路、不是真实运具；保留一个配置项只为沿用旧费用口径，且不加时刻表冗余
     id: 'same-station',
     name: '同站换乘',
     nameEn: 'Same-Station Transfer',
