@@ -62,6 +62,27 @@
         </button>
       </div>
     </section>
+    <section v-if="nextArrivals.length">
+      <h3 class="info-title">下一班</h3>
+      <div
+        v-for="arrival in nextArrivals"
+        :key="`${arrival.lineId}-${arrival.direction}-${arrival.terminusId}`"
+        class="tt-row">
+        <span class="tt-span">
+          <span
+            class="line-chip-dot inline-block align-middle"
+            :style="{ background: arrival.color }" />
+          {{ arrival.lineName }}
+        </span>
+        <span class="tt-value">
+          开往 {{ arrival.terminusName }} ·
+          <template v-if="arrival.waitMinutes < 1">即将进站</template>
+          <template v-else
+            >约 {{ Math.floor(arrival.waitMinutes) }} 分（{{ arrival.clock }}）</template
+          >
+        </span>
+      </div>
+    </section>
     <section v-if="headways.length">
       <h3 class="info-title">间隔时间</h3>
       <div v-for="headway in headways" :key="headway.lineId" class="tt-group">
@@ -125,7 +146,9 @@ import {
 } from '../composables/useMapData';
 import { displayLabel, nameRows } from '../composables/stationNames';
 import { selectLine } from '../composables/useSelection';
+import { useSimClock } from '../composables/useSimClock';
 import {
+  nextArrivalsAt,
   stationDepartures,
   stationHeadways,
   type StationDepartures,
@@ -167,6 +190,11 @@ const authorities = computed(() => orgList('authority'));
 
 const headways = computed(() => stationHeadways(props.stationId));
 const departures = computed(() => stationDepartures(props.stationId));
+
+// 「下一班」：随模拟时钟走 —— 按整分取整重算（nextArrivalsAt 要扫全部班次，不必每帧都来一次）
+const { minutesOfDay } = useSimClock();
+const nowMinute = computed(() => Math.floor(minutesOfDay.value));
+const nextArrivals = computed(() => nextArrivalsAt(props.stationId, nowMinute.value));
 
 /** 「时刻表发车」展开状态（按线路 id），未记录 / false = 折叠到 `TIMETABLE_COLLAPSED_ROWS` 行 */
 const expanded = reactive<Record<string, boolean>>({});

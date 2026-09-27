@@ -4,7 +4,6 @@ import {
   expandDepartures,
   mergeIntervalSources,
   type IntervalSegment,
-  type IntervalSource,
   type TimetableDeparture,
 } from './timetable';
 import {
@@ -15,7 +14,8 @@ import {
   type LineVariant,
 } from './useMapData';
 import { formatClock } from './formatTime';
-import { buildTrainRun } from './trainRuns';
+import { buildTrainRun, stopArrival, trainRuns } from './trainRuns';
+import { lineStationSources } from './trainSchedule';
 
 /** 一条线路在某个站点的间隔时间：按时间顺序、相邻同值合并的段 */
 export interface StationHeadway {
@@ -35,17 +35,8 @@ export interface StationHeadway {
 export function stationHeadways(stationId: string): StationHeadway[] {
   const out: StationHeadway[] = [];
   for (const line of sortLinesForDisplay(stationLineMap.get(stationId) ?? [])) {
-    const sources: IntervalSource[] = [];
-    for (const variant of line.variants) {
-      const bands = variant.timetable.interval;
-      if (bands === undefined) continue;
-      const index = variant.stations.indexOf(stationId);
-      if (index < 0) continue;
-      const neighbours = new Set<string>();
-      if (index > 0) neighbours.add(variant.stations[index - 1]);
-      if (index < variant.stations.length - 1) neighbours.add(variant.stations[index + 1]);
-      for (const other of neighbours) sources.push({ bands, segment: [stationId, other] });
-    }
+    // 间隔来源与合成器（`trainSchedule.lineStationSources`）是同一份实现
+    const sources = lineStationSources(line, stationId);
     if (sources.length === 0) continue;
     out.push({
       lineId: line.id,
@@ -168,4 +159,53 @@ export function stationDepartures(stationId: string): StationDepartures[] {
     });
   }
   return out;
+}
+
+/** 本站某条线路某个去向的最近一班到站 */
+export interface NextArrival {
+  lineId: string;
+  lineName: string;
+  color: string;
+  direction: 'up' | 'down';
+  /** 该班次末站（id 与在该线路主语言下的名字） */
+  terminusId: string;
+  terminusName: string;
+  runId: string;
+  /** 距 `minute` 多少分钟（班次每天重复，所以折算到 `[0, 1440)`） */
+  waitMinutes: number;
+  /** 到站钟点（`formatClock`，跨天带「次日 」） */
+  clock: string;
+}
+
+/**
+ * 「下一班」：本站每条线路、每个去向（按该班次的末站区分）的最近一班到站。
+ * 列车全天班次（`trainRuns`，含由间隔合成的班次）每天重复，所以晚于现在的班次直接算，
+ * 已经过去的班次按 +1440 折算成明天同一班；同一条线路的多个变体共用这一份逻辑
+ * （支线的两个终点会各占一行）。虚拟线路（同站换乘）没有班次，天然不出现。
+ */
+export function nextArrivalsAt(stationId: string, minute: number): NextArrival[] {
+  const best = new Map<string, NextArrival>();
+  for (const run of trainRuns) {
+    for (let i = 0; i < run.stops.length; i++) {
+      if (run.stops[i].stationId !== stationId) continue;
+      let wait = (stopArrival(run, i) - minute) % 1440;
+      if (wait < 0) wait += 1440;
+      const terminusId = run.stops[run.stops.length - 1].stationId;
+      const key = `${run.line.id}|${run.dep.direction}|${terminusId}`;
+      const hit = best.get(key);
+      if (hit && hit.waitMinutes <= wait) continue;
+      best.set(key, {
+        lineId: run.line.id,
+        lineName: run.line.names[run.line.primaryLang],
+        color: run.line.color,
+        direction: run.dep.direction,
+        terminusId,
+        terminusName: stationName(run.line, terminusId),
+        runId: run.id,
+        waitMinutes: wait,
+        clock: formatClock(minute + wait),
+      });
+    }
+  }
+  return [...best.values()].sort((a, b) => a.waitMinutes - b.waitMinutes);
 }

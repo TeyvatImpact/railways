@@ -1,5 +1,6 @@
 // 时刻表的纯逻辑（无 Vue 依赖）：数据形态、校验、发车时刻展开与区间间隔派生。
 // 本阶段只做数据、校验与纯函数派生，不做 UI、不改任何现有行为。
+import { DEFAULT_DWELL_MINUTES } from '../config/schedule.config';
 import { hasVehicle } from '../config/vehicles';
 
 export type TimetableDirection = 'up' | 'down';
@@ -78,13 +79,15 @@ export function isWindow(d: TimetableDeparture | TimetableWindow): d is Timetabl
 /** `HH:mm`；`24:00` 只作为「当日 24 时」出现（等于次日 00:00，分钟数 1440） */
 const TIME_RE = /^(([01]\d|2[0-3]):[0-5]\d|24:00)$/;
 
-function minuteOf(time: string): number {
+/** `HH:mm` → 当日分钟数（`24:00` → 1440）；`clockOf` 的逆运算，合成器解析时段边界时也用它 */
+export function minuteOf(time: string): number {
   const [h, m] = time.split(':').map(Number);
   return h * 60 + m;
 }
 
-function clockOf(minutes: number): string {
-  const t = ((minutes % 1440) + 1440) % 1440;
+/** 绝对分钟数 → `HH:mm`（向下取整到分钟，绕回表盘）；`intervalAt` / `closedAt` 的时刻参数由它给出 */
+export function clockOf(minutes: number): string {
+  const t = Math.floor(((minutes % 1440) + 1440) % 1440);
   return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
 }
 
@@ -295,8 +298,9 @@ export function segmentKey(a: string, b: string): string {
 /**
  * 该时段是否覆盖这一分钟：时段是**半开区间 `[from, to)`**（服务时段 `06:00–23:00` = 06:00 起、23:00 前），
  * `to <= from` 视为跨天（如 `22:00 → 01:00` 覆盖 22:00–01:00 之前），`to = from` = 全天。
+ * 合成器判 `between` 段的窗口也用它（口径唯一的出处）。
  */
-function bandCovers(band: TimetableIntervalBand, minutes: number): boolean {
+export function bandCovers(band: TimetableIntervalBand, minutes: number): boolean {
   const from = minuteOf(band.from);
   const rawTo = minuteOf(band.to);
   const to = rawTo <= from ? rawTo + 1440 : rawTo;
@@ -334,6 +338,36 @@ export function intervalAt(
     out = band.interval ?? Infinity;
   }
   return out;
+}
+
+/**
+ * 该时刻这一区间是否被某个**显式 `null`** 的时段封掉（区别于「没有任何时段覆盖」= 空档）。
+ * 判定用与 `intervalAt` 完全相同的顺序覆盖规则：遍历 bands，覆盖该时刻且范围匹配时记录
+ * `band.interval === null`，返回最后一次命中的结果；没有任何段覆盖 = `false`（空档不封段）。
+ *
+ * 合成班次用它作整趟的合法性检查：一趟车只要在一个被封掉的时刻经过该区间就整趟作废。
+ */
+export function closedAt(
+  bands: readonly (TimetableIntervalBand | null)[],
+  time: string,
+  segment: readonly [string, string],
+): boolean {
+  const minutes = minuteOf(time);
+  let closed = false;
+  for (const band of bands) {
+    if (band === null) {
+      closed = true;
+      continue;
+    }
+    if (!bandCovers(band, minutes)) continue;
+    if (
+      band.stations !== undefined &&
+      !(band.stations.includes(segment[0]) && band.stations.includes(segment[1]))
+    )
+      continue;
+    closed = band.interval === null;
+  }
+  return closed;
 }
 
 /**
@@ -382,10 +416,9 @@ export function buildSegmentHeadways(
   return map;
 }
 
-/** 某站的停站时间（分钟）：逐站覆盖 → `default`；没有停站数据 → `undefined` */
-export function dwellAt(dwell: VariantDwell | undefined, stationId: string): number | undefined {
-  if (dwell === undefined) return undefined;
-  return dwell.stations?.[stationId] ?? dwell.default;
+/** 某站的停站时间（分钟）：逐站覆盖 → `default` → `DEFAULT_DWELL_MINUTES` */
+export function dwellAt(dwell: VariantDwell | undefined, stationId: string): number {
+  return dwell?.stations?.[stationId] ?? dwell?.default ?? DEFAULT_DWELL_MINUTES;
 }
 
 /** 一组「时段间隔」+ 它作用的区间 */

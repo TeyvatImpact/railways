@@ -1,7 +1,9 @@
 // 列车运行模型（读 useMapData 的数据，无 Vue 依赖）：
-// 把每条线路每个变体的 `timetable.departures` 展开成「一趟车的全部停站时刻」，
+// 把每条线路每个变体的班次展开成「一趟车的全部停站时刻」—— 写了 `timetable.departures` 的变体照旧展开，
+// 只写 `timetable.interval` 的变体由 `trainSchedule.syntheticSchedule` 从间隔合成具体班次；
 // 再按模拟时刻回答「这趟车现在在哪、什么状态」——地图上的列车圆点与列车详情面板都读它。
 import { dwellAt, expandDepartures, type TimetableDeparture } from './timetable';
+import { gapLimitOf, lineStationInterval, syntheticSchedule } from './trainSchedule';
 import {
   lines,
   pairCost,
@@ -33,13 +35,16 @@ export interface TrainRun {
   stops: TrainStop[];
   /** 首站开出时刻（绝对分钟，可能 ≥ 1440） */
   start: number;
-  /** 末站到站 + 该站停站时间：之后这趟车不再渲染 */
+  /**
+   * 这趟车渲染到什么时候：末站到站 + 该站停站时间；到终点后有下一班要跑（折返继续运营）时会被
+   * 延长到下一班的开出时刻 —— 那段时间圆点就停在终点站上。
+   */
   end: number;
 }
 
-/** 该站停站时长（分钟）：`dwell` 逐站覆盖 → `default`；无停站数据 = 0 */
+/** 该站停站时长（分钟）：`dwell` 逐站覆盖 → `default` → 缺省常量（1 分钟） */
 export function dwellMinutes(run: TrainRun, stationId: string): number {
-  return dwellAt(run.variant.timetable.dwell, stationId) ?? 0;
+  return dwellAt(run.variant.timetable.dwell, stationId);
 }
 
 /** 第 i 站到站时刻；首站（只有开出）返回其开出时刻 */
@@ -99,7 +104,7 @@ export function buildTrainRun(
     for (let i = 1; i < path.length; i++) {
       time += pairCost(dep.vehicle, path[i - 1], path[i]).time;
       const arrival = time;
-      time += dwellAt(variant.timetable.dwell, path[i]) ?? 0;
+      time += dwellAt(variant.timetable.dwell, path[i]);
       if (i === path.length - 1) {
         stops.push({ stationId: path[i], arrival, turnback: end === 'turnback' });
       } else {
@@ -130,12 +135,55 @@ export function buildTrainRun(
 /** 全天所有班次（模块导入时一次性算好，与 `useRouting` 建图同口径） */
 export const trainRuns: TrainRun[] = [];
 for (const line of lines) {
-  line.variants.forEach((variant) => {
-    expandDepartures(variant.timetable).forEach((dep, index) => {
+  // 只写间隔的变体由 `trainSchedule` 合成班次（见该文件），写 departures 的照旧展开
+  const synthetic = syntheticSchedule(line);
+  line.variants.forEach((variant, variantIndex) => {
+    const departures =
+      variant.timetable.interval !== undefined
+        ? (synthetic.get(variantIndex) ?? [])
+        : expandDepartures(variant.timetable);
+    departures.forEach((dep, index) => {
       const run = buildTrainRun(line, variant, dep, index);
       if (run) trainRuns.push(run);
     });
   });
+}
+
+/**
+ * 折返停留（在终点站的衔接）：到终点后有下一班要跑 → 折返继续运营（本趟车的 `end` 顶到下一班
+ * 开出，圆点停在站上等）；没有 → 到终点就结束运营（圆点消失）。
+ *
+ * 同一站上「先到先发」即同一列车：末站为本站的班次（到站）与首站为本站的班次（开出）各按时刻升序
+ * FIFO 配对，只配对到站时刻不晚于开出时刻的；等待时间超过该站该线当时的 `gapLimitOf`（合并间隔的
+ * 容差）就不显示停留，免得出现停几个小时的僵尸点。
+ */
+for (const line of lines) {
+  const runs = trainRuns.filter((run) => run.line === line);
+  if (runs.length === 0) continue;
+  for (const stationId of line.stations) {
+    const arrivals: { run: TrainRun; at: number }[] = [];
+    const departures: TrainRun[] = [];
+    for (const run of runs) {
+      const lastIndex = run.stops.length - 1;
+      if (run.stops[lastIndex].stationId === stationId)
+        arrivals.push({ run, at: stopArrival(run, lastIndex) });
+      if (run.stops[0].stationId === stationId) departures.push(run);
+    }
+    if (arrivals.length === 0 || departures.length === 0) continue;
+    arrivals.sort((a, b) => a.at - b.at);
+    departures.sort((a, b) => a.start - b.start);
+    let next = 0;
+    const waiting: { run: TrainRun; at: number }[] = [];
+    for (const departure of departures) {
+      while (next < arrivals.length && arrivals[next].at <= departure.start)
+        waiting.push(arrivals[next++]);
+      const taking = waiting.shift();
+      if (!taking) continue; // 没有车可接 = 新列车凭空出现，不延长任何车的停留
+      const limit = gapLimitOf(lineStationInterval(line, stationId, taking.at));
+      if (departure.start - taking.at > limit) continue; // 等太久：这趟车到终点就结束运营
+      taking.run.end = Math.max(taking.run.end, departure.start);
+    }
+  }
 }
 
 export function trainById(id: string): TrainRun | undefined {
