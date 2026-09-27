@@ -115,3 +115,33 @@ export const SAME_COLOR = '#7777';
 
 /** 同站点连接线描边宽度（px） */
 export const SAME_LINE_WIDTH = 2;
+
+// ===== 归属边界配置 =====
+
+/**
+ * 归属网格的步长（数据坐标单位）：把平面按「离哪个站点最近」划给该站的归属单位后，
+ * 边界是把这张标签图插值成等值线得到的 —— 步长越小越贴近真实 Voronoi 边界，
+ * 格点数按平方增长。0.2 单位 = 10px，插值误差已在 1px 量级。
+ */
+export const BORDER_GRID_STEP = 0.2;
+
+/** 网格向外多铺的边距（数据坐标单位），让边界能包住最外侧的站点 */
+export const BORDER_GRID_MARGIN = 1;
+
+/** 边界折线简化容差（数据坐标单位）：去掉等值线上的栅格锯齿 */
+export const BORDER_SIMPLIFY_EPSILON = 0.06;
+
+/** 国家/地区边界线颜色 */
+export const NATION_BORDER_COLOR = '#6b7280';
+
+/** 国家/地区边界线宽度（px） */
+export const NATION_BORDER_WIDTH = 2.5;
+
+/** 区域边界线颜色 */
+export const AREA_BORDER_COLOR = '#9ca3af';
+
+/** 区域边界线宽度（px） */
+export const AREA_BORDER_WIDTH = 1.25;
+
+/** 区域边界线虚线样式（空字符串 = 实线） */
+export const AREA_BORDER_DASH = '5,4';

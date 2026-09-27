@@ -40,6 +40,29 @@
         </g>
 
         <path
+          v-for="p in areaBorderPaths"
+          :key="p.id"
+          :d="p.d"
+          :stroke="AREA_BORDER_COLOR"
+          :stroke-width="AREA_BORDER_WIDTH"
+          :stroke-dasharray="AREA_BORDER_DASH || undefined"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          pointer-events="none" />
+
+        <path
+          v-for="p in nationBorderPaths"
+          :key="p.id"
+          :d="p.d"
+          :stroke="NATION_BORDER_COLOR"
+          :stroke-width="NATION_BORDER_WIDTH"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          pointer-events="none" />
+
+        <path
           v-for="(seg, i) in renderSegments"
           :key="i"
           :d="segPath(seg, i)"
@@ -177,7 +200,16 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { BLOCK_SIZE, FERRY_COLOR_HIGHLIGHT } from '../config/render.config';
+import {
+  AREA_BORDER_COLOR,
+  AREA_BORDER_DASH,
+  AREA_BORDER_WIDTH,
+  BLOCK_SIZE,
+  FERRY_COLOR_HIGHLIGHT,
+  NATION_BORDER_COLOR,
+  NATION_BORDER_WIDTH,
+} from '../config/render.config';
+import { areaBorderPaths, nationBorderPaths } from '../composables/useTerritoryBorders';
 import {
   svgWidth,
   svgHeight,
