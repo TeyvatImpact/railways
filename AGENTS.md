@@ -201,15 +201,26 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 4. 边的类别由它两端站点决定：国家/地区不同 = 国家/地区边界线（粗、实线），同国不同区域（含「无区域」这一档）= 区域边界线（细、虚线）；
 5. 相邻三角形共用同一条 Delaunay 边 ⇒ 共用同一个外心交点，边界天然**无缝、无重叠、无双线**；节点度数只有 1（凸包上收口）/ 2（穿过）/ ≥3（多个单位交汇，共圆格点会给出 4 度点）；
 6. 每条 Voronoi 边裁到站点凸包内（凸包外的射线不画），同类线段按交点坐标接成折线、去掉共线中间点；
-7. 折线再转成**向心 Catmull–Rom 曲线**（控制点数学与线路曲线共用 `useCurveGeometry.ts` 的 `bezierControls`）：曲线经过每个节点，交汇点因此被钉住、相邻区域的边界不会各自平滑而撕开；直接跑标准 Catmull–Rom 在节点间距悬殊处会过冲（实测离真实边界最远 42px），所以每个节点的控制点长度被钳到 `min(BORDER_CORNER_FILLET, 相邻段长 / 3)` 且进出两端对称（节点处仍是 C¹）。长直线段共线、平滑后仍然是直线，圆角只发生在转弯处；
-8. 输出地图像素空间的 SVG path（`C` 命令；把 `BORDER_CORNER_FILLET` 设为 0 即退回精确折线）。
+7. 折线转成地图像素空间的 SVG path，平滑方式由 `render.config.ts` 的 `BORDER_SMOOTHING` 决定（三种都是**插值**的：节点精确落在曲线上，所以多单位共用的 Voronoi 顶点被钉住，相邻区域不会各自平滑而错位撕裂）：
+   - `round`（**默认**）：只在转角做统一半径（`BORDER_CORNER_RADIUS`，默认 6px）的圆角 —— 沿两条边各退回 `cut = min(半径, 相邻段长 / 2)`，用「以原折点为控制点的二次贝塞尔」（`Q`）连接，切向仍沿原边、圆角不会鼓出转角；直线段一点不动；
+   - `none`：精确折线（`M`/`L`），Voronoi 顶点处的真实折角一览无余；
+   - `flow`：整条链走一遍向心 Catmull–Rom（控制点数学与线路曲线共用 `useCurveGeometry.ts` 的 `bezierControls`，出 `C`）—— 最圆滑，但切线不设上限，节点间距悬殊处会冲出真实边界几十像素。
 
 导出 `nationBorderPaths` / `areaBorderPaths`（`{ id, d }[]`），`RailwayMap.vue` 在网格之后、线路之前铺这两层（`pointer-events="none"`，不吃点击），描边取自 `render.config.ts` 的 `NATION_BORDER_*` / `AREA_BORDER_*`。要点：
 
 - 只画**相邻归属之间**的边界；站点云最外圈不画「海岸线」，凸包边上的边界正好在凸包上收口。
 - 共圆（1 单位格点布局里很常见）会让相邻三角形外心重合，重合的 Voronoi 边只画一次；`MIN_SEGMENT`（0.01 单位 = 0.5px）丢掉凸包裁剪留下的亚像素碎段 —— 它们短于 path 的 0.1px 输出精度，会退化成零长自环。
 - 边界是运行时纯几何推导，**不进任何数据文件**；`mark.json` 仍是最上层的手绘覆盖。
-- 平滑是有代价的，实测（0.1 细网格真值）偏离真实 Voronoi 边界：圆角 0 → 平均 0.02px / 最大 0.11px（精确折线）；6 → 平均 1.08px / p90 2.54px / 最大 6.59px；12 → 平均 1.98px / 最大 13.35px。默认 6：折角从「最大 134°、p99 45°」压到「最大 81°、p99 18°」，覆盖率仍是 100%。
+- 平滑是有代价的，三种方式实测（以「每条渲染线段中点到最近两站的距离差」衡量，等于偏离真实 Voronoi 边界的 2 倍）：
+
+  | `BORDER_SMOOTHING`  | 偏离 平均 / p90 / p99 / 最大   | 折角 p99 / 最大 | 覆盖率 |
+  | ------------------- | ------------------------------ | --------------- | ------ |
+  | `none`              | 0.01 / 0.04 / 0.07 / 0.08px    | 128.7° / 133.8° | 100%   |
+  | `round`（默认 6px） | 0.37 / 1.01 / 1.78 / 2.13px    | 5.2° / 11.3°    | 100%   |
+  | `flow`              | 4.41 / 10.96 / 23.90 / 51.28px | 9.9° / 25.7°    | 100%   |
+
+  `round` 是「直线保持精确、只把转角磨圆」的方案：观感接近手绘地图，代价只有 1px 量级；换成 `none` 或 `flow` 只是改这一行常量。
+
 - 可复算的校验口径：Delaunay 满足欧拉公式且空圆违例 0；每条输出线段的中点与「最近两个站点」等距（偏差 0）；0.1 细网格上「相邻格归属不同」的接触点 100% 被覆盖（国家 2283/2283、区域 2184/2184）；分类错误 0（当前 7 条国家边界折线 + 14 条区域边界折线）。
 
 ### Annotation file (`mark.json`)
@@ -333,7 +344,7 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 - Because the map graph is built per variant, a route that changes variant (branch → main, 小交路 → 大交路) is reported as a transfer at the shared station; a ride entirely inside one variant stays a single segment. `RouteSegment` / `NodeInfo` carry `variantIndex` / `variantName` / `variantNameEn`, and `segmentLineName()` renders `帕哈岛线（支线）`-style labels.
 - Transfer-station circles count **lines**, not variants: `transferStationIds` uses the per-line station union, so `K2`/`K3` trunk stations stopped being transfer stations when `K2-B`/`K3-B` merged (those also served by `K1` or a ferry kept it).
 - Line colours come from the line's index in the flattened line list, so adding/removing a line entry (e.g. folding `K2-B`/`K3-B` away) shifts the palette for every line after it.
-- 归属边界的圆角由 `render.config.ts` 的 `BORDER_CORNER_FILLET`（px，默认 6，0 = 精确折线）单点控制；曲线在节点处插值，所以圆角不会让相邻区域错位或撕开。
+- 归属边界的平滑由 `render.config.ts` 的 `BORDER_SMOOTHING`（`none` / `round` / `flow`，默认 `round`）与 `BORDER_CORNER_RADIUS`（px，默认 6）两个常量控制；三种方式都在节点处插值，所以换方式不会让相邻区域错位或撕开。
 - 归属边界（`useTerritoryBorders.ts`）是 Delaunay/marching triangles 算出的**精确 Voronoi 边界**：只在**相邻归属单位**之间生成，站点云外圈没有线；共圆退化靠 Lawson 翻边与「外心重合只画一次」处理，没有可调分辨率或平滑参数。站点坐标或 `regions.json` 一变，边界下次加载自动重算，数据侧无需改动。
 - Curve mode (`useCurveGeometry.ts`, implemented but not surfaced in the UI) deliberately **ignores waypoints** — its vertices are the pair's two stations, taken from the first part's start and the last part's end.
 - `/display` draws **rail lines only** (`lines.filter((l) => !l.lineType)`), so all 12 ferries and 3 same-station links are absent there; the 换乘徽章 likewise only list rail lines (a station reachable only by ferry shows no badge). To include them, drop that filter in `views/display/index.vue`.

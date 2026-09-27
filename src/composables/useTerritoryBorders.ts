@@ -1,5 +1,5 @@
 import { stations, minX, minY } from './useMapData';
-import { BLOCK_SIZE, BORDER_CORNER_FILLET } from '../config/render.config';
+import { BLOCK_SIZE, BORDER_CORNER_RADIUS, BORDER_SMOOTHING } from '../config/render.config';
 import { bezierControls, type Pt } from './useCurveGeometry';
 
 /**
@@ -418,15 +418,35 @@ function dropCollinear(polyline: Point[]): Point[] {
 const format = (value: number): string => (Math.round(value * 10) / 10).toString();
 
 /**
- * 折线 → 向心 Catmull–Rom 曲线 path（控制点数学与线路曲线同一套：`bezierControls`）。
+ * 一个转角的圆角切点：沿两条边各退回 `cut`，用「以原折点为控制点的二次贝塞尔」把切点连起来。
+ * 控制点就是原来的折点，所以圆角完全落在原转角内（不会鼓出去），切向仍沿原边；
+ * `cut` 不超过相邻段长的一半，密集的小转角不会互相吃掉。退化的短段返回 null（保持折角）。
+ */
+function cornerFillet(prev: Pt, corner: Pt, next: Pt): { start: Pt; end: Pt } | null {
+  const inLength = Math.hypot(corner.x - prev.x, corner.y - prev.y);
+  const outLength = Math.hypot(next.x - corner.x, next.y - corner.y);
+  if (inLength < 1e-6 || outLength < 1e-6) return null;
+  const cut = Math.min(BORDER_CORNER_RADIUS, inLength / 2, outLength / 2);
+  return {
+    start: {
+      x: corner.x + ((prev.x - corner.x) / inLength) * cut,
+      y: corner.y + ((prev.y - corner.y) / inLength) * cut,
+    },
+    end: {
+      x: corner.x + ((next.x - corner.x) / outLength) * cut,
+      y: corner.y + ((next.y - corner.y) / outLength) * cut,
+    },
+  };
+}
+
+/**
+ * 折线 → path，按 `BORDER_SMOOTHING` 选平滑方式。三种方式都是**插值**的：节点（含多个单位
+ * 共用的 Voronoi 顶点）精确落在曲线上，因此相邻区域的边界不会各自平滑而错位撕裂。
  *
- * 曲线**经过每一个节点**，交汇点（多个单位共用）因此天然被钉住，相邻区域的边界不会因为
- * 各自平滑而撕开；完全共线的节点给出共线控制点，直线段平滑后仍是直线。
- *
- * 标准向心 Catmull–Rom 在节点间距悬殊时会严重过冲（实测离真实 Voronoi 边界最远 42px），
- * 所以每个节点的控制点长度被钳到 `min(圆角上限, 相邻段长 / 3)`：转弯被圆掉，长直线不动，
- * 曲线离真实边界只剩圆角量级的偏差；长度按节点对称取值（进出两端取同一个值），
- * 曲线在节点处仍是 C¹，不会出现新的折角。
+ * - `none`：精确折线；
+ * - `round`：只在转角做统一半径的圆角，直线段一点不动；
+ * - `flow`：整条链的向心 Catmull–Rom（控制点数学与线路曲线共用 `bezierControls`）——最圆滑，
+ *   但切线不设上限，节点间距悬殊处会冲出真实边界几十像素。
  */
 function buildPath(vertices: Point[]): string | null {
   if (vertices.length < 2) return null;
@@ -435,40 +455,61 @@ function buildPath(vertices: Point[]): string | null {
     y: (p.y - minY) * BLOCK_SIZE,
   }));
   const count = pixels.length;
-  const head = pixels[0];
-  const tail = pixels[count - 1];
-  let d = `M ${format(head.x)},${format(head.y)}`;
-  if (count === 2) return `${d} L ${format(tail.x)},${format(tail.y)}`;
-  const closed = Math.hypot(tail.x - head.x, tail.y - head.y) < 1e-3;
+  const closed =
+    Math.hypot(pixels[count - 1].x - pixels[0].x, pixels[count - 1].y - pixels[0].y) < 1e-3;
+  const points = closed ? pixels.slice(0, count - 1) : pixels;
+  const size = points.length;
+  const ring = (index: number): Pt => points[((index % size) + size) % size];
+  const at = (p: Pt): string => `${format(p.x)},${format(p.y)}`;
 
-  // 每个节点允许的控制点长度：不超过相邻两段较短者的 1/3，也不超过圆角上限
-  const handles = pixels.map((p, index) => {
-    const prev = pixels[index > 0 ? index - 1 : closed ? count - 2 : 0];
-    const next = pixels[index + 1 < count ? index + 1 : closed ? 1 : count - 1];
-    const shorter = Math.min(
-      Math.hypot(p.x - prev.x, p.y - prev.y),
-      Math.hypot(next.x - p.x, next.y - p.y),
-    );
-    return Math.min(BORDER_CORNER_FILLET, shorter / 3);
-  });
+  if (BORDER_SMOOTHING === 'flow' && size > 2) {
+    let d = `M ${at(points[0])}`;
+    for (let i = 0; i < (closed ? size : size - 1); i++) {
+      const p1 = ring(i);
+      const p2 = ring(i + 1);
+      const p0 = closed || i > 0 ? ring(i - 1) : p1;
+      const p3 = closed || i + 2 < size ? ring(i + 2) : p2;
+      const { c1, c2 } = bezierControls(p0, p1, p2, p3);
+      d += ` C ${at(c1)} ${at(c2)} ${at(p2)}`;
+    }
+    return closed ? `${d} Z` : d;
+  }
 
-  const stretch = (from: Pt, to: Pt, length: number): Pt => {
-    const dx = to.x - from.x;
-    const dy = to.y - from.y;
-    const size = Math.hypot(dx, dy);
-    if (size < 1e-9) return { x: from.x, y: from.y };
-    return { x: from.x + (dx / size) * length, y: from.y + (dy / size) * length };
-  };
+  // none / round：开链两端不做圆角，闭环每个节点都做
+  const fillets = points.map((corner, index) =>
+    BORDER_SMOOTHING === 'round' && (closed || (index > 0 && index < size - 1))
+      ? cornerFillet(ring(index - 1), corner, ring(index + 1))
+      : null,
+  );
+  /** 进入某个节点的落点：有圆角就是圆角起点，否则就是节点本身 */
+  const enter = (index: number): Pt => fillets[index]?.start ?? points[index];
 
-  for (let i = 0; i < count - 1; i++) {
-    const p1 = pixels[i];
-    const p2 = pixels[i + 1];
-    const start = i > 0 ? i - 1 : closed ? count - 2 : 0;
-    const end = i + 2 < count ? i + 2 : closed ? 1 : count - 1;
-    const { c1, c2 } = bezierControls(pixels[start], p1, p2, pixels[end]);
-    const h1 = stretch(p1, c1, handles[i]);
-    const h2 = stretch(p2, c2, handles[i + 1]);
-    d += ` C ${format(h1.x)},${format(h1.y)} ${format(h2.x)},${format(h2.y)} ${format(p2.x)},${format(p2.y)}`;
+  if (!closed) {
+    let d = `M ${at(points[0])}`;
+    let pen = points[0];
+    const same = (a: Pt, b: Pt) => Math.hypot(a.x - b.x, a.y - b.y) < 1e-6;
+    for (let i = 1; i < size; i++) {
+      const fillet = fillets[i];
+      if (fillet) {
+        if (!same(pen, fillet.start)) d += ` L ${at(fillet.start)}`;
+        d += ` Q ${at(points[i])} ${at(fillet.end)}`;
+        pen = fillet.end;
+      } else if (!same(pen, points[i])) {
+        d += ` L ${at(points[i])}`;
+        pen = points[i];
+      }
+    }
+    return d;
+  }
+
+  // 闭环：从节点 0 的落点起笔，绕一圈正好回到它（最后一步的直线就是闭合边）
+  let d = `M ${at(enter(0))}`;
+  for (let i = 0; i < size; i++) {
+    const fillet = fillets[i];
+    if (fillet) d += ` Q ${at(points[i])} ${at(fillet.end)}`;
+    const from = fillet ? fillet.end : points[i];
+    const to = enter((i + 1) % size);
+    if (Math.hypot(from.x - to.x, from.y - to.y) > 1e-6) d += ` L ${at(to)}`;
   }
   return d;
 }

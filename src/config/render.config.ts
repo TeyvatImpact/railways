@@ -131,11 +131,15 @@ export const AREA_BORDER_COLOR = '#9ca3af';
 export const AREA_BORDER_WIDTH = 1.25;
 
 /**
- * 归属边界的圆角上限（px）：转角处 Catmull–Rom 控制点的最大长度。
- * 控制点同时还被压到相邻段长的 1/3 以内，所以曲线不会比真实边界多出圆角量级的偏差；
- * 设 0 即退回精确折线（直线段本来就完全共线，圆角只作用于转弯处）。
+ * 归属边界的平滑方式：
+ * - `none`：精确折线（Voronoi 顶点处的真实折角，直线段一点不动）；
+ * - `round`：只在转角做**统一半径**的圆角，直线段仍然精确 —— 转角大小一致，最像手绘地图；
+ * - `flow`：整条链走一遍向心 Catmull–Rom（最圆滑，但节点间距悬殊处会明显过冲、偏离真实边界）。
  */
-export const BORDER_CORNER_FILLET = 6;
+export const BORDER_SMOOTHING: 'none' | 'round' | 'flow' = 'round';
+
+/** 转角圆角半径（px），仅 `round` 模式使用；相邻段太短时自动收到段长的一半，避免圆角互相重叠 */
+export const BORDER_CORNER_RADIUS = 6;
 
 /** 区域边界线虚线样式（空字符串 = 实线） */
 export const AREA_BORDER_DASH = '5,4';
