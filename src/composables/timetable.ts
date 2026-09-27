@@ -39,7 +39,8 @@ export interface TimetableIntervalBand {
 export interface VariantTimetable {
   /**
    * 只写间隔、不含逐条发车信息：按时段给不同间隔。
-   * 元素可为 `null` —— `null` 表示「任何时间的间隔都是无限大」，出现即压过同数组里的有限时段。
+   * 时段**按数组顺序**依次覆盖，后面的段盖住前面的段（相同时刻以最后一段为准，见 `intervalAt`）；
+   * `null` 元素覆盖所有时刻，即「该时刻的间隔无限大」。
    * 与 `departures` 互斥 —— 写间隔的时刻表只能写时段间隔。
    */
   interval?: (TimetableIntervalBand | null)[];
@@ -193,10 +194,52 @@ export function segmentKey(a: string, b: string): string {
   return [a, b].sort().join('|');
 }
 
+/** 该时段是否覆盖这一分钟（`to <= from` 的段绕天，如 `22:00 → 01:00` 覆盖 22:00–01:00） */
+function bandCovers(band: TimetableIntervalBand, minutes: number): boolean {
+  const from = minuteOf(band.from);
+  let to = minuteOf(band.to);
+  if (to <= from) to += 1440;
+  return (minutes >= from && minutes <= to) || (minutes + 1440 >= from && minutes + 1440 <= to);
+}
+
 /**
- * 每条区间的最小固定间隔（分钟）：凡写了时段间隔的变体，对其站序里每对相邻站取所有时段 interval 的 `min`。
- * `interval` 里出现 `null` 的变体 —— 它声明「任何时间间隔无限大」—— 该变体的间隔视为 `Infinity`（压过自己的有限时段）。
+ * 某一时刻（`HH:mm`）的生效间隔（分钟）：时段**按数组顺序**依次覆盖，后面的段盖住前面的段。
+ * `undefined` = 没有任何段覆盖该时刻，`Infinity` = 该时刻的间隔无限大（`null` 段）。
  */
+export function intervalAt(
+  bands: readonly (TimetableIntervalBand | null)[],
+  time: string,
+): number | undefined {
+  const minutes = minuteOf(time);
+  let out: number | undefined;
+  for (const band of bands) {
+    if (band === null) out = Infinity;
+    else if (bandCovers(band, minutes)) out = band.interval;
+  }
+  return out;
+}
+
+/**
+ * 一天里生效间隔的最小值。生效间隔只在时段边界之间恒定，所以取样 00:00 与所有边界
+ * （每个 `from`、每个 `to + 1`，模 1440）就够；没有任何段覆盖任何时刻 → `undefined`。
+ */
+function minIntervalOfDay(bands: readonly (TimetableIntervalBand | null)[]): number | undefined {
+  const samples = new Set([0]);
+  for (const band of bands) {
+    if (band === null) continue;
+    samples.add(minuteOf(band.from));
+    samples.add((minuteOf(band.to) + 1) % 1440);
+  }
+  let min: number | undefined;
+  for (const minutes of samples) {
+    const value = intervalAt(bands, clockOf(minutes));
+    if (value === undefined) continue;
+    min = min === undefined ? value : Math.min(min, value);
+  }
+  return min;
+}
+
+/** 每条区间的最小固定间隔（分钟）：凡写了时段间隔的变体，按其站序里每对相邻站记该变体一天里的最小生效间隔（见 `intervalAt` / `minIntervalOfDay`） */
 export function buildSegmentHeadways(
   lines: readonly {
     variants: { stations: string[]; timetable: VariantTimetable }[];
@@ -207,14 +250,7 @@ export function buildSegmentHeadways(
     for (const variant of line.variants) {
       const bands = variant.timetable.interval;
       if (bands === undefined) continue;
-      let headway: number | undefined;
-      for (const band of bands) {
-        if (band === null) {
-          headway = Infinity;
-          break;
-        }
-        headway = headway === undefined ? band.interval : Math.min(headway, band.interval);
-      }
+      const headway = minIntervalOfDay(bands);
       if (headway === undefined) continue;
       for (let i = 0; i < variant.stations.length - 1; i++) {
         const key = segmentKey(variant.stations[i], variant.stations[i + 1]);

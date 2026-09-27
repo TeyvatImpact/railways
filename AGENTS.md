@@ -211,12 +211,13 @@ All data is JSON stored in `src/data/`. No CSV files.
 变体可带一个可选的 `timetable`（本阶段**不写任何真实时刻表数据**，只做数据形态、校验与纯函数派生）。两种形态**互斥**，一个 `timetable` 只能二选一：
 
 ```jsonc
-// ① 只写间隔、没有逐条发车信息：按时段给间隔（只能写 from / to / interval）
+// ① 只写间隔、没有逐条发车信息：按时段给间隔（只能写 from / to / interval；按数组顺序覆盖）
 "timetable": {
   "interval": [
-    { "from": "05:30", "to": "07:00", "interval": 15 },
-    { "from": "07:00", "to": "09:30", "interval": 5 },
-    { "from": "22:00", "to": "01:00", "interval": 20 }
+    { "from": "05:30", "to": "23:00", "interval": 12 },   // 基准
+    { "from": "07:00", "to": "09:30", "interval": 5 },    // 早高峰，盖掉基准
+    { "from": "17:00", "to": "19:00", "interval": 6 },    // 晚高峰
+    { "from": "22:00", "to": "01:00", "interval": 20 }    // 绕天：22:00–01:00
   ]
 }
 
@@ -230,12 +231,13 @@ All data is JSON stored in `src/data/`. No CSV files.
 ```
 
 - **① 时段间隔**：`interval` = **非空数组**，每段 `{ from, to, interval }` —— 段内固定间隔（分钟，正数）作用于整条变体的所有区间；`to <= from` 视为跨天（+24h）。段对象**只能写这三个键**（多写 `station` / `direction` / `vehicle` 之类直接报错）；段内不发车时刻、不区分站与方向，所以 `expandDepartures` 对它输出 `[]`。
-- **① 的 `null` 元素**：数组元素可以是 `null` —— 含义是「任何时间的间隔都是无限大」（该变体全线没有有限间隔，如无服务 / 间隔未知）。它在同一数组里**压过**有限时段（`[null, { from: "07:00", to: "09:00", interval: 5 }]` 也算无限大）；派生出的区间间隔因此是 `Infinity`（跨变体聚合仍是 `min`，所以别的变体有有限间隔时该区间的值不变）。
+- **① 按序覆盖**：时段**按数组顺序**依次铺下去，**后面的段盖住前面的段**（相同时刻以数组中最后一段为准）——「基准 + 高峰覆盖」要把基准写前面、例外写后面，反序写就变成例外被基准盖掉。`intervalAt(bands, "HH:mm")` 是这套覆盖的唯一实现，返回该时刻的生效间隔（`undefined` = 没有任何段覆盖该时刻，`Infinity` = `null` 段）。
+- **① 的 `null` 元素**：数组元素可以是 `null` —— 含义是「任何时间的间隔都是无限大」（如无服务 / 间隔未知）；它同样按位置参与覆盖，`[null, { from: "07:00", to: "09:00", interval: 5 }]` = 只有 07:00–09:00 是 5、其余无限大，`[{ … }, null]` = 全天无限大。
 - **② 逐条发车**：`direction`：`up` = 变体站序方向，`down` = 逆站序；`oneWay` 线不能有 `down`。`vehicle` 省略 = 该变体的车型。
 - `time` / `from` / `to`：`"HH:mm"`；时间窗自 `from` 起每 `every` 分钟发一辆、发的时刻 ≤ `to`（**去尾**）；`to <= from` 视为跨天（+24h），如 `18:00 → 02:00` 每 20 分 = 25 班。
 - 判别：有 `time` = 单点，有 `every` = 时间窗；两者在同一条 `departures` 数组里混排。
 - `parseTimetable(raw, ctx)` 校验（信息带 `线路 X 的变体 #i`）：`interval` 非空数组、元素是 `null` 或只含 `from` / `to` / `interval` 的对象、段 `interval` 正数、`departures` 数组、`interval` 与 `departures` 互斥、单点 / 时间窗二选一、时间 `HH:mm`、every 正整数、发车站在该变体站序里、方向合法、单向线不能 `down`、车型已知、虚拟线路不应有时刻表。
-- `expandDepartures(t)` → 逐个时刻（按绝对分钟升序，跨天不折回）；`segmentKey(a, b)` = 无向站对键（与 `connections.json` 同口径）；`buildSegmentHeadways(lines)` → 每区间在所有时段里的最小 `interval`（变体的 `interval` 里有 `null` 则该变体为 `Infinity`）。`useMapData.ts` 导出 `segmentHeadways` 与 `headwayFor(a, b)`（当前无消费方）。
+- `expandDepartures(t)` → 逐个时刻（按绝对分钟升序，跨天不折回）；`segmentKey(a, b)` = 无向站对键（与 `connections.json` 同口径）；`intervalAt(bands, time)` → 该时刻的生效间隔；`buildSegmentHeadways(lines)` → 每区间记该变体**一天里的最小生效间隔**（按 `intervalAt` 覆盖后取样所有时段边界；全无覆盖的变体跳过，`[null]` 这类只覆盖无限大的变体为 `Infinity`），跨变体仍取 `min`。`useMapData.ts` 导出 `segmentHeadways` 与 `headwayFor(a, b)`（当前无消费方）。
 
 ### Connections file (`connections.json`)
 
