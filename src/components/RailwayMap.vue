@@ -209,7 +209,8 @@ import {
   NATION_BORDER_COLOR,
   NATION_BORDER_WIDTH,
 } from '../config/render.config';
-import { areaBorderPaths, nationBorderPaths } from '../composables/useTerritoryBorders';
+import { buildBorderPaths } from '../composables/useTerritoryBorders';
+import { useBorderSmoothing } from '../composables/useBorderSmoothing';
 import {
   svgWidth,
   svgHeight,
@@ -241,6 +242,11 @@ const emit = defineEmits<{
 }>();
 
 const { renderMode } = useRenderMode();
+const { borderSmoothing } = useBorderSmoothing();
+
+/** 归属边界的两层 path：换平滑方式只重拼字符串，几何不变 */
+const nationBorderPaths = computed(() => buildBorderPaths('nation', borderSmoothing.value));
+const areaBorderPaths = computed(() => buildBorderPaths('area', borderSmoothing.value));
 
 /** 曲线模式下每段线段对应的 path（与 renderSegments 同序）；直线模式为 null */
 const curveSegments = computed<CurveSegment[] | null>(() =>

@@ -1,5 +1,5 @@
 import { stations, minX, minY } from './useMapData';
-import { BLOCK_SIZE, BORDER_CORNER_RADIUS, BORDER_SMOOTHING } from '../config/render.config';
+import { BLOCK_SIZE, BORDER_CORNER_RADIUS, type BorderSmoothing } from '../config/render.config';
 import { bezierControls, type Pt } from './useCurveGeometry';
 
 /**
@@ -23,6 +23,9 @@ import { bezierControls, type Pt } from './useCurveGeometry';
  * 要么是闭环（被完全包围的飞地）。近共线的边缘三角形外心会飞到很远，全靠这一步裁掉。
  * 模块加载时算一次（本机约 10ms），结果只依赖站点坐标与 `regions.json`。
  */
+
+/** 两类边界：国家/地区边界线（粗）与区域边界线（细） */
+export type TerritoryBorderKind = 'nation' | 'area';
 
 export interface TerritoryBorderPath {
   id: string;
@@ -448,7 +451,7 @@ function cornerFillet(prev: Pt, corner: Pt, next: Pt): { start: Pt; end: Pt } | 
  * - `flow`：整条链的向心 Catmull–Rom（控制点数学与线路曲线共用 `bezierControls`）——最圆滑，
  *   但切线不设上限，节点间距悬殊处会冲出真实边界几十像素。
  */
-function buildPath(vertices: Point[]): string | null {
+function buildPath(vertices: Point[], smoothing: BorderSmoothing): string | null {
   if (vertices.length < 2) return null;
   const pixels: Pt[] = vertices.map((p) => ({
     x: (p.x - minX) * BLOCK_SIZE,
@@ -462,7 +465,7 @@ function buildPath(vertices: Point[]): string | null {
   const ring = (index: number): Pt => points[((index % size) + size) % size];
   const at = (p: Pt): string => `${format(p.x)},${format(p.y)}`;
 
-  if (BORDER_SMOOTHING === 'flow' && size > 2) {
+  if (smoothing === 'flow' && size > 2) {
     let d = `M ${at(points[0])}`;
     for (let i = 0; i < (closed ? size : size - 1); i++) {
       const p1 = ring(i);
@@ -477,7 +480,7 @@ function buildPath(vertices: Point[]): string | null {
 
   // none / round：开链两端不做圆角，闭环每个节点都做
   const fillets = points.map((corner, index) =>
-    BORDER_SMOOTHING === 'round' && (closed || (index > 0 && index < size - 1))
+    smoothing === 'round' && (closed || (index > 0 && index < size - 1))
       ? cornerFillet(ring(index - 1), corner, ring(index + 1))
       : null,
   );
@@ -514,24 +517,31 @@ function buildPath(vertices: Point[]): string | null {
   return d;
 }
 
-function buildPaths(list: Segment[], idPrefix: string): TerritoryBorderPath[] {
+/** 两类边界的节点折线（像素坐标）：几何只算一次，换平滑方式只是重新拼 path 字符串 */
+const borderChains: Record<TerritoryBorderKind, Point[][]> = {
+  nation: chain(segments.filter((segment) => segment.nation)),
+  area: chain(segments.filter((segment) => !segment.nation)),
+};
+
+const pathCache = new Map<string, TerritoryBorderPath[]>();
+
+/**
+ * 某一类边界在指定平滑方式下的 SVG path（结果按「类别 + 方式」缓存，
+ * 控制面板上反复切换不会重算——几何本来也只算一次）。
+ */
+export function buildBorderPaths(
+  kind: TerritoryBorderKind,
+  smoothing: BorderSmoothing,
+): TerritoryBorderPath[] {
+  const key = `${kind}|${smoothing}`;
+  const cached = pathCache.get(key);
+  if (cached) return cached;
   const paths: TerritoryBorderPath[] = [];
-  for (const polyline of chain(list)) {
-    const d = buildPath(dropCollinear(polyline));
+  for (const polyline of borderChains[kind]) {
+    const d = buildPath(dropCollinear(polyline), smoothing);
     if (!d) continue;
-    paths.push({ id: `${idPrefix}-${paths.length}`, d });
+    paths.push({ id: `${kind}-border-${paths.length}`, d });
   }
+  pathCache.set(key, paths);
   return paths;
 }
-
-/** 国家/地区边界线（加粗） */
-export const nationBorderPaths: TerritoryBorderPath[] = buildPaths(
-  segments.filter((segment) => segment.nation),
-  'nation-border',
-);
-
-/** 区域边界线（同国之内，含「无区域」一档） */
-export const areaBorderPaths: TerritoryBorderPath[] = buildPaths(
-  segments.filter((segment) => !segment.nation),
-  'area-border',
-);

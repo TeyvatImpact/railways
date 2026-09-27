@@ -130,13 +130,16 @@ export const AREA_BORDER_COLOR = '#9ca3af';
 /** 区域边界线宽度（px） */
 export const AREA_BORDER_WIDTH = 1.25;
 
+/** 归属边界的平滑方式（几何层的全部选项） */
+export type BorderSmoothing = 'none' | 'round' | 'flow';
+
 /**
- * 归属边界的平滑方式：
+ * 归属边界的**初始**平滑方式（地图控制面板上的按钮可以在运行时临时改，见 `useBorderSmoothing.ts`）：
  * - `none`：精确折线（Voronoi 顶点处的真实折角，直线段一点不动）；
- * - `round`：只在转角做**统一半径**的圆角，直线段仍然精确 —— 转角大小一致，最像手绘地图；
- * - `flow`：整条链走一遍向心 Catmull–Rom（最圆滑，但节点间距悬殊处会明显过冲、偏离真实边界）。
+ * - `round`：只在转角做统一半径的圆角，直线段仍然精确；
+ * - `flow`：整条链走一遍向心 Catmull–Rom —— 最圆滑，但节点间距悬殊处会冲出真实边界几十像素。
  */
-export const BORDER_SMOOTHING: 'none' | 'round' | 'flow' = 'round';
+export const BORDER_SMOOTHING: BorderSmoothing = 'flow';
 
 /** 转角圆角半径（px），仅 `round` 模式使用；相邻段太短时自动收到段长的一半，避免圆角互相重叠 */
 export const BORDER_CORNER_RADIUS = 6;

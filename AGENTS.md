@@ -57,12 +57,13 @@ Panel anatomy: a line-coloured frame, a top-left header (线路名称 badge left
 | App         | `InfoDialog.vue`                     | Modal showing intro.md via `markdown-exit` + `github-markdown-css`                                                                                                                                                                                                                                                                                                                                                      |
 | Map         | `RailwayMap.vue`                     | SVG viewport with pan/zoom, grid lines, territory borders (thin area under thick nation), segments, stations, labels, markers; emits `station-click`                                                                                                                                                                                                                                                                    |
 | Routing     | `RoutePanel.vue`                     | Right sidebar: fuzzy-search dropdown, map pick mode, calculate button, multi-route option list, RouteTimeline detail view                                                                                                                                                                                                                                                                                               |
-| Overlays    | `MapControls.vue`                    | Fixed bottom-left zoom +/- buttons and mouse coordinate readout (data-space x,y); rendered inside RailwayMap                                                                                                                                                                                                                                                                                                            |
+| Overlays    | `MapControls.vue`                    | Fixed bottom-left zoom +/- buttons, mouse coordinate readout (data-space x,y) and the temporary 归属边界平滑 toggle (cycles flow → round → none); rendered inside RailwayMap                                                                                                                                                                                                                                            |
 | Data        | `data/regions.json`                  | 站点归属表：「国家/地区」（`nations` = 七国 + 至冬国挪德卡莱自治区）与可选「区域」（`areas`），`stations` 以完整站点 id 为键 —— 每站必有一项；`useMapData.ts` 校验完整性并挂到 `Station.nation` / `Station.area`                                                                                                                                                                                                        |
 | Data        | `composables/useMapData.ts`          | Imports region JSON + ferry.json + same.json + regions.json, resolves every station's `names` and every line's `primaryLang`（线路缺省继承区域 config；ferry/same 无 config → `zhCN`），轮渡 / 同站换乘线路名由端点站派生（`lineNaming.ts`，数据里不写 `names`），运营公司 / 主体是 `{ names }`，flattens every line's `variants` into unique station pairs, computes segments with line offsetting for parallel tracks |
 | Interaction | `composables/useMapInteraction.ts`   | Mouse drag/scroll, touch pan/pinch-zoom; persists viewport to localStorage                                                                                                                                                                                                                                                                                                                                              |
 | UI          | `composables/useTheme.ts`            | Light/dark theme ref, Varlet MD3 StyleProvider swap, persisted to localStorage                                                                                                                                                                                                                                                                                                                                          |
 | UI          | `composables/useRenderMode.ts`       | Line-connection mode ref; `straight` (default) / `curve` (Catmull-Rom). Dormant: no UI control, no persistence                                                                                                                                                                                                                                                                                                          |
+| UI          | `composables/useBorderSmoothing.ts`  | 归属边界平滑方式的运行时 ref（初值 = `BORDER_SMOOTHING`，默认 `flow`）+ `cycleBorderSmoothing()`；只对本会话有效、不落盘，控制面板按钮调用它                                                                                                                                                                                                                                                                            |
 | Render      | `composables/useCurveGeometry.ts`    | Chains station pairs per line and converts each pair to a centripetal Catmull-Rom cubic; returns one entry per renderSegment, index-aligned                                                                                                                                                                                                                                                                             |
 | Borders     | `composables/useTerritoryBorders.ts` | 站点归属 → 边界线：Delaunay 三角剖分 + marching triangles 求相邻归属单位之间的 Voronoi 边界，输出国家/地区边界（粗实线）与区域边界（细虚线）两类 SVG path（纯模块，无 Vue 依赖；精确解，无栅格无容差）                                                                                                                                                                                                                  |
 | UI          | `components/DialogWindow.vue`        | Shared modal shell used by InfoDialog and AdminPanel                                                                                                                                                                                                                                                                                                                                                                    |
@@ -201,25 +202,25 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 4. 边的类别由它两端站点决定：国家/地区不同 = 国家/地区边界线（粗、实线），同国不同区域（含「无区域」这一档）= 区域边界线（细、虚线）；
 5. 相邻三角形共用同一条 Delaunay 边 ⇒ 共用同一个外心交点，边界天然**无缝、无重叠、无双线**；节点度数只有 1（凸包上收口）/ 2（穿过）/ ≥3（多个单位交汇，共圆格点会给出 4 度点）；
 6. 每条 Voronoi 边裁到站点凸包内（凸包外的射线不画），同类线段按交点坐标接成折线、去掉共线中间点；
-7. 折线转成地图像素空间的 SVG path，平滑方式由 `render.config.ts` 的 `BORDER_SMOOTHING` 决定（三种都是**插值**的：节点精确落在曲线上，所以多单位共用的 Voronoi 顶点被钉住，相邻区域不会各自平滑而错位撕裂）：
-   - `round`（**默认**）：只在转角做统一半径（`BORDER_CORNER_RADIUS`，默认 6px）的圆角 —— 沿两条边各退回 `cut = min(半径, 相邻段长 / 2)`，用「以原折点为控制点的二次贝塞尔」（`Q`）连接，切向仍沿原边、圆角不会鼓出转角；直线段一点不动；
-   - `none`：精确折线（`M`/`L`），Voronoi 顶点处的真实折角一览无余；
-   - `flow`：整条链走一遍向心 Catmull–Rom（控制点数学与线路曲线共用 `useCurveGeometry.ts` 的 `bezierControls`，出 `C`）—— 最圆滑，但切线不设上限，节点间距悬殊处会冲出真实边界几十像素。
+7. 折线（`borderChains`，像素坐标）转成 SVG path：几何只算一次，**平滑方式是运行时状态**（`useBorderSmoothing.ts` 的 `borderSmoothing` ref，初值 = `render.config.ts` 的 `BORDER_SMOOTHING`，地图左下角控制面板有一个 dev-only 的临时按钮循环切换；三种方式的结果按「类别 + 方式」缓存）。三种方式都是**插值**的：节点精确落在曲线上，所以多单位共用的 Voronoi 顶点被钉住，相邻区域不会各自平滑而错位撕裂：
+   - `flow`（**初始默认**）：整条链走一遍向心 Catmull–Rom（控制点数学与线路曲线共用 `useCurveGeometry.ts` 的 `bezierControls`，出 `C`）—— 最圆滑，但切线不设上限，节点间距悬殊处会冲出真实边界几十像素；
+   - `round`：只在转角做统一半径（`BORDER_CORNER_RADIUS`，默认 6px）的圆角 —— 沿两条边各退回 `cut = min(半径, 相邻段长 / 2)`，用「以原折点为控制点的二次贝塞尔」（`Q`）连接，切向仍沿原边、圆角不会鼓出转角；直线段一点不动，代价 1px 量级；
+   - `none`：精确折线（`M`/`L`），Voronoi 顶点处的真实折角一览无余。
 
-导出 `nationBorderPaths` / `areaBorderPaths`（`{ id, d }[]`），`RailwayMap.vue` 在网格之后、线路之前铺这两层（`pointer-events="none"`，不吃点击），描边取自 `render.config.ts` 的 `NATION_BORDER_*` / `AREA_BORDER_*`。要点：
+`useTerritoryBorders.ts` 是**纯几何模块**（无 Vue 依赖），导出 `buildBorderPaths(kind, smoothing)`（`{ id, d }[]`）与折线缓存；运行时状态在 `useBorderSmoothing.ts`。`RailwayMap.vue` 在网格之后、线路之前铺这两层（`pointer-events="none"`，不吃点击），描边取自 `render.config.ts` 的 `NATION_BORDER_*` / `AREA_BORDER_*`。要点：
 
 - 只画**相邻归属之间**的边界；站点云最外圈不画「海岸线」，凸包边上的边界正好在凸包上收口。
 - 共圆（1 单位格点布局里很常见）会让相邻三角形外心重合，重合的 Voronoi 边只画一次；`MIN_SEGMENT`（0.01 单位 = 0.5px）丢掉凸包裁剪留下的亚像素碎段 —— 它们短于 path 的 0.1px 输出精度，会退化成零长自环。
 - 边界是运行时纯几何推导，**不进任何数据文件**；`mark.json` 仍是最上层的手绘覆盖。
 - 平滑是有代价的，三种方式实测（以「每条渲染线段中点到最近两站的距离差」衡量，等于偏离真实 Voronoi 边界的 2 倍）：
 
-  | `BORDER_SMOOTHING`  | 偏离 平均 / p90 / p99 / 最大   | 折角 p99 / 最大 | 覆盖率 |
-  | ------------------- | ------------------------------ | --------------- | ------ |
-  | `none`              | 0.01 / 0.04 / 0.07 / 0.08px    | 128.7° / 133.8° | 100%   |
-  | `round`（默认 6px） | 0.37 / 1.01 / 1.78 / 2.13px    | 5.2° / 11.3°    | 100%   |
-  | `flow`              | 4.41 / 10.96 / 23.90 / 51.28px | 9.9° / 25.7°    | 100%   |
+  | `BORDER_SMOOTHING` | 偏离 平均 / p90 / p99 / 最大   | 折角 p99 / 最大 | 覆盖率 |
+  | ------------------ | ------------------------------ | --------------- | ------ |
+  | `none`             | 0.01 / 0.04 / 0.07 / 0.08px    | 128.7° / 133.8° | 100%   |
+  | `round`（6px）     | 0.37 / 1.01 / 1.78 / 2.13px    | 5.2° / 11.3°    | 100%   |
+  | `flow`（初始默认） | 4.41 / 10.96 / 23.90 / 51.28px | 9.9° / 25.7°    | 100%   |
 
-  `round` 是「直线保持精确、只把转角磨圆」的方案：观感接近手绘地图，代价只有 1px 量级；换成 `none` 或 `flow` 只是改这一行常量。
+  `flow` 观感最圆滑但最不贴真实边界（最远 51px）；`round` 是「直线保持精确、只把转角磨圆」，1px 量级；`none` 完全精确、折角分明。三者靠控制面板的按钮现场比较，改初始值只需改 `BORDER_SMOOTHING` 一行。
 
 - 可复算的校验口径：Delaunay 满足欧拉公式且空圆违例 0；每条输出线段的中点与「最近两个站点」等距（偏差 0）；0.1 细网格上「相邻格归属不同」的接触点 100% 被覆盖（国家 2283/2283、区域 2184/2184）；分类错误 0（当前 7 条国家边界折线 + 14 条区域边界折线）。
 
@@ -344,7 +345,7 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 - Because the map graph is built per variant, a route that changes variant (branch → main, 小交路 → 大交路) is reported as a transfer at the shared station; a ride entirely inside one variant stays a single segment. `RouteSegment` / `NodeInfo` carry `variantIndex` / `variantName` / `variantNameEn`, and `segmentLineName()` renders `帕哈岛线（支线）`-style labels.
 - Transfer-station circles count **lines**, not variants: `transferStationIds` uses the per-line station union, so `K2`/`K3` trunk stations stopped being transfer stations when `K2-B`/`K3-B` merged (those also served by `K1` or a ferry kept it).
 - Line colours come from the line's index in the flattened line list, so adding/removing a line entry (e.g. folding `K2-B`/`K3-B` away) shifts the palette for every line after it.
-- 归属边界的平滑由 `render.config.ts` 的 `BORDER_SMOOTHING`（`none` / `round` / `flow`，默认 `round`）与 `BORDER_CORNER_RADIUS`（px，默认 6）两个常量控制；三种方式都在节点处插值，所以换方式不会让相邻区域错位或撕开。
+- 归属边界的平滑是**运行时**的：`useBorderSmoothing.ts` 的 ref（初值 = `render.config.ts` 的 `BORDER_SMOOTHING`，默认 `flow`）由左下角控制面板的「边界：xxx」按钮循环切换，不落盘；`BORDER_CORNER_RADIUS`（px，默认 6）只影响 `round`。三种方式都在节点处插值，所以换方式不会让相邻区域错位或撕开。
 - 归属边界（`useTerritoryBorders.ts`）是 Delaunay/marching triangles 算出的**精确 Voronoi 边界**：只在**相邻归属单位**之间生成，站点云外圈没有线；共圆退化靠 Lawson 翻边与「外心重合只画一次」处理，没有可调分辨率或平滑参数。站点坐标或 `regions.json` 一变，边界下次加载自动重算，数据侧无需改动。
 - Curve mode (`useCurveGeometry.ts`, implemented but not surfaced in the UI) deliberately **ignores waypoints** — its vertices are the pair's two stations, taken from the first part's start and the last part's end.
 - `/display` draws **rail lines only** (`lines.filter((l) => !l.lineType)`), so all 12 ferries and 3 same-station links are absent there; the 换乘徽章 likewise only list rail lines (a station reachable only by ferry shows no badge). To include them, drop that filter in `views/display/index.vue`.
