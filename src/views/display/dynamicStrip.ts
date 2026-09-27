@@ -1,5 +1,5 @@
 // /display 动态模式的进度模型：把「变体站序 + 方向 + 进度序号」翻译成
-// 「每列该显示为灰 / 原色 / 闪烁」与「哪几段线路要按原色点亮」，不碰任何 CSS。
+// 「每列该显示为灰 / 原色 / 闪烁」与「哪几段线路要按原色点亮、当前区间切成哪几份」，不碰任何 CSS。
 // 灰是默认态：不在本趟变体行程上的站与段永远不会被点亮。
 import type { StripModel, StripStationModel } from './stripModel';
 
@@ -16,6 +16,19 @@ export interface RouteSpan {
   toCol: number;
   /** lane 段是否从引线落点起（CSS 需加 lane-row / 2 + 9px 的左缩进） */
   lead: boolean;
+}
+
+/**
+ * 当前区间切出的一份：几何与 RouteSpan 相同，另带它在所属几何段里的横向占比与相位。
+ * 数组顺序 = 行进方向（0 = 起点端），一份一份点亮，方向即由点亮的先后读出来。
+ */
+export interface RouteSpanPart extends RouteSpan {
+  /** 本份在所属几何段里的左端（0..1，CSS left） */
+  offset: number;
+  /** 本份占所属几何段的比例（0..1，CSS width） */
+  ratio: number;
+  /** 本区间共几份（动画按份数定每份的点亮时长） */
+  parts: number;
 }
 
 export type ProgressStep =
@@ -35,8 +48,8 @@ export interface ProgressModel {
   states: Record<number, StationState>;
   /** 还没到的行程段：按原色点亮 */
   litSpans: RouteSpan[];
-  /** 正在经过的行程段：按原色闪烁（停站状态时为空 —— 闪烁落在该站圆圈上） */
-  currentSpans: RouteSpan[];
+  /** 正在经过的区间：切成几份，按数组顺序（= 行进方向）一份一份点亮（停站状态时为空） */
+  currentParts: RouteSpanPart[];
   /** 本趟行程用到的支线车道（1 起算）；不在里面的车道连「支线」标签块一起保持灰 */
   activeLanes: number[];
 }
@@ -48,7 +61,7 @@ export const EMPTY_PROGRESS: ProgressModel = {
   steps: [],
   states: {},
   litSpans: [],
-  currentSpans: [],
+  currentParts: [],
   activeLanes: [],
 };
 
@@ -83,6 +96,26 @@ function intervalSpans(a: StripStationModel, b: StripStationModel): RouteSpan[] 
     return [{ kind: 'lane', lane: a.lane, fromCol: a.col, toCol: b.col, lead: false }];
   }
   return [];
+}
+
+/**
+ * 把一段区间切成一份一份，用来「一份一份点亮」地指示行进方向。
+ * 单独一段直线（主线区间 / 支线车道区间）切三段；分岔区间按几何段算 —— 45° 引线算一段、长直线算一段。
+ * 返回顺序 = 行进方向：先亮的那一份在最前（反向行驶时把份序倒过来）。
+ */
+function splitSpans(spans: RouteSpan[]): RouteSpanPart[] {
+  const perSpan = spans.length === 1 ? 3 : 1;
+  const out: Omit<RouteSpanPart, 'parts'>[] = [];
+  for (const sp of spans) {
+    const parts = Array.from({ length: perSpan }, (_, i) => ({
+      ...sp,
+      offset: i / perSpan,
+      ratio: 1 / perSpan,
+    }));
+    const forward = sp.kind === 'diag' || sp.toCol >= sp.fromCol;
+    out.push(...(forward ? parts : parts.reverse()));
+  }
+  return out.map((part) => ({ ...part, parts: out.length }));
 }
 
 /**
@@ -138,7 +171,7 @@ export function buildProgress(
   const states: Record<number, StationState> = {};
   for (const station of strip.stations) states[station.col] = 'dim';
   const litSpans: RouteSpan[] = [];
-  const currentSpans: RouteSpan[] = [];
+  const currentParts: RouteSpanPart[] = [];
   // 「出站 / 即将入站」两个状态共用同一份 spans，点亮时按数组身份去重（否则同一段会叠两层同样的条）
   const litSpanSets = new Set<RouteSpan[]>();
   for (let i = index; i < steps.length; i++) {
@@ -146,7 +179,7 @@ export function buildProgress(
     if (step.kind === 'station') {
       states[step.col] = i === index ? 'current' : 'lit';
     } else if (i === index) {
-      currentSpans.push(...step.spans);
+      currentParts.push(...splitSpans(step.spans));
     } else if (!litSpanSets.has(step.spans)) {
       litSpanSets.add(step.spans);
       litSpans.push(...step.spans);
@@ -157,5 +190,5 @@ export function buildProgress(
     ...new Set(cols.map((col) => byCol.get(col)!.lane).filter((lane) => lane > 0)),
   ].sort((a, b) => a - b);
 
-  return { count: steps.length, index, steps, states, litSpans, currentSpans, activeLanes };
+  return { count: steps.length, index, steps, states, litSpans, currentParts, activeLanes };
 }

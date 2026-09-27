@@ -305,6 +305,8 @@ const BASE_ROWS = ['52px', '4px', '20px', '6px', '20px', '12px', '18px'];
 /** 一段支线车道的高度（px）：支线的 45° 引线与车道横线落点都由它推出来（见 .lane-diag / .lane-track） */
 const LANE_ROW = 24;
 const PANEL_H = 280;
+/** 动态模式里「一份接一份点亮」的周期（秒）：与 CSS 的 dyn-march-2 / dyn-march-3 一致 */
+const DYN_PERIOD = 1.1;
 
 function stripStyle(s: StripModel) {
   const n = s.stations.length;
@@ -469,7 +471,7 @@ function cell(col: number) {
             </div>
           </template>
 
-          <!-- 动态模式：只点亮本趟行程还没走到的段（当前段闪烁）；其余线路段由 .strip-dyn 统一变灰 -->
+          <!-- 动态模式：只点亮本趟行程还没走到的段；正在经过的区间切成几份，一份一份点亮（顺序 = 行进方向） -->
           <div
             v-for="(sp, i) in dyn(s.key).litSpans"
             :key="'dyn-lit-' + i"
@@ -477,11 +479,20 @@ function cell(col: number) {
             :class="{ 'dyn-span-diag': sp.kind === 'diag', 'dyn-span-lead': sp.lead }"
             :style="spanStyle(sp)"></div>
           <div
-            v-for="(sp, i) in dyn(s.key).currentSpans"
+            v-for="(sp, i) in dyn(s.key).currentParts"
             :key="'dyn-cur-' + i"
             class="dyn-span dyn-span-cur"
             :class="{ 'dyn-span-diag': sp.kind === 'diag', 'dyn-span-lead': sp.lead }"
-            :style="spanStyle(sp)"></div>
+            :style="spanStyle(sp)">
+            <div
+              class="dyn-chunk"
+              :class="'dyn-chunk-' + sp.parts"
+              :style="{
+                left: sp.offset * 100 + '%',
+                width: sp.ratio * 100 + '%',
+                animationDelay: `${-(i / sp.parts) * DYN_PERIOD}s`,
+              }"></div>
+          </div>
 
           <!-- 站点：白底圆圈 + 居中的序号（不在本趟行程上 / 已经过的都是灰的） -->
           <div
@@ -868,9 +879,24 @@ function cell(col: number) {
   border-radius: 3px;
   background: var(--line-color);
 }
-/* 正在经过的段：原色与灰底之间闪烁 */
+/* 正在经过的区间：底不再整段着色（透出下面的灰线），由里面一份一份点亮 —— 亮的先后即行进方向 */
 .dyn-span-cur {
-  animation: dyn-blink 1.1s ease-in-out infinite;
+  position: relative;
+  background: none;
+}
+/* 一份：位置（left）与占比（width）由模型给；同一区间里只有一份是亮的 */
+.dyn-chunk {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 3px;
+  background: var(--line-color);
+}
+.dyn-chunk-2 {
+  animation: dyn-march-2 1.1s linear infinite;
+}
+.dyn-chunk-3 {
+  animation: dyn-march-3 1.1s linear infinite;
 }
 /* 与 .lane-diag 同形：从分歧站圆圈中心 45° 汇入支线车道（写在 .dyn-span 之后才能覆盖 align-self） */
 .dyn-span-diag {
@@ -900,6 +926,27 @@ function cell(col: number) {
 /* 本趟行程用不到的车道，连末端的「支线」标签块一起变灰 */
 .lane-tag.dyn-dim {
   background: var(--dyn-gray);
+}
+/* 一份一份点亮：每份一个周期内亮 1 / 份数 的时间，靠 animation-delay 错开相位，所以同时只有一份是亮的 */
+@keyframes dyn-march-2 {
+  0%,
+  49.99% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes dyn-march-3 {
+  0%,
+  33.32% {
+    opacity: 1;
+  }
+  33.34%,
+  100% {
+    opacity: 0;
+  }
 }
 @keyframes dyn-blink {
   0%,
