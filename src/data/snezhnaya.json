@@ -123,6 +123,7 @@
       "lineLabels": [],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Snezhnaya-Snezhnaya",
             "Snezhnaya-Svetloledovka",
@@ -145,6 +146,7 @@
       "lineLabels": [],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Snezhnaya-Snezhnaya",
             "Snezhnaya-Morepesok",
@@ -166,6 +168,7 @@
       "lineLabels": [],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Snezhnaya-Snezhnaya",
             "Snezhnaya-Morepesok",
@@ -187,6 +190,7 @@
       "lineLabels": [],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": ["Snezhnaya-Snezhnaya", "Snezhnaya-PaleCrown"]
         }
       ]
@@ -199,10 +203,10 @@
         "ja": "スネージナヤ列車・ナド・クライ連絡線",
         "en": "Snezhnaya Railway Nod-Krai Connector"
       },
-      "costPreset": "standard",
       "lineLabels": [],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": ["Snezhnaya-Sretomorozsk", "Teyvat-STR"]
         }
       ]

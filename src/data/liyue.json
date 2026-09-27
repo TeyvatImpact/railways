@@ -297,6 +297,7 @@
       ],
       "variants": [
         {
+          "vehicle": "liyue-metro",
           "stations": [
             "Liyue-LYG",
             "Liyue-HET",
@@ -307,8 +308,7 @@
             "Liyue-HYG"
           ]
         }
-      ],
-      "costPreset": "liyue-metro"
+      ]
     },
     {
       "id": "LHM-2",
@@ -324,6 +324,7 @@
       ],
       "variants": [
         {
+          "vehicle": "liyue-metro",
           "stations": [
             "Liyue-HYC",
             "Liyue-NCM",
@@ -335,8 +336,7 @@
             "Liyue-LYB"
           ]
         }
-      ],
-      "costPreset": "liyue-metro"
+      ]
     },
     {
       "id": "LHM-3",
@@ -352,6 +352,7 @@
       ],
       "variants": [
         {
+          "vehicle": "liyue-metro",
           "stations": [
             "Liyue-HJW",
             "Liyue-NCM",
@@ -362,8 +363,7 @@
             "Liyue-YLY"
           ]
         }
-      ],
-      "costPreset": "liyue-metro"
+      ]
     },
     {
       "id": "LHM-S1",
@@ -379,10 +379,10 @@
       ],
       "variants": [
         {
+          "vehicle": "liyue-metro",
           "stations": ["Liyue-LHC", "Liyue-LYB", "Liyue-YLY", "Liyue-GYX", "Liyue-GYG"]
         }
-      ],
-      "costPreset": "liyue-metro"
+      ]
     }
   ]
 }

@@ -1539,6 +1539,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-SAA",
             "Teyvat-MSC",
@@ -1567,6 +1568,7 @@
           ]
         },
         {
+          "vehicle": "standard",
           "name": "小交路",
           "nameEn": "Short Turnback",
           "stations": [
@@ -1588,8 +1590,7 @@
             "Teyvat-SMC"
           ]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "B",
@@ -1615,6 +1616,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-STL",
             "Teyvat-WLD",
@@ -1631,8 +1633,7 @@
             "Teyvat-POM"
           ]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "M1",
@@ -1656,6 +1657,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-SFL",
             "Teyvat-WSW",
@@ -1667,12 +1669,12 @@
           ]
         },
         {
+          "vehicle": "standard",
           "name": "小交路",
           "nameEn": "Short Turnback",
           "stations": ["Teyvat-SFL", "Teyvat-WSW", "Teyvat-MSG", "Teyvat-WDR"]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "L1",
@@ -1697,6 +1699,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-LYS",
             "Teyvat-LYH",
@@ -1710,8 +1713,7 @@
             "Teyvat-YLW"
           ]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "L2",
@@ -1736,6 +1738,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-CWT",
             "Teyvat-MMY",
@@ -1747,12 +1750,12 @@
           ]
         },
         {
+          "vehicle": "standard",
           "name": "小交路",
           "nameEn": "Short Turnback",
           "stations": ["Teyvat-YLW", "Teyvat-QYV", "Teyvat-QCV", "Teyvat-DHM", "Teyvat-WSI"]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "S1",
@@ -1776,10 +1779,10 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": ["Teyvat-BDH", "Teyvat-CTC", "Teyvat-SMC", "Teyvat-VMV", "Teyvat-POM"]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "S2",
@@ -1803,6 +1806,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-CTC",
             "Teyvat-CHH",
@@ -1818,8 +1822,7 @@
             "Teyvat-CTC"
           ]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "F1",
@@ -1852,6 +1855,7 @@
       ],
       "variants": [
         {
+          "vehicle": "aquabus",
           "stations": [
             "Teyvat-COF",
             "Teyvat-PLM",
@@ -1868,8 +1872,7 @@
             "Teyvat-COF"
           ]
         }
-      ],
-      "costPreset": "aquabus"
+      ]
     },
     {
       "id": "F2",
@@ -1901,10 +1904,10 @@
       ],
       "variants": [
         {
+          "vehicle": "aquabus",
           "stations": ["Teyvat-COF", "Teyvat-MCT", "Teyvat-OPE", "Teyvat-FFP", "Teyvat-LDH"]
         }
-      ],
-      "costPreset": "aquabus"
+      ]
     },
     {
       "id": "F3",
@@ -1936,10 +1939,10 @@
       ],
       "variants": [
         {
+          "vehicle": "aquabus",
           "stations": ["Teyvat-RRH", "Teyvat-MAT", "Teyvat-COF", "Teyvat-PLM", "Teyvat-MES"]
         }
-      ],
-      "costPreset": "aquabus"
+      ]
     },
     {
       "id": "N0",
@@ -1960,10 +1963,10 @@
       "lineLabels": [["COE", "RB"]],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": ["Teyvat-DOM", "Teyvat-COE", "Teyvat-SFV", "Teyvat-CWF", "Teyvat-SSF"]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "N1",
@@ -1987,6 +1990,7 @@
       ],
       "variants": [
         {
+          "vehicle": "natlan-resort",
           "stations": [
             "Teyvat-COE",
             "Teyvat-SFV",
@@ -1996,8 +2000,7 @@
             "Teyvat-FSF"
           ]
         }
-      ],
-      "costPreset": "natlan-resort"
+      ]
     },
     {
       "id": "N2",
@@ -2022,6 +2025,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-ONT",
             "Teyvat-FFC",
@@ -2036,8 +2040,7 @@
             "Teyvat-COE"
           ]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "N3",
@@ -2061,6 +2064,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-TPP",
             "Teyvat-SOC",
@@ -2070,8 +2074,7 @@
             "Teyvat-TPB"
           ]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "N4",
@@ -2100,10 +2103,10 @@
       "lineLabels": [["EBM", "LB"]],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": ["Teyvat-EBP", "Teyvat-EBM", "Teyvat-CFC", "Teyvat-WVB", "Teyvat-TLI"]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "K1",
@@ -2124,10 +2127,10 @@
       "lineLabels": [["NST", "LB"]],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": ["Teyvat-NSP", "Teyvat-NST", "Teyvat-CKC", "Teyvat-FME"]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "K2",
@@ -2152,6 +2155,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-NSP",
             "Teyvat-NST",
@@ -2163,6 +2167,7 @@
           ]
         },
         {
+          "vehicle": "standard",
           "name": "支线",
           "nameEn": "Branch",
           "stations": [
@@ -2175,8 +2180,7 @@
             "Teyvat-KEW"
           ]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "K3",
@@ -2201,6 +2205,7 @@
       ],
       "variants": [
         {
+          "vehicle": "standard",
           "stations": [
             "Teyvat-VOP",
             "Teyvat-PRM",
@@ -2211,6 +2216,7 @@
           ]
         },
         {
+          "vehicle": "standard",
           "name": "支线",
           "nameEn": "Branch",
           "stations": [
@@ -2222,15 +2228,14 @@
             "Teyvat-KMC"
           ]
         }
-      ],
-      "costPreset": "standard"
+      ]
     },
     {
       "id": "ferry-fnc-vop",
       "lineType": "ferry",
-      "costPreset": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Teyvat-FNC", "Teyvat-VOP"]
         }
       ]

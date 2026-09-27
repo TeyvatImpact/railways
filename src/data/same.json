@@ -5,30 +5,30 @@
       "lineType": "same-station",
       "variants": [
         {
+          "vehicle": "same-station",
           "stations": ["Teyvat-LYH", "Liyue-LYG"]
         }
-      ],
-      "costPreset": "same-station"
+      ]
     },
     {
       "id": "same-lys-lyn",
       "lineType": "same-station",
       "variants": [
         {
+          "vehicle": "same-station",
           "stations": ["Teyvat-LYS", "Liyue-LYN"]
         }
-      ],
-      "costPreset": "same-station"
+      ]
     },
     {
       "id": "same-lyh-lyb",
       "lineType": "same-station",
       "variants": [
         {
+          "vehicle": "same-station",
           "stations": ["Teyvat-LYN", "Liyue-LYB"]
         }
-      ],
-      "costPreset": "same-station"
+      ]
     }
   ]
 }

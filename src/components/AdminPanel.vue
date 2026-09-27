@@ -81,11 +81,6 @@
                         placeholder="en" />
                     </template>
                     <span v-else class="derived-name">线路名由端点站自动生成，不可编辑</span>
-                    <select v-model="line.costPreset" class="preset-select">
-                      <option v-for="p in presetOptions" :key="p.id" :value="p.id">
-                        {{ p.label }}
-                      </option>
-                    </select>
                   </div>
                   <div v-for="(variant, vi) in line.variants" :key="vi" class="variant-group">
                     <div class="line-header">
@@ -97,6 +92,11 @@
                         v-model="variant.nameEn"
                         class="edit-input line-name"
                         placeholder="Variant (EN)" />
+                      <select v-model="variant.vehicle" class="preset-select">
+                        <option v-for="v in VEHICLES" :key="v.id" :value="v.id">
+                          {{ v.name }}
+                        </option>
+                      </select>
                     </div>
                     <table class="data-table">
                       <thead>
@@ -162,19 +162,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
+import { VEHICLES } from '../config/vehicles';
 
 const fileKeys = ['teyvat', 'inazuma', 'liyue', 'snezhnaya', 'ferry', 'same', 'connections'];
 const regionKeys = ['teyvat', 'inazuma', 'liyue', 'snezhnaya'];
-
-const presetOptions = [
-  { id: 'standard', label: '标准' },
-  { id: 'aquabus', label: '巡轨船' },
-  { id: 'natlan-resort', label: '度假村' },
-  { id: 'inazuma', label: '稻妻铁道' },
-  { id: 'liyue-metro', label: '璃月港地铁' },
-  { id: 'ferry', label: '轮渡' },
-  { id: 'same-station', label: '同站换乘' },
-];
 
 const isDev = import.meta.env.DEV;
 const props = defineProps<{ visible: boolean }>();

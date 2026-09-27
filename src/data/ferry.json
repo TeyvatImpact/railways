@@ -5,90 +5,90 @@
       "lineType": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Liyue-KYB", "Inazuma-RTP"]
         }
-      ],
-      "costPreset": "ferry"
+      ]
     },
     {
       "id": "ferry-kyn-mus",
       "lineType": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Liyue-KYN", "Inazuma-MUS"]
         }
-      ],
-      "costPreset": "ferry"
+      ]
     },
     {
       "id": "ferry-pom-mus",
       "lineType": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Teyvat-POM", "Inazuma-MUS"]
         }
-      ],
-      "costPreset": "ferry"
+      ]
     },
     {
       "id": "ferry-bdh-rrh",
       "lineType": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Teyvat-BDH", "Teyvat-RRH"]
         }
-      ],
-      "costPreset": "ferry"
+      ]
     },
     {
       "id": "ferry-vko-rrh",
       "lineType": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Teyvat-VKO", "Teyvat-RRH"]
         }
-      ],
-      "costPreset": "ferry"
+      ]
     },
     {
       "id": "ferry-rrh-nsp",
       "lineType": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Teyvat-RRH", "Teyvat-NSP"]
         }
-      ],
-      "costPreset": "ferry"
+      ]
     },
     {
       "id": "ferry-ffc-nsp",
       "lineType": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Teyvat-FFC", "Teyvat-NSP"]
         }
-      ],
-      "costPreset": "ferry"
+      ]
     },
     {
       "id": "ferry-ffc-ebp",
       "lineType": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Teyvat-FFC", "Teyvat-EBP"]
         }
-      ],
-      "costPreset": "ferry"
+      ]
     },
     {
       "id": "ferry-ylw-ldh",
       "lineType": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Teyvat-YLW", "Teyvat-LDH"]
         }
-      ],
-      "costPreset": "ferry"
+      ]
     }
   ]
 }

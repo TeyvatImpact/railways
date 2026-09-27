@@ -29,7 +29,7 @@ import {
   type MarkerSize,
   type MarkerTextRole,
 } from '../config/render.config';
-import farePresets from '../config/fare-presets.json';
+import { DEFAULT_VEHICLE_ID, defaultCompute, getVehicle, hasVehicle } from '../config/vehicles';
 import type { NameLocale, OrgNames, StationNames } from './stationNames';
 import { ferryLineNames, sameStationLineNames } from './lineNaming';
 
@@ -57,14 +57,6 @@ export interface ConnectionEntry {
   waypoints?: Waypoints;
 }
 
-export interface PresetConfig {
-  id: string;
-  name: string;
-  nameEn: string;
-  farePerKm: number;
-  minutesPerKm: number;
-}
-
 /** 途经点：链式增量，单位为数据坐标单位（与 station.x/y 同尺度）。第 1 个点相对区间起点站，之后每个点相对前一个点 */
 export type Waypoints = [number, number][];
 
@@ -77,6 +69,8 @@ export interface LineVariantData {
   /** 短变体名（如 `支线` / `小交路`）；空或省略表示该线路的全线交路 */
   name?: string;
   nameEn?: string;
+  /** 本变体选用的车型 id（`config/vehicles.ts`）；省略 = `DEFAULT_VEHICLE_ID` */
+  vehicle?: string;
   /** 该变体的站序（短 id；跨区引用写完整 id） */
   stations: string[];
 }
@@ -90,7 +84,6 @@ export interface LineData {
   names?: StationNames;
   /** 线路名的主语言；缺省时继承所属区域 config.primaryLang（ferry.json / same.json 无 config → `zhCN`） */
   primaryLang?: NameLocale;
-  costPreset: string;
   lineLabels?: [string, string][];
   /** 同一线路的多个交路（支线 / 大小交路），至少一个；变体之间共用线路名与颜色 */
   variants: LineVariantData[];
@@ -103,15 +96,6 @@ export interface LineData {
   /** 运营主体（提瓦特铁路xx局 / 稻妻幕府 / 枫丹廷 …）；缺省同上 */
   authority?: OrgInfo;
   lineType?: 'ferry' | 'same-station';
-}
-
-const presetsMap = new Map<string, PresetConfig>();
-for (const p of farePresets as PresetConfig[]) {
-  presetsMap.set(p.id, p);
-}
-
-export function getPreset(id: string): PresetConfig {
-  return presetsMap.get(id) ?? presetsMap.get('standard')!;
 }
 
 /** regions.json 的一级划分（「国家/地区」或「区域」）：稳定 id + 四语名称 */
@@ -132,6 +116,8 @@ export interface Station extends StationData {
 export interface LineVariant {
   name: string;
   nameEn: string;
+  /** 已解析的车型 id（数据里的值，缺省补 `DEFAULT_VEHICLE_ID`） */
+  vehicle: string;
   stations: string[];
 }
 
@@ -389,6 +375,8 @@ function assertVariants(line: LineData): void {
   for (const variant of line.variants) {
     if (!Array.isArray(variant.stations) || variant.stations.length < 2)
       throw new Error(`线路 ${line.id} 的变体站点数不足 2 个`);
+    if (variant.vehicle && !hasVehicle(variant.vehicle))
+      throw new Error(`线路 ${line.id} 的变体引用了未知车型：${variant.vehicle}`);
   }
 }
 
@@ -485,15 +473,17 @@ export interface PairCost {
 }
 
 /**
- * 线路在某站对上的一程费用：`distance × preset`，四舍五入到整数。
+ * 线路变体在某站对上的一程费用：距离先由 `connections.json` 查出，再交给该变体车型的
+ * 计算公式（缺省 = 设计时速推时间、票价系数推票价），最后四舍五入到整数。
  * 渲染段的标签、路由图的边权、信息面板的区间费用都走这一个函数。
  */
-export function pairCost(costPreset: string, aId: string, bId: string): PairCost {
+export function pairCost(vehicleId: string, aId: string, bId: string): PairCost {
   const distance = lookupDistance(aId, bId);
-  const preset = getPreset(costPreset);
+  const vehicle = getVehicle(vehicleId);
+  const { time, fare } = (vehicle.compute ?? defaultCompute)(distance, vehicle);
   return {
-    fare: Math.round(distance * preset.farePerKm),
-    time: Math.round(distance * preset.minutesPerKm),
+    fare: Math.round(fare),
+    time: Math.round(time),
     distance,
   };
 }
@@ -568,6 +558,7 @@ export const lines: Line[] = parsedLines.map((line) => ({
   variants: line.variants.map((variant) => ({
     name: variant.name ?? '',
     nameEn: variant.nameEn ?? '',
+    vehicle: variant.vehicle ?? DEFAULT_VEHICLE_ID,
     stations: variant.stations,
   })),
   stations: unionStations(line.variants),
@@ -791,12 +782,12 @@ function lineWidth(line: LineData): number | undefined {
 }
 
 /**
- * 线路全部变体按顺序展开后的站间区间。同一无向站对只保留首次出现的方向：变体共用同一段轨道，
- * 不能因为两个变体都经过而占两个平行轨道槽位。
+ * 线路全部变体按顺序展开后的站间区间。同一无向站对只保留首次出现的方向与车型：变体共用同一段轨道，
+ * 不能因为两个变体都经过而占两个平行轨道槽位（费用标签同理，取首个经过该区间的变体的车型）。
  */
-function linePairs(variants: { stations: string[] }[]): [string, string][] {
+function linePairs(variants: LineVariantData[]): { a: string; b: string; vehicle: string }[] {
   const seen = new Set<string>();
-  const out: [string, string][] = [];
+  const out: { a: string; b: string; vehicle: string }[] = [];
   for (const variant of variants) {
     for (let i = 0; i < variant.stations.length - 1; i++) {
       const a = variant.stations[i];
@@ -804,7 +795,7 @@ function linePairs(variants: { stations: string[] }[]): [string, string][] {
       const key = [a, b].sort().join('|');
       if (seen.has(key)) continue;
       seen.add(key);
-      out.push([a, b]);
+      out.push({ a, b, vehicle: variant.vehicle ?? DEFAULT_VEHICLE_ID });
     }
   }
   return out;
@@ -815,12 +806,12 @@ for (const line of parsedLines) {
   const dash = line.lineType === 'ferry' ? FERRY_DASH : undefined;
   const pairs = linePairs(line.variants);
   for (let i = 0; i < pairs.length; i++) {
-    const [aId, bId] = pairs[i];
+    const { a: aId, b: bId, vehicle } = pairs[i];
     const sa = stationMap.get(aId);
     const sb = stationMap.get(bId);
     if (!sa || !sb) continue;
 
-    const { fare, time, distance } = pairCost(line.costPreset, aId, bId);
+    const { fare, time, distance } = pairCost(vehicle, aId, bId);
 
     const verts = connectionVertices(sa, sb);
     const groupKey = polylineKey(verts);

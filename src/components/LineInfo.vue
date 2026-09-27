@@ -214,8 +214,9 @@ function onVariantChange(e: Event) {
 function costLabel(i: number): string {
   const a = stationIds.value[i];
   const b = stationIds.value[i + 1];
-  if (!line.value || !a || !b) return '';
-  const cost = pairCost(line.value.costPreset, a, b);
+  const variant = line.value?.variants[variantIndex.value];
+  if (!variant || !a || !b) return '';
+  const cost = pairCost(variant.vehicle, a, b);
   return `${cost.fare} 摩拉 · ${cost.time} 分钟 · ${cost.distance} 千米`;
 }
 </script>

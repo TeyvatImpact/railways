@@ -145,7 +145,7 @@ for (const line of lines) {
       const aSt = stationMap.get(aId);
       const bSt = stationMap.get(bId);
       if (!aSt || !bSt) continue;
-      const { fare, time, distance } = pairCost(line.costPreset, aId, bId);
+      const { fare, time, distance } = pairCost(variant.vehicle, aId, bId);
       addEdge(
         nodeIdFor(aId, line.id, vi),
         nodeIdFor(bId, line.id, vi),

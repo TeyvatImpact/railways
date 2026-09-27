@@ -461,6 +461,7 @@
       ],
       "variants": [
         {
+          "vehicle": "inazuma",
           "stations": [
             "Inazuma-NIT",
             "Inazuma-IZC",
@@ -471,8 +472,7 @@
             "Inazuma-RTP"
           ]
         }
-      ],
-      "costPreset": "inazuma"
+      ]
     },
     {
       "id": "YG",
@@ -485,6 +485,7 @@
       "lineLabels": [["AUM", "LT"]],
       "variants": [
         {
+          "vehicle": "inazuma",
           "stations": [
             "Inazuma-BKP",
             "Inazuma-KDV",
@@ -495,8 +496,7 @@
             "Inazuma-BKP"
           ]
         }
-      ],
-      "costPreset": "inazuma"
+      ]
     },
     {
       "id": "NW",
@@ -512,6 +512,7 @@
       ],
       "variants": [
         {
+          "vehicle": "inazuma",
           "stations": [
             "Inazuma-IZC",
             "Inazuma-HMZ",
@@ -523,8 +524,7 @@
             "Inazuma-HGV"
           ]
         }
-      ],
-      "costPreset": "inazuma"
+      ]
     },
     {
       "id": "NS",
@@ -537,10 +537,10 @@
       "lineLabels": [["IZC", "LB"]],
       "variants": [
         {
+          "vehicle": "inazuma",
           "stations": ["Inazuma-NIT", "Inazuma-IZC", "Inazuma-HMZ", "Inazuma-BKP", "Inazuma-GNS"]
         }
-      ],
-      "costPreset": "inazuma"
+      ]
     },
     {
       "id": "YS",
@@ -553,10 +553,10 @@
       "lineLabels": [["SPH", "LB"]],
       "variants": [
         {
+          "vehicle": "inazuma",
           "stations": ["Inazuma-FFT", "Inazuma-HGV", "Inazuma-SPH", "Inazuma-JTM"]
         }
-      ],
-      "costPreset": "inazuma"
+      ]
     },
     {
       "id": "WT",
@@ -577,10 +577,10 @@
       "lineLabels": [["WTE", "LB"]],
       "variants": [
         {
+          "vehicle": "inazuma",
           "stations": ["Inazuma-WTE", "Inazuma-BRV", "Inazuma-SGM", "Inazuma-MUS"]
         }
-      ],
-      "costPreset": "inazuma"
+      ]
     },
     {
       "id": "TA",
@@ -593,10 +593,10 @@
       "lineLabels": [["ATP", "LT"]],
       "variants": [
         {
+          "vehicle": "inazuma",
           "stations": ["Inazuma-TMP", "Inazuma-MCS", "Inazuma-MKN", "Inazuma-ATP"]
         }
-      ],
-      "costPreset": "inazuma"
+      ]
     },
     {
       "id": "TB",
@@ -609,17 +609,17 @@
       "lineLabels": [["SKP", "LT"]],
       "variants": [
         {
+          "vehicle": "inazuma",
           "stations": ["Inazuma-SKP", "Inazuma-ONB", "Inazuma-CRS", "Inazuma-MCS", "Inazuma-WKS"]
         }
-      ],
-      "costPreset": "inazuma"
+      ]
     },
     {
       "id": "ferry-hgv-wte",
       "lineType": "ferry",
-      "costPreset": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Inazuma-HGV", "Inazuma-WTE"]
         }
       ]
@@ -627,9 +627,9 @@
     {
       "id": "ferry-izc-tmp",
       "lineType": "ferry",
-      "costPreset": "ferry",
       "variants": [
         {
+          "vehicle": "ferry",
           "stations": ["Inazuma-IZC", "Inazuma-TMP"]
         }
       ]
