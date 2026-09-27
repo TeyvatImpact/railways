@@ -1,5 +1,6 @@
 import { stations, minX, minY } from './useMapData';
-import { BLOCK_SIZE } from '../config/render.config';
+import { BLOCK_SIZE, BORDER_CORNER_FILLET } from '../config/render.config';
+import { bezierControls, type Pt } from './useCurveGeometry';
 
 /**
  * 归属边界（国家/地区边界线 + 区域边界线）。
@@ -317,14 +318,28 @@ if (points.length >= 3) {
       start = circumcenters[adjacent[0]];
       end = circumcenters[adjacent[1]];
     } else {
+      // 凸包边：Voronoi 边是从外心射向**远离第三个站**那一侧的射线（第三站就在另一侧等着切进来）
       const center = circumcenters[adjacent[0]];
+      const triangle = triangles[adjacent[0]];
+      const third =
+        triangle[0] !== a && triangle[0] !== b
+          ? triangle[0]
+          : triangle[1] !== a && triangle[1] !== b
+            ? triangle[1]
+            : triangle[2];
       const midpoint = { x: (points[a].x + points[b].x) / 2, y: (points[a].y + points[b].y) / 2 };
-      const dx = center.x - midpoint.x;
-      const dy = center.y - midpoint.y;
+      let dx = center.x - midpoint.x;
+      let dy = center.y - midpoint.y;
       const length = Math.hypot(dx, dy);
       if (length < MIN_SEGMENT) continue;
+      dx /= length;
+      dy /= length;
+      if (dx * (points[third].x - midpoint.x) + dy * (points[third].y - midpoint.y) > 0) {
+        dx = -dx;
+        dy = -dy;
+      }
       start = center;
-      end = { x: center.x + (dx / length) * rayLength, y: center.y + (dy / length) * rayLength };
+      end = { x: center.x + dx * rayLength, y: center.y + dy * rayLength };
     }
     const clipped = clipToHull(start, end, hull);
     if (!clipped) continue;
@@ -402,17 +417,67 @@ function dropCollinear(polyline: Point[]): Point[] {
 
 const format = (value: number): string => (Math.round(value * 10) / 10).toString();
 
+/**
+ * 折线 → 向心 Catmull–Rom 曲线 path（控制点数学与线路曲线同一套：`bezierControls`）。
+ *
+ * 曲线**经过每一个节点**，交汇点（多个单位共用）因此天然被钉住，相邻区域的边界不会因为
+ * 各自平滑而撕开；完全共线的节点给出共线控制点，直线段平滑后仍是直线。
+ *
+ * 标准向心 Catmull–Rom 在节点间距悬殊时会严重过冲（实测离真实 Voronoi 边界最远 42px），
+ * 所以每个节点的控制点长度被钳到 `min(圆角上限, 相邻段长 / 3)`：转弯被圆掉，长直线不动，
+ * 曲线离真实边界只剩圆角量级的偏差；长度按节点对称取值（进出两端取同一个值），
+ * 曲线在节点处仍是 C¹，不会出现新的折角。
+ */
+function buildPath(vertices: Point[]): string | null {
+  if (vertices.length < 2) return null;
+  const pixels: Pt[] = vertices.map((p) => ({
+    x: (p.x - minX) * BLOCK_SIZE,
+    y: (p.y - minY) * BLOCK_SIZE,
+  }));
+  const count = pixels.length;
+  const head = pixels[0];
+  const tail = pixels[count - 1];
+  let d = `M ${format(head.x)},${format(head.y)}`;
+  if (count === 2) return `${d} L ${format(tail.x)},${format(tail.y)}`;
+  const closed = Math.hypot(tail.x - head.x, tail.y - head.y) < 1e-3;
+
+  // 每个节点允许的控制点长度：不超过相邻两段较短者的 1/3，也不超过圆角上限
+  const handles = pixels.map((p, index) => {
+    const prev = pixels[index > 0 ? index - 1 : closed ? count - 2 : 0];
+    const next = pixels[index + 1 < count ? index + 1 : closed ? 1 : count - 1];
+    const shorter = Math.min(
+      Math.hypot(p.x - prev.x, p.y - prev.y),
+      Math.hypot(next.x - p.x, next.y - p.y),
+    );
+    return Math.min(BORDER_CORNER_FILLET, shorter / 3);
+  });
+
+  const stretch = (from: Pt, to: Pt, length: number): Pt => {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const size = Math.hypot(dx, dy);
+    if (size < 1e-9) return { x: from.x, y: from.y };
+    return { x: from.x + (dx / size) * length, y: from.y + (dy / size) * length };
+  };
+
+  for (let i = 0; i < count - 1; i++) {
+    const p1 = pixels[i];
+    const p2 = pixels[i + 1];
+    const start = i > 0 ? i - 1 : closed ? count - 2 : 0;
+    const end = i + 2 < count ? i + 2 : closed ? 1 : count - 1;
+    const { c1, c2 } = bezierControls(pixels[start], p1, p2, pixels[end]);
+    const h1 = stretch(p1, c1, handles[i]);
+    const h2 = stretch(p2, c2, handles[i + 1]);
+    d += ` C ${format(h1.x)},${format(h1.y)} ${format(h2.x)},${format(h2.y)} ${format(p2.x)},${format(p2.y)}`;
+  }
+  return d;
+}
+
 function buildPaths(list: Segment[], idPrefix: string): TerritoryBorderPath[] {
   const paths: TerritoryBorderPath[] = [];
   for (const polyline of chain(list)) {
-    const vertices = dropCollinear(polyline);
-    if (vertices.length < 2) continue;
-    const d = vertices
-      .map(
-        (p, i) =>
-          `${i === 0 ? 'M' : 'L'} ${format((p.x - minX) * BLOCK_SIZE)},${format((p.y - minY) * BLOCK_SIZE)}`,
-      )
-      .join(' ');
+    const d = buildPath(dropCollinear(polyline));
+    if (!d) continue;
     paths.push({ id: `${idPrefix}-${paths.length}`, d });
   }
   return paths;

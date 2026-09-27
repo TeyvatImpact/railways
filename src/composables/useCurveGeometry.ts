@@ -23,7 +23,8 @@ const MERGE = 1e-6;
 /** 向心 Catmull-Rom 参数化指数 */
 const ALPHA = 0.5;
 
-interface Pt {
+/** 曲线顶点（SVG 用户单位） */
+export interface Pt {
   x: number;
   y: number;
 }
@@ -32,7 +33,7 @@ interface Pt {
  * 向心 Catmull-Rom 三次贝塞尔控制点：曲线经过 p1、p2，p0/p3 决定两端切线。
  * 节点取累计弦长的 ALPHA 次幂（非均匀参数化，避免不等距站点处的过冲与打结）。
  */
-function bezierControls(p0: Pt, p1: Pt, p2: Pt, p3: Pt): { c1: Pt; c2: Pt } {
+export function bezierControls(p0: Pt, p1: Pt, p2: Pt, p3: Pt): { c1: Pt; c2: Pt } {
   // 重合点会让节点增量归零；取一个下限，此时对应的差向量本身也是零向量，公式仍然有限
   const k01 = Math.max(Math.pow(Math.hypot(p1.x - p0.x, p1.y - p0.y), ALPHA), 1e-3);
   const k12 = Math.max(Math.pow(Math.hypot(p2.x - p1.x, p2.y - p1.y), ALPHA), 1e-3);

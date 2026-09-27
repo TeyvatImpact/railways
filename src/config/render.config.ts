@@ -130,5 +130,12 @@ export const AREA_BORDER_COLOR = '#9ca3af';
 /** 区域边界线宽度（px） */
 export const AREA_BORDER_WIDTH = 1.25;
 
+/**
+ * 归属边界的圆角上限（px）：转角处 Catmull–Rom 控制点的最大长度。
+ * 控制点同时还被压到相邻段长的 1/3 以内，所以曲线不会比真实边界多出圆角量级的偏差；
+ * 设 0 即退回精确折线（直线段本来就完全共线，圆角只作用于转弯处）。
+ */
+export const BORDER_CORNER_FILLET = 6;
+
 /** 区域边界线虚线样式（空字符串 = 实线） */
 export const AREA_BORDER_DASH = '5,4';
