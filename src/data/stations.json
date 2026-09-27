@@ -1,0 +1,2376 @@
+{
+  "Teyvat-LYH": {
+    "names": {
+      "zhCN": "璃月港",
+      "zhTW": "璃月港",
+      "ja": "璃月港",
+      "en": "Liyue Harbor",
+      "pronunciationJa": "リーユェこう"
+    },
+    "x": 0,
+    "y": 0,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "L"
+  },
+  "Teyvat-LYS": {
+    "names": {
+      "zhCN": "璃月港南",
+      "zhTW": "璃月港南",
+      "ja": "璃月港南",
+      "en": "Liyue Harbor South"
+    },
+    "x": 2,
+    "y": 1,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "T"
+  },
+  "Teyvat-DYR": {
+    "names": {
+      "zhCN": "遁玉陵",
+      "zhTW": "遁玉陵",
+      "ja": "遁玉の丘",
+      "en": "Dunyu Ruins",
+      "pronunciationJa": "とんぎょくのおか"
+    },
+    "x": -2,
+    "y": -2,
+    "nation": "liyue",
+    "labelDir": "RT"
+  },
+  "Teyvat-TQV": {
+    "names": {
+      "zhCN": "天遒谷",
+      "zhTW": "天遒谷",
+      "ja": "天穹の谷",
+      "en": "Tianqiu Valley",
+      "pronunciationJa": "てんきゅうのたに"
+    },
+    "x": -3,
+    "y": -3,
+    "nation": "liyue",
+    "labelDir": "L"
+  },
+  "Teyvat-NTM": {
+    "names": {
+      "zhCN": "南天门",
+      "zhTW": "南天門",
+      "ja": "南天門",
+      "en": "Nantianmen",
+      "pronunciationJa": "なんてんもん"
+    },
+    "x": -4,
+    "y": -4,
+    "nation": "liyue",
+    "labelDir": "L"
+  },
+  "Teyvat-MIL": {
+    "names": {
+      "zhCN": "珉林",
+      "zhTW": "珉林",
+      "ja": "珉林",
+      "en": "Minlin",
+      "pronunciationJa": "みんりん"
+    },
+    "x": -4,
+    "y": -6,
+    "nation": "liyue",
+    "labelDir": "LB"
+  },
+  "Teyvat-MXL": {
+    "names": {
+      "zhCN": "悬练山",
+      "zhTW": "懸練山",
+      "ja": "懸練山",
+      "en": "Mt. Xuanlian",
+      "pronunciationJa": "けんれんざん"
+    },
+    "x": -4,
+    "y": -7,
+    "nation": "liyue",
+    "area": "chenyu-vale",
+    "labelDir": "LB"
+  },
+  "Teyvat-CZW": {
+    "names": {
+      "zhCN": "赤璋城垣",
+      "zhTW": "赤璋城垣",
+      "ja": "赤璋の石垣",
+      "en": "Chizhang Wall",
+      "pronunciationJa": "せきしょうのいしがき"
+    },
+    "x": -5,
+    "y": -8,
+    "nation": "liyue",
+    "area": "chenyu-vale",
+    "labelDir": "LB"
+  },
+  "Teyvat-JDM": {
+    "names": {
+      "zhCN": "宝玦口",
+      "zhTW": "寶玦口",
+      "ja": "宝玦の口",
+      "en": "Jademouth",
+      "pronunciationJa": "ほうけつのくち"
+    },
+    "x": -6,
+    "y": -10,
+    "nation": "liyue",
+    "area": "chenyu-vale",
+    "labelDir": "R"
+  },
+  "Teyvat-YLW": {
+    "names": {
+      "zhCN": "遗珑埠",
+      "zhTW": "遺瓏埠",
+      "ja": "遺瓏埠",
+      "en": "Yilong Wharf",
+      "pronunciationJa": "いろうふ"
+    },
+    "x": -6,
+    "y": -12,
+    "nation": "liyue",
+    "area": "chenyu-vale",
+    "labelDir": "RB"
+  },
+  "Teyvat-CWT": {
+    "names": {
+      "zhCN": "赤望台",
+      "zhTW": "赤望臺",
+      "ja": "赤望台",
+      "en": "Chiwang Terrace",
+      "pronunciationJa": "せきぼうだい"
+    },
+    "x": -8,
+    "y": -8,
+    "nation": "liyue",
+    "area": "chenyu-vale",
+    "labelDir": "LT"
+  },
+  "Teyvat-MMY": {
+    "names": {
+      "zhCN": "暝垣山",
+      "zhTW": "暝垣山",
+      "ja": "暝垣山",
+      "en": "Mt. Mingyuan",
+      "pronunciationJa": "めいえんさん"
+    },
+    "x": -7,
+    "y": -11,
+    "nation": "liyue",
+    "area": "chenyu-vale",
+    "labelDir": "LT"
+  },
+  "Teyvat-QYV": {
+    "names": {
+      "zhCN": "翘英庄",
+      "zhTW": "翹英莊",
+      "ja": "翹英荘",
+      "en": "Qiaoying Village",
+      "pronunciationJa": "ぎょうえいそう"
+    },
+    "x": -3,
+    "y": -11,
+    "nation": "liyue",
+    "area": "chenyu-vale",
+    "labelDir": "RT"
+  },
+  "Teyvat-QCV": {
+    "names": {
+      "zhCN": "轻策庄",
+      "zhTW": "輕策莊",
+      "ja": "軽策荘",
+      "en": "Qingce Village",
+      "pronunciationJa": "けいさくそう"
+    },
+    "x": -1,
+    "y": -10,
+    "nation": "liyue",
+    "labelDir": "RT"
+  },
+  "Teyvat-DHM": {
+    "names": {
+      "zhCN": "荻花洲",
+      "zhTW": "荻花洲",
+      "ja": "荻花洲",
+      "en": "Dihua Marsh",
+      "pronunciationJa": "てきかしゅう"
+    },
+    "x": 1,
+    "y": -8,
+    "nation": "liyue",
+    "labelDir": "RB"
+  },
+  "Teyvat-WSI": {
+    "names": {
+      "zhCN": "望舒客栈",
+      "zhTW": "望舒客棧",
+      "ja": "望舒旅館",
+      "en": "Wangshu Inn",
+      "pronunciationJa": "ぼうじょりょかん"
+    },
+    "x": 1,
+    "y": -6,
+    "nation": "liyue",
+    "labelDir": "R"
+  },
+  "Teyvat-SAA": {
+    "names": {
+      "zhCN": "风神像",
+      "zhTW": "風神像",
+      "ja": "風神像",
+      "en": "Statue of Anemo Archon"
+    },
+    "x": 6,
+    "y": -14,
+    "nation": "mondstadt",
+    "labelDir": "LB"
+  },
+  "Teyvat-MSC": {
+    "names": {
+      "zhCN": "蒙德城",
+      "zhTW": "蒙德城",
+      "ja": "モンド城",
+      "en": "Mondstadt City"
+    },
+    "x": 7,
+    "y": -13,
+    "nation": "mondstadt",
+    "labelDir": "LB"
+  },
+  "Teyvat-MSG": {
+    "names": {
+      "zhCN": "蒙德城门",
+      "zhTW": "蒙德城門",
+      "ja": "モンド城門",
+      "en": "Mondstadt City Gate"
+    },
+    "x": 8,
+    "y": -12,
+    "nation": "mondstadt"
+  },
+  "Teyvat-SPV": {
+    "names": {
+      "zhCN": "清泉镇",
+      "zhTW": "清泉鎮",
+      "ja": "清泉町",
+      "en": "Springvale",
+      "pronunciationJa": "きよいずみちょう"
+    },
+    "x": 7,
+    "y": -11,
+    "nation": "mondstadt",
+    "labelDir": "LT"
+  },
+  "Teyvat-DWW": {
+    "names": {
+      "zhCN": "晨曦酒庄",
+      "zhTW": "晨曦酒莊",
+      "ja": "アカツキワイナリー",
+      "en": "Dawn Winery"
+    },
+    "x": 4,
+    "y": -10,
+    "nation": "mondstadt",
+    "labelDir": "LT"
+  },
+  "Teyvat-STG": {
+    "names": {
+      "zhCN": "石门",
+      "zhTW": "石門",
+      "ja": "石門",
+      "en": "Stone Gate",
+      "pronunciationJa": "せきもん"
+    },
+    "x": 2,
+    "y": -9,
+    "nation": "liyue",
+    "labelDir": "RB"
+  },
+  "Teyvat-GLP": {
+    "names": {
+      "zhCN": "归离原",
+      "zhTW": "歸離原",
+      "ja": "帰離原",
+      "en": "Guili Plains",
+      "pronunciationJa": "きりはら"
+    },
+    "x": 1,
+    "y": -4,
+    "nation": "liyue",
+    "labelDir": "RB"
+  },
+  "Teyvat-LYN": {
+    "names": {
+      "zhCN": "璃月港北",
+      "zhTW": "璃月港北",
+      "ja": "璃月港北",
+      "en": "Liyue Harbor North"
+    },
+    "x": 1,
+    "y": -1,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "LT"
+  },
+  "Teyvat-LSA": {
+    "names": {
+      "zhCN": "璃沙郊",
+      "zhTW": "璃沙郊",
+      "ja": "璃沙郊",
+      "en": "Lisha",
+      "pronunciationJa": "りしゃこう"
+    },
+    "x": -1,
+    "y": 1,
+    "nation": "liyue",
+    "labelDir": "B"
+  },
+  "Teyvat-CHM": {
+    "names": {
+      "zhCN": "层岩巨渊",
+      "zhTW": "層岩巨淵",
+      "ja": "層岩巨淵",
+      "en": "The Chasm",
+      "pronunciationJa": "そうがんきょえん"
+    },
+    "x": -4,
+    "y": 1,
+    "nation": "liyue",
+    "labelDir": "RB"
+  },
+  "Teyvat-CBC": {
+    "names": {
+      "zhCN": "丹砂崖",
+      "zhTW": "丹砂崖",
+      "ja": "丹砂崖",
+      "en": "Cinnabar Cliff",
+      "pronunciationJa": "たんしゃがい"
+    },
+    "x": -6,
+    "y": 1,
+    "nation": "liyue",
+    "labelDir": "T"
+  },
+  "Teyvat-GHV": {
+    "names": {
+      "zhCN": "化城郭",
+      "zhTW": "化城郭",
+      "ja": "ガンダルヴァー村",
+      "en": "Gandharva Ville",
+      "pronunciationJa": "ガンダルヴァーむら"
+    },
+    "x": -8,
+    "y": 1,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "LB"
+  },
+  "Teyvat-SMC": {
+    "names": {
+      "zhCN": "须弥城",
+      "zhTW": "須彌城",
+      "ja": "スメールシティ",
+      "en": "Sumeru City"
+    },
+    "x": -10,
+    "y": 0,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "LT"
+  },
+  "Teyvat-PDD": {
+    "names": {
+      "zhCN": "禅那园",
+      "zhTW": "禪那園",
+      "ja": "パルディスディアイ",
+      "en": "Pardis Dhyai"
+    },
+    "x": -12,
+    "y": 1,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "LT"
+  },
+  "Teyvat-CVR": {
+    "names": {
+      "zhCN": "喀万驿",
+      "zhTW": "喀萬驛",
+      "ja": "キャラバン宿駅",
+      "en": "Caravan Ribat",
+      "pronunciationJa": "キャラバンしゅくえき"
+    },
+    "x": -14,
+    "y": 3,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "LT"
+  },
+  "Teyvat-ARV": {
+    "names": {
+      "zhCN": "阿如村",
+      "zhTW": "阿如村",
+      "ja": "アアル村",
+      "en": "Aaru Village",
+      "pronunciationJa": "アアルむら"
+    },
+    "x": -17,
+    "y": 5,
+    "nation": "sumeru",
+    "area": "great-red-sand",
+    "labelDir": "B"
+  },
+  "Teyvat-MKD": {
+    "names": {
+      "zhCN": "赤王陵",
+      "zhTW": "赤王陵",
+      "ja": "キングデシェレトの霊廟",
+      "en": "The Mausoleum of King Deshret",
+      "pronunciationJa": "キングデシェレトのれいびょう"
+    },
+    "x": -22,
+    "y": 5,
+    "nation": "sumeru",
+    "area": "great-red-sand",
+    "labelDir": "B"
+  },
+  "Teyvat-DOM": {
+    "names": {
+      "zhCN": "千壑沙地",
+      "zhTW": "千壑沙地",
+      "ja": "千尋の砂漠",
+      "en": "Desert of Hadramaveth",
+      "pronunciationJa": "せんじんのさばく"
+    },
+    "x": -24,
+    "y": 3,
+    "nation": "sumeru",
+    "area": "great-red-sand",
+    "labelDir": "RT"
+  },
+  "Teyvat-WSV": {
+    "names": {
+      "zhCN": "折胫谷",
+      "zhTW": "折脛谷",
+      "ja": "失脚の谷",
+      "en": "Wounded Shin Valley",
+      "pronunciationJa": "しっきゃくのたに"
+    },
+    "x": -24,
+    "y": 0,
+    "nation": "sumeru",
+    "area": "great-red-sand",
+    "labelDir": "R"
+  },
+  "Teyvat-TMM": {
+    "names": {
+      "zhCN": "铁穆山",
+      "zhTW": "鐵穆山",
+      "ja": "鉄和山",
+      "en": "Temir Mountains",
+      "pronunciationJa": "てつなざん"
+    },
+    "x": -24,
+    "y": -3,
+    "nation": "sumeru",
+    "area": "great-red-sand",
+    "labelDir": "R"
+  },
+  "Teyvat-VKO": {
+    "names": {
+      "zhCN": "甘露花海",
+      "zhTW": "甘露花海",
+      "ja": "甘露花海",
+      "en": "Vourukasha Oasis",
+      "pronunciationJa": "かんろかかい"
+    },
+    "x": -22,
+    "y": -4,
+    "nation": "sumeru",
+    "area": "great-red-sand"
+  },
+  "Teyvat-STL": {
+    "names": {
+      "zhCN": "风龙废墟",
+      "zhTW": "風龍廢墟",
+      "ja": "風龍廃墟",
+      "en": "Stormterror's Lair",
+      "pronunciationJa": "ふうりゅうはいきょ"
+    },
+    "x": 3,
+    "y": -14,
+    "nation": "mondstadt",
+    "labelDir": "L"
+  },
+  "Teyvat-WLD": {
+    "names": {
+      "zhCN": "奔狼岭",
+      "zhTW": "奔狼嶺",
+      "ja": "奔狼領",
+      "en": "Wolvendom",
+      "pronunciationJa": "ほうろうりょう"
+    },
+    "x": 4,
+    "y": -12,
+    "nation": "mondstadt",
+    "labelDir": "L"
+  },
+  "Teyvat-MYV": {
+    "names": {
+      "zhCN": "明蕴镇",
+      "zhTW": "明蘊鎮",
+      "ja": "明蘊町",
+      "en": "Mingyun Village",
+      "pronunciationJa": "めいうんちょう"
+    },
+    "x": 4,
+    "y": -6,
+    "nation": "liyue",
+    "labelDir": "RB"
+  },
+  "Teyvat-CJS": {
+    "names": {
+      "zhCN": "翠玦坡",
+      "zhTW": "翠玦坡",
+      "ja": "翠決坡",
+      "en": "Cuijue Slope",
+      "pronunciationJa": "すいけつざか"
+    },
+    "x": -1,
+    "y": -4,
+    "nation": "liyue",
+    "labelDir": "B"
+  },
+  "Teyvat-LPV": {
+    "names": {
+      "zhCN": "采樵谷",
+      "zhTW": "採樵谷",
+      "ja": "採樵の谷",
+      "en": "Lumberpick Valley",
+      "pronunciationJa": "さいしょうのたに"
+    },
+    "x": -4,
+    "y": -1,
+    "nation": "liyue"
+  },
+  "Teyvat-TGG": {
+    "names": {
+      "zhCN": "天工峡",
+      "zhTW": "天工峽",
+      "ja": "天工峡",
+      "en": "Tiangong Gorge",
+      "pronunciationJa": "てんこうきょう"
+    },
+    "x": -5,
+    "y": 2,
+    "nation": "liyue",
+    "labelDir": "B"
+  },
+  "Teyvat-DTM": {
+    "names": {
+      "zhCN": "降诸魔山",
+      "zhTW": "降諸魔山",
+      "ja": "デーヴァーンタカ山",
+      "en": "Devantaka Mountain",
+      "pronunciationJa": "デーヴァーンタカやま"
+    },
+    "x": -8,
+    "y": 3,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "LT"
+  },
+  "Teyvat-POM": {
+    "names": {
+      "zhCN": "奥摩斯港",
+      "zhTW": "奧摩斯港",
+      "ja": "オルモス港",
+      "en": "Port Ormos",
+      "pronunciationJa": "オルモスこう"
+    },
+    "x": -10,
+    "y": 5,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "B"
+  },
+  "Teyvat-SFL": {
+    "names": {
+      "zhCN": "星落湖",
+      "zhTW": "星落湖",
+      "ja": "星落としの湖",
+      "en": "Starfell Lake",
+      "pronunciationJa": "ほしおとしのみずうみ"
+    },
+    "x": 10,
+    "y": -14,
+    "nation": "mondstadt",
+    "labelDir": "RB"
+  },
+  "Teyvat-WSW": {
+    "names": {
+      "zhCN": "低语森林",
+      "zhTW": "低語森林",
+      "ja": "囁きの森",
+      "en": "Whispering Woods",
+      "pronunciationJa": "ささやきのもり"
+    },
+    "x": 9,
+    "y": -13,
+    "nation": "mondstadt",
+    "labelDir": "RB"
+  },
+  "Teyvat-WDR": {
+    "names": {
+      "zhCN": "风起地",
+      "zhTW": "風起地",
+      "ja": "風立ちの地",
+      "en": "Windrise",
+      "pronunciationJa": "かぜたちのち"
+    },
+    "x": 9,
+    "y": -11,
+    "nation": "mondstadt"
+  },
+  "Teyvat-DSC": {
+    "names": {
+      "zhCN": "龙脊雪山营地",
+      "zhTW": "龍脊雪山營地",
+      "ja": "ドラゴンスパインのキャンプ",
+      "en": "Dragonspine Camp"
+    },
+    "x": 8,
+    "y": -9,
+    "nation": "mondstadt",
+    "area": "dragonspine",
+    "labelDir": "RB"
+  },
+  "Teyvat-SCP": {
+    "names": {
+      "zhCN": "覆雪之路",
+      "zhTW": "覆雪之路",
+      "ja": "積雪の道",
+      "en": "Snow-Covered Path",
+      "pronunciationJa": "せきせつのみち"
+    },
+    "x": 7,
+    "y": -8,
+    "nation": "mondstadt",
+    "area": "dragonspine",
+    "labelDir": "RB"
+  },
+  "Teyvat-WRV": {
+    "names": {
+      "zhCN": "眠龙谷",
+      "zhTW": "眠龍谷",
+      "ja": "龍眠の谷",
+      "en": "Wyrmrest Valley",
+      "pronunciationJa": "りゅうみんのたに"
+    },
+    "x": 5,
+    "y": -8,
+    "nation": "mondstadt",
+    "area": "dragonspine",
+    "labelDir": "RB"
+  },
+  "Teyvat-BDH": {
+    "names": {
+      "zhCN": "拜达港",
+      "zhTW": "拜達港",
+      "ja": "バイダ港",
+      "en": "Bayda Harbor",
+      "pronunciationJa": "バイダこう"
+    },
+    "x": -12,
+    "y": -5,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "LB"
+  },
+  "Teyvat-CTC": {
+    "names": {
+      "zhCN": "茸蕈窟",
+      "zhTW": "茸蕈窟",
+      "ja": "チャトラカム洞窟",
+      "en": "Chatrakam Cave",
+      "pronunciationJa": "チャトラカムどうくつ"
+    },
+    "x": -10,
+    "y": -3,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "RT"
+  },
+  "Teyvat-VMV": {
+    "names": {
+      "zhCN": "维摩庄",
+      "zhTW": "維摩莊",
+      "ja": "ヴィマラ村",
+      "en": "Vimara Village",
+      "pronunciationJa": "ヴィマラむら"
+    },
+    "x": -10,
+    "y": 3,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "LB"
+  },
+  "Teyvat-CHH": {
+    "names": {
+      "zhCN": "香醉坡",
+      "zhTW": "香醉坡",
+      "ja": "ガンダ丘",
+      "en": "Gandha Hill",
+      "pronunciationJa": "ガンダおか"
+    },
+    "x": -8,
+    "y": -2,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "R"
+  },
+  "Teyvat-APW": {
+    "names": {
+      "zhCN": "水天丛林",
+      "zhTW": "水天叢林",
+      "ja": "アパーム叢林",
+      "en": "Apam Woods",
+      "pronunciationJa": "アパームそうりん"
+    },
+    "x": -12,
+    "y": 5,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "B"
+  },
+  "Teyvat-ROD": {
+    "names": {
+      "zhCN": "荼诃之座",
+      "zhTW": "荼訶之座",
+      "ja": "ダーリ遺跡",
+      "en": "Ruins of Dahri",
+      "pronunciationJa": "ダーリいせき"
+    },
+    "x": -14,
+    "y": 4,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "RT"
+  },
+  "Teyvat-YNM": {
+    "names": {
+      "zhCN": "谒颂幽境",
+      "zhTW": "謁頌幽境",
+      "ja": "ヤスナ幽境",
+      "en": "Yasna Monument",
+      "pronunciationJa": "ヤスナゆうきょう"
+    },
+    "x": -14,
+    "y": 1,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "L"
+  },
+  "Teyvat-FOA": {
+    "names": {
+      "zhCN": "觉王之殿",
+      "zhTW": "覺王之殿",
+      "ja": "アシュヴァッタ神殿",
+      "en": "Fane of Ashvattha",
+      "pronunciationJa": "アシュヴァッタしんでん"
+    },
+    "x": -14,
+    "y": -1,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "L"
+  },
+  "Teyvat-VNA": {
+    "names": {
+      "zhCN": "桓那兰那",
+      "zhTW": "桓那蘭那",
+      "ja": "ヴァナラーナ",
+      "en": "Vanarana"
+    },
+    "x": -13,
+    "y": -3,
+    "nation": "sumeru",
+    "area": "rainforest",
+    "labelDir": "LT"
+  },
+  "Teyvat-COF": {
+    "names": {
+      "zhCN": "枫丹廷",
+      "zhTW": "楓丹廷",
+      "ja": "フォンテーヌ廷",
+      "en": "Court of Fontaine",
+      "pronunciationJa": "フォンテーヌてい"
+    },
+    "x": -19,
+    "y": -14,
+    "nation": "fontaine",
+    "labelDir": "L"
+  },
+  "Teyvat-PLM": {
+    "names": {
+      "zhCN": "沫芒宫",
+      "zhTW": "沫芒宮",
+      "ja": "パレ・メルモニア",
+      "en": "Palais Mermonia"
+    },
+    "x": -20,
+    "y": -15,
+    "nation": "fontaine",
+    "labelDir": "L"
+  },
+  "Teyvat-FRI": {
+    "names": {
+      "zhCN": "新枫丹科学院",
+      "zhTW": "新楓丹科學院",
+      "ja": "新フォンテーヌ科学院",
+      "en": "New Fontaine Research Institute"
+    },
+    "x": -18,
+    "y": -19,
+    "nation": "fontaine",
+    "labelDir": "T"
+  },
+  "Teyvat-CLR": {
+    "names": {
+      "zhCN": "中央实验室遗址",
+      "zhTW": "中央實驗室遺址",
+      "ja": "中央実験室跡地",
+      "en": "Central Laboratory Ruins",
+      "pronunciationJa": "ちゅうおうじっけんしつあとち"
+    },
+    "x": -16,
+    "y": -19,
+    "nation": "fontaine",
+    "labelDir": "RT"
+  },
+  "Teyvat-LCU": {
+    "names": {
+      "zhCN": "优兰尼娅湖",
+      "zhTW": "優蘭尼婭湖",
+      "ja": "ウラニア湖",
+      "en": "Loch Urania"
+    },
+    "x": -13,
+    "y": -18,
+    "nation": "fontaine",
+    "labelDir": "RT"
+  },
+  "Teyvat-WWL": {
+    "names": {
+      "zhCN": "湖中垂柳",
+      "zhTW": "湖中垂柳",
+      "ja": "湖中のウィーピングウィロー",
+      "en": "Weeping Willow of the Lake"
+    },
+    "x": -12,
+    "y": -17,
+    "nation": "fontaine"
+  },
+  "Teyvat-FFP": {
+    "names": {
+      "zhCN": "幽林雾道",
+      "zhTW": "幽林霧道",
+      "ja": "霧の幽林道",
+      "en": "Foggy Forest Path",
+      "pronunciationJa": "きりのゆうりんどう"
+    },
+    "x": -12,
+    "y": -15,
+    "nation": "fontaine",
+    "labelDir": "RT"
+  },
+  "Teyvat-FCR": {
+    "names": {
+      "zhCN": "卡布狄斯堡遗迹",
+      "zhTW": "卡布狄斯堡遺蹟",
+      "ja": "カリュブディス砦跡",
+      "en": "Fort Charybdis Ruins"
+    },
+    "x": -12,
+    "y": -13,
+    "nation": "fontaine",
+    "labelDir": "RB"
+  },
+  "Teyvat-MAE": {
+    "names": {
+      "zhCN": "秋分山东",
+      "zhTW": "秋分山東",
+      "ja": "モン・オトンヌキ東",
+      "en": "Mont Automnequi East"
+    },
+    "x": -15,
+    "y": -11,
+    "nation": "fontaine",
+    "labelDir": "RB"
+  },
+  "Teyvat-MAT": {
+    "names": {
+      "zhCN": "秋分山",
+      "zhTW": "秋分山",
+      "ja": "モン・オトンヌキ",
+      "en": "Mont Automnequi"
+    },
+    "x": -17,
+    "y": -11,
+    "nation": "fontaine",
+    "labelDir": "RB"
+  },
+  "Teyvat-POI": {
+    "names": {
+      "zhCN": "白淞镇",
+      "zhTW": "白淞鎮",
+      "ja": "ポワソン町",
+      "en": "Poisson",
+      "pronunciationJa": "ポワソンちょう"
+    },
+    "x": -18,
+    "y": -11,
+    "nation": "fontaine",
+    "labelDir": "LB"
+  },
+  "Teyvat-ENS": {
+    "names": {
+      "zhCN": "厄里那斯",
+      "zhTW": "厄裡那斯",
+      "ja": "エリナス",
+      "en": "Elynas"
+    },
+    "x": -21,
+    "y": -12,
+    "nation": "fontaine",
+    "labelDir": "L"
+  },
+  "Teyvat-MCT": {
+    "names": {
+      "zhCN": "茉洁",
+      "zhTW": "茉潔",
+      "ja": "マルコット",
+      "en": "Marcotte"
+    },
+    "x": -16,
+    "y": -16,
+    "nation": "fontaine",
+    "labelDir": "B"
+  },
+  "Teyvat-OPE": {
+    "names": {
+      "zhCN": "欧庇克莱歌剧院",
+      "zhTW": "歐庇克萊歌劇院",
+      "ja": "エピクレシス歌劇場",
+      "en": "Opera Epiclese",
+      "pronunciationJa": "エピクレシスかげきじょう"
+    },
+    "x": -14,
+    "y": -15,
+    "nation": "fontaine",
+    "labelDir": "B"
+  },
+  "Teyvat-LDH": {
+    "names": {
+      "zhCN": "柔灯港",
+      "zhTW": "柔燈港",
+      "ja": "ルミドゥースハーバー",
+      "en": "Lumidouce Harbor"
+    },
+    "x": -9,
+    "y": -14,
+    "nation": "fontaine",
+    "labelDir": "LB"
+  },
+  "Teyvat-RRH": {
+    "names": {
+      "zhCN": "海露港",
+      "zhTW": "海露港",
+      "ja": "ロマリタイムハーバー",
+      "en": "Romaritime Harbor"
+    },
+    "x": -18,
+    "y": -8,
+    "nation": "fontaine"
+  },
+  "Teyvat-MES": {
+    "names": {
+      "zhCN": "芒索斯山东麓",
+      "zhTW": "芒索斯山東麓",
+      "ja": "イースト・エスス山麓",
+      "en": "Mont Esus East"
+    },
+    "x": -23,
+    "y": -19,
+    "nation": "fontaine",
+    "labelDir": "R"
+  },
+  "Teyvat-COE": {
+    "names": {
+      "zhCN": "「回声之子」",
+      "zhTW": "「回聲之子」",
+      "ja": "「こだまの子」",
+      "en": "\"Children of Echoes\"",
+      "pronunciationJa": "こだまのこ"
+    },
+    "x": -27,
+    "y": 3,
+    "nation": "natlan",
+    "labelDir": "T"
+  },
+  "Teyvat-SFV": {
+    "names": {
+      "zhCN": "硫晶支脉",
+      "zhTW": "硫晶支脈",
+      "ja": "硫晶の支脈",
+      "en": "Sulfurous Veins",
+      "pronunciationJa": "りゅうしょうのしみゃく"
+    },
+    "x": -30,
+    "y": 3,
+    "nation": "natlan",
+    "labelDir": "T"
+  },
+  "Teyvat-CWF": {
+    "names": {
+      "zhCN": "楚汶市集",
+      "zhTW": "楚汶市集",
+      "ja": "チュエンマーケット",
+      "en": "Chuwen Fair"
+    },
+    "x": -33,
+    "y": 4,
+    "nation": "natlan",
+    "labelDir": "RB"
+  },
+  "Teyvat-NWW": {
+    "names": {
+      "zhCN": "巡夜者战争纪念碑",
+      "zhTW": "巡夜者戰爭紀念碑",
+      "ja": "夜巡者の戦争記念碑",
+      "en": "Night Warden Wars Memorial"
+    },
+    "x": -35,
+    "y": 5,
+    "nation": "natlan",
+    "labelDir": "L"
+  },
+  "Teyvat-COP": {
+    "names": {
+      "zhCN": "「沃陆之邦」",
+      "zhTW": "「沃陸之邦」",
+      "ja": "「豊穣の邦」",
+      "en": "\"Collective of Plenty\"",
+      "pronunciationJa": "ほうじょうのくに"
+    },
+    "x": -38,
+    "y": 8,
+    "nation": "natlan",
+    "labelDir": "B"
+  },
+  "Teyvat-FSF": {
+    "names": {
+      "zhCN": "石火坠陨处",
+      "zhTW": "石火墜隕處",
+      "ja": "星岩の墜落地",
+      "en": "Fallingstart Fields",
+      "pronunciationJa": "せいがんのついらくち"
+    },
+    "x": -40,
+    "y": 7,
+    "nation": "natlan",
+    "labelDir": "LB"
+  },
+  "Teyvat-ONT": {
+    "names": {
+      "zhCN": "奥奇卡纳塔",
+      "zhTW": "奧奇卡納塔",
+      "ja": "オシカ・ナタ",
+      "en": "Ochkanatlan"
+    },
+    "x": -38,
+    "y": -2,
+    "nation": "natlan"
+  },
+  "Teyvat-FFC": {
+    "names": {
+      "zhCN": "「花羽会」",
+      "zhTW": "「花羽會」",
+      "ja": "「花翼の集」",
+      "en": "\"Flower-Feather Clan\"",
+      "pronunciationJa": "かよくのつどい"
+    },
+    "x": -36,
+    "y": 1,
+    "nation": "natlan",
+    "labelDir": "B"
+  },
+  "Teyvat-HZH": {
+    "names": {
+      "zhCN": "柴薪之丘",
+      "zhTW": "柴薪之丘",
+      "ja": "ウィッツトリの丘",
+      "en": "Huitztli Hill",
+      "pronunciationJa": "ウィッツトリのおか"
+    },
+    "x": -33,
+    "y": 3,
+    "nation": "natlan",
+    "labelDir": "LB"
+  },
+  "Teyvat-SSF": {
+    "names": {
+      "zhCN": "圣火竞技场",
+      "zhTW": "聖火競技場",
+      "ja": "聖火競技場",
+      "en": "Stadium of the Sacred Flame",
+      "pronunciationJa": "せいかきょうぎじょう"
+    },
+    "x": -33,
+    "y": 5,
+    "nation": "natlan",
+    "labelDir": "LB"
+  },
+  "Teyvat-POS": {
+    "names": {
+      "zhCN": "「流泉之众」",
+      "zhTW": "「流泉之眾」",
+      "ja": "「流泉の衆」",
+      "en": "\"People of the Springs\"",
+      "pronunciationJa": "りゅうせんのしゅう"
+    },
+    "x": -33,
+    "y": 9,
+    "nation": "natlan",
+    "labelDir": "LT"
+  },
+  "Teyvat-AYW": {
+    "names": {
+      "zhCN": "溶水域",
+      "zhTW": "溶水域",
+      "ja": "アメヤルコの水域",
+      "en": "Ameyalco Waters",
+      "pronunciationJa": "アメヤルコのすいいき"
+    },
+    "x": -32,
+    "y": 8,
+    "nation": "natlan",
+    "labelDir": "RB"
+  },
+  "Teyvat-TPP": {
+    "names": {
+      "zhCN": "彩石顶",
+      "zhTW": "彩石頂",
+      "ja": "彩晶の頂",
+      "en": "Teticpac Peak",
+      "pronunciationJa": "さいしょうのいただき"
+    },
+    "x": -30,
+    "y": 7,
+    "nation": "natlan",
+    "labelDir": "B"
+  },
+  "Teyvat-AST": {
+    "names": {
+      "zhCN": "祖遗庙宇",
+      "zhTW": "祖遺廟宇",
+      "ja": "先人の神殿",
+      "en": "Ancestral Temple",
+      "pronunciationJa": "せんじんのしんでん"
+    },
+    "x": -29,
+    "y": 7,
+    "nation": "natlan",
+    "labelDir": "RB"
+  },
+  "Teyvat-TPR": {
+    "names": {
+      "zhCN": "隆崛坡",
+      "zhTW": "隆崛坡",
+      "ja": "テペアカク坂",
+      "en": "Tepeacac Rise",
+      "pronunciationJa": "テペアカクざか"
+    },
+    "x": -28,
+    "y": 5,
+    "nation": "natlan"
+  },
+  "Teyvat-SOC": {
+    "names": {
+      "zhCN": "「悬木人」",
+      "zhTW": "「懸木人」",
+      "ja": "「懸木の民」",
+      "en": "\"Scions of the Canopy\"",
+      "pronunciationJa": "かがりぎのたみ"
+    },
+    "x": -31,
+    "y": 6,
+    "nation": "natlan",
+    "labelDir": "LB"
+  },
+  "Teyvat-MNW": {
+    "names": {
+      "zhCN": "「烟谜主」",
+      "zhTW": "「煙謎主」",
+      "ja": "「謎煙の主」",
+      "en": "\"Masters of the Night-Wind\"",
+      "pronunciationJa": "めいえんのあるじ"
+    },
+    "x": -37,
+    "y": 4,
+    "nation": "natlan",
+    "labelDir": "T"
+  },
+  "Teyvat-TPB": {
+    "names": {
+      "zhCN": "浮羽之湾",
+      "zhTW": "浮羽之灣",
+      "ja": "テコロアパン湾",
+      "en": "Tecoloapan Bay",
+      "pronunciationJa": "テコロアパンわん"
+    },
+    "x": -39,
+    "y": 4,
+    "nation": "natlan",
+    "labelDir": "T"
+  },
+  "Teyvat-EBP": {
+    "names": {
+      "zhCN": "悠悠港",
+      "zhTW": "悠悠港",
+      "ja": "のびのび港",
+      "en": "Easybreeze Port"
+    },
+    "x": -44,
+    "y": 0,
+    "nation": "natlan",
+    "area": "easybreeze-resort",
+    "labelDir": "RT"
+  },
+  "Teyvat-EBM": {
+    "names": {
+      "zhCN": "悠悠集市",
+      "zhTW": "悠悠集市",
+      "ja": "のびのびマーケット",
+      "en": "Easybreeze Market",
+      "pronunciationJa": "カラフルどうくつ"
+    },
+    "x": -45,
+    "y": -2,
+    "nation": "natlan",
+    "area": "easybreeze-resort",
+    "labelDir": "RT"
+  },
+  "Teyvat-CFC": {
+    "names": {
+      "zhCN": "彩彩崖",
+      "zhTW": "彩彩崖",
+      "ja": "カラフル崖",
+      "en": "Colorfall Cliffs",
+      "pronunciationJa": "カラフルがけ"
+    },
+    "x": -47,
+    "y": -3,
+    "nation": "natlan",
+    "area": "easybreeze-resort",
+    "labelDir": "RT"
+  },
+  "Teyvat-WVB": {
+    "names": {
+      "zhCN": "浪浪湾",
+      "zhTW": "浪浪灣",
+      "ja": "ざぶざぶ湾",
+      "en": "Wavey Bay",
+      "pronunciationJa": "ざぶざぶわん"
+    },
+    "x": -49,
+    "y": -3,
+    "nation": "natlan",
+    "area": "easybreeze-resort",
+    "labelDir": "RT"
+  },
+  "Teyvat-TLI": {
+    "names": {
+      "zhCN": "提提岛",
+      "zhTW": "提提島",
+      "ja": "ティティ島",
+      "en": "Tele Isle",
+      "pronunciationJa": "ティティとう"
+    },
+    "x": -51,
+    "y": -5,
+    "nation": "natlan",
+    "area": "easybreeze-resort",
+    "labelDir": "RT"
+  },
+  "Teyvat-NSP": {
+    "names": {
+      "zhCN": "那夏港",
+      "zhTW": "那夏港",
+      "ja": "ナシャ港",
+      "en": "Nasha Port"
+    },
+    "x": -36,
+    "y": -6,
+    "nation": "nodkrai",
+    "area": "lempo-island",
+    "labelDir": "R"
+  },
+  "Teyvat-NST": {
+    "names": {
+      "zhCN": "那夏镇",
+      "zhTW": "那夏鎮",
+      "ja": "ナシャタウン",
+      "en": "Nasha Town"
+    },
+    "x": -36,
+    "y": -7,
+    "nation": "nodkrai",
+    "area": "lempo-island"
+  },
+  "Teyvat-CKC": {
+    "names": {
+      "zhCN": "叮铃哐啷蛋卷工坊",
+      "zhTW": "叮鈴哐啷蛋卷工坊",
+      "ja": "カチャカチャ・クルムカケ工房",
+      "en": "Clink-Clank Krumkake Craftshop",
+      "pronunciationJa": "カチャカチャ・クルムカケこうぼう"
+    },
+    "x": -38,
+    "y": -8,
+    "nation": "nodkrai",
+    "area": "lempo-island",
+    "labelDir": "B"
+  },
+  "Teyvat-FME": {
+    "names": {
+      "zhCN": "霜月之坊",
+      "zhTW": "霜月之坊",
+      "ja": "霜月の里",
+      "en": "Frostmoon Enclave",
+      "pronunciationJa": "そうげつのさと"
+    },
+    "x": -40,
+    "y": -9,
+    "nation": "nodkrai",
+    "area": "hiisi-island",
+    "labelDir": "T"
+  },
+  "Teyvat-BMB": {
+    "names": {
+      "zhCN": "苔骨荒原",
+      "zhTW": "苔骨荒原",
+      "ja": "ボーンモス荒原",
+      "en": "Barrowmoss Barrens",
+      "pronunciationJa": "ボーンモスこうげん"
+    },
+    "x": -35,
+    "y": -9,
+    "nation": "nodkrai",
+    "area": "lempo-island"
+  },
+  "Teyvat-BAL": {
+    "names": {
+      "zhCN": "蓝珀湖",
+      "zhTW": "藍珀湖",
+      "ja": "青い琥珀",
+      "en": "Blue Amber Lake",
+      "pronunciationJa": "あおいこはく"
+    },
+    "x": -34,
+    "y": -10,
+    "nation": "nodkrai",
+    "area": "lempo-island"
+  },
+  "Teyvat-NTP": {
+    "names": {
+      "zhCN": "空寂走廊",
+      "zhTW": "空寂走廊",
+      "ja": "空寂の回廊",
+      "en": "Nothing Passage",
+      "pronunciationJa": "くうじゃくのかいろう"
+    },
+    "x": -34,
+    "y": -12,
+    "nation": "nodkrai",
+    "area": "lempo-island"
+  },
+  "Teyvat-PHI": {
+    "names": {
+      "zhCN": "帕哈岛",
+      "zhTW": "帕哈島",
+      "ja": "パハ島",
+      "en": "Paha Isle",
+      "pronunciationJa": "パハとう"
+    },
+    "x": -34,
+    "y": -14,
+    "nation": "nodkrai",
+    "area": "paha-isle"
+  },
+  "Teyvat-KEE": {
+    "names": {
+      "zhCN": "月矩力试验设计局·东",
+      "zhTW": "月矩力試驗設計局·東",
+      "ja": "クーヴァキ実験設計局・東",
+      "en": "Kuuvahki Experimental Design Bureau East"
+    },
+    "x": -36,
+    "y": -14,
+    "nation": "nodkrai",
+    "area": "paha-isle",
+    "labelDir": "B"
+  },
+  "Teyvat-KEW": {
+    "names": {
+      "zhCN": "月矩力试验设计局·西",
+      "zhTW": "月矩力試驗設計局·西",
+      "ja": "クーヴァキ実験設計局・西",
+      "en": "Kuuvahki Experimental Design Bureau West"
+    },
+    "x": -38,
+    "y": -14,
+    "nation": "nodkrai",
+    "area": "paha-isle",
+    "labelDir": "T"
+  },
+  "Teyvat-FNC": {
+    "names": {
+      "zhCN": "终夜长茔",
+      "zhTW": "終夜長塋",
+      "ja": "夜明かしの墓",
+      "en": "Final Night Cemetery",
+      "pronunciationJa": "よあかしのはか"
+    },
+    "x": -34,
+    "y": -15,
+    "nation": "nodkrai",
+    "area": "paha-isle"
+  },
+  "Teyvat-VOP": {
+    "names": {
+      "zhCN": "虚海望港",
+      "zhTW": "虛海望港",
+      "ja": "海を望めぬ峰の港",
+      "en": "Voidsea Outlook Port"
+    },
+    "x": -34,
+    "y": -16,
+    "nation": "nodkrai",
+    "area": "north-nodkrai"
+  },
+  "Teyvat-PRM": {
+    "names": {
+      "zhCN": "皮拉米达城",
+      "zhTW": "皮拉米達城",
+      "ja": "ピラミダ",
+      "en": "Piramida"
+    },
+    "x": -34,
+    "y": -19,
+    "nation": "nodkrai",
+    "area": "north-nodkrai"
+  },
+  "Teyvat-DSM": {
+    "names": {
+      "zhCN": "噩影泽地",
+      "zhTW": "噩影澤地",
+      "ja": "厄影の沼地",
+      "en": "Dreadshade Mire",
+      "pronunciationJa": "やくえいのぬまち"
+    },
+    "x": -34,
+    "y": -21,
+    "nation": "nodkrai",
+    "area": "north-nodkrai"
+  },
+  "Teyvat-FNK": {
+    "names": {
+      "zhCN": "西风戍垒",
+      "zhTW": "西風戍壘",
+      "ja": "西風の砦",
+      "en": "Favonius Keep",
+      "pronunciationJa": "エピュロスのとりで"
+    },
+    "x": -35,
+    "y": -23,
+    "nation": "nodkrai",
+    "area": "north-nodkrai",
+    "labelDir": "RT"
+  },
+  "Teyvat-CWC": {
+    "names": {
+      "zhCN": "望崖营壁",
+      "zhTW": "望崖營壁",
+      "ja": "クリフサイド・キャンプ",
+      "en": "Cliffwatch Camp"
+    },
+    "x": -36,
+    "y": -25,
+    "nation": "nodkrai",
+    "area": "north-nodkrai",
+    "labelDir": "R"
+  },
+  "Teyvat-KMC": {
+    "names": {
+      "zhCN": "苦壑崖",
+      "zhTW": "苦壑崖",
+      "ja": "キプマキの崖",
+      "en": "Kipumaki Cliff",
+      "pronunciationJa": "キプマキのがけ"
+    },
+    "x": -36,
+    "y": -26,
+    "nation": "nodkrai",
+    "area": "north-nodkrai",
+    "labelDir": "R"
+  },
+  "Teyvat-AVT": {
+    "names": {
+      "zhCN": "安瓦蒂尼尔湖",
+      "zhTW": "安瓦蒂尼爾湖",
+      "ja": "アームスヴァルトニル湖",
+      "en": "Armvartnir",
+      "pronunciationJa": "アームスヴァルトニルこ"
+    },
+    "x": -34,
+    "y": -25,
+    "nation": "nodkrai",
+    "area": "north-nodkrai",
+    "labelDir": "RB"
+  },
+  "Teyvat-STR": {
+    "names": {
+      "zhCN": "特辖地研究所",
+      "zhTW": "特轄地研究所",
+      "ja": "特別管轄区研究所",
+      "en": "Special Territory Research Institute",
+      "pronunciationJa": "とくべつかんかつくけんけんきゅうじょ"
+    },
+    "x": -33,
+    "y": -27,
+    "nation": "nodkrai",
+    "area": "north-nodkrai",
+    "labelDir": "R"
+  },
+  "Inazuma-RTP": {
+    "names": {
+      "zhCN": "离岛港",
+      "zhTW": "離島港",
+      "ja": "離島港",
+      "en": "Ritou Port"
+    },
+    "x": 25,
+    "y": 11,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "B"
+  },
+  "Inazuma-RTU": {
+    "names": {
+      "zhCN": "离岛",
+      "zhTW": "離島",
+      "ja": "離島",
+      "en": "Ritou",
+      "pronunciationJa": "りとう"
+    },
+    "x": 26,
+    "y": 11,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "B"
+  },
+  "Inazuma-KDV": {
+    "names": {
+      "zhCN": "绀田村",
+      "zhTW": "紺田村",
+      "ja": "紺田村",
+      "en": "Konda Village",
+      "pronunciationJa": "こんだむら"
+    },
+    "x": 28,
+    "y": 12,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "L"
+  },
+  "Inazuma-BKP": {
+    "names": {
+      "zhCN": "白狐之野",
+      "zhTW": "白狐之野",
+      "ja": "白狐の野",
+      "en": "Byakko Plain",
+      "pronunciationJa": "びゃっこのや"
+    },
+    "x": 29,
+    "y": 13,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "L"
+  },
+  "Inazuma-HMZ": {
+    "names": {
+      "zhCN": "花见坂",
+      "zhTW": "花見坂",
+      "ja": "花見坂",
+      "en": "Hanamizaka"
+    },
+    "x": 30,
+    "y": 14,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-IZC": {
+    "names": {
+      "zhCN": "稻妻城",
+      "zhTW": "稻妻城",
+      "ja": "稲妻城",
+      "en": "Inazuma City",
+      "pronunciationJa": "いなずまじょう"
+    },
+    "x": 31,
+    "y": 15,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-NIT": {
+    "names": {
+      "zhCN": "鸣神岛·天守",
+      "zhTW": "鳴神島·天守",
+      "ja": "鳴神島・天守",
+      "en": "Narukami Island: Tenshukaku",
+      "pronunciationJa": "なるかみじま・てんしゅ"
+    },
+    "x": 32,
+    "y": 16,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-AUM": {
+    "names": {
+      "zhCN": "荒海",
+      "zhTW": "荒海",
+      "ja": "荒海",
+      "en": "Araumi",
+      "pronunciationJa": "あらうみ"
+    },
+    "x": 29,
+    "y": 9,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-YGN": {
+    "names": {
+      "zhCN": "影向山北",
+      "zhTW": "影向山北",
+      "ja": "影向山北",
+      "en": "Mt. Yougou North"
+    },
+    "x": 31,
+    "y": 9,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-KSE": {
+    "names": {
+      "zhCN": "神里屋敷",
+      "zhTW": "神里屋敷",
+      "ja": "神里屋敷",
+      "en": "Kamisato Estate",
+      "pronunciationJa": "かみさとやしき"
+    },
+    "x": 32,
+    "y": 11,
+    "nation": "inazuma",
+    "area": "narukami-island"
+  },
+  "Inazuma-CJF": {
+    "names": {
+      "zhCN": "镇守之森",
+      "zhTW": "鎮守之森",
+      "ja": "鎮守の森",
+      "en": "Chinju Forest",
+      "pronunciationJa": "ちんじゅのもり"
+    },
+    "x": 31,
+    "y": 12,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "RB"
+  },
+  "Inazuma-GNS": {
+    "names": {
+      "zhCN": "鸣神大社",
+      "zhTW": "鳴神大社",
+      "ja": "鳴神大社",
+      "en": "Grand Narukami Shrine",
+      "pronunciationJa": "なるかみおおやしろ"
+    },
+    "x": 30,
+    "y": 11,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "T"
+  },
+  "Inazuma-AKI": {
+    "names": {
+      "zhCN": "甘金岛",
+      "zhTW": "甘金島",
+      "ja": "甘金島",
+      "en": "Amakane Island",
+      "pronunciationJa": "あまかねじま"
+    },
+    "x": 28,
+    "y": 14,
+    "nation": "inazuma",
+    "area": "narukami-island",
+    "labelDir": "RB"
+  },
+  "Inazuma-KJE": {
+    "names": {
+      "zhCN": "九条阵屋",
+      "zhTW": "九條陣屋",
+      "ja": "九条陣屋",
+      "en": "Kujou Encampment",
+      "pronunciationJa": "くじょうじんや"
+    },
+    "x": 25,
+    "y": 15,
+    "nation": "inazuma",
+    "area": "kannazuka",
+    "labelDir": "RB"
+  },
+  "Inazuma-KNZ": {
+    "names": {
+      "zhCN": "神无冢",
+      "zhTW": "神無冢",
+      "ja": "神無塚",
+      "en": "Kannazuka",
+      "pronunciationJa": "かんなづか"
+    },
+    "x": 23,
+    "y": 16,
+    "nation": "inazuma",
+    "area": "kannazuka",
+    "labelDir": "RB"
+  },
+  "Inazuma-NCB": {
+    "names": {
+      "zhCN": "名椎滩",
+      "zhTW": "名椎灘",
+      "ja": "名椎の浜",
+      "en": "Nazuchi Beach",
+      "pronunciationJa": "なづちのはま"
+    },
+    "x": 21,
+    "y": 16,
+    "nation": "inazuma",
+    "area": "kannazuka",
+    "labelDir": "T"
+  },
+  "Inazuma-MSG": {
+    "names": {
+      "zhCN": "无想刃狭间",
+      "zhTW": "無想刃狹間",
+      "ja": "無想刃狭間",
+      "en": "Musoujin Gorge",
+      "pronunciationJa": "むそうじんはざま"
+    },
+    "x": 19,
+    "y": 16,
+    "nation": "inazuma",
+    "area": "yashiori-island",
+    "labelDir": "T"
+  },
+  "Inazuma-HGV": {
+    "names": {
+      "zhCN": "绯木村",
+      "zhTW": "緋木村",
+      "ja": "緋木村",
+      "en": "Higi Village",
+      "pronunciationJa": "ひぎむら"
+    },
+    "x": 17,
+    "y": 17,
+    "nation": "inazuma",
+    "area": "yashiori-island",
+    "labelDir": "R"
+  },
+  "Inazuma-FFT": {
+    "names": {
+      "zhCN": "藤兜砦",
+      "zhTW": "藤兜砦",
+      "ja": "藤兜砦",
+      "en": "Fort Fujitou",
+      "pronunciationJa": "ふじとうとりで"
+    },
+    "x": 16,
+    "y": 16,
+    "nation": "inazuma",
+    "area": "yashiori-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-SPH": {
+    "names": {
+      "zhCN": "蛇神之首",
+      "zhTW": "蛇神之首",
+      "ja": "蛇神の首",
+      "en": "Serpent's Head",
+      "pronunciationJa": "へびがみのくび"
+    },
+    "x": 18,
+    "y": 18,
+    "nation": "inazuma",
+    "area": "yashiori-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-JTM": {
+    "names": {
+      "zhCN": "蛇骨矿洞",
+      "zhTW": "蛇骨礦洞",
+      "ja": "蛇骨鉱坑",
+      "en": "Jakotsu Mine",
+      "pronunciationJa": "じゃこつこうこう"
+    },
+    "x": 19,
+    "y": 19,
+    "nation": "inazuma",
+    "area": "yashiori-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-WTE": {
+    "names": {
+      "zhCN": "海祇东",
+      "zhTW": "海祇東",
+      "ja": "海祇東",
+      "en": "Watatsumi East"
+    },
+    "x": 15,
+    "y": 18,
+    "nation": "inazuma",
+    "area": "watatsumi-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-BRV": {
+    "names": {
+      "zhCN": "望泷村",
+      "zhTW": "望瀧村",
+      "ja": "望瀧村",
+      "en": "Bourou Village",
+      "pronunciationJa": "ぼうろうむら"
+    },
+    "x": 14,
+    "y": 17,
+    "nation": "inazuma",
+    "area": "watatsumi-island",
+    "labelDir": "T"
+  },
+  "Inazuma-SGM": {
+    "names": {
+      "zhCN": "珊瑚宫",
+      "zhTW": "珊瑚宮",
+      "ja": "珊瑚宮",
+      "en": "Sangonomiya Shrine",
+      "pronunciationJa": "さんごのみや"
+    },
+    "x": 12,
+    "y": 17,
+    "nation": "inazuma",
+    "area": "watatsumi-island",
+    "labelDir": "T"
+  },
+  "Inazuma-MUS": {
+    "names": {
+      "zhCN": "曚云神社/曚云港",
+      "zhTW": "曚雲神社/曚雲港",
+      "ja": "曚雲神社/曚雲港",
+      "en": "Mouun Shrine / Mouun Port"
+    },
+    "x": 11,
+    "y": 17,
+    "nation": "inazuma",
+    "area": "watatsumi-island",
+    "labelDir": "LT"
+  },
+  "Inazuma-SKP": {
+    "names": {
+      "zhCN": "知比山",
+      "zhTW": "知比山",
+      "ja": "シリコロ山",
+      "en": "Shirikoro Peak",
+      "pronunciationJa": "シリコロやま"
+    },
+    "x": 21,
+    "y": 22,
+    "nation": "inazuma",
+    "area": "tsurumi-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-ONB": {
+    "names": {
+      "zhCN": "笈名海滨",
+      "zhTW": "笈名海濱",
+      "ja": "オイナ海岸",
+      "en": "Oina Beach",
+      "pronunciationJa": "オイナかいがん"
+    },
+    "x": 22,
+    "y": 23,
+    "nation": "inazuma",
+    "area": "tsurumi-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-CRS": {
+    "names": {
+      "zhCN": "千来神祠",
+      "zhTW": "千來神祠",
+      "ja": "チライ社殿",
+      "en": "Chirai Shrine",
+      "pronunciationJa": "チライしゃでん"
+    },
+    "x": 24,
+    "y": 23,
+    "nation": "inazuma",
+    "area": "tsurumi-island",
+    "labelDir": "RT"
+  },
+  "Inazuma-MCS": {
+    "names": {
+      "zhCN": "茂知祭场",
+      "zhTW": "茂知祭場",
+      "ja": "モシリ祭場",
+      "en": "Moshiri Ceremonial Site",
+      "pronunciationJa": "モシリさいじょう"
+    },
+    "x": 24,
+    "y": 24,
+    "nation": "inazuma",
+    "area": "tsurumi-island",
+    "labelDir": "RB"
+  },
+  "Inazuma-WKS": {
+    "names": {
+      "zhCN": "惑饲滩",
+      "zhTW": "惑飼灘",
+      "ja": "ワクカウ浜",
+      "en": "Wakukau Shoal",
+      "pronunciationJa": "ワクカウはま"
+    },
+    "x": 23,
+    "y": 25,
+    "nation": "inazuma",
+    "area": "tsurumi-island",
+    "labelDir": "RB"
+  },
+  "Inazuma-TMP": {
+    "names": {
+      "zhCN": "鹤观港",
+      "zhTW": "鶴觀港",
+      "ja": "鶴観港",
+      "en": "Tsurumi Port"
+    },
+    "x": 26,
+    "y": 23,
+    "nation": "inazuma",
+    "area": "tsurumi-island",
+    "labelDir": "B"
+  },
+  "Inazuma-MKN": {
+    "names": {
+      "zhCN": "菅名山",
+      "zhTW": "菅名山",
+      "ja": "カンナ山",
+      "en": "Mt. Kanna",
+      "pronunciationJa": "カンナざん"
+    },
+    "x": 22,
+    "y": 24,
+    "nation": "inazuma",
+    "area": "tsurumi-island",
+    "labelDir": "B"
+  },
+  "Inazuma-ATP": {
+    "names": {
+      "zhCN": "逢岳之野",
+      "zhTW": "逢嶽之野",
+      "ja": "アウタケ平原",
+      "en": "Autake Plains",
+      "pronunciationJa": "アウタケへいげん"
+    },
+    "x": 20,
+    "y": 24,
+    "nation": "inazuma",
+    "area": "tsurumi-island",
+    "labelDir": "B"
+  },
+  "Liyue-LYG": {
+    "names": {
+      "zhCN": "璃月港站",
+      "zhTW": "璃月港站",
+      "ja": "璃月港駅",
+      "en": "Liyue Harbor Station"
+    },
+    "x": 5,
+    "y": -1,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "L"
+  },
+  "Liyue-HET": {
+    "names": {
+      "zhCN": "荷塘",
+      "zhTW": "荷塘",
+      "ja": "荷塘",
+      "en": "Lotus Pond"
+    },
+    "x": 7,
+    "y": 1,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "RT"
+  },
+  "Liyue-FYP": {
+    "names": {
+      "zhCN": "绯云坡",
+      "zhTW": "緋雲坡",
+      "ja": "緋雲の丘",
+      "en": "Feiyun Slope",
+      "pronunciationJa": "ひうんのおか"
+    },
+    "x": 7,
+    "y": 3,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "T"
+  },
+  "Liyue-LYN": {
+    "names": {
+      "zhCN": "璃月港南站",
+      "zhTW": "璃月港南站",
+      "ja": "璃月港南駅",
+      "en": "Liyue Harbor South Station"
+    },
+    "x": 7,
+    "y": 5,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "T"
+  },
+  "Liyue-PSC": {
+    "names": {
+      "zhCN": "喷水池",
+      "zhTW": "噴水池",
+      "ja": "噴水池",
+      "en": "The Fountain"
+    },
+    "x": 8,
+    "y": 6,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "LB"
+  },
+  "Liyue-CHY": {
+    "names": {
+      "zhCN": "吃虎岩",
+      "zhTW": "吃虎巖",
+      "ja": "チ虎岩",
+      "en": "Chihu Rock",
+      "pronunciationJa": "ちこがん"
+    },
+    "x": 9,
+    "y": 7,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "B"
+  },
+  "Liyue-HYG": {
+    "names": {
+      "zhCN": "货运港",
+      "zhTW": "貨運港",
+      "ja": "貨物港",
+      "en": "Cargo Port"
+    },
+    "x": 11,
+    "y": 7,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "B"
+  },
+  "Liyue-HYC": {
+    "names": {
+      "zhCN": "黑岩厂",
+      "zhTW": "黑巖廠",
+      "ja": "黒岩場",
+      "en": "Blackcliff Forge",
+      "pronunciationJa": "こくがんじょう"
+    },
+    "x": 5,
+    "y": 7,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "B"
+  },
+  "Liyue-NCM": {
+    "names": {
+      "zhCN": "南城门",
+      "zhTW": "南城門",
+      "ja": "南城門",
+      "en": "South Gate"
+    },
+    "x": 6,
+    "y": 6,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "L"
+  },
+  "Liyue-KYN": {
+    "names": {
+      "zhCN": "客运港南",
+      "zhTW": "客運港南",
+      "ja": "旅客港南",
+      "en": "Passenger Port South"
+    },
+    "x": 9,
+    "y": 5,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban"
+  },
+  "Liyue-KYB": {
+    "names": {
+      "zhCN": "客运港北",
+      "zhTW": "客運港北",
+      "ja": "旅客港北",
+      "en": "Passenger Port North"
+    },
+    "x": 9,
+    "y": 3,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban"
+  },
+  "Liyue-BCM": {
+    "names": {
+      "zhCN": "北城门",
+      "zhTW": "北城門",
+      "ja": "北城門",
+      "en": "North Gate"
+    },
+    "x": 9,
+    "y": 1,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "RB"
+  },
+  "Liyue-YLQ": {
+    "names": {
+      "zhCN": "云来新区",
+      "zhTW": "雲來新區",
+      "ja": "雲来新区",
+      "en": "Yunlai New District"
+    },
+    "x": 9,
+    "y": -1,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "L"
+  },
+  "Liyue-LYB": {
+    "names": {
+      "zhCN": "璃月港北站",
+      "zhTW": "璃月港北站",
+      "ja": "璃月港北駅",
+      "en": "Liyue Harbor North Station"
+    },
+    "x": 9,
+    "y": -3,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "T"
+  },
+  "Liyue-HJW": {
+    "names": {
+      "zhCN": "黄金屋",
+      "zhTW": "黃金屋",
+      "ja": "黄金屋",
+      "en": "Golden House",
+      "pronunciationJa": "おうごんや"
+    },
+    "x": 7,
+    "y": 7,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "B"
+  },
+  "Liyue-YJT": {
+    "names": {
+      "zhCN": "玉京台",
+      "zhTW": "玉京臺",
+      "ja": "玉京台",
+      "en": "Yujing Terrace",
+      "pronunciationJa": "ぎょくけいだい"
+    },
+    "x": 5,
+    "y": 5,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "L"
+  },
+  "Liyue-YHT": {
+    "names": {
+      "zhCN": "月海亭",
+      "zhTW": "月海亭",
+      "ja": "月海亭",
+      "en": "Yuehai Pavilion",
+      "pronunciationJa": "げつかいてい"
+    },
+    "x": 5,
+    "y": 3,
+    "nation": "liyue",
+    "area": "liyue-harbor-urban",
+    "labelDir": "LB"
+  },
+  "Liyue-YLY": {
+    "names": {
+      "zhCN": "云来崖",
+      "zhTW": "雲來崖",
+      "ja": "雲来崖",
+      "en": "Yunlai Cliff"
+    },
+    "x": 11,
+    "y": -3,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "T"
+  },
+  "Liyue-LHC": {
+    "names": {
+      "zhCN": "渌华池",
+      "zhTW": "淥華池",
+      "ja": "漉華の池",
+      "en": "Luhua Pool",
+      "pronunciationJa": "ろくかのいけ"
+    },
+    "x": 7,
+    "y": -4,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "RT"
+  },
+  "Liyue-GYX": {
+    "names": {
+      "zhCN": "孤云阁西",
+      "zhTW": "孤雲閣西",
+      "ja": "孤雲閣西",
+      "en": "Guyun Stone Forest West"
+    },
+    "x": 13,
+    "y": -3,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "T"
+  },
+  "Liyue-GYG": {
+    "names": {
+      "zhCN": "孤云阁",
+      "zhTW": "孤雲閣",
+      "ja": "孤雲閣",
+      "en": "Guyun Stone Forest",
+      "pronunciationJa": "こうんかく"
+    },
+    "x": 15,
+    "y": -3,
+    "nation": "liyue",
+    "area": "liyue-harbor-outskirts",
+    "labelDir": "T"
+  },
+  "Snezhnaya-Snezhnaya": {
+    "names": {
+      "zhCN": "至冬堡（列车总站）",
+      "zhTW": "至冬堡（列車總站）",
+      "ja": "スネージナヤ・グラード（セントラルステーション）",
+      "en": "Snezhnograd (Central Station)"
+    },
+    "x": -25,
+    "y": -35,
+    "nation": "snezhnaya",
+    "labelDir": "RT"
+  },
+  "Snezhnaya-Svetloledovka": {
+    "names": {
+      "zhCN": "彩冰镇",
+      "zhTW": "彩冰鎮",
+      "ja": "スヴェトロレドフカ",
+      "en": "Svetloledovka"
+    },
+    "x": -24,
+    "y": -33,
+    "nation": "snezhnaya"
+  },
+  "Snezhnaya-Sretomorozsk": {
+    "names": {
+      "zhCN": "凝露镇",
+      "zhTW": "凝露鎮",
+      "ja": "スレトモロスク",
+      "en": "Sretomorozsk"
+    },
+    "x": -27,
+    "y": -30,
+    "nation": "snezhnaya",
+    "labelDir": "B"
+  },
+  "Snezhnaya-Zorya": {
+    "names": {
+      "zhCN": "曙光车站",
+      "zhTW": "曙光車站",
+      "ja": "ザーリャ駅",
+      "en": "Rankova Zorya",
+      "pronunciationJa": "ザーリャえき"
+    },
+    "x": -28,
+    "y": -33,
+    "nation": "snezhnaya",
+    "labelDir": "LB"
+  },
+  "Snezhnaya-Morepesok": {
+    "names": {
+      "zhCN": "海屑镇",
+      "zhTW": "海屑鎮",
+      "ja": "モレペソク",
+      "en": "Morepesok"
+    },
+    "x": -27,
+    "y": -36,
+    "nation": "snezhnaya",
+    "labelDir": "T"
+  },
+  "Snezhnaya-Flamefeather": {
+    "names": {
+      "zhCN": "焰羽谷",
+      "zhTW": "焰羽谷",
+      "ja": "焔翼の谷",
+      "en": "Flamefeather Valley",
+      "pronunciationJa": "えんよくのたに"
+    },
+    "x": -29,
+    "y": -35,
+    "nation": "snezhnaya",
+    "labelDir": "L"
+  },
+  "Snezhnaya-PaleCrown": {
+    "names": {
+      "zhCN": "白冕宫",
+      "zhTW": "白冕宮",
+      "ja": "ペールクラウンパレス",
+      "en": "Pale Crown Palace"
+    },
+    "x": -22,
+    "y": -37,
+    "nation": "snezhnaya",
+    "labelDir": "R"
+  }
+}

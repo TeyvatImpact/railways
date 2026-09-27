@@ -53,14 +53,19 @@ Panel anatomy: a line-coloured frame, a top-left header (线路名称 badge left
 | Page        | `views/display/index.vue`            | Static rail-only strip renderer on `/display`; reads `useMapData` + `buildStrip`, lays each `StripModel` out with a CSS grid (fixed terminal margins, header, numbered stations, 45° labels, 换乘徽章, branch lanes)                                                                                                                                                                                                                                                                                                                                       |
 | Page        | `views/display/stripModel.ts`        | Pure strip model (`buildStrip`, `EDGE`): merged columns, texts, badge row per cluster, `--label-shift` / `--badge-shift` clamps, branch-lane columns; text widths injected via `MeasureFn` — no pixel layout (that is CSS)                                                                                                                                                                                                                                                                                                                                 |
 | Page        | `views/display/variantStrip.ts`      | Pure variant selection for `/display`: `pickDisplayVariant` (longest variant) + `splitVariants` (main line vs. divergent 支线)                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| Page        | `views/display/loopStrip.ts`         | Pure loop handling for `/display` (`isLoop` / `loopRing` / `ringOrder` / `rollRing` / `buildLoopProgress` / `LoopProgress.rollId`): drops the data's closing duplicate station for the static strip, rolls the station order around the just-passed seam station for the dynamic strip, and gives the ring its own progress model (seam station grey, arrived station second + blinking, current interval = the rolled strip's first segment)                                                                                                                                            |
+| Page        | `views/display/loopStrip.ts`         | Pure loop handling for `/display` (`isLoop` / `loopRing` / `ringOrder` / `rollRing` / `buildLoopProgress` / `LoopProgress.rollId`): drops the data's closing duplicate station for the static strip, rolls the station order around the just-passed seam station for the dynamic strip, and gives the ring its own progress model (seam station grey, arrived station second + blinking, current interval = the rolled strip's first segment)                                                                                                              |
 | App         | `TitleBar.vue`                       | Top title bar + "关于" button                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | App         | `InfoDialog.vue`                     | Modal showing intro.md via `markdown-exit` + `github-markdown-css`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | Map         | `RailwayMap.vue`                     | SVG viewport with pan/zoom, grid lines, territory borders (thin area under thick nation), segments, stations, labels, markers; emits `station-click`（仅在选择起点 / 终点时）, 其它点击写 `useSelection`（线段 → 线路，站点 → 站点，空白 → 清空）；高亮由 selection 推导                                                                                                                                                                                                                                                                                   |
 | Routing     | `RoutePanel.vue`                     | Right sidebar, two blocks: ① 搜索框 + `StationInfo` / `LineInfo`（站点 / 线路信息，含关闭按钮）, ② 路径规划（map pick mode, calculate button, multi-route option list, `RouteTimeline` detail view）。地图点击经 `useSelection` 与搜索结果走同一条路径                                                                                                                                                                                                                                                                                                     |
 | Overlays    | `MapControls.vue`                    | Fixed bottom-left zoom +/- buttons, mouse coordinate readout (data-space x,y) and the temporary 归属边界平滑 toggle (cycles flow → round → none); rendered inside RailwayMap                                                                                                                                                                                                                                                                                                                                                                               |
-| Data        | `data/regions.json`                  | 站点归属表：「国家/地区」（`nations` = 七国 + 至冬国挪德卡莱自治区）与可选「区域」（`areas`），`stations` 以完整站点 id 为键 —— 每站必有一项；`useMapData.ts` 校验完整性并挂到 `Station.nation` / `Station.area`                                                                                                                                                                                                                                                                                                                                           |
-| Data        | `composables/useMapData.ts`          | Imports region JSON + ferry.json + same.json + regions.json, resolves every station's `names` and every line's `primaryLang`（线路缺省继承区域 config；ferry/same 无 config → `zhCN`），轮渡 / 同站换乘线路名由端点站派生（`lineNaming.ts`，数据里不写 `names`），运营公司 / 主体是 `{ names }`，flattens every line's `variants` into unique station pairs, computes segments with line offsetting for parallel tracks；导出 `pairCost`（区间费用，渲染段 / 路由 / 信息面板共用）与 `stationLineMap`（站点 → 线路）                                       |
+| Data        | `data/stations.json`                 | 站点表：**完整站点 id 为键**（如 `Teyvat-LYH`），每条 `{ names, x, y, nation, area?, labelDir? }`；坐标为已折算旧 `config.x/y` 的绝对值                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Data        | `data/lines.json`                    | 线路表（含变体）：**线路 id 为键**（35 轨道 + 12 轮渡 + 3 同站）；轨道线路必有 `names` / `network` / `colorSlot`，`lineType` 线路禁止写 `names` / `colorSlot`、同站换乘禁止 `network`                                                                                                                                                                                                                                                                                                                                                                      |
+| Data        | `data/networks.json`                 | 体系表（6）：`teyvat` / `liyue-metro` / `aquabus` / `inazuma` / `snezhnaya` / `easybreeze`，每项 `{ operator?, authority?, primaryLang?, fontFamily?, voice? }`（引用 `organizations.json` 的 id）；体系不写 `names`                                                                                                                                                                                                                                                                                                                                       |
+| Data        | `data/organizations.json`            | 运营公司 / 运营主体表（17）：`{ names }`（含可选的 `ru`）；id = `names.en` 规范化                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Data        | `data/territories.json`              | 国家/地区（8）+ 区域（16）四语名；`nations` 可带 `primaryLang` / `fontFamily`（仅 `inazuma` 写，站点由 loader 从所属 nation 继承）                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Data        | `data/voice/*.json`                  | 配音模板（命名空间 = 文件名 = 模板 id）：`common.json` 通用原子句 + 组合表 + 设置，`snezhnaya.json` 至冬模板（`extends: common` + 站点文本池）                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Data        | `composables/useMapData.ts`          | 读七张表（stations/lines/networks/organizations/territories/connections/mark）解析成 `stations` / `lines`：线路名（轮渡 / 同站换乘由端点站派生）、颜色（`linePalette[colorSlot]`）、字体 / 主语言（体系）、运营公司 / 主体、配音模板（线路 → 体系 → `common`）、时刻表（`parseTimetable`）都在此解析；flattens variants into unique station pairs, computes segments with line offsetting for parallel tracks；导出 `pairCost` / `stationLineMap` / `segmentHeadways` / `headwayFor`                                                                       |
 | Interaction | `composables/useMapInteraction.ts`   | Mouse drag/scroll, touch pan/pinch-zoom; persists viewport to localStorage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | UI          | `composables/useTheme.ts`            | Light/dark theme ref, Varlet MD3 StyleProvider swap, persisted to localStorage                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | UI          | `composables/useRenderMode.ts`       | Line-connection mode ref; `straight` (default) / `curve` (Catmull-Rom). Dormant: no UI control, no persistence                                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -78,114 +83,148 @@ Panel anatomy: a line-coloured frame, a top-left header (线路名称 badge left
 | Info        | `composables/useSelection.ts`        | 右侧面板「选中了什么」的唯一来源：`selection` ref（`{ kind: 'station' \| 'line', id }`）+ `selectStation` / `selectLine` / `clearSelection`。地图点击与搜索结果都写它，信息面板与地图高亮都读它                                                                                                                                                                                                                                                                                                                                                            |
 | Info        | `components/StationInfo.vue`         | 站点信息：四语名称（含日语假名读音）、国家/地区 + 区域、管理机构（服务该站的线路的运营公司 / 运营主体，去重）、可乘坐线路（点击 → `selectLine`）                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Info        | `components/LineInfo.vue`            | 线路信息：四语名称、单向 / 双向、机构、上行 / 下行切换（单向线路禁用下行）、交路选择（>1 时）、起终站 + 各自的管理机构（点击 → `selectStation`）、线路全览（`TransitTimeline`：一站一区间，区间行只给该站对的摩拉 / 时间 / 千米，不给线路名与方向）                                                                                                                                                                                                                                                                                                        |
-| Data        | `scripts/migrate-data-v2.cjs`        | Migration script that extracts fare/time/distance from station tuples into standalone stationDistances arrays                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Data        | `scripts/migrate-connections.cjs`    | One-shot migration that moved every station pair's distance and waypoints from the per-file `stationDistances` arrays and line station tuples into the global `connections.json`, and turned line `stations` into bare id arrays                                                                                                                                                                                                                                                                                                                           |
-| Data        | `scripts/migrate-line-variants.cjs`  | One-shot migration that wrapped every line's `stations` into `variants: [{ stations }]` and built the 大小交路 / 支线 variants of `M1`, `A`, `L2`, `K2` (+`K2-B`), `K3` (+`K3-B`)                                                                                                                                                                                                                                                                                                                                                                          |
-| Data        | `scripts/migrate-line-names.cjs`     | One-shot migration that turned every line's `name`/`nameZh`/`nameEn` into `names`（轨道交通线路的 ja/zhTW 来自脚本内的表，en 沿用原值并修笔误）and every `operator`/`authority` into `{ names }`（`ORG_NAMES` 表，至冬主体的俄文移到 `names.ru`）；轮渡 / 同站换乘的名字当时也由端点站派生，现已改为运行时派生（`lineNaming.ts`），脚本跳过这两类线路                                                                                                                                                                                                      |
-| Data        | `scripts/migrate-station-names.cjs`  | One-shot migration that merged each station's `nameCn`/`nameZh`/`nameEn` into `names: { zhCN, zhTW, ja, en, pronunciationJa? }` (matched against `.temp/words.json`; 39 entries hard-coded in `OVERRIDES`) and added `config.primaryLang`                                                                                                                                                                                                                                                                                                                  |
-| Data        | `scripts/migrate-vehicles.cjs`       | One-shot migration that moved each line's `costPreset` onto its variants as `vehicle` (same ids as `config/vehicles.ts`; a line without `costPreset` used the old `standard` fallback), editing the raw text so the data files' compact array formatting is preserved                                                                                                                                                                                                                                                                                      |
-| Dev         | `components/AdminPanel.vue`          | Floating data editor (dev-only) — edit each station's and each line's four locale names (`names.zhCN` / `zhTW` / `ja` / `en` + optional `pronunciationJa`), per-variant line names / 车型（`vehicle` 下拉取值 `config/vehicles.ts`）and connection distances via web UI（轮渡 / 同站换乘线路名由端点站派生，面板只提示不可编辑）                                                                                                                                                                                                                           |
-| Dev         | `vite.config.ts`                     | Admin API middleware (`GET/PUT /__admin/data/*`) for reading/writing JSON files in dev mode                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Data        | `scripts/migrate-data-v3.cjs`        | 唯一一次性迁移：把 4 个地区分册 + `ferry.json` + `same.json` + `regions.json` 合并成 `stations/lines/networks/organizations/territories.json`；内置旧色位等价校验（不等即 exit、不写文件），跑一次即弃                                                                                                                                                                                                                                                                                                                                                     |
+| Dev         | `components/AdminPanel.vue`          | Floating data editor (dev-only), six tabs `stations` / `lines` / `networks` / `organizations` / `territories` / `connections` — edit station four-language names (+ `pronunciationJa`), line four-language names (derived-name lines show a hint), per-variant names / 车型（`vehicle` 下拉取值 `config/vehicles.ts`）and read-only station sequences, network `fontFamily` / `primaryLang` / `operator` / `authority` / `voice`, organization four-language names (+ `ru`), territory names, connection distances                                         |
+| Dev         | `vite.config.ts`                     | Admin API middleware (`GET/PUT /__admin/data/*`); `ALLOWED_FILES` = `stations.json` / `lines.json` / `networks.json` / `organizations.json` / `territories.json` / `connections.json` / `mark.json`                                                                                                                                                                                                                                                                                                                                                        |
 | Config      | `config/render.config.ts`            | All render constants (fonts, palette, spacing, special line colors, territory border strokes and grid step)                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | Config      | `config/vehicles.ts`                 | 车型（列车 / 船只）配置：`id`、名称、设计时速（km/h）、票价系数（摩拉/千米）、加/减速度（m/s²，给出后时间按含加减速的梯形速度曲线算）、时刻表冗余系数函数（时间算完后再加上/乘）、数据计算公式（距离 × 车型 → 时间 / 票价，可覆写）与预留的可载人数；线路的**每个变体**用 `vehicle` 选一种                                                                                                                                                                                                                                                                 |
+| Config      | `config/announce.config.ts`          | 语音引擎常量：`AnnounceLang` / `AnnounceKind` / `PROGRESS_STATES` / `VOICE_LANGS` / `UTTERANCE_LANGS` / `VOICE_STORAGE_KEY` / `PREVIEW` / `LOG_LIMIT` / `DEFAULT_VOICE_TEMPLATE`；通用文案已移入 `data/voice/*.json`                                                                                                                                                                                                                                                                                                                                       |
+| Timing      | `composables/timetable.ts`           | 时刻表纯模块：类型 + `parseTimetable`（校验）+ `expandDepartures`（时间窗 → 逐个时刻，跨天、去尾）+ `segmentKey` + `buildSegmentHeadways`；无 Vue 依赖                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Voice       | `views/display/announce.ts`          | 配音模板模型与纯逻辑：`createVoiceRegistry`（命名空间 + `extends` 合并 + 构建期校验）、`buildAnnouncement(ctx, templates, opts?)`、`shortLineName`；无 Vue 依赖                                                                                                                                                                                                                                                                                                                                                                                            |
+| Voice       | `views/display/voiceTemplates.ts`    | 装配注册表：`import.meta.glob('../../data/voice/*.json')` → 模板 id = 文件名 stem → 校验线路 / 体系引用的模板 id 存在                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 
 ## Data
 
 All data is JSON stored in `src/data/`. No CSV files.
 
-**IMPORTANT**: When working with these files, do NOT always read them in full — they can be large (e.g. `teyvat.json` is ~2000 lines). Read only the first ~30-40 lines to understand structure, or use `grep` to find specific stations/lines by ID or name. The schemas below describe the structure precisely — rely on them instead of full file reads.
+**IMPORTANT**: When working with these files, do NOT always read them in full — they can be large (e.g. `lines.json` / `stations.json` are >1000 lines). Read only the first ~30-40 lines to understand structure, or use `grep` to find specific stations/lines by ID or name. The schemas below describe the structure precisely — rely on them instead of full file reads.
 
-Region files, each with structure `{ config, stations, lines }`:
+`src/data/` 现为「一个实体一张表」：**站点 / 线路 / 体系 / 机构 / 归属**各一张以 id 为键的表，加上全局的 `connections.json`、手绘的 `mark.json`、语音模板目录 `voice/`。
 
-| File             | Config prefix | Config font                                                 |
-| ---------------- | ------------- | ----------------------------------------------------------- |
-| `teyvat.json`    | `"Teyvat"`    | `"Noto Sans SC"`                                            |
-| `inazuma.json`   | `"Inazuma"`   | `"Noto Serif JP"` (loaded via Google Fonts in `index.html`) |
-| `liyue.json`     | `"Liyue"`     | `"Noto Sans SC"`                                            |
-| `snezhnaya.json` | `"Snezhnaya"` | `"Noto Sans SC"`                                            |
+| 文件                 | 内容                                                             | 条数                             |
+| -------------------- | ---------------------------------------------------------------- | -------------------------------- |
+| `stations.json`      | 站点，完整站点 id 为键                                           | 180                              |
+| `lines.json`         | 线路（含变体），线路 id 为键                                     | 50（35 轨道 + 12 轮渡 + 3 同站） |
+| `networks.json`      | 体系（默认字体 / 主语言 / 运营公司 / 运营主体 / 配音模板）       | 6                                |
+| `organizations.json` | 运营公司 + 运营主体（四语名，含至冬的 `ru`）                     | 17                               |
+| `territories.json`   | 国家/地区（8）+ 区域（16）的四语名                               | 2 段                             |
+| `connections.json`   | 全局站间连接表（距离 + 途经点）                                  | 208                              |
+| `mark.json`          | 手绘 SVG 标注路径 + 文字标识                                     | —                                |
+| `voice/*.json`       | 配音模板（见 [Voice templates](#voice-templates-srcvoice-json)） | 2                                |
 
-`connections.json` is the global station-pair connection table (distance + waypoints for every adjacent pair — see below).  
-`mark.json` contains `{ paths, texts }` — 手绘 SVG 标注路径 + 文字标识系统（国家 / 国家运输机构 / 区域；大、小两类，可重点、可日语字体，四行文字）。详见 [Annotation file](#annotation-file-markjson)。
+### `stations.json`
 
-`regions.json` is the **station-territory table**（归属表）— the one place that says where each station is. Structure `{ nations, areas, stations }`:
+```jsonc
+{
+  "Teyvat-LYH": {
+    "names": {
+      "zhCN": "璃月港",
+      "zhTW": "璃月港",
+      "ja": "璃月港",
+      "en": "Liyue Harbor",
+      "pronunciationJa": "リーユェこう",
+    },
+    "x": 0,
+    "y": 0, // 已是绝对值（旧 loader 的 config.x/y 偏移已折算进来）
+    "nation": "liyue", // 必有
+    "area": "liyue-harbor-outskirts", // 可选（原 regions.json 的区域）
+    "labelDir": "L", // 可选
+  },
+}
+```
+
+键顺序 = 旧 `parsedStations` 顺序（teyvat 119 → inazuma 33 → liyue 21 → snezhnaya 7），**逐字保持**（标签避让与 Delaunay 剖分都依赖它）；条目的键顺序固定为 `names, x, y, nation, area?, labelDir?`。`x`/`y` 已是绝对值，所以 `minX/minY/svgWidth/svgHeight` 与 `mark.json` 的坐标口径与旧版完全一致。
+
+### `territories.json`
 
 ```jsonc
 {
   // 「国家/地区」：七国 + 至冬国挪德卡莱自治区（`nodkrai`）
-  "nations": { "mondstadt": { "names": Names }, … },
-  // 「区域」：隶属于某个国家/地区；没有区域的国家（枫丹、至冬）与无区域的站点都不出现在这里
-  "areas": { "dragonspine": { "names": Names, "nation": "mondstadt" }, … },
-  // 完整站点 id → 归属；一个点必有国家/地区，区域可选
-  "stations": {
-    "Teyvat-DSC": { "nation": "mondstadt", "area": "dragonspine" },
-    "Teyvat-SAA": { "nation": "mondstadt" }
-  }
+  "nations": {
+    "mondstadt": { "names": Names },
+    // 只有 inazuma 写 primaryLang / fontFamily；其余 nation 缺省 zhCN + Noto Sans SC
+    "inazuma": { "names": Names, "primaryLang": "ja", "fontFamily": "Noto Serif JP" }
+  },
+  // 「区域」：隶属于某个国家/地区
+  "areas": { "dragonspine": { "names": Names, "nation": "mondstadt" } }
 }
 ```
 
-`Names` 与站点 / 线路同一套四语键（`zhCN` / `zhTW` / `ja` / `en`）；id 是代码里比对的稳定标识，中文名只作显示。归属与数据文件无关 —— `teyvat.json` 一册里就横跨蒙德 / 璃月 / 须弥 / 枫丹 / 纳塔 / 至冬国挪德卡莱自治区六个国家/地区，所以归属表必须是独立的一册。`useMapData.ts` 加载后校验：每个站点都必须有条目、条目的站点必须存在、`area` 必须存在于 `areas` 且其 `nation` 与站点一致；校验通过后把 `nation` / `area` 挂到每个 `Station` 上（`Territory = { id, names }`）。消费方是归属边界：`useTerritoryBorders.ts` 拿它把地图划成国家/地区与区域两种边界线（见 [Territory borders](#territory-borders-useterritorybordersts)）。
+`primaryLang` / `fontFamily` 从旧的「地区分册 config」上移到 nation：旧口径里 Teyvat 分册（横跨 6 个 nation）都是 zhCN + Noto Sans SC、Inazuma 分册都是 ja + Noto Serif JP —— 与 nation 一一对应，所以只有 `inazuma` 需要写这两个键。站点由 loader 从 nation 继承（主语言非 `zhCN` 时 `fontFamilyZh = 'Noto Serif SC'`）。`Names` 与站点 / 线路同一套四语键；id 是代码里比对的稳定标识，中文名只作显示。`useMapData.ts` 加载后校验：每个站点的 `nation` 必须存在、`area` 必须存在且其 `nation` 与站点一致；校验通过后把 `nation` / `area` 挂到每个 `Station` 上（`Territory = { id, names }`）。消费方是归属边界（见 [Territory borders](#territory-borders-useterritorybordersts)）。
 
-Two special line files:
+### `organizations.json` / `networks.json`
 
-| File         | `lineType`       | Visual style                           |
-| ------------ | ---------------- | -------------------------------------- |
-| `ferry.json` | `"ferry"`        | Thin dark blue dashed line             |
-| `same.json`  | `"same-station"` | Thin semi-transparent black solid line |
+```jsonc
+// organizations.json：运营公司 / 运营主体（id = names.en 规范化：小写、非字母数字折成 `-`、去首尾 `-`）
+{
+  "teyvat-railway": { "names": { "zhCN": "提瓦特铁路", "zhTW": "提瓦特鐵路", "ja": "テイワット鉄道", "en": "Teyvat Railway" } },
+  "snezhnaya-royal-railway-transport-bureau": { "names": { …, "ru": "Королевское …" } }
+}
 
-### Region file schema (`teyvat.json`, `inazuma.json`, `liyue.json`, `snezhnaya.json`)
+// networks.json：体系（体系名 = 其运营公司的四语名，不写 names）
+{
+  "teyvat": { "operator": "teyvat-railway" },
+  "inazuma": { "operator": "inazuma-railways", "authority": "inazuma-shogunate", "primaryLang": "ja", "fontFamily": "Noto Serif JP" },
+  "snezhnaya": { "operator": "snezhnaya-royal-railway", "authority": "snezhnaya-royal-railway-transport-bureau", "voice": "snezhnaya" }
+}
+```
+
+`fontFamily` 缺省 `Noto Sans SC`、`primaryLang` 缺省 `zhCN`、`voice` 缺省 `common`。**体系 → 线路**：`teyvat` = `A B M1 L1 L2 S1 S2 N0 N1 N2 N3 K1 K2 K3`（各带自己的 authority）、`liyue-metro` = `LHM-1/2/3/S1`、`aquabus` = `F1/F2/F3`、`inazuma` = `NK YG NW NS YS WT TA TB`（`WT` 覆盖 authority）、`snezhnaya` = `Trian-1…5`、`easybreeze` = `N4`。旧 `teyvat.json` 里 F1-F3 的运营公司 / 主体与 N4 的机构现在挂在 `aquabus` / `easybreeze` 体系上（线路上不再重复写）。`A` / `B` 的 authority 由「跨局」改为 `liyue-bureau`（线路名不变）。
+
+### `lines.json`
 
 ```jsonc
 {
-  "config": {
-    "x": number, "y": number, "name": string, "fontFamily": string,
-    "primaryLang"?: "ja" | "zhCN",          // 本文件站名与线路名的「主语言」：稻妻 "ja"，其余 "zhCN"（决定标签主行 / 搜索结果 / 路由里的站名）
-    "operator"?: { "names": Names },         // 本文件所有线路的默认运营公司（Names 见下）
-    "authority"?: { "names": Names }         // 本文件所有线路的默认运营主体
+  "A": {
+    "names": Names,                       // 轨道线路必有；lineType 线路禁止写（名字由端点站派生）
+    "network": "teyvat",                  // 轨道线路必有
+    "authority": "liyue-bureau",          // 覆盖体系默认时写出（不写 = 用体系默认）
+    "colorSlot": 0,                       // 轨道线路必有：linePalette[slot % 35]
+    "lineLabels": [["Teyvat-SAA", "RT"]], // 短 id 已展开为完整 id；空数组不写
+    "oneWay": true,                       // 只 Trian-1/2/3 写
+    "variants": [
+      { "stations": ["Teyvat-SAA", …] },                          // vehicle 省略 = standard
+      { "name": "小交路", "nameEn": "Short Turnback", "stations": […] }
+    ]
   },
-  // Names = 四语名称对象，键名与 .temp/words.json 一致（新增语言 = 新增键）：
-  //   { zhCN, zhTW, ja, en, pronunciationJa? }                    站点名 / 线路名
-  //   { zhCN, zhTW, ja, en, pronunciationJa?, ru? }               运营公司 / 运营主体（ru = 额外语言，如至冬主体的俄文）
-  "stations": [
-    {
-      "id": string,
-      "names": Names,                           // 四语站名
-      "x": number, "y": number, "labelDir"?: string
-    }
-    // labelDir: one of "L","R","T","B","LT","LB","RT","RB"
-  ],
-  "lines": [
-    {
-      "id": string,
-      "names": Names,                       // 四语线路名，键名与站名同一套（lineType 为 ferry / same-station 的线路不写，名字由端点站运行时派生）
-      "primaryLang"?: "ja" | "zhCN",         // 可选：覆盖本文件的主语言（缺省继承 config.primaryLang；ferry/same 无 config → "zhCN"）
-      "operator"?: { "names": Names },         // 覆盖 config.operator（如 F1-F3 → 枫丹巡轨船）
-      "authority"?: { "names": Names },        // 覆盖 config.authority（如 N4 → 悠悠度假村管理委员会）
-      "oneWay"?: boolean,                   // true = 单向，所有变体都只按各自 stations 的顺序开行
-      "lineLabels"?: [ [stationId, position], ... ],   // 线路级：对该线全部变体生效
-      "variants": [
-        {
-          "name"?: string,                  // 短变体名（`支线` / `小交路` …）；空或省略 = 该线路的全线交路
-          "nameEn"?: string,
-          "vehicle"?: string,               // 本变体选用的车型 id（`config/vehicles.ts`）；省略 = "standard"
-          "stations": [stationId, ...]      // 裸站点 id 数组：短 id 按本区前缀展开，跨区引用写完整 id（如 "Teyvat-STR"）
-        }
-      ]
-      // 至少 1 个变体，每个变体至少 2 站；同一线路的变体共用 id / 名称 / 颜色 / 平行轨道槽位，车型按变体各自选择
-    }
+  "Trian-1": { "names": Names, "network": "snezhnaya", "colorSlot": 0, "oneWay": true, "variants": [{ "stations": […] }] },
+  "ferry-fnc-vop": { "lineType": "ferry", "network": "teyvat", "variants": [{ "vehicle": "ferry", "stations": ["Teyvat-FNC", "Teyvat-VOP"] }] },
+  "same-lyh-lyg": { "lineType": "same-station", "variants": [{ "vehicle": "same-station", "stations": ["Teyvat-LYH", "Liyue-LYG"] }] }
+}
+```
+
+字段规则：
+
+- **键顺序**保留现状：轨道线路 `A B M1 L1 L2 S1 S2 F1 F2 F3 N0 N1 N2 N3 N4 K1 K2 K3 NK YG NW NS YS WT TA TB LHM-1 LHM-2 LHM-3 LHM-S1 Trian-1…5`，随后 12 条轮渡（`ferry-fnc-vop`、`ferry-hgv-wte`、`ferry-izc-tmp`，再 `ferry.json` 的 9 条），最后 3 条同站换乘 —— `/display` 的面板顺序与全部线路颜色与旧版完全一致（3 条区域轮渡在站点面板的线路列表里挪进轮渡段）。
+- `colorSlot`：按**旧数据里的实际取色**回填（旧规则 = 本册内第 n 条非 `lineType` 线路取 `linePalette[n]`）；`lineType` 线路用 `FERRY_COLOR` / `SAME_COLOR`，不占色位。
+- `vehicle`：等于 `standard` 时省略（旧数据 24 处冗余显式全删）；其余保持（`ferry` 12、`inazuma` 8、`liyue-metro` 4、`aquabus` 3、`same-station` 3、`natlan-resort` 1）。
+- `network`：轨道线路必有；轮渡可选（`ferry-fnc-vop` → `teyvat`，`ferry-hgv-wte` / `ferry-izc-tmp` → `inazuma`，`ferry.json` 那 9 条不写）；同站换乘禁止写。
+- `lineLabels`：短 id 全部展开成完整 id；`[]` 一律不写。
+- `timetable`（变体级，可选）：见 [Timetable](#timetable-composablestimetablets)；本阶段无真实数据。
+
+### 线名派生（轮渡 / 同站换乘）
+
+轮渡 / 同站换乘的线名**不写进数据**，由 `composables/lineNaming.ts` 在运行时用端点站的四语站名拼出（同站换乘只取首站）：组合前的站名先过 `plainStationName`（多写法取第一种 `曚云神社/曚云港` → `曚云神社`，去引号 `「花羽会」` → `花羽会`）。轮渡有两个模板：**无固定顺序**用双向箭头、两端站按数据里 `variants[].stations` 的顺序（`{A}↔{B} 轮渡` / `渡輪` / `{A} ↔ {B} Ferry`）—— 这是线路自身的名字，地图、搜索候选、条带都用它；**有固定顺序**用单向箭头、两端站按行程方向（`{A}→{B} 轮渡`）—— 只用在路径规划里展示线路名的地方（`RouteSegment.lineName` / `lineNameEn`）。同站换乘只有一个普通模板：`{A}同站换乘` / `同站轉乘` / `同駅乗り換え` / `{A} Same-Station`，不随方向变化。`lines.json` 里所有 `stations` / `lineLabels` 都是**完整 id**（如 `Teyvat-LYS`）—— 不再有「短 id 按前缀展开」这一层。
+
+### Timetable (`composables/timetable.ts`)
+
+变体可带一个可选的 `timetable`（本阶段**不写任何真实时刻表数据**，只做数据形态、校验与纯函数派生）：
+
+```jsonc
+"timetable": {
+  "interval": 12,                                       // 固定间隔（分钟）：作用于整条变体的所有区间
+  "departures": [
+    { "time": "07:30", "station": "Teyvat-SFL", "direction": "up" },
+    { "from": "18:00", "to": "02:00", "every": 20, "station": "Teyvat-SFL", "direction": "down", "vehicle": "aquabus" }
   ]
 }
 ```
 
-### Special line files
-
-**`ferry.json`** — `{ lines: [{ id, "lineType": "ferry", variants: [{ stations: [prefixedId, ...] }] }] }`
-**`same.json`** — `{ lines: [{ id, "lineType": "same-station", variants: [{ stations: [prefixedId, ...] }] }] }`
-
-轮渡 / 同站换乘的线名**不写进数据**，由 `composables/lineNaming.ts` 在运行时用端点站的四语站名拼出（同站换乘只取首站）：组合前的站名先过 `plainStationName`（多写法取第一种 `曚云神社/曚云港` → `曚云神社`，去引号 `「花羽会」` → `花羽会`）。轮渡有两个模板：**无固定顺序**用双向箭头、两端站按数据里 `variants[].stations` 的顺序（`{A}↔{B} 轮渡` / `渡輪` / `{A} ↔ {B} Ferry`）—— 这是线路自身的名字，地图、搜索候选、条带都用它；**有固定顺序**用单向箭头、两端站按行程方向（`{A}→{B} 轮渡`）—— 只用在路径规划里展示线路名的地方（`RouteSegment.lineName` / `lineNameEn`）。同站换乘只有一个普通模板：`{A}同站换乘` / `同站轉乘` / `同駅乗り換え` / `{A} Same-Station`，不随方向变化。
-
-散落在区域文件里的轮渡（`teyvat.json` 的 `ferry-fnc-vop`、`inazuma.json` 的 `ferry-hgv-wte` / `ferry-izc-tmp`）同样不写 `names`，走同一套派生；它们仍是区域线路（按本区前缀展开站 id、继承本区 `primaryLang` —— 稻妻那两条的线路名主语言是 `ja`），也因此不占用 `linePalette` 的色位。
-
-Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat-LYS"`) to reference stations across region files. They are not re-prefixed at runtime; their variant `stations` arrays are bare id strings like the region files'. Their pairs get their `connections.json` entries from the same global table.
+- `direction`：`up` = 变体站序方向，`down` = 逆站序；`oneWay` 线不能有 `down`。`vehicle` 省略 = 该变体的车型。
+- `time` / `from` / `to`：`"HH:mm"`；时间窗自 `from` 起每 `every` 分钟发一辆、发的时刻 ≤ `to`（**去尾**）；`to <= from` 视为跨天（+24h），如 `18:00 → 02:00` 每 20 分 = 25 班。
+- 判别：有 `time` = 单点，有 `every` = 时间窗；两者在同一条 `departures` 数组里混排。
+- `parseTimetable(raw, ctx)` 校验（信息带 `线路 X 的变体 #i`）：interval 正数、departures 数组、单点 / 时间窗二选一、时间 `HH:mm`、every 正整数、发车站在该变体站序里、方向合法、单向线不能 `down`、车型已知、虚拟线路不应有时刻表。
+- `expandDepartures(t)` → 逐个时刻（按绝对分钟升序，跨天不折回）；`segmentKey(a, b)` = 无向站对键（与 `connections.json` 同口径）；`buildSegmentHeadways(lines)` → 每区间的最小 `interval`。`useMapData.ts` 导出 `segmentHeadways` 与 `headwayFor(a, b)`（当前无消费方）。
 
 ### Connections file (`connections.json`)
 
@@ -199,7 +238,7 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 
 ### Territory borders (`useTerritoryBorders.ts`)
 
-`regions.json` 说「每个站点属于谁」，`useTerritoryBorders.ts` 把它变成地图上的两种线。划分规则是**最近站点优先**：平面上每一点取最近的站点，用它的归属单位（国家/地区 × 区域；同一国家里「没有区域」的站点自成一档）作为该点的归属 —— 边界就是相邻归属单位之间的 **Voronoi 边界**，站点坐标或归属一改，边界自动跟着变（模块加载时算一次，本机约 10ms）。
+`territories.json`（归属）+ `stations.json` 说「每个站点属于谁、在哪」，`useTerritoryBorders.ts` 把它变成地图上的两种线。划分规则是**最近站点优先**：平面上每一点取最近的站点，用它的归属单位（国家/地区 × 区域；同一国家里「没有区域」的站点自成一档）作为该点的归属 —— 边界就是相邻归属单位之间的 **Voronoi 边界**，站点坐标或归属一改，边界自动跟着变（模块加载时算一次，本机约 10ms）。
 
 算法是 **Delaunay 三角剖分 + marching triangles**（精确解：无栅格、无容差、无平滑）：
 
@@ -268,20 +307,22 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 
 ### Station/line field details
 
-- **`id`** (station): Short uppercase code, e.g. `"LYH"`, `"RTP"`. Gets runtime prefix → `"Teyvat-LYH"`.
+- **`id`** (station): 完整站点 id，即 `stations.json` 的键（如 `"Teyvat-LYH"`）—— 不再有「短 id + 运行时前缀」这一层；`lines.json` 与 `connections.json` 里的站点引用一律是完整 id。
 - **`names`**（站点 / 线路 / 机构）: 四语名称对象 `{ zhCN, zhTW, ja, en, pronunciationJa? }`（键名与辞书 `.temp/words.json` 一致，新增语言 = 新增键；机构另有可选的 `ru`）。`useMapData.ts` 解析时校验站点四键非空；线路名同样校验，但**轮渡 / 同站换乘线路不写 `names`**（写了会报错）—— 它们的名字由端点站运行时派生，见 [Special line files](#special-line-files)。`primaryLang` 指出哪一语言是「主语言」——标签主行、搜索结果显示名、路由与播报里的站名 / 线名都用它。上屏语言与顺序由 `composables/stationNames.ts` 的 `nameLabelLines(names, primaryLang)` 唯一决定（当前：主语言行 → 中文行（主语言非中文时）→ 英文行），站点、线路、`/display` 页头共用这一条规则。
-- **`nation` / `area`** (runtime `Station`, 来自 `regions.json`): `nation` = 所属「国家/地区」（七国 + 至冬国挪德卡莱自治区），`area` = 所属「区域」，可能缺省。两者都是 `Territory = { id, names }`，`names` 与站点 / 线路同一套四语键。数据侧只有 id 字符串，`useMapData.ts` 把它们解析成对象并校验（每站必有、区域必须存在且与国家一致）。
-- **Cross-region reference**: A region line may reference a station owned by another region by writing its **already-prefixed** id, e.g. `"Teyvat-STR"` inside `snezhnaya.json`. `regionStationId()` in `useMapData.ts` passes any id containing `-` through untouched (applies to each variant's `stations` and to `lineLabels`). Raw station ids must therefore NEVER contain `-`; `connections.json` always uses full ids.
+- **`nation` / `area`** (runtime `Station`，数据写在 `stations.json`、值查 `territories.json`): `nation` = 所属「国家/地区」（七国 + 至冬国挪德卡莱自治区），`area` = 所属「区域」，可能缺省。两者都是 `Territory = { id, names }`，`names` 与站点 / 线路同一套四语键。数据侧只有 id 字符串，`useMapData.ts` 把它们解析成对象并校验（每站必有、区域必须存在且与国家一致）。
+- **Cross-network reference**: 一条线路（不论属于哪个体系）引用别的体系的站点时直接写完整 id（如 `snezhnaya` 体系的 `Trian-5` 里写 `"Teyvat-STR"`）—— 现在没有前缀展开这一步，任何地方都是完整 id。
 - **`variants`** (line): the line's service patterns. `stations` is a bare station id array — the ordered sequence that variant runs through; every adjacent pair must have an entry in `connections.json` (or fall back to 10 km + straight line). `name` / `nameEn` are the short variant labels (`支线` / `小交路`), empty for the everyday full-length service. `vehicle` picks this variant's 车型 id from `config/vehicles.ts` (omitted = `standard`). Variants of one line share its id, name, colour and parallel-track slot, so two variants over the same pair render as **one** track; the runtime `Line.stations` is a derived union of all variants' stations (first-appearance order), used for station↔line lookups only.
 - **`labelDir`**: Optional, one of `L`/`R`/`T`/`B`/`LT`/`LB`/`RT`/`RB`. Controls label offset direction from station point.
 - **`waypoints`** (connection): the path between a connection's two stations — see [Connections file](#connections-file-connectionsjson) above.
 - **`lineLabels`**: Optional array of `[stationId, position]` — instructs renderer where to place the line's name label relative to that station.
-- **`config.x`/`config.y`**: Origin offset applied to all station coordinates in that region at runtime.
 - **`vehicle`** (variant): each variant picks one 车型 from `config/vehicles.ts` — the successor of the old `fare-presets.json`/`costPreset`. A vehicle carries `id` / `name` / `designSpeed`（设计时速，km/h）/ `fareCoefficient`（票价系数，摩拉/千米）/ `acceleration`、`deceleration`（m/s²，`Infinity` = 瞬时达速或停住）/ `schedulePadding`（时刻表冗余系数函数，见下）/ 可选的 `compute(distance, vehicle) => { time, fare }` 覆写公式，以及预留的 `capacity`（当前未使用）。缺省公式：票价 = 距离 × 票价系数；时间 = `travelMinutes(distance, vehicle)` —— 没给正的加/减速度时按设计时速纯匀速（`distance / (designSpeed / 60)`，缺省、非正数、`NaN` 都走这条），给了则按含加减速的**梯形速度曲线**：起步到设计时速要 `v²/2a`、停站要 `v²/2d`，够长就「加速 → 匀速 → 减速」，区间短到到不了设计时速就整程只有加速 + 减速（峰值速度由「加速距离 + 减速距离 = 全程」解出）。换算关系 `1 m/s² = 3.6 km/min²`。未知 id 报错，省略 = `standard`。
 - **`schedulePadding`** (vehicle): 时刻表冗余系数函数 `(分钟, 车型) => 分钟`，在 `travelMinutes` 得出行程时间**之后**再作用一次，表示排点给运行图留的余量；可加常数、乘系数或两者兼有（稻妻 = `×1.05 + 0.25`），省略 = 不加。只在缺省公式里生效，整段覆写 `compute` 时由覆写方自己决定。当前取值：提瓦特 / 枫丹巡轨船 `+2`、度假村 `+1`、稻妻 `×1.05 + 0.25`、璃月港地铁 `+0.5`、轮渡 `×1.1`、同站换乘（虚拟）无。
-- **`operator` / `authority`**: 运营公司 / 运营主体（`{ names }`，四语齐全）shown in `/display`'s strip header as `names.zhCN` + `names.en` (+ `names.ru`) — Chinese primary, smaller English, optional third line (Snezhnaya's `authority` carries the Russian in `names.ru`). Each region file sets file-wide defaults in `config`, a line overrides either one locally (`F1`-`F3` → 枫丹巡轨船, `N4` → 悠悠度假村轨道交通, `WT` → 稲妻国海祇島珊瑚宮自治政府). `useMapData.ts` resolves the override onto each `Line` while prefixing variant stations, so consumers read `line.operator.names` / `line.authority.names` directly.
-- **`oneWay`**: Optional boolean; `true` = 单向线路，所有变体都只按各自 `stations` 的排列顺序开行，反向不可乘坐（环线即按单一方向绕行）。缺省 = 双向。当前仅 `snezhnaya.json` 的三条环线 `Trian-1`/`Trian-2`/`Trian-3` 为单向；`Trian-4`（白冕宫线）与 `Trian-5`（挪德卡莱连接线）为双向。
-- **虚拟线路**: `Line.virtual`（派生自 `lineType === 'same-station'`，即 `same.json` 里那些「X同站换乘」）—— 它们只是换乘关系的载体，不是能乘坐 / 能搜索的真实线路。`useRouting.searchLines()` 直接跳过它们；站点线路列表（`searchStations` 候选、`StationInfo` 可乘坐线路）用 `sortLinesForDisplay()` 把真实线路排前、虚拟线路排最后；`LineInfo` 上给虚拟线路挂一个「虚拟线路」标签。地图渲染、路径图与站点高亮照旧包含它们（同站换乘是图里 0 成本的边）。轮渡**不是**虚拟线路，仍可搜索。
+- **`operator` / `authority`** (line): 运营公司 / 运营主体，**id 引用** `organizations.json`；线路写了就覆盖体系默认（`teyvat` 体系的 14 条各带 authority，`WT` 覆盖 `authority`），不写就用体系默认（`F1`-`F3` / `N4` 的机构现挂在 `aquabus` / `easybreeze` 体系上）。解析出的对象是 `{ names }`，`/display` 的页头照旧印 `names.zhCN` + `names.en` (+ `names.ru`)。`useMapData.ts` 解析成 `line.operator` / `line.authority`（`OrgInfo | undefined`），消费者直接读 `line.operator?.names`。
+- **`network`** (line): 所属体系（`networks.json` 的键）；轨道线路必有，轮渡可选，同站换乘禁止。体系提供 `fontFamily` / `primaryLang` / 默认 `operator` / `authority` / `voice`。`Line.network` 保留体系 id 备查。
+- **`colorSlot`** (line): 轨道线路必有（整数）—— 颜色 = `linePalette[slot % 35]`；槽位按旧数据实际取色回填，所以视觉零变化。`lineType` 线路不写（用 `FERRY_COLOR` / `SAME_COLOR`）。
+- **`voice`** (line): 配音模板 id（见 [Voice templates](#voice-templates-srcvoice-json)）；缺省 = 体系 `voice`，再缺省 = `DEFAULT_VOICE_TEMPLATE`（`common`）。解析结果在 `Line.voice`。
+- **`oneWay`**: Optional boolean; `true` = 单向线路，所有变体都只按各自 `stations` 的排列顺序开行，反向不可乘坐（环线即按单一方向绕行）。缺省 = 双向。当前仅 `lines.json` 的三条环线 `Trian-1`/`Trian-2`/`Trian-3` 为单向；`Trian-4`（白冕宫线）与 `Trian-5`（挪德卡莱连接线）为双向。
+- **虚拟线路**: `Line.virtual`（派生自 `lineType === 'same-station'`，即 `lines.json` 里那些「X同站换乘」）—— 它们只是换乘关系的载体，不是能乘坐 / 能搜索的真实线路。`useRouting.searchLines()` 直接跳过它们；站点线路列表（`searchStations` 候选、`StationInfo` 可乘坐线路）用 `sortLinesForDisplay()` 把真实线路排前、虚拟线路排最后；`LineInfo` 上给虚拟线路挂一个「虚拟线路」标签。地图渲染、路径图与站点高亮照旧包含它们（同站换乘是图里 0 成本的边）。轮渡**不是**虚拟线路，仍可搜索。
 - **`connections`**: the global station-pair table in `connections.json` (replaces the old per-file `stationDistances` and the per-line waypoint tuples). See [Connections file](#connections-file-connectionsjson) above.
 - **Cost computation**: 距离先由 `connections.json` 查出，再交给该变体车型的公式（缺省 = 设计时速 + 加/减速度推时间、再乘时刻表冗余，票价系数推票价）。**时间全程不化整**（`PairCost.time` / `RenderSegment.time` / `RouteResult.totalTime` 都是原始小数），只有票价四舍五入到整数摩拉；时间的上屏格式交给 `composables/formatTime.ts`（完整 `[h] 时 [m] 分` / `[m] 分 [s] 秒` / `[s] 秒`，线路图小字 `[m]'[s]"` / `[m]'` / `[s]"`）。唯一实现是 `useMapData.ts` 的 `pairCost(vehicleId, aId, bId)`，渲染段标签、`useRouting.ts` 的路由边权、`LineInfo` 的站间费用都调它。
 
@@ -289,11 +330,11 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 
 **Graph construction** (built once at module load):
 
-| Edge type                          | Cost metric                   | Description                                                                                                                                       |
-| ---------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Line adjacency                     | Actual fare (variant vehicle) | Consecutive stations **within one variant**; `oneWay` lines only get the forward edge (reverse travel is impossible, loops must be ridden around) |
-| Transfer (same-station)            | 0                             | Two lines — or two variants of the same line — sharing the same physical station                                                                  |
-| Cross-network transfer (same.json) | 0                             | Connections defined in `same.json` (different prefix)                                                                                             |
+| Edge type               | Cost metric                   | Description                                                                                                                                       |
+| ----------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Line adjacency          | Actual fare (variant vehicle) | Consecutive stations **within one variant**; `oneWay` lines only get the forward edge (reverse travel is impossible, loops must be ridden around) |
+| Transfer (same-station) | 0                             | Two lines — or two variants of the same line — sharing the same physical station                                                                  |
+| Cross-station transfer  | 0                             | Connections defined by `same-station` lines (同站换乘，连接不同体系的站点)                                                                        |
 
 **Node format**: `` `${stationFullId}-${lineId}#${variantIndex}` ``, e.g. `Teyvat-LYH-A#0`, `Liyue-KYB-ferry-kyb-rtp#0`.
 
@@ -318,8 +359,8 @@ Each variant is its own chain in the graph, so changing from a branch/local (小
 - **Coordinates**: data units × `BLOCK_SIZE` (64px, `render.config.ts`). SVG viewport sized to data bounds with configurable `margin`. The background grid is the data unit itself — `gridStep` is **derived** from `BLOCK_SIZE` (`gridStep = BLOCK_SIZE`), never set independently, so grid lines, station positions and the mouse-coordinate readout always agree. `BLOCK_SIZE` is the single knob for the map's scale (`useLabelPlacement`'s grid spacing and `useTerritoryBorders`' `MIN_SEGMENT` follow it too).
 - **Label fonts**: Inazuma stations use `"Noto Serif JP", serif` from Google Fonts; others use `"Noto Sans SC"`.
 - **Label sizes**: Fixed small size (`fsCNSmall: 12`, `fsENSmall: 8`). No zoom-dependent switching.
-- **Station / line names**: every station and line carries `names: { zhCN, zhTW, ja, en, pronunciationJa? }` (运营公司 / 主体 likewise, under `{ names }`); the region's `config.primaryLang` (`ja` for Inazuma, `zhCN` elsewhere; a line may override it) picks the primary line. `nameLabelLines(names, primaryLang)` in `composables/stationNames.ts` is the single source for which lines render and in what order (primary → `zhCN` when the primary isn't Chinese → `en`), shared by the map labels, the `/display` strip header and the `/display` station labels. CN text uses `"Noto Serif SC"` at EN font size.
-- **Line palette**: `linePalette` in `render.config.ts` — 35 colours, picked by the line's **index inside its own data file** (each region restarts at `#e6194b`), not globally. Order: 7 base hues 红橙黄绿青蓝紫 (`#e6194b #f58231 #ffe119 #3cb44b #42d4f4 #4363d8 #911eb4`), then the same 7 lightened (×0.35 white), darkened (×0.30 black), lightened more (×0.65 white) and darkened more (×0.55 black). Ferry / same-station lines keep `FERRY_COLOR` / `SAME_COLOR` and do not consume a slot on the map (`/display` numbers every line in the file, which matches the map because those entries sit last in the region files).
+- **Station / line names**: every station and line carries `names: { zhCN, zhTW, ja, en, pronunciationJa? }` (运营公司 / 主体 likewise, under `{ names }`); the station's nation `primaryLang` / the line's network `primaryLang` (`ja` for Inazuma, `zhCN` elsewhere) picks the primary line. `nameLabelLines(names, primaryLang)` in `composables/stationNames.ts` is the single source for which lines render and in what order (primary → `zhCN` when the primary isn't Chinese → `en`), shared by the map labels, the `/display` strip header and the `/display` station labels. CN text uses `"Noto Serif SC"` at EN font size.
+- **Line palette**: `linePalette` in `render.config.ts` — 35 colours。颜色现在由 `lines.json` 每条轨道线路**显式写出的 `colorSlot`** 决定（`linePalette[slot % 35]`），不再按「本册内第几条」隐式推导；槽位按旧数据实际取色回填，所以颜色与旧版一致。顺序：7 基础色 红橙黄绿青蓝紫 (`#e6194b #f58231 #ffe119 #3cb44b #42d4f4 #4363d8 #911eb4`)，再加亮（×0.35 白）、加暗（×0.30 黑）、更加亮（×0.65 白）、更加暗（×0.55 黑）。轮渡 / 同站换乘用 `FERRY_COLOR` / `SAME_COLOR`，不占色位。
 - **Parallel tracks**: Shared segments are offset by `LINE_WIDTH` per line, centered. A line occupies **one** slot no matter how many variants traverse the segment — variant station pairs are de-duplicated (direction-insensitively, first occurrence wins) before offsetting, so a 支线/小交路 does not push its own line (or anyone else) sideways.
 - **Viewport persistence**: Pan/zoom saved to localStorage key `teyvat-railways-map-state`.
 - **All imports**: relative paths (`../../composables/...`). `tsconfig.json` declares an `@/*` → `./src/*` alias for `vue-tsc`, but `vite.config.ts` has **no** matching `resolve.alias`, so `@/...` imports would break the build — don't use them.
@@ -359,17 +400,17 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 
 - `dist/` is **not** tracked — `.gitignore` ignores `/dist`; `pnpm build` regenerates it locally.
 - Router history base is `/tr` (`createWebHistory('/tr')` in `router/index.ts`), but `vite.config.ts` sets no `base`, so `dist/index.html` references `/assets/*` from the domain root.
-- Data imports in `useMapData.ts` use short names (`teyvat.json`, `inazuma.json`, etc.). If you add a new region, mirror this pattern.
-- Region lists are hardcoded in every consumer — adding a region file requires touching **all** of: `composables/useMapData.ts` (import + prefix loops + distances), `components/AdminPanel.vue` (`fileKeys`/`regionKeys`), and `vite.config.ts` (`ALLOWED_FILES`). `/display` needs no change (it renders whatever `useMapData` exports).
-- 站点归属表 `regions.json` 与数据文件解耦：**任何新增站点都必须在它的 `stations` 里加一项**（`useMapData.ts` 缺项即报错），`area` 只能从 `areas` 里取、且必须与站点的 `nation` 一致。归属表里的 id 是完整站点 id（`Teyvat-DSC`），而 `nations` / `areas` 的键是稳定 id（`mondstadt` / `dragonspine`）——中文名只用于显示，代码里比 id。`nations` 的「至冬国挪德卡莱自治区」是**一个**值（`nodkrai`），不拆成「至冬」+「挪德卡莱」两级。
+- `useMapData.ts` 直接 import 七张表的 JSON（`stations` / `lines` / `networks` / `organizations` / `territories` / `connections` / `mark`）；新增体系 / 线路 / 站点 = 在对应表里加一项，不改代码（新增体系还要在 `networks.json` 写默认值）。
+- 数据表集合硬编码在三处，加表 / 改表要同步：`composables/useMapData.ts`（import + 解析）、`components/AdminPanel.vue`（`fileKeys`）、`vite.config.ts`（`ALLOWED_FILES`）；配音模板集合由 `views/display/voiceTemplates.ts` 的 `import.meta.glob` 自动发现，无需改。`/display` 无需改动（渲染 `useMapData` 导出的一切）。
+- 站点归属写在 `stations.json` 的 `nation` / `area`，**值**查 `territories.json`：`nation` 必有（`useMapData.ts` 缺失即报错），`area` 只能从 `territories.areas` 里取、且其 `nation` 必须与站点一致。`nations` / `areas` 的键是稳定 id（`mondstadt` / `dragonspine`）—— 中文名只用于显示，代码里比 id。`nations` 的「至冬国挪德卡莱自治区」是**一个**值（`nodkrai`），不拆成「至冬」+「挪德卡莱」两级。
 - `vue-tsc` is in devDeps but has no npm script — run via `npx vue-tsc --noEmit`.
 - Manual verification only: run `pnpm dev` and check the browser.
-- Ferry/same-station JSON files don't have their own stations — lines reference prefixed station IDs (e.g. `Teyvat-LYS`) directly. These lines are not run through the standard prefix step. Region files may also declare ferry lines (`lineType: "ferry"`): those stay region lines (prefix + `primaryLang` inherited, e.g. 稻妻 ferry names are `ja`), but their `names` are derived too.
-- 轮渡 / 同站换乘线路（不论在 `ferry.json` / `same.json` 还是在区域文件里）**数据里没有 `names`**：`useMapData.ts` 解析时若发现写了 `names` 直接报错，名字由 `lineNaming.ts` 从端点站派生（同站换乘取首站），派生前站名过 `plainStationName`（多写法取第一种、去引号）。改站名 → 线名自动跟着变。
+- `ferry.json` / `same.json` 已并入 `lines.json`（无独立文件）；所有线路——不论体系——都直接引用**完整站点 id**（如 `Teyvat-LYS`），没有前缀展开这一步。区域轮渡 `ferry-fnc-vop` / `ferry-hgv-wte` / `ferry-izc-tmp` 带 `network`（`teyvat` / `inazuma`），因此继承该体系的运营公司 / 主体与 `primaryLang`（稻妻那两条的线路名主语言是 `ja`）；`ferry.json` 那 9 条与 3 条同站换乘不写 `network`。
+- 轮渡 / 同站换乘线路（`lineType` = `ferry` / `same-station`）**数据里没有 `names`**：`useMapData.ts` 解析时若发现写了 `names` 直接报错，名字由 `lineNaming.ts` 从端点站派生（同站换乘取首站），派生前站名过 `plainStationName`（多写法取第一种、去引号）。改站名 → 线名自动跟着变。
 - 轮渡有两个模板：双向箭头 ↔ 的那份用于「没有固定顺序」的场景（线路自身的名字：地图、搜索候选、条带、`NodeInfo.lineName`），单向箭头 → 的那份按行程方向用于「有固定顺序」的场景 —— 只在路径规划结果里重算 `RouteSegment.lineName` / `lineNameEn`（`ferrySegmentNames`），所以同一段轮渡正反乘车会看到 `A→B 轮渡` / `B→A 轮渡`。同站换乘只有一份普通模板，不随方向变。
 - `intro.md` is imported via `?raw` in `InfoDialog.vue` and rendered with `markdown-exit`. The modal has `github-markdown-css` with transparent background override.
 - First visit detection uses localStorage key `teyvat-railways-visited`.
-- AdminPanel (🛠 button, dev-mode only) exposes a GUI for editing station / line names (four languages each), variant names and connection distances; it lists each line's variants as read-only segment sequences. Changes write back via `PUT /__admin/data/*` and Vite HMR auto-reloads the app.
+- AdminPanel (🛠 button, dev-mode only) 有六个页签 `stations` / `lines` / `networks` / `organizations` / `territories` / `connections`：可改站点四语名（+ 读音）、线路四语名（名字派生型线路显示提示不可编辑）、变体名 / 车型与只读站序、体系 `fontFamily` / `primaryLang` / `operator` / `authority` / `voice`、机构四语名（+ `ru`）、归属四语名、连接距离。改动经 `PUT /__admin/data/*` 写回，Vite HMR 自动刷新。
 - RoutePanel exposes `onStationClick(stationId)` via `defineExpose` — HomeView calls it when RailwayMap emits `station-click`. The map only emits it while a 起点 / 终点 pick is active; every other station / line click goes into `useSelection.selection` instead, which the panel and the map highlight both read (one code path for map clicks and search results alike).
 - RoutePanel now shows a multi-route option list (fare/time/distance) after calculation; clicking one opens the RouteTimeline detail view, clicking × returns to the list.
 - 两条时间线（路径详情 `RouteTimeline.vue` 与线路全览 `LineInfo.vue`）共用 `components/TransitTimeline.vue`，**样式就是原 `RouteTimeline` 的那套类名**（`w-12` 轨道列、`flex-1 w-1 min-h-2` 轨道段、`w-4 h-4` 白底 + 4px 描边圆点、`text-base font-bold leading-tight` 站名、`text-xs mt-0.5 font-en` 英文）—— 轨道段与圆点同在一列里上下相接，所以整条线连续；颜色由 `stop.inColor` / `stop.outColor` 逐站给，换乘站就是「上段旧线色、下段新线色」。费用位置由 `metricsPlacement` 决定：`leg`（两条时间线都在用，费用跟在区间行的线路名 + 方向后，或单独一行）／`stop`（挂在上一站的站名下面，备用）。站点行带 `id` 且 `clickableStations` 时是按钮，点击 emit `station-click` → 打开对应站点信息。
@@ -377,13 +418,13 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 - `useRouting.ts` builds the graph eagerly at module import time (synchronous, runs once).
 - Segment paths are built in `useMapData.ts`: `connectionVertices()` reads the pair from `connections.json` (`lookupConnection()`), expands its chained `waypoints` into polyline vertices, and reverses the whole vertex list when the line traverses the pair against the canonical `from → to` order. Every pair contributes one `RenderSegment` per vertex span (`partIndex` 0..N). `pairSegmentIds` (also exported there) maps `${lineId}|${aId}|${bId}` → the pair's segment ids in both directions; `RailwayMap.vue` uses that map for route highlighting instead of recomputing corner geometry.
 - Parallel-track offsetting groups **whole polylines** by their direction-normalized vertex signature (`polylineKey`) and translates the entire pair by one vector derived from the start→end chord, so corners stay continuous. Straight pairs are unaffected; only corridors additionally shared by another identically-shaped polyline shift (offset ≤ 4px per neighbour).
-- Station-pair connections (distance **and** waypoints) live only in `src/data/connections.json`; region files no longer carry `stationDistances` and lines no longer carry per-pair waypoints. Adding a connection = adding one fully-prefixed entry there (a missing pair silently means 10 km + straight line).
-- Line variants (支线 / 大小交路) live inside the owning line as `variants[]`, sharing its id, name, colour and track slot — a variant is **not** a separate line, so it never gets its own colour or parallel offset; 车型则按变体各自用 `vehicle` 选（`config/vehicles.ts`）。Today's variants: `M1`/`A`/`L2` each carry a `小交路` (short turnback) beside the full-length one, and the former standalone `K2-B` / `K3-B` lines were folded into `K2` / `K3` as `支线` (their `lineLabels` were merged into the parent, so the map still names the line at the branch termini). `ferry.json` / `same.json` lines are single-variant.
+- Station-pair connections (distance **and** waypoints) live only in `src/data/connections.json`; (已删除的)地区分册不再携带 `stationDistances`，线路也不再携带逐对途经点。 Adding a connection = adding one fully-prefixed entry there (a missing pair silently means 10 km + straight line).
+- Line variants (支线 / 大小交路) live inside the owning line as `variants[]`, sharing its id, name, colour and track slot — a variant is **not** a separate line, so it never gets its own colour or parallel offset; 车型则按变体各自用 `vehicle` 选（`config/vehicles.ts`）。Today's variants: `M1`/`A`/`L2` each carry a `小交路` (short turnback) beside the full-length one, and the former standalone `K2-B` / `K3-B` lines were folded into `K2` / `K3` as `支线` (their `lineLabels` were merged into the parent, so the map still names the line at the branch termini). 轮渡 / 同站换乘线路单变体。
 - Because the map graph is built per variant, a route that changes variant (branch → main, 小交路 → 大交路) is reported as a transfer at the shared station; a ride entirely inside one variant stays a single segment. `RouteSegment` / `NodeInfo` carry `variantIndex` / `variantName` / `variantNameEn`, and `segmentLineName()` renders `帕哈岛线（支线）`-style labels.
 - Transfer-station circles count **lines**, not variants: `transferStationIds` uses the per-line station union, so `K2`/`K3` trunk stations stopped being transfer stations when `K2-B`/`K3-B` merged (those also served by `K1` or a ferry kept it).
-- Line colours come from the line's index in the flattened line list, so adding/removing a line entry (e.g. folding `K2-B`/`K3-B` away) shifts the palette for every line after it.
+- 线路颜色由 `lines.json` 的 `colorSlot` 显式决定，增删线路不再影响别条线路的颜色（旧的「序号即色位」耦合已解除）。
 - 归属边界的平滑是**运行时**的：`useBorderSmoothing.ts` 的 ref（初值 = `render.config.ts` 的 `BORDER_SMOOTHING`，默认 `flow`）由左下角控制面板的「边界：xxx」按钮循环切换，不落盘；`BORDER_CORNER_RADIUS`（px，默认 6）只影响 `round`。三种方式都在节点处插值，所以换方式不会让相邻区域错位或撕开。
-- 归属边界（`useTerritoryBorders.ts`）是 Delaunay/marching triangles 算出的**精确 Voronoi 边界**：只在**相邻归属单位**之间生成，站点云外圈没有线；共圆退化靠 Lawson 翻边与「外心重合只画一次」处理，没有可调分辨率或平滑参数。站点坐标或 `regions.json` 一变，边界下次加载自动重算，数据侧无需改动。
+- 归属边界（`useTerritoryBorders.ts`）是 Delaunay/marching triangles 算出的**精确 Voronoi 边界**：只在**相邻归属单位**之间生成，站点云外圈没有线；共圆退化靠 Lawson 翻边与「外心重合只画一次」处理，没有可调分辨率或平滑参数。站点坐标（`stations.json`）或归属（`territories.json`）一变，边界下次加载自动重算，数据侧无需改动。
 - Curve mode (`useCurveGeometry.ts`, implemented but not surfaced in the UI) deliberately **ignores waypoints** — its vertices are the pair's two stations, taken from the first part's start and the last part's end.
 - `/display` draws **rail lines only** (`lines.filter((l) => !l.lineType)`), so all 12 ferries and 3 same-station links are absent there; the 换乘徽章 likewise only list rail lines (a station reachable only by ferry shows no badge). To include them, drop that filter in `views/display/index.vue`.
 - `/display` badge labels are the **last `·` segment** of the other line's `names[primaryLang]` (`蒙德局·自由线` → `自由线`, `璃月港地铁·1号线` → `1号线`, names without `·` stay whole), so several lines of one operator can render as bare numbers — the colour carries the rest of the identity.
@@ -391,4 +432,4 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 - `/display` 的排版是**纯 CSS**（`index.vue` 的 scoped style，DOM 无 SVG、无 JS 坐标）：`.strip` 的行模板与列模板都由 `index.vue` 的 `stripStyle` 生成（行 = 页头 / 徽章两行 / 12px 引线通道 / 主线 / 每条支线一段 24px 车道 / 站名；列 = `${EDGE}px repeat(N-1, 1fr) ${EDGE}px`，N = 并集列数 —— 支线独占站占分歧站之后紧邻的几列，所以首末站永远距内容区左右各 `EDGE` = 64px，主线只跨首末主线站之间，末端列线由模型给的 `trunkEndCol` 定），站名块 `rotate(45deg)` 绕自身左上角转，圆圈序号 flex 居中，换乘引线是 `::after` 竖线 + `::before` 三角（按徽章行给两个固定长度：12 / 38px）。支线车道在同一段 24px 行里居中：45° 引线绕左上角转 45°，从分歧站圆圈中心（= 车道段上沿 -9px）落到车道圆圈中心（水平行程 = 24/2 + 9 = 21px、线长 = 21√2，全由 `calc(var(--lane-row) …)` 推出），车道横线自同一水平行程处起、画到支线末站列线，末站右边那一列挂红底白字的 `支线 / Branch` 标签块，支线站名（含中文行）用 `--branch-color` = `#c0392b`。`stripModel.ts` 只决定 CSS 做不到的几件事：每站落在哪一列 / 哪条车道（`col` / `lane`）、支线引线与横线跨哪几列、徽章簇放哪一行、末尾站站名左移多少（`--label-shift`）、边缘处徽章簇挤回多少（`--badge-shift`）、以及线路色上的文字色；前几件依赖真实字宽，所以仍走 `MeasureFn`。站名字号 12/8（与地图标签同），站名行高 111px 能容纳 `(W+H)/√2 ≈ 105px` 的最坏斜排。
 - `/display` 每条线路面板**外面、上方**有一条与面板同宽（1920）的调试/配置栏（`index.vue` 的 `.dyn-bar`，属页面流而非 `.strip` 网格）：`动态模式` 开关打开后出现 `线路方向`（**上行 = 站序 = 图上从左到右**，下行 = 逆序；环线首末同站标注顺行 / 逆行）、`线路变体`（多交路线路才有，默认条带主线变体，未命名变体标 `全线`，标签为 `名称 · nameEn`）、`进度`（三态：**站点（到站）/ 进入区间（出站）/ 离开区间（即将入站）**，标签形如 `1. 风神像（到站）` / `区间：风神像 → 蒙德城（出站）`，可按 ◀ ▶ 逐步；其中「即将入站」由 `announce.config.ts` 的 `PROGRESS_STATES.leave` 控制，当前为 **false**，改成 true 即出现在进度里并参与播报）。视觉规则：**整条线路默认是灰的**（打开开关后 `.strip-dyn` 把主线 / 45° 引线 / 车道横线的底色换成 `--dyn-gray`，站圆圈与站名用 `.node.dyn-dim` / `.st-label.dyn-dim`，用不到的车道连 `支线` 标签块一起灰，变灰站点上的**换乘徽章**（含引线）也跟着灰 —— `index.vue` 的 `badgeFill()` 把徽章的 `background` 与 `--badge-color` 一并换成 `--dyn-gray`）—— **不在所选变体行程上的部分（小交路以外的区段、支线车道、别条支线）永远保持灰**；只有本趟行程**还没走到**的段与站按原色点亮（`.dyn-span` —— 它必须是**定位元素**（`position: relative`），因为 `.track` 为了挂环线首尾虚线自己是 `position: relative`，定位元素绘制在普通流元素之上，否则点亮段会被灰底整条压住、动态模式看起来永远全灰），**正在经过**的区间不再整段闪烁：`.dyn-span-cur` 退化成容器（底色透明，透出下面的灰线），里面按模型给的 `left` / `width` 摆若干 `.dyn-chunk`，用 `partDelay(i, parts)`（= `-(parts - i) / parts × 1.1s`；负延迟的含义是「动画已经跑过这么久」，写成 `-(i / parts) × 1.1s` 会让亮的顺序变成 1、3、2）错开相位、`@keyframes dyn-march`（周期 = 模型的 `MARCH_PERIOD` = 1.1s）让每份只亮 1/3 个周期 —— 所以**同时只有一份亮着**，亮的先后 = 行进方向；正在经过的车站闪的是**站名那一块**（`.st-label.dyn-cur`，`@keyframes dyn-blink`；圆圈与序号不闪）、已经走过的段与站同样是灰的；进度只作用于所选变体的行程（支线变体沿车道走，主线的一段会跨过支线独占站），换方向 / 换变体把进度重置到起点站。面板尺寸与网格骨架不变，动态状态只在内存里（刷新即重置）。纯模型是 `views/display/dynamicStrip.ts`（`buildProgress(strip, stationIds, dir, progress, { leave })` / `routeCols` / `EMPTY_PROGRESS`：把变体站序按列做子序列匹配成列序，再输出每列的 `states`（`dim` / `lit` / `current`）、`litSpans`（还没到的区间，整段点亮；`RouteSpan` = 列号 + `lane` + `lead`，两个区间子状态共用同一份 spans、点亮时按身份去重）、`currentParts`（正在经过的区间切出的份：`splitSpans()` **恒切三段** —— **单一直线**区间等分三段，**支线分岔**区间是 45° 引线一段 + 长直线两段；`RouteSpanPart` = `RouteSpan` + `offset` / `ratio` / `parts`，反向行驶时份序倒过来，所以数组顺序 = 行进方向）与 `activeLanes`；`ProgressStep` 按状态带 `stationId`（到站）或 `fromId` / `toId`（区间），供播报用），`index.vue` 用 `lineVariants` / `dynState` / `dynViews` / `spanStyle` 接起来；因为环线首末同站占两列，站点 / 站名 / 徽章的 `:key` 用 `st.col` 而不是 `st.id`。
 - `/display` 的**环线**（首尾同站的闭合线路：`Inazuma-YG`、`Snezhnaya-Trian-1/2/3`、`Teyvat-S2`、`Teyvat-F1`）走 `views/display/loopStrip.ts`（纯模块）这条专用路径：数据里末尾那个「闭合用的重复站」**不改数据、只在条带上不画** —— 静态条带按**规范化环序**（`loopRing`）画，`.strip-loop` 再给主线首尾各加一段 **32px 虚线延伸**（`repeating-linear-gradient` 4px 实 4px 空；不是额外站点，只表示线路继续绕圈 —— 动态模式下**起点侧**那段跟底色一起变灰、**终点侧**一直保持线路色，因为它指向这一圈接下来要走的方向）。动态模式里环线**滚动**：`rollRing(ring, 接缝站, dir)` 把**刚经过的那一站**移到条带首位、末尾再补一次同一个站（它在条带上出现两次，列车位置永远落在接缝旁，跨过起点 / 终点时整条条带滚一格而不是跳变）—— 区间状态下接缝站 = 出发站，**到站状态下接缝站 = 上一站**（于是到站的那一站落在第二列）；视图按滚动后的站序重建条带（`rolledStrip`，按「线路 + 接缝站」缓存；圆圈的编号由 `StripInput.numbers` 显式给出 —— 跟着**站点定义顺序**走，所以首尾那两个同站的圆圈显示同一个号，不会随滚动变成「第几列」），所以模板渲染的是 `displayStrips`（普通线路 = 静态条带）而不是 `strips`。环线的进度是另一套模型 `buildLoopProgress(order, progress, { leave })`：环上没有「不在本趟行程上」的站，条带永远只画「接缝站 + 前方一整圈」，于是站色只有三档 —— **首列**（刚经过的接缝站）灰、**到站时第 1 列是 `current`**（原色 + 闪站名）、**第 2 列到末尾全亮**（末尾那列虽然与首列同站，但它是这一圈最后要到的站，所以照样亮，连它右侧的虚线延伸也保持线路色）；当前区间恒为滚动后条带的**第一段**：到站时它已经是刚走完的那一段（灰），出站 / 即将入站时它三段式点亮、其余整圈都还亮；步骤 = 每站「到站 / 出站」两档（`leave` 打开则三档），标签序号 = 环内序号；返回值多一个 `rollId`（= 这一步的接缝站）。方向：上行 = 数据环序、下行 = `ringOrder` 反向绕行（内环 / 外环各画各的），**单向环线**（`oneWay`，即 Trian-1/2/3）只有数据方向一种 —— 配置栏不出现「下行」，`loopDir()` 把方向钉在 `up`；`canStep()` 让环线的 ◀ ▶ 永远可点（`goStep` 对环线取模绕圈），绕完一圈回到起点站即整圈滚完。
-- `/display` 的语音播报（浏览器 `speechSynthesis`）：页面最顶上有一条**吸顶**（`sticky top-0`，页面根 `h-screen overflow-y-auto px-4 pb-4` 是滚动容器）的语音面板 `views/display/VoicePanel.vue`（1920 宽，与条带面板对齐）——中 / 日 / 英三个音色下拉（按 `voice.lang` 前缀筛，`voiceURI` 为值，默认取筛后第一个）、每语言一个「▶ 试听」、一个全局「自动播报」开关；选择与开关落 localStorage `teyvat-railways-voices`（`{ zh, ja, en, auto }`，`auto` 默认 true）。**动态模式每一次配置调整都播报**（开启动态 → `welcome`；方向 → `terminal`；变体 → `terminal` + `variant`；进度 / ◀ ▶ → 该状态；关掉开关只写日志不发音；地区脚本未覆盖的档位静音 —— 至冬只覆盖到站档），配置栏第二行的「🔊 播报」按钮把**当前进度状态**重播一遍（与自动播报同一条内容；地区脚本的专属文本每次重新随机，`force` 绕过自动播报开关）。引擎与日志在 `composables/useSpeech.ts`（模块级**单例** `reactive` 对象；**打断式**队列：新播报先 `speechSynthesis.cancel()` 并把日志里未播完的标「已打断」；日志状态 `queued` / `speaking` / `done` / `canceled` / `error` / `note`，上限 60 条；音色列表是异步的，首次调用不记「没找到音色」的噪音）。日志由 `views/display/AnnounceLog.vue` 渲染在每条线路配置栏底部（`.dyn-bar` 改成纵向两行：第一行开关 + 三项配置、第二行播报按钮 + 日志；日志高 60px = 3 行 × 18px + 内边距边框，自动滚到最新；日志是**全局一条**，所有打开的动态模式配置栏显示同一份内容）。播报文案集中在 `src/config/announce.config.ts`：`ATOMS` = 原子句（句子级最小单位，中 / 日 / 英各一份，空串 = 该句不播，占位符 `{line} {terminus} {station} {next} {variant} {transfers} {branch} {n}`），`COMPOSITION` = 每次播报按顺序念哪几句（`station` / `enter` / `leave` / `on` / `direction` / `variant`），`views/display/announce.ts`（纯函数 `buildAnnouncement` / `langOf` / `shortLineName`）按「本地语言一句 + 英文一句」逐句交替展开，并处理条件句（终点站换成 `arriveTerminal` / `alightTerminal`、该站没有其他轨道线路就省略 `transfer`（最多列 2 条，超出写「等 N 条线路」）、下一站是分岔站才出 `branchHint`：支线车用 `branchHintOther`、主线车用 `branchHintBranch`）。**语言按地区自动选**：站点级事件看站点 id 前缀（`Inazuma-` → 日语，其余 → 中文），线路级事件看线路首个站的前缀，各自再补一句英文；站名与线名都按语言取 `names`（zh → `names.zhCN`、ja → `names.ja`、en → `names.en`，见 `localNameFor`），只有变体名（支线 / 小交路 / 全线）仍是数据里的中文名 + 英文名加 `VARIANT_NAMES_JA`（`branchHint` 也走这套，所以日语支线提示念「支線」而不是「支线」）。`doors`（中性开门句）与 `platformArriving`（站台广播）故意留在 `ATOMS` 里但不进任何组合表。**地区脚本**：`src/data/<地区>.announce.json`（现只有 `snezhnaya.announce.json`，由 `views/display/announceScript.ts` 按站点 id 前缀查表）覆盖该地区的报站：`kinds` 白名单声明该地区启用哪些档位（至冬只有 `station` = 到站档，`on` / `direction` / `variant` / `enter` / `leave` 在至冬都不发声、也不写日志），到站档念三段 —— `templates.arrival`（到站提示）+ `templates.prepare`（提前做好准备）+ 该站 `texts` 里随机一条（每次播报重新抽，含 🔊 重播），`{station}` 用报站名（`announceName`，缺省用中文站名；`至冬堡（列车总站）` → `至冬堡`、`曙光车站` → `临时站点`）—— 报站名只决定念法（顺带把地名后的「（列车总站）」这类修饰从语音里去掉），地图 / 条带上的显示名始终取数据里的 `names`，两者互不影响；文本按语言键给出（当前只有 `zh`，用该地区的语言音色念，缺该语言即跳过，补 `en` 即自动中英对照）；每条 `text` 的 `announcer`（阿加波夫 / 卡索娃）是**隐藏 metadata** —— 只存数据，不进 UI 与日志。没写进 `stations` 的站点（`Snezhnaya-Flamefeather` / `Snezhnaya-PaleCrown`）仍念前两段模板；`buildAnnouncement` 的 `rand` 可注入，便于脚本化验证。
+- `/display` 的语音播报（浏览器 `speechSynthesis`）：页面最顶上有一条**吸顶**（`sticky top-0`，页面根 `h-screen overflow-y-auto px-4 pb-4` 是滚动容器）的语音面板 `views/display/VoicePanel.vue`（1920 宽，与条带面板对齐）——中 / 日 / 英三个音色下拉（按 `voice.lang` 前缀筛，`voiceURI` 为值，默认取筛后第一个）、每语言一个「▶ 试听」、一个全局「自动播报」开关；选择与开关落 localStorage `teyvat-railways-voices`（`{ zh, ja, en, auto }`，`auto` 默认 true）。**动态模式每一次配置调整都播报**（开启动态 → `welcome`；方向 → `terminal`；变体 → `terminal` + `variant`；进度 / ◀ ▶ → 该状态；关掉开关只写日志不发音；地区脚本未覆盖的档位静音 —— 至冬只覆盖到站档），配置栏第二行的「🔊 播报」按钮把**当前进度状态**重播一遍（与自动播报同一条内容；地区脚本的专属文本每次重新随机，`force` 绕过自动播报开关）。引擎与日志在 `composables/useSpeech.ts`（模块级**单例** `reactive` 对象；**打断式**队列：新播报先 `speechSynthesis.cancel()` 并把日志里未播完的标「已打断」；日志状态 `queued` / `speaking` / `done` / `canceled` / `error` / `note`，上限 60 条；音色列表是异步的，首次调用不记「没找到音色」的噪音）。日志由 `views/display/AnnounceLog.vue` 渲染在每条线路配置栏底部（`.dyn-bar` 改成纵向两行：第一行开关 + 三项配置、第二行播报按钮 + 日志；日志高 60px = 3 行 × 18px + 内边距边框，自动滚到最新；日志是**全局一条**，所有打开的动态模式配置栏显示同一份内容）。播报文案**数据化**：通用文案与地区专用文案都在 `src/data/voice/*.json`（命名空间 = 文件名 = 模板 id；`extends` 继承另一个模板）。`views/display/announce.ts` 的 `createVoiceRegistry(datas)` 把每个文件解析成模板（`atoms` 带命名空间前缀、沿 `extends` 链合并；`settings` 合并；叶覆盖 `kinds` / `composition` / `extraLanguages`；`stations` 不继承）并做**构建期校验**（extends 不存在 / 成环、未知原子句、未知条件、未知占位符、settings 缺字段、非档位名）；`buildAnnouncement(ctx, templates, opts?)` 按 `ctx.line.voice` 取模板，`kinds` 白名单不含本次档位即静音，组合序列外层按数组顺序、内层按语言（本地语言 + `extraLanguages`），逐句渲染并跳过缺语言 / 缺占位符的句子（任一 `{…}` 取值为空即整句跳过，取代旧的 `REQUIRED` 硬编码表）。装配在 `views/display/voiceTemplates.ts`（`import.meta.glob('../../data/voice/*.json')`，模板 id = 文件名 stem；并校验线路 / 体系引用的模板 id 存在）。`src/config/announce.config.ts` 只留引擎常量（`AnnounceLang` / `AnnounceKind` / `PROGRESS_STATES` / `VOICE_LANGS` / `UTTERANCE_LANGS` / `VOICE_STORAGE_KEY` / `PREVIEW` / `LOG_LIMIT` / `DEFAULT_VOICE_TEMPLATE`）。`common.json` = 通用模板（原 `ATOMS` + `COMPOSITION` + 各文案常量照搬；`station` / `leave` 用条件槽 `atTerminus` / `hasTransfers`，`enter` 用 `nextIsJunction` / `branchTrain` 选 `branchHintOther` / `branchHintBranch`）。`snezhnaya.json` = 至冬模板（`extends: common`、`kinds: ["station"]`，到站档 = `arrival` + `prepare` + `{ source: "stationText" }` 站点文本池三段；`{station}` 用报站名 `announceName`（缺省用当语言站名），`announcer`（阿加波夫 / 卡索娃）是隐藏 metadata；未写进 `stations` 的站点仍念前两段）。**语言按 `primaryLang` 自动选**：站点级事件看目标站（`station` = 到达站，`enter` / `leave` = 下一站），线路级事件看线路主语言；`ja` → 日语，其余 → 中文，各自再补 `extraLanguages`（缺省 `en`）。模板由线路 `Line.voice` 引用（线路 → 体系 `networks.json` 的 `voice` → `common`），所以 `Trian-1…5` 整条线路走至冬模板（含 `Trian-5` 上 `Teyvat-STR` 的到站播报）。

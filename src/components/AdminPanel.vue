@@ -23,9 +23,10 @@
             </div>
 
             <div class="admin-body">
-              <div class="admin-section">
+              <!-- stations -->
+              <div v-if="activeFile === 'stations'" class="admin-section">
                 <h3>Stations</h3>
-                <table v-if="currentStations.length" class="data-table">
+                <table class="data-table">
                   <thead>
                     <tr>
                       <th class="col-id">ID</th>
@@ -37,52 +38,50 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="st in currentStations" :key="st.id">
-                      <td class="col-id">{{ st.id }}</td>
-                      <td><input v-model="st.names.zhCN" class="edit-input" /></td>
-                      <td><input v-model="st.names.zhTW" class="edit-input" /></td>
-                      <td><input v-model="st.names.ja" class="edit-input" /></td>
-                      <td><input v-model="st.names.en" class="edit-input" /></td>
+                    <tr v-for="row in stationRows" :key="row.id">
+                      <td class="col-id">{{ row.id }}</td>
+                      <td><input v-model="row.value.names.zhCN" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.zhTW" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.ja" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.en" class="edit-input" /></td>
                       <td>
                         <input
-                          v-model="st.names.pronunciationJa"
+                          v-model="row.value.names.pronunciationJa"
                           class="edit-input"
                           placeholder="可选" />
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                <p v-else class="text-gray-400 text-xs italic">
-                  No station definitions in this file.
-                </p>
               </div>
 
-              <div class="admin-section">
+              <!-- lines -->
+              <div v-else-if="activeFile === 'lines'" class="admin-section">
                 <h3>Lines</h3>
-                <div v-for="line in currentLines" :key="line.id" class="line-group">
+                <div v-for="row in lineRows" :key="row.id" class="line-group">
                   <div class="line-header">
-                    <span class="line-id">{{ line.id }}</span>
-                    <template v-if="line.names">
+                    <span class="line-id">{{ row.id }}</span>
+                    <template v-if="row.value.names">
                       <input
-                        v-model="line.names.zhCN"
+                        v-model="row.value.names.zhCN"
                         class="edit-input line-name"
                         placeholder="zhCN" />
                       <input
-                        v-model="line.names.zhTW"
+                        v-model="row.value.names.zhTW"
                         class="edit-input line-name"
                         placeholder="zhTW" />
                       <input
-                        v-model="line.names.ja"
+                        v-model="row.value.names.ja"
                         class="edit-input line-name"
                         placeholder="ja" />
                       <input
-                        v-model="line.names.en"
+                        v-model="row.value.names.en"
                         class="edit-input line-name"
                         placeholder="en" />
                     </template>
                     <span v-else class="derived-name">线路名由端点站自动生成，不可编辑</span>
                   </div>
-                  <div v-for="(variant, vi) in line.variants" :key="vi" class="variant-group">
+                  <div v-for="(variant, vi) in row.value.variants" :key="vi" class="variant-group">
                     <div class="line-header">
                       <input
                         v-model="variant.name"
@@ -114,9 +113,149 @@
                 </div>
               </div>
 
-              <div class="admin-section">
+              <!-- networks -->
+              <div v-else-if="activeFile === 'networks'" class="admin-section">
+                <h3>Networks</h3>
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th class="col-id">ID</th>
+                      <th>Operator</th>
+                      <th>Authority</th>
+                      <th>primaryLang</th>
+                      <th>fontFamily</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row in networkRows" :key="row.id">
+                      <td class="col-id">{{ row.id }}</td>
+                      <td>
+                        <select v-model="row.value.operator" class="preset-select">
+                          <option :value="undefined">（无）</option>
+                          <option v-for="oid in orgIds" :key="oid" :value="oid">{{ oid }}</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select v-model="row.value.authority" class="preset-select">
+                          <option :value="undefined">（无）</option>
+                          <option v-for="oid in orgIds" :key="oid" :value="oid">{{ oid }}</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select v-model="row.value.primaryLang" class="preset-select">
+                          <option :value="undefined">（默认 zhCN）</option>
+                          <option value="zhCN">zhCN</option>
+                          <option value="ja">ja</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          v-model="row.value.fontFamily"
+                          class="edit-input"
+                          placeholder="可选" />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- organizations -->
+              <div v-else-if="activeFile === 'organizations'" class="admin-section">
+                <h3>Organizations</h3>
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th class="col-id">ID</th>
+                      <th>zhCN</th>
+                      <th>zhTW</th>
+                      <th>ja</th>
+                      <th>en</th>
+                      <th>ru</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row in orgRows" :key="row.id">
+                      <td class="col-id">{{ row.id }}</td>
+                      <td><input v-model="row.value.names.zhCN" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.zhTW" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.ja" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.en" class="edit-input" /></td>
+                      <td>
+                        <input v-model="row.value.names.ru" class="edit-input" placeholder="可选" />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- territories -->
+              <div v-else-if="activeFile === 'territories'" class="admin-section">
+                <h3>Nations</h3>
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th class="col-id">ID</th>
+                      <th>zhCN</th>
+                      <th>zhTW</th>
+                      <th>ja</th>
+                      <th>en</th>
+                      <th>primaryLang</th>
+                      <th>fontFamily</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row in nationRows" :key="row.id">
+                      <td class="col-id">{{ row.id }}</td>
+                      <td><input v-model="row.value.names.zhCN" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.zhTW" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.ja" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.en" class="edit-input" /></td>
+                      <td>
+                        <select v-model="row.value.primaryLang" class="preset-select">
+                          <option :value="undefined">（默认 zhCN）</option>
+                          <option value="zhCN">zhCN</option>
+                          <option value="ja">ja</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          v-model="row.value.fontFamily"
+                          class="edit-input"
+                          placeholder="可选" />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <h3>Areas</h3>
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th class="col-id">ID</th>
+                      <th>国家/地区</th>
+                      <th>zhCN</th>
+                      <th>zhTW</th>
+                      <th>ja</th>
+                      <th>en</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row in areaRows" :key="row.id">
+                      <td class="col-id">{{ row.id }}</td>
+                      <td>{{ row.value.nation }}</td>
+                      <td><input v-model="row.value.names.zhCN" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.zhTW" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.ja" class="edit-input" /></td>
+                      <td><input v-model="row.value.names.en" class="edit-input" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- connections -->
+              <div v-else-if="activeFile === 'connections'" class="admin-section">
                 <h3>Connections</h3>
-                <table v-if="currentConnections.length" class="data-table">
+                <table v-if="connectionRows.length" class="data-table">
                   <thead>
                     <tr>
                       <th>From</th>
@@ -126,7 +265,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(c, ci) in currentConnections" :key="ci">
+                    <tr v-for="(c, ci) in connectionRows" :key="ci">
                       <td>{{ distStationName(c.from) }}</td>
                       <td>{{ distStationName(c.to) }}</td>
                       <td class="col-seg">{{ fmtWaypoints(c.waypoints) }}</td>
@@ -164,8 +303,7 @@
 import { ref, reactive, computed, watch } from 'vue';
 import { VEHICLES } from '../config/vehicles';
 
-const fileKeys = ['teyvat', 'inazuma', 'liyue', 'snezhnaya', 'ferry', 'same', 'connections'];
-const regionKeys = ['teyvat', 'inazuma', 'liyue', 'snezhnaya'];
+const fileKeys = ['stations', 'lines', 'networks', 'organizations', 'territories', 'connections'];
 
 const isDev = import.meta.env.DEV;
 const props = defineProps<{ visible: boolean }>();
@@ -173,81 +311,68 @@ const emit = defineEmits<{ close: [] }>();
 const loading = ref(true);
 const saving = ref(false);
 const savedMsg = ref('');
-const activeFile = ref('teyvat');
+const activeFile = ref('stations');
 const filesData = reactive<Record<string, any>>({});
+
+type Row = { id: string; value: any };
+function entriesOf(key: string): Row[] {
+  const obj = filesData[key];
+  if (!obj || typeof obj !== 'object') return [];
+  return Object.entries(obj).map(([id, value]) => ({ id, value }));
+}
+
+const stationRows = computed<Row[]>(() => entriesOf('stations'));
+const lineRows = computed<Row[]>(() => entriesOf('lines'));
+const networkRows = computed<Row[]>(() => entriesOf('networks'));
+const orgRows = computed<Row[]>(() => entriesOf('organizations'));
+const orgIds = computed(() => Object.keys(filesData.organizations ?? {}));
+const connectionRows = computed<any[]>(() => filesData.connections?.connections ?? []);
+
+// territories 有两段（nations / areas），单独取
+const territoriesData = computed(() => filesData.territories ?? {});
+function territoryRows(kind: 'nations' | 'areas'): Row[] {
+  const obj = territoriesData.value[kind];
+  if (!obj) return [];
+  return Object.entries(obj).map(([id, value]) => ({ id, value: value as any }));
+}
+const nationRows = computed<Row[]>(() => territoryRows('nations'));
+const areaRows = computed<Row[]>(() => territoryRows('areas'));
 
 const stationNameMap = computed(() => {
   const map = new Map<string, string>();
-  for (const key of regionKeys) {
-    const data = filesData[key];
-    if (!data?.config?.name || !data.stations) continue;
-    const prefix = data.config.name;
-    for (const st of data.stations) {
-      map.set(`${prefix}-${st.id}`, st.names?.zhCN ?? '');
-    }
+  for (const [id, st] of Object.entries<any>(filesData.stations ?? {})) {
+    map.set(id, st.names?.zhCN ?? '');
   }
   return map;
 });
 
-function stationName(stationId: string, fileKey?: string): string {
-  const data = fileKey ? filesData[fileKey] : null;
-  if (data?.stations) {
-    const st = data.stations.find((s: any) => s.id === stationId);
-    if (st) return `${st.names?.zhCN ?? ''} / ${st.names?.en ?? ''}`;
-  }
+function stationName(stationId: string): string {
+  const st = filesData.stations?.[stationId];
+  if (st) return `${st.names?.zhCN ?? ''} / ${st.names?.en ?? ''}`;
   const name = stationNameMap.value.get(stationId);
   if (name) return name;
   return stationId;
 }
 
 function distStationName(id: string): string {
-  const fileKey = activeFile.value;
-  const data = filesData[fileKey];
-  if (data?.stations) {
-    const st = data.stations.find((s: any) => s.id === id);
-    if (st) return `${st.names?.zhCN ?? ''} / ${st.names?.en ?? ''} (${id})`;
-  }
-  const fullName = stationNameMap.value.get(id);
-  if (fullName) return `${fullName} (${id})`;
+  const st = filesData.stations?.[id];
+  if (st) return `${st.names?.zhCN ?? ''} / ${st.names?.en ?? ''} (${id})`;
+  const name = stationNameMap.value.get(id);
+  if (name) return `${name} (${id})`;
   return id;
 }
-
-const currentFileData = computed(() => filesData[activeFile.value]);
-
-const currentStations = computed(() => {
-  const d = currentFileData.value;
-  if (!d?.stations) return [];
-  return d.stations;
-});
-
-const currentLines = computed(() => {
-  const d = currentFileData.value;
-  if (!d?.lines) return [];
-  return d.lines;
-});
-
-const currentConnections = computed(() => {
-  const d = currentFileData.value;
-  if (!d?.connections) return [];
-  return d.connections;
-});
 
 function fmtWaypoints(w?: [number, number][]) {
   return w?.length ? w.map(([x, y]) => `${x},${y}`).join(' → ') : '直线';
 }
 
 function getSegments(variant: any) {
-  const segs: any[] = [];
+  const segs: { fromName: string; toName: string }[] = [];
   for (let i = 0; i < variant.stations.length - 1; i++) {
-    const fromId = variant.stations[i];
-    const toId = variant.stations[i + 1];
-    const fromName = regionKeys.includes(activeFile.value)
-      ? stationName(fromId, activeFile.value)
-      : stationName(fromId);
-    const toName = regionKeys.includes(activeFile.value)
-      ? stationName(toId, activeFile.value)
-      : stationName(toId);
-    segs.push({ fromName, toName });
+    segs.push({
+      fromName: stationName(variant.stations[i]),
+      toName: stationName(variant.stations[i + 1]),
+    });
   }
   return segs;
 }

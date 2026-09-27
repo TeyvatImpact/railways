@@ -34,6 +34,7 @@ import {
   type AnnounceContext,
   type StationText,
 } from './announce';
+import { VOICE_TEMPLATES } from './voiceTemplates';
 import { useSpeech } from '../../composables/useSpeech';
 import { PROGRESS_STATES, type AnnounceKind } from '../../config/announce.config';
 import VoicePanel from './VoicePanel.vue';
@@ -294,8 +295,7 @@ function buildContext(
 
   return {
     kind,
-    line: { names: line.names, stationIds: line.stations },
-    direction: dynState[key].dir,
+    line: { names: line.names, primaryLang: line.primaryLang, voice: line.voice },
     variant: { name: variant.name, nameEn: variant.nameEn },
     terminus,
     station,
@@ -308,7 +308,7 @@ function buildContext(
 
 function announce(key: string, kind: AnnounceKind, step?: ProgressStep, force = false) {
   const ctx = buildContext(key, kind, step);
-  if (ctx) speech.speak(buildAnnouncement(ctx), { force });
+  if (ctx) speech.speak(buildAnnouncement(ctx, VOICE_TEMPLATES), { force });
 }
 
 /** 进度步骤 → 播报类型：station（到站）/ enter（出站）/ leave（即将入站） */

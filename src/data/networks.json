@@ -1,0 +1,28 @@
+{
+  "teyvat": {
+    "operator": "teyvat-railway"
+  },
+  "liyue-metro": {
+    "operator": "liyue-harbor-metro",
+    "authority": "liyue-ministry-of-civil-affairs"
+  },
+  "aquabus": {
+    "operator": "fontaine-aquabus",
+    "authority": "court-of-fontaine"
+  },
+  "inazuma": {
+    "operator": "inazuma-railways",
+    "authority": "inazuma-shogunate",
+    "primaryLang": "ja",
+    "fontFamily": "Noto Serif JP"
+  },
+  "snezhnaya": {
+    "operator": "snezhnaya-royal-railway",
+    "authority": "snezhnaya-royal-railway-transport-bureau",
+    "voice": "snezhnaya"
+  },
+  "easybreeze": {
+    "operator": "easybreeze-holiday-resort-transit",
+    "authority": "easybreeze-holiday-resort-management-committee"
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "nations": {
+    "mondstadt": {
+      "names": {
+        "zhCN": "蒙德",
+        "zhTW": "蒙德",
+        "ja": "モンド",
+        "en": "Mondstadt"
+      }
+    },
+    "liyue": {
+      "names": {
+        "zhCN": "璃月",
+        "zhTW": "璃月",
+        "ja": "璃月",
+        "en": "Liyue"
+      }
+    },
+    "inazuma": {
+      "names": {
+        "zhCN": "稻妻",
+        "zhTW": "稻妻",
+        "ja": "稲妻",
+        "en": "Inazuma"
+      },
+      "primaryLang": "ja",
+      "fontFamily": "Noto Serif JP"
+    },
+    "sumeru": {
+      "names": {
+        "zhCN": "须弥",
+        "zhTW": "須彌",
+        "ja": "スメール",
+        "en": "Sumeru"
+      }
+    },
+    "fontaine": {
+      "names": {
+        "zhCN": "枫丹",
+        "zhTW": "楓丹",
+        "ja": "フォンテーヌ",
+        "en": "Fontaine"
+      }
+    },
+    "natlan": {
+      "names": {
+        "zhCN": "纳塔",
+        "zhTW": "納塔",
+        "ja": "ナタ",
+        "en": "Natlan"
+      }
+    },
+    "snezhnaya": {
+      "names": {
+        "zhCN": "至冬",
+        "zhTW": "至冬",
+        "ja": "スネージナヤ",
+        "en": "Snezhnaya"
+      }
+    },
+    "nodkrai": {
+      "names": {
+        "zhCN": "至冬国挪德卡莱自治区",
+        "zhTW": "至冬國挪德卡萊自治區",
+        "ja": "至冬国ノド＝クライ自治区",
+        "en": "Nod-Krai Autonomous Region of Snezhnaya"
+      }
+    }
+  },
+  "areas": {
+    "dragonspine": {
+      "names": {
+        "zhCN": "龙脊雪山",
+        "zhTW": "龍脊雪山",
+        "ja": "ドラゴンスパイン",
+        "en": "Dragonspine"
+      },
+      "nation": "mondstadt"
+    },
+    "chenyu-vale": {
+      "names": {
+        "zhCN": "沉玉谷",
+        "zhTW": "沉玉谷",
+        "ja": "沈玉の谷",
+        "en": "Chenyu Vale"
+      },
+      "nation": "liyue"
+    },
+    "liyue-harbor-outskirts": {
+      "names": {
+        "zhCN": "璃月港城郊",
+        "zhTW": "璃月港城郊",
+        "ja": "璃月港郊外",
+        "en": "Liyue Harbor Outskirts"
+      },
+      "nation": "liyue"
+    },
+    "liyue-harbor-urban": {
+      "names": {
+        "zhCN": "璃月港城区",
+        "zhTW": "璃月港城區",
+        "ja": "璃月港市街地",
+        "en": "Liyue Harbor Urban Area"
+      },
+      "nation": "liyue"
+    },
+    "narukami-island": {
+      "names": {
+        "zhCN": "鸣神岛",
+        "zhTW": "鳴神島",
+        "ja": "鳴神島",
+        "en": "Narukami Island"
+      },
+      "nation": "inazuma"
+    },
+    "kannazuka": {
+      "names": {
+        "zhCN": "神无冢",
+        "zhTW": "神無塚",
+        "ja": "神無塚",
+        "en": "Kannazuka"
+      },
+      "nation": "inazuma"
+    },
+    "yashiori-island": {
+      "names": {
+        "zhCN": "八酝岛",
+        "zhTW": "八醞島",
+        "ja": "八酝島",
+        "en": "Yashiori Island"
+      },
+      "nation": "inazuma"
+    },
+    "watatsumi-island": {
+      "names": {
+        "zhCN": "海祇岛",
+        "zhTW": "海祇島",
+        "ja": "海祇島",
+        "en": "Watatsumi Island"
+      },
+      "nation": "inazuma"
+    },
+    "tsurumi-island": {
+      "names": {
+        "zhCN": "鹤观岛",
+        "zhTW": "鶴觀島",
+        "ja": "鶴観島",
+        "en": "Tsurumi Island"
+      },
+      "nation": "inazuma"
+    },
+    "great-red-sand": {
+      "names": {
+        "zhCN": "大赤沙海（沙漠）",
+        "zhTW": "大赤沙海（沙漠）",
+        "ja": "大赤砂海（砂漠）",
+        "en": "Great Red Sand (Desert)"
+      },
+      "nation": "sumeru"
+    },
+    "rainforest": {
+      "names": {
+        "zhCN": "雨林",
+        "zhTW": "雨林",
+        "ja": "雨林",
+        "en": "Rainforest"
+      },
+      "nation": "sumeru"
+    },
+    "easybreeze-resort": {
+      "names": {
+        "zhCN": "悠悠度假村",
+        "zhTW": "悠悠度假村",
+        "ja": "悠悠リゾート",
+        "en": "Easybreeze Resort"
+      },
+      "nation": "natlan"
+    },
+    "lempo-island": {
+      "names": {
+        "zhCN": "伦波岛",
+        "zhTW": "倫波島",
+        "ja": "レンポ島",
+        "en": "Lempo Island"
+      },
+      "nation": "nodkrai"
+    },
+    "hiisi-island": {
+      "names": {
+        "zhCN": "希汐岛",
+        "zhTW": "希汐島",
+        "ja": "ヒイシ島",
+        "en": "Hiisi Island"
+      },
+      "nation": "nodkrai"
+    },
+    "paha-isle": {
+      "names": {
+        "zhCN": "帕哈岛",
+        "zhTW": "帕哈島",
+        "ja": "パハ島",
+        "en": "Paha Isle"
+      },
+      "nation": "nodkrai"
+    },
+    "north-nodkrai": {
+      "names": {
+        "zhCN": "挪德卡莱北",
+        "zhTW": "挪德卡萊北",
+        "ja": "ノド＝クライ北部",
+        "en": "North Nod-Krai"
+      },
+      "nation": "nodkrai"
+    }
+  }
+}

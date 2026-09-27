@@ -1,0 +1,1065 @@
+{
+  "A": {
+    "names": {
+      "zhCN": "跨局·原初线",
+      "zhTW": "跨局·原初線",
+      "ja": "げんしょ線",
+      "en": "Primordial Line"
+    },
+    "network": "teyvat",
+    "authority": "liyue-bureau",
+    "colorSlot": 0,
+    "lineLabels": [
+      ["Teyvat-SAA", "RT"],
+      ["Teyvat-WSI", "LB"],
+      ["Teyvat-CBC", "B"],
+      ["Teyvat-ARV", "T"],
+      ["Teyvat-TMM", "L"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-SAA",
+          "Teyvat-MSC",
+          "Teyvat-MSG",
+          "Teyvat-SPV",
+          "Teyvat-DWW",
+          "Teyvat-STG",
+          "Teyvat-DHM",
+          "Teyvat-WSI",
+          "Teyvat-GLP",
+          "Teyvat-LYN",
+          "Teyvat-LYH",
+          "Teyvat-LSA",
+          "Teyvat-CHM",
+          "Teyvat-CBC",
+          "Teyvat-GHV",
+          "Teyvat-SMC",
+          "Teyvat-PDD",
+          "Teyvat-CVR",
+          "Teyvat-ARV",
+          "Teyvat-MKD",
+          "Teyvat-DOM",
+          "Teyvat-WSV",
+          "Teyvat-TMM",
+          "Teyvat-VKO"
+        ]
+      },
+      {
+        "name": "小交路",
+        "nameEn": "Short Turnback",
+        "stations": [
+          "Teyvat-SAA",
+          "Teyvat-MSC",
+          "Teyvat-MSG",
+          "Teyvat-SPV",
+          "Teyvat-DWW",
+          "Teyvat-STG",
+          "Teyvat-DHM",
+          "Teyvat-WSI",
+          "Teyvat-GLP",
+          "Teyvat-LYN",
+          "Teyvat-LYH",
+          "Teyvat-LSA",
+          "Teyvat-CHM",
+          "Teyvat-CBC",
+          "Teyvat-GHV",
+          "Teyvat-SMC"
+        ]
+      }
+    ]
+  },
+  "B": {
+    "names": {
+      "zhCN": "跨局·风岩草线",
+      "zhTW": "跨局·風岩草線",
+      "ja": "風岩草線",
+      "en": "Anemo-Geo-Dendro Line"
+    },
+    "network": "teyvat",
+    "authority": "liyue-bureau",
+    "colorSlot": 1,
+    "lineLabels": [
+      ["Teyvat-STL", "RT"],
+      ["Teyvat-CJS", "T"],
+      ["Teyvat-LPV", "L"],
+      ["Teyvat-DTM", "RB"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-STL",
+          "Teyvat-WLD",
+          "Teyvat-DWW",
+          "Teyvat-WRV",
+          "Teyvat-MYV",
+          "Teyvat-GLP",
+          "Teyvat-CJS",
+          "Teyvat-TQV",
+          "Teyvat-LPV",
+          "Teyvat-CHM",
+          "Teyvat-TGG",
+          "Teyvat-DTM",
+          "Teyvat-POM"
+        ]
+      }
+    ]
+  },
+  "M1": {
+    "names": {
+      "zhCN": "蒙德局·自由线",
+      "zhTW": "蒙德局·自由線",
+      "ja": "モンド自由線",
+      "en": "Mondstadt Freedom Line"
+    },
+    "network": "teyvat",
+    "authority": "mondstadt-bureau",
+    "colorSlot": 2,
+    "lineLabels": [
+      ["Teyvat-SFL", "RT"],
+      ["Teyvat-DSC", "LT"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-SFL",
+          "Teyvat-WSW",
+          "Teyvat-MSG",
+          "Teyvat-WDR",
+          "Teyvat-DSC",
+          "Teyvat-SCP",
+          "Teyvat-WRV"
+        ]
+      },
+      {
+        "name": "小交路",
+        "nameEn": "Short Turnback",
+        "stations": ["Teyvat-SFL", "Teyvat-WSW", "Teyvat-MSG", "Teyvat-WDR"]
+      }
+    ]
+  },
+  "L1": {
+    "names": {
+      "zhCN": "璃月局·璃沉线",
+      "zhTW": "璃月局·璃沉線",
+      "ja": "璃月沈玉線",
+      "en": "Liyue Chenyu Line"
+    },
+    "network": "teyvat",
+    "authority": "liyue-bureau",
+    "colorSlot": 3,
+    "lineLabels": [
+      ["Teyvat-LYS", "LB"],
+      ["Teyvat-MIL", "R"],
+      ["Teyvat-YLW", "RT"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-LYS",
+          "Teyvat-LYH",
+          "Teyvat-DYR",
+          "Teyvat-TQV",
+          "Teyvat-NTM",
+          "Teyvat-MIL",
+          "Teyvat-MXL",
+          "Teyvat-CZW",
+          "Teyvat-JDM",
+          "Teyvat-YLW"
+        ]
+      }
+    ]
+  },
+  "L2": {
+    "names": {
+      "zhCN": "璃月局·沉玉谷线",
+      "zhTW": "璃月局·沉玉谷線",
+      "ja": "璃月沈玉の谷線",
+      "en": "Liyue Chenyu Valley Line"
+    },
+    "network": "teyvat",
+    "authority": "liyue-bureau",
+    "colorSlot": 4,
+    "lineLabels": [
+      ["Teyvat-CWT", "B"],
+      ["Teyvat-QCV", "LB"],
+      ["Teyvat-WSI", "LT"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-CWT",
+          "Teyvat-MMY",
+          "Teyvat-YLW",
+          "Teyvat-QYV",
+          "Teyvat-QCV",
+          "Teyvat-DHM",
+          "Teyvat-WSI"
+        ]
+      },
+      {
+        "name": "小交路",
+        "nameEn": "Short Turnback",
+        "stations": ["Teyvat-YLW", "Teyvat-QYV", "Teyvat-QCV", "Teyvat-DHM", "Teyvat-WSI"]
+      }
+    ]
+  },
+  "S1": {
+    "names": {
+      "zhCN": "须弥局·须弥南北线",
+      "zhTW": "須彌局·須彌南北線",
+      "ja": "スメール南北線",
+      "en": "Sumeru South-North Line"
+    },
+    "network": "teyvat",
+    "authority": "sumeru-bureau",
+    "colorSlot": 5,
+    "lineLabels": [
+      ["Teyvat-BDH", "RT"],
+      ["Teyvat-VMV", "LT"]
+    ],
+    "variants": [
+      {
+        "stations": ["Teyvat-BDH", "Teyvat-CTC", "Teyvat-SMC", "Teyvat-VMV", "Teyvat-POM"]
+      }
+    ]
+  },
+  "S2": {
+    "names": {
+      "zhCN": "须弥局·须弥环线",
+      "zhTW": "須彌局·須彌環線",
+      "ja": "スメール環状線",
+      "en": "Sumeru Loop Line"
+    },
+    "network": "teyvat",
+    "authority": "sumeru-bureau",
+    "colorSlot": 6,
+    "lineLabels": [
+      ["Teyvat-APW", "T"],
+      ["Teyvat-VNA", "RB"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-CTC",
+          "Teyvat-CHH",
+          "Teyvat-GHV",
+          "Teyvat-DTM",
+          "Teyvat-POM",
+          "Teyvat-APW",
+          "Teyvat-ROD",
+          "Teyvat-CVR",
+          "Teyvat-YNM",
+          "Teyvat-FOA",
+          "Teyvat-VNA",
+          "Teyvat-CTC"
+        ]
+      }
+    ]
+  },
+  "F1": {
+    "names": {
+      "zhCN": "枫丹局·巡轨船·卡雷斯线",
+      "zhTW": "楓丹局·巡軌船·卡雷斯線",
+      "ja": "フォンテーヌ巡水船カーレス線",
+      "en": "Fontaine Aquabus Callas Line"
+    },
+    "network": "teyvat",
+    "authority": "court-of-fontaine",
+    "colorSlot": 7,
+    "lineLabels": [
+      ["Teyvat-COF", "R"],
+      ["Teyvat-CLR", "B"],
+      ["Teyvat-FCR", "L"]
+    ],
+    "variants": [
+      {
+        "vehicle": "aquabus",
+        "stations": [
+          "Teyvat-COF",
+          "Teyvat-PLM",
+          "Teyvat-FRI",
+          "Teyvat-CLR",
+          "Teyvat-LCU",
+          "Teyvat-WWL",
+          "Teyvat-FFP",
+          "Teyvat-FCR",
+          "Teyvat-MAE",
+          "Teyvat-MAT",
+          "Teyvat-POI",
+          "Teyvat-ENS",
+          "Teyvat-COF"
+        ]
+      }
+    ]
+  },
+  "F2": {
+    "names": {
+      "zhCN": "枫丹局·巡轨船·娜维娅线",
+      "zhTW": "楓丹局·巡軌船·娜維婭線",
+      "ja": "フォンテーヌ巡水船ナヴィア線",
+      "en": "Fontaine Aquabus Navia Line"
+    },
+    "network": "teyvat",
+    "authority": "court-of-fontaine",
+    "colorSlot": 8,
+    "lineLabels": [
+      ["Teyvat-MCT", "T"],
+      ["Teyvat-LDH", "RT"]
+    ],
+    "variants": [
+      {
+        "vehicle": "aquabus",
+        "stations": ["Teyvat-COF", "Teyvat-MCT", "Teyvat-OPE", "Teyvat-FFP", "Teyvat-LDH"]
+      }
+    ]
+  },
+  "F3": {
+    "names": {
+      "zhCN": "枫丹局·巡轨船·克莱门汀线",
+      "zhTW": "楓丹局·巡軌船·克萊門汀線",
+      "ja": "フォンテーヌ巡水船クレメンタイン線",
+      "en": "Fontaine Aquabus Clementine Line"
+    },
+    "network": "teyvat",
+    "authority": "court-of-fontaine",
+    "colorSlot": 9,
+    "lineLabels": [
+      ["Teyvat-RRH", "L"],
+      ["Teyvat-MES", "L"]
+    ],
+    "variants": [
+      {
+        "vehicle": "aquabus",
+        "stations": ["Teyvat-RRH", "Teyvat-MAT", "Teyvat-COF", "Teyvat-PLM", "Teyvat-MES"]
+      }
+    ]
+  },
+  "N0": {
+    "names": {
+      "zhCN": "纳塔局·连接线",
+      "zhTW": "納塔局·連接線",
+      "ja": "ナタ連絡線",
+      "en": "Natlan Connection Line"
+    },
+    "network": "teyvat",
+    "authority": "natlan-bureau",
+    "colorSlot": 10,
+    "lineLabels": [["Teyvat-COE", "RB"]],
+    "variants": [
+      {
+        "stations": ["Teyvat-DOM", "Teyvat-COE", "Teyvat-SFV", "Teyvat-CWF", "Teyvat-SSF"]
+      }
+    ]
+  },
+  "N1": {
+    "names": {
+      "zhCN": "纳塔局·赫布里穆线",
+      "zhTW": "納塔局·赫布里穆線",
+      "ja": "ナタハボリム線",
+      "en": "Natlan Haborym Line"
+    },
+    "network": "teyvat",
+    "authority": "natlan-bureau",
+    "colorSlot": 11,
+    "lineLabels": [
+      ["Teyvat-SFV", "B"],
+      ["Teyvat-FSF", "LT"]
+    ],
+    "variants": [
+      {
+        "vehicle": "natlan-resort",
+        "stations": [
+          "Teyvat-COE",
+          "Teyvat-SFV",
+          "Teyvat-CWF",
+          "Teyvat-NWW",
+          "Teyvat-COP",
+          "Teyvat-FSF"
+        ]
+      }
+    ]
+  },
+  "N2": {
+    "names": {
+      "zhCN": "纳塔局·杜麦尼线",
+      "zhTW": "納塔局·杜麥尼線",
+      "ja": "ナタトゥマイニ線",
+      "en": "Natlan Tumaini Line"
+    },
+    "network": "teyvat",
+    "authority": "natlan-bureau",
+    "colorSlot": 12,
+    "lineLabels": [
+      ["Teyvat-ONT", "L"],
+      ["Teyvat-POS", "LB"],
+      ["Teyvat-TPR", "LT"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-ONT",
+          "Teyvat-FFC",
+          "Teyvat-HZH",
+          "Teyvat-CWF",
+          "Teyvat-SSF",
+          "Teyvat-POS",
+          "Teyvat-AYW",
+          "Teyvat-TPP",
+          "Teyvat-AST",
+          "Teyvat-TPR",
+          "Teyvat-COE"
+        ]
+      }
+    ]
+  },
+  "N3": {
+    "names": {
+      "zhCN": "纳塔局·卡皮塔诺线",
+      "zhTW": "納塔局·卡皮塔諾線",
+      "ja": "ナタカピターノ線",
+      "en": "Natlan Il Capitano Line"
+    },
+    "network": "teyvat",
+    "authority": "natlan-bureau",
+    "colorSlot": 13,
+    "lineLabels": [
+      ["Teyvat-SOC", "RT"],
+      ["Teyvat-TPB", "B"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-TPP",
+          "Teyvat-SOC",
+          "Teyvat-SSF",
+          "Teyvat-NWW",
+          "Teyvat-MNW",
+          "Teyvat-TPB"
+        ]
+      }
+    ]
+  },
+  "N4": {
+    "names": {
+      "zhCN": "纳塔局·悠悠度假村线",
+      "zhTW": "納塔局·悠悠度假村線",
+      "ja": "ナタのびのびリゾート線",
+      "en": "Natlan Easybreeze Holiday Resort Line"
+    },
+    "network": "teyvat",
+    "authority": "easybreeze-holiday-resort-management-committee",
+    "colorSlot": 14,
+    "lineLabels": [["Teyvat-EBM", "LB"]],
+    "variants": [
+      {
+        "stations": ["Teyvat-EBP", "Teyvat-EBM", "Teyvat-CFC", "Teyvat-WVB", "Teyvat-TLI"]
+      }
+    ]
+  },
+  "K1": {
+    "names": {
+      "zhCN": "挪德卡莱局·希汐岛线",
+      "zhTW": "挪德卡萊局·希汐島線",
+      "ja": "ナド・クライ・ヒーシ島線",
+      "en": "Nod-Krai Hiisi Island Line"
+    },
+    "network": "teyvat",
+    "authority": "nod-krai-bureau",
+    "colorSlot": 15,
+    "lineLabels": [["Teyvat-NST", "LB"]],
+    "variants": [
+      {
+        "stations": ["Teyvat-NSP", "Teyvat-NST", "Teyvat-CKC", "Teyvat-FME"]
+      }
+    ]
+  },
+  "K2": {
+    "names": {
+      "zhCN": "挪德卡莱局·帕哈岛线",
+      "zhTW": "挪德卡萊局·帕哈島線",
+      "ja": "ナド・クライ・パハ島線",
+      "en": "Nod-Krai Paha Isle Line"
+    },
+    "network": "teyvat",
+    "authority": "nod-krai-bureau",
+    "colorSlot": 16,
+    "lineLabels": [
+      ["Teyvat-NSP", "LB"],
+      ["Teyvat-FNC", "LT"],
+      ["Teyvat-KEW", "LB"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-NSP",
+          "Teyvat-NST",
+          "Teyvat-BMB",
+          "Teyvat-BAL",
+          "Teyvat-NTP",
+          "Teyvat-PHI",
+          "Teyvat-FNC"
+        ]
+      },
+      {
+        "name": "支线",
+        "nameEn": "Branch",
+        "stations": [
+          "Teyvat-NSP",
+          "Teyvat-NST",
+          "Teyvat-BMB",
+          "Teyvat-BAL",
+          "Teyvat-NTP",
+          "Teyvat-KEE",
+          "Teyvat-KEW"
+        ]
+      }
+    ]
+  },
+  "K3": {
+    "names": {
+      "zhCN": "挪德卡莱局·虚海望线",
+      "zhTW": "挪德卡莱局·虛海望線",
+      "ja": "ナド・クライ・海を望めぬ峰線",
+      "en": "Nod-Krai Voidsea Outlook Line"
+    },
+    "network": "teyvat",
+    "authority": "nod-krai-bureau",
+    "colorSlot": 17,
+    "lineLabels": [
+      ["Teyvat-VOP", "LT"],
+      ["Teyvat-STR", "L"],
+      ["Teyvat-KMC", "L"]
+    ],
+    "variants": [
+      {
+        "stations": [
+          "Teyvat-VOP",
+          "Teyvat-PRM",
+          "Teyvat-DSM",
+          "Teyvat-FNK",
+          "Teyvat-AVT",
+          "Teyvat-STR"
+        ]
+      },
+      {
+        "name": "支线",
+        "nameEn": "Branch",
+        "stations": [
+          "Teyvat-VOP",
+          "Teyvat-PRM",
+          "Teyvat-DSM",
+          "Teyvat-FNK",
+          "Teyvat-CWC",
+          "Teyvat-KMC"
+        ]
+      }
+    ]
+  },
+  "NK": {
+    "names": {
+      "zhCN": "IR 东稻妻·鸣神岛线",
+      "zhTW": "IR 東稻妻·鳴神島線",
+      "ja": "IR 東稲妻·鳴神島線",
+      "en": "IR East Narukami Line"
+    },
+    "network": "inazuma",
+    "colorSlot": 0,
+    "lineLabels": [
+      ["Inazuma-RTU", "T"],
+      ["Inazuma-NIT", "B"]
+    ],
+    "variants": [
+      {
+        "vehicle": "inazuma",
+        "stations": [
+          "Inazuma-NIT",
+          "Inazuma-IZC",
+          "Inazuma-HMZ",
+          "Inazuma-BKP",
+          "Inazuma-KDV",
+          "Inazuma-RTU",
+          "Inazuma-RTP"
+        ]
+      }
+    ]
+  },
+  "YG": {
+    "names": {
+      "zhCN": "IR 东稻妻·影向山环状线",
+      "zhTW": "IR 東稻妻·影向山環狀線",
+      "ja": "IR 東稲妻·影向山環状線",
+      "en": "IR East Mt. Yougou Loop Line"
+    },
+    "network": "inazuma",
+    "colorSlot": 1,
+    "lineLabels": [["Inazuma-AUM", "LT"]],
+    "variants": [
+      {
+        "vehicle": "inazuma",
+        "stations": [
+          "Inazuma-BKP",
+          "Inazuma-KDV",
+          "Inazuma-AUM",
+          "Inazuma-YGN",
+          "Inazuma-KSE",
+          "Inazuma-CJF",
+          "Inazuma-BKP"
+        ]
+      }
+    ]
+  },
+  "NW": {
+    "names": {
+      "zhCN": "IR 东稻妻·鸣海线",
+      "zhTW": "IR 東稻妻·鳴海線",
+      "ja": "IR 東稲妻·鳴海線",
+      "en": "IR East Inazuma-Watatsumi Line"
+    },
+    "network": "inazuma",
+    "colorSlot": 2,
+    "lineLabels": [
+      ["Inazuma-KJE", "T"],
+      ["Inazuma-NCB", "B"]
+    ],
+    "variants": [
+      {
+        "vehicle": "inazuma",
+        "stations": [
+          "Inazuma-IZC",
+          "Inazuma-HMZ",
+          "Inazuma-AKI",
+          "Inazuma-KJE",
+          "Inazuma-KNZ",
+          "Inazuma-NCB",
+          "Inazuma-MSG",
+          "Inazuma-HGV"
+        ]
+      }
+    ]
+  },
+  "NS": {
+    "names": {
+      "zhCN": "IR 东稻妻·鸣神大社线",
+      "zhTW": "IR 東稻妻·鳴神大社線",
+      "ja": "IR 東稲妻·鳴神大社線",
+      "en": "IR East Shrine Line"
+    },
+    "network": "inazuma",
+    "colorSlot": 3,
+    "lineLabels": [["Inazuma-IZC", "LB"]],
+    "variants": [
+      {
+        "vehicle": "inazuma",
+        "stations": ["Inazuma-NIT", "Inazuma-IZC", "Inazuma-HMZ", "Inazuma-BKP", "Inazuma-GNS"]
+      }
+    ]
+  },
+  "YS": {
+    "names": {
+      "zhCN": "IR 东稻妻·八酝岛线",
+      "zhTW": "IR 東稻妻·八醞島線",
+      "ja": "IR 東稲妻·ヤシオリ島線",
+      "en": "IR East Yashiori Island Line"
+    },
+    "network": "inazuma",
+    "colorSlot": 4,
+    "lineLabels": [["Inazuma-SPH", "LB"]],
+    "variants": [
+      {
+        "vehicle": "inazuma",
+        "stations": ["Inazuma-FFT", "Inazuma-HGV", "Inazuma-SPH", "Inazuma-JTM"]
+      }
+    ]
+  },
+  "WT": {
+    "names": {
+      "zhCN": "IR 珊瑚宫·海祇岛线",
+      "zhTW": "IR 珊瑚宮·海祇島線",
+      "ja": "IR 珊瑚宮·海祇島線",
+      "en": "IR Sangonomiya Watatsumi Island Line"
+    },
+    "network": "inazuma",
+    "authority": "watatsumi-sangonomiya-autonomous-government",
+    "colorSlot": 5,
+    "lineLabels": [["Inazuma-WTE", "LB"]],
+    "variants": [
+      {
+        "vehicle": "inazuma",
+        "stations": ["Inazuma-WTE", "Inazuma-BRV", "Inazuma-SGM", "Inazuma-MUS"]
+      }
+    ]
+  },
+  "TA": {
+    "names": {
+      "zhCN": "IR 鹤观·一号线",
+      "zhTW": "IR 鶴觀·一號線",
+      "ja": "IR 鶴観·一番線",
+      "en": "IR Tsurumi Line 1"
+    },
+    "network": "inazuma",
+    "colorSlot": 6,
+    "lineLabels": [["Inazuma-ATP", "LT"]],
+    "variants": [
+      {
+        "vehicle": "inazuma",
+        "stations": ["Inazuma-TMP", "Inazuma-MCS", "Inazuma-MKN", "Inazuma-ATP"]
+      }
+    ]
+  },
+  "TB": {
+    "names": {
+      "zhCN": "IR 鹤观·二号线",
+      "zhTW": "IR 鶴觀·二號線",
+      "ja": "IR 鶴観·二番線",
+      "en": "IR Tsurumi Line 2"
+    },
+    "network": "inazuma",
+    "colorSlot": 7,
+    "lineLabels": [["Inazuma-SKP", "LT"]],
+    "variants": [
+      {
+        "vehicle": "inazuma",
+        "stations": ["Inazuma-SKP", "Inazuma-ONB", "Inazuma-CRS", "Inazuma-MCS", "Inazuma-WKS"]
+      }
+    ]
+  },
+  "LHM-1": {
+    "names": {
+      "zhCN": "璃月港地铁·1号线",
+      "zhTW": "璃月港地鐵·1號線",
+      "ja": "璃月港メトロ1号線",
+      "en": "Liyue Harbor Line 1"
+    },
+    "network": "liyue-metro",
+    "colorSlot": 0,
+    "lineLabels": [
+      ["Liyue-LYG", "RT"],
+      ["Liyue-HYG", "T"]
+    ],
+    "variants": [
+      {
+        "vehicle": "liyue-metro",
+        "stations": [
+          "Liyue-LYG",
+          "Liyue-HET",
+          "Liyue-FYP",
+          "Liyue-LYN",
+          "Liyue-PSC",
+          "Liyue-CHY",
+          "Liyue-HYG"
+        ]
+      }
+    ]
+  },
+  "LHM-2": {
+    "names": {
+      "zhCN": "璃月港地铁·2号线",
+      "zhTW": "璃月港地鐵·2號線",
+      "ja": "璃月港メトロ2号線",
+      "en": "Liyue Harbor Line 2"
+    },
+    "network": "liyue-metro",
+    "colorSlot": 1,
+    "lineLabels": [
+      ["Liyue-HYC", "LT"],
+      ["Liyue-LYB", "LB"]
+    ],
+    "variants": [
+      {
+        "vehicle": "liyue-metro",
+        "stations": [
+          "Liyue-HYC",
+          "Liyue-NCM",
+          "Liyue-PSC",
+          "Liyue-KYN",
+          "Liyue-KYB",
+          "Liyue-BCM",
+          "Liyue-YLQ",
+          "Liyue-LYB"
+        ]
+      }
+    ]
+  },
+  "LHM-3": {
+    "names": {
+      "zhCN": "璃月港地铁·3号线",
+      "zhTW": "璃月港地鐵·3號線",
+      "ja": "璃月港メトロ3号線",
+      "en": "Liyue Harbor Line 3"
+    },
+    "network": "liyue-metro",
+    "colorSlot": 2,
+    "lineLabels": [
+      ["Liyue-YHT", "LT"],
+      ["Liyue-BCM", "RT"]
+    ],
+    "variants": [
+      {
+        "vehicle": "liyue-metro",
+        "stations": [
+          "Liyue-HJW",
+          "Liyue-NCM",
+          "Liyue-YJT",
+          "Liyue-YHT",
+          "Liyue-HET",
+          "Liyue-BCM",
+          "Liyue-YLY"
+        ]
+      }
+    ]
+  },
+  "LHM-S1": {
+    "names": {
+      "zhCN": "璃月港地铁·S1号线",
+      "zhTW": "璃月港地鐵·S1號線",
+      "ja": "璃月港メトロS1号線",
+      "en": "Liyue Harbor Line S1"
+    },
+    "network": "liyue-metro",
+    "colorSlot": 3,
+    "lineLabels": [
+      ["Liyue-LHC", "LT"],
+      ["Liyue-GYG", "B"]
+    ],
+    "variants": [
+      {
+        "vehicle": "liyue-metro",
+        "stations": ["Liyue-LHC", "Liyue-LYB", "Liyue-YLY", "Liyue-GYX", "Liyue-GYG"]
+      }
+    ]
+  },
+  "Trian-1": {
+    "names": {
+      "zhCN": "至冬列车大环线",
+      "zhTW": "至冬列車大環線",
+      "ja": "スネージナヤ列車大環状線",
+      "en": "Snezhnaya Large Loop Line"
+    },
+    "network": "snezhnaya",
+    "colorSlot": 0,
+    "oneWay": true,
+    "variants": [
+      {
+        "stations": [
+          "Snezhnaya-Snezhnaya",
+          "Snezhnaya-Svetloledovka",
+          "Snezhnaya-Sretomorozsk",
+          "Snezhnaya-Zorya",
+          "Snezhnaya-Snezhnaya"
+        ]
+      }
+    ]
+  },
+  "Trian-2": {
+    "names": {
+      "zhCN": "至冬列车小环线",
+      "zhTW": "至冬列車小環線",
+      "ja": "スネージナヤ列車小環状線",
+      "en": "Snezhnaya Small Loop Line"
+    },
+    "network": "snezhnaya",
+    "colorSlot": 1,
+    "oneWay": true,
+    "variants": [
+      {
+        "stations": [
+          "Snezhnaya-Snezhnaya",
+          "Snezhnaya-Morepesok",
+          "Snezhnaya-Zorya",
+          "Snezhnaya-Snezhnaya"
+        ]
+      }
+    ]
+  },
+  "Trian-3": {
+    "names": {
+      "zhCN": "至冬列车焰羽谷线",
+      "zhTW": "至冬列車焰羽谷線",
+      "ja": "スネージナヤ列車焔翼の谷線",
+      "en": "Snezhnaya Flamefeather Line"
+    },
+    "network": "snezhnaya",
+    "colorSlot": 2,
+    "oneWay": true,
+    "variants": [
+      {
+        "stations": [
+          "Snezhnaya-Snezhnaya",
+          "Snezhnaya-Morepesok",
+          "Snezhnaya-Flamefeather",
+          "Snezhnaya-Zorya",
+          "Snezhnaya-Snezhnaya"
+        ]
+      }
+    ]
+  },
+  "Trian-4": {
+    "names": {
+      "zhCN": "至冬列车白冕宫线",
+      "zhTW": "至冬列車白冕宮線",
+      "ja": "スネージナヤ列車ペールクラウンパレス線",
+      "en": "Snezhnaya Pale Crown Palace Line"
+    },
+    "network": "snezhnaya",
+    "colorSlot": 3,
+    "variants": [
+      {
+        "stations": ["Snezhnaya-Snezhnaya", "Snezhnaya-PaleCrown"]
+      }
+    ]
+  },
+  "Trian-5": {
+    "names": {
+      "zhCN": "至冬列车·挪德卡莱连接线",
+      "zhTW": "至冬列車·挪德卡萊連接線",
+      "ja": "スネージナヤ列車・ナド・クライ連絡線",
+      "en": "Snezhnaya Railway Nod-Krai Connector"
+    },
+    "network": "snezhnaya",
+    "colorSlot": 4,
+    "variants": [
+      {
+        "stations": ["Snezhnaya-Sretomorozsk", "Teyvat-STR"]
+      }
+    ]
+  },
+  "ferry-fnc-vop": {
+    "lineType": "ferry",
+    "network": "teyvat",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Teyvat-FNC", "Teyvat-VOP"]
+      }
+    ]
+  },
+  "ferry-hgv-wte": {
+    "lineType": "ferry",
+    "network": "inazuma",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Inazuma-HGV", "Inazuma-WTE"]
+      }
+    ]
+  },
+  "ferry-izc-tmp": {
+    "lineType": "ferry",
+    "network": "inazuma",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Inazuma-IZC", "Inazuma-TMP"]
+      }
+    ]
+  },
+  "ferry-kyb-rtp": {
+    "lineType": "ferry",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Liyue-KYB", "Inazuma-RTP"]
+      }
+    ]
+  },
+  "ferry-kyn-mus": {
+    "lineType": "ferry",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Liyue-KYN", "Inazuma-MUS"]
+      }
+    ]
+  },
+  "ferry-pom-mus": {
+    "lineType": "ferry",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Teyvat-POM", "Inazuma-MUS"]
+      }
+    ]
+  },
+  "ferry-bdh-rrh": {
+    "lineType": "ferry",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Teyvat-BDH", "Teyvat-RRH"]
+      }
+    ]
+  },
+  "ferry-vko-rrh": {
+    "lineType": "ferry",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Teyvat-VKO", "Teyvat-RRH"]
+      }
+    ]
+  },
+  "ferry-rrh-nsp": {
+    "lineType": "ferry",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Teyvat-RRH", "Teyvat-NSP"]
+      }
+    ]
+  },
+  "ferry-ffc-nsp": {
+    "lineType": "ferry",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Teyvat-FFC", "Teyvat-NSP"]
+      }
+    ]
+  },
+  "ferry-ffc-ebp": {
+    "lineType": "ferry",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Teyvat-FFC", "Teyvat-EBP"]
+      }
+    ]
+  },
+  "ferry-ylw-ldh": {
+    "lineType": "ferry",
+    "variants": [
+      {
+        "vehicle": "ferry",
+        "stations": ["Teyvat-YLW", "Teyvat-LDH"]
+      }
+    ]
+  },
+  "same-lyh-lyg": {
+    "lineType": "same-station",
+    "variants": [
+      {
+        "vehicle": "same-station",
+        "stations": ["Teyvat-LYH", "Liyue-LYG"]
+      }
+    ]
+  },
+  "same-lys-lyn": {
+    "lineType": "same-station",
+    "variants": [
+      {
+        "vehicle": "same-station",
+        "stations": ["Teyvat-LYS", "Liyue-LYN"]
+      }
+    ]
+  },
+  "same-lyh-lyb": {
+    "lineType": "same-station",
+    "variants": [
+      {
+        "vehicle": "same-station",
+        "stations": ["Teyvat-LYN", "Liyue-LYB"]
+      }
+    ]
+  }
+}

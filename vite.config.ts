@@ -7,13 +7,13 @@ import type { Connect } from 'vite';
 
 const DATA_DIR = path.join(__dirname, 'src', 'data');
 const ALLOWED_FILES = [
-  'teyvat.json',
-  'inazuma.json',
-  'liyue.json',
-  'snezhnaya.json',
-  'ferry.json',
-  'same.json',
+  'stations.json',
+  'lines.json',
+  'networks.json',
+  'organizations.json',
+  'territories.json',
   'connections.json',
+  'mark.json',
 ];
 
 function adminApi(

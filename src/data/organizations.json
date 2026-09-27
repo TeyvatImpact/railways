@@ -1,0 +1,139 @@
+{
+  "teyvat-railway": {
+    "names": {
+      "zhCN": "提瓦特铁路",
+      "zhTW": "提瓦特鐵路",
+      "ja": "テイワット鉄道",
+      "en": "Teyvat Railway"
+    }
+  },
+  "liyue-harbor-metro": {
+    "names": {
+      "zhCN": "璃月港地铁",
+      "zhTW": "璃月港地鐵",
+      "ja": "璃月港メトロ",
+      "en": "Liyue Harbor Metro"
+    }
+  },
+  "fontaine-aquabus": {
+    "names": {
+      "zhCN": "枫丹巡轨船",
+      "zhTW": "楓丹巡軌船",
+      "ja": "フォンテーヌ巡水船",
+      "en": "Fontaine Aquabus"
+    }
+  },
+  "easybreeze-holiday-resort-transit": {
+    "names": {
+      "zhCN": "悠悠度假村轨道交通",
+      "zhTW": "悠悠度假村軌道交通",
+      "ja": "のびのびリゾート軌道交通",
+      "en": "Easybreeze Holiday Resort Transit"
+    }
+  },
+  "inazuma-railways": {
+    "names": {
+      "zhCN": "稻妻旅客铁道株式会社",
+      "zhTW": "稻妻旅客鐵道株式會社",
+      "ja": "稲妻旅客鉄道株式会社",
+      "en": "Inazuma Railways"
+    }
+  },
+  "snezhnaya-royal-railway": {
+    "names": {
+      "zhCN": "至冬皇家铁路",
+      "zhTW": "至冬皇家鐵路",
+      "ja": "スネージナヤ皇立鉄道",
+      "en": "Snezhnaya Royal Railway"
+    }
+  },
+  "mondstadt-bureau": {
+    "names": {
+      "zhCN": "蒙德局",
+      "zhTW": "蒙德局",
+      "ja": "モンド局",
+      "en": "Mondstadt Bureau"
+    }
+  },
+  "liyue-bureau": {
+    "names": {
+      "zhCN": "璃月局",
+      "zhTW": "璃月局",
+      "ja": "璃月局",
+      "en": "Liyue Bureau"
+    }
+  },
+  "sumeru-bureau": {
+    "names": {
+      "zhCN": "须弥局",
+      "zhTW": "須彌局",
+      "ja": "スメール局",
+      "en": "Sumeru Bureau"
+    }
+  },
+  "natlan-bureau": {
+    "names": {
+      "zhCN": "纳塔局",
+      "zhTW": "納塔局",
+      "ja": "ナタ局",
+      "en": "Natlan Bureau"
+    }
+  },
+  "nod-krai-bureau": {
+    "names": {
+      "zhCN": "挪德卡莱局",
+      "zhTW": "挪德卡萊局",
+      "ja": "ナド・クライ局",
+      "en": "Nod-Krai Bureau"
+    }
+  },
+  "court-of-fontaine": {
+    "names": {
+      "zhCN": "枫丹廷",
+      "zhTW": "楓丹廷",
+      "ja": "フォンテーヌ廷",
+      "en": "Court of Fontaine"
+    }
+  },
+  "inazuma-shogunate": {
+    "names": {
+      "zhCN": "稻妻幕府",
+      "zhTW": "稻妻幕府",
+      "ja": "稲妻幕府",
+      "en": "Inazuma Shogunate"
+    }
+  },
+  "watatsumi-sangonomiya-autonomous-government": {
+    "names": {
+      "zhCN": "稻妻国海祇岛珊瑚宫自治政府",
+      "zhTW": "稻妻國海祇島珊瑚宮自治政府",
+      "ja": "稲妻国海祇島珊瑚宮自治政府",
+      "en": "Watatsumi Sangonomiya Autonomous Government"
+    }
+  },
+  "liyue-ministry-of-civil-affairs": {
+    "names": {
+      "zhCN": "璃月总务司",
+      "zhTW": "璃月總務司",
+      "ja": "璃月総務司",
+      "en": "Liyue Ministry of Civil Affairs"
+    }
+  },
+  "snezhnaya-royal-railway-transport-bureau": {
+    "names": {
+      "zhCN": "至冬皇家轨道运输局",
+      "zhTW": "至冬皇家軌道運輸局",
+      "ja": "スネージナヤ皇立軌道運輸局",
+      "en": "Snezhnaya Royal Railway Transport Bureau",
+      "ru": "Королевское управление железнодорожного транспорта Снежной"
+    }
+  },
+  "easybreeze-holiday-resort-management-committee": {
+    "names": {
+      "zhCN": "悠悠度假村管理委员会",
+      "zhTW": "悠悠度假村管理委員會",
+      "ja": "のびのびリゾート管理委員会",
+      "en": "Easybreeze Holiday Resort Management Committee"
+    }
+  }
+}

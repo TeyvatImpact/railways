@@ -1,11 +1,9 @@
-import dataR from '../data/teyvat.json';
-import dataI from '../data/inazuma.json';
-import dataL from '../data/liyue.json';
-import dataS from '../data/snezhnaya.json';
-import regionsData from '../data/regions.json';
+import stationsData from '../data/stations.json';
+import linesData from '../data/lines.json';
+import networksData from '../data/networks.json';
+import organizationsData from '../data/organizations.json';
+import territoriesData from '../data/territories.json';
 import markersData from '../data/mark.json';
-import ferryData from '../data/ferry.json';
-import sameData from '../data/same.json';
 import connectionsData from '../data/connections.json';
 import {
   BLOCK_SIZE,
@@ -30,14 +28,20 @@ import {
   type MarkerTextRole,
 } from '../config/render.config';
 import { DEFAULT_VEHICLE_ID, defaultCompute, getVehicle, hasVehicle } from '../config/vehicles';
+import { DEFAULT_VOICE_TEMPLATE } from '../config/announce.config';
+import {
+  buildSegmentHeadways,
+  parseTimetable,
+  segmentKey,
+  type VariantTimetable,
+} from './timetable';
 import type { NameLocale, OrgNames, StationNames } from './stationNames';
 import { ferryLineNames, sameStationLineNames } from './lineNaming';
 
 export interface StationData {
   id: string;
-  prefix: string;
   names: StationNames;
-  /** 本站名的「主语言」= 所属区域 config.primaryLang；标签主行、搜索结果、路由站名都用它 */
+  /** 本站名的「主语言」= 所属国家/地区的 `primaryLang`；标签主行、搜索结果、路由站名都用它 */
   primaryLang: NameLocale;
   x: number;
   y: number;
@@ -71,8 +75,10 @@ export interface LineVariantData {
   nameEn?: string;
   /** 本变体选用的车型 id（`config/vehicles.ts`）；省略 = `DEFAULT_VEHICLE_ID` */
   vehicle?: string;
-  /** 该变体的站序（短 id；跨区引用写完整 id） */
+  /** 该变体的站序（完整站点 id） */
   stations: string[];
+  /** 变体级时刻表（可选；见 `composables/timetable.ts`），缺省 = 无 */
+  timetable?: unknown;
 }
 
 export interface LineData {
@@ -82,32 +88,34 @@ export interface LineData {
    * 轮渡 / 同站换乘线路不写死名字 —— 运行时由端点站的四语站名派生（`lineNaming.ts`），故此处缺省。
    */
   names?: StationNames;
-  /** 线路名的主语言；缺省时继承所属区域 config.primaryLang（ferry.json / same.json 无 config → `zhCN`） */
-  primaryLang?: NameLocale;
+  /** 线路所属体系（`networks.json`）的 id；轨道线路必有，同站换乘禁止写，区域轮渡可选 */
+  network?: string;
+  /** 运营公司（`organizations.json` 的 id）；缺省时取体系的同名字段 */
+  operator?: string;
+  /** 运营主体（`organizations.json` 的 id）；缺省同上 */
+  authority?: string;
+  /** 配色槽位（轨道线路必有）：`linePalette[slot % length]` */
+  colorSlot?: number;
   lineLabels?: [string, string][];
   /** 同一线路的多个交路（支线 / 大小交路），至少一个；变体之间共用线路名与颜色 */
   variants: LineVariantData[];
   /** true = 单向线路，所有变体都只按各自 `stations` 的顺序开行 */
   oneWay?: boolean;
-  fontFamily?: string;
-  fontFamilyZh?: string;
-  /** 运营公司；缺省时取所属区域文件 config 的同名字段 */
-  operator?: OrgInfo;
-  /** 运营主体（提瓦特铁路xx局 / 稻妻幕府 / 枫丹廷 …）；缺省同上 */
-  authority?: OrgInfo;
+  /** 配音模板 id（`src/data/voice/*.json` 的文件名）；缺省 = 体系的 `voice`，再缺省 = `common` */
+  voice?: string;
   lineType?: 'ferry' | 'same-station';
 }
 
-/** regions.json 的一级划分（「国家/地区」或「区域」）：稳定 id + 四语名称 */
+/** territories.json 的一级划分（「国家/地区」或「区域」）：稳定 id + 四语名称 */
 export interface Territory {
   id: string;
   names: StationNames;
 }
 
 export interface Station extends StationData {
-  /** 所属「国家/地区」（regions.json 的 `nations`）；每个站点必有 */
+  /** 所属「国家/地区」（`territories.json` 的 `nations`）；每个站点必有 */
   nation: Territory;
-  /** 所属「区域」（regions.json 的 `areas`）；该站不属于任何区域时缺省 */
+  /** 所属「区域」（`territories.json` 的 `areas`）；该站不属于任何区域时缺省 */
   area?: Territory;
   cx: number;
   cy: number;
@@ -119,13 +127,24 @@ export interface LineVariant {
   /** 已解析的车型 id（数据里的值，缺省补 `DEFAULT_VEHICLE_ID`） */
   vehicle: string;
   stations: string[];
+  /** 已解析并校验的时刻表（缺省 = `{ departures: [] }`） */
+  timetable: VariantTimetable;
 }
 
-export interface Line extends Omit<LineData, 'variants' | 'names'> {
+export interface Line extends Omit<LineData, 'variants' | 'names' | 'operator' | 'authority'> {
   /** 已解析的线路名：区域线路取数据里的 `names`，轮渡 / 同站换乘由端点站派生 */
   names: StationNames;
-  /** 已解析的线路名主语言（线路对象上的值优先，否则所属区域 config.primaryLang，再否则 `zhCN`） */
+  /** 已解析的线路名主语言（体系 `primaryLang`，缺省 `zhCN`） */
   primaryLang: NameLocale;
+  /** 渲染字体（体系 `fontFamily`，缺省 `Noto Sans SC`） */
+  fontFamily: string;
+  /** 主语言非 zhCN 时，`names.zhCN` 那一行用的字体 */
+  fontFamilyZh?: string;
+  /** 已解析的运营公司 / 运营主体对象 */
+  operator?: OrgInfo;
+  authority?: OrgInfo;
+  /** 已解析的配音模板 id（线路 → 体系 → `common`） */
+  voice: string;
   color: string;
   variants: LineVariant[];
   /** 派生：所有变体站点的并集（按首次出现顺序），用于「站 ↔ 线路」查询 */
@@ -179,103 +198,43 @@ export interface MarkerTextLine {
   fontFamily: string;
 }
 
-interface RegionFile {
-  config: {
-    x: number;
-    y: number;
-    name: string;
-    fontFamily?: string;
-    /** 本文件站名与线路名的「主语言」：inazuma = 'ja'，其余 = 'zhCN' */
-    primaryLang?: NameLocale;
-    /** 该文件所有线路的默认运营公司 / 运营主体，线路对象可各自覆盖 */
-    operator?: OrgInfo;
-    authority?: OrgInfo;
-  };
-  stations: {
-    id: string;
-    names: StationNames;
-    x: number;
-    y: number;
-    labelDir?: string;
-  }[];
-  lines: LineData[];
+// ---- 输入表的数据形态 ----
+
+interface StationsFileEntry {
+  names: StationNames;
+  x: number;
+  y: number;
+  nation: string;
+  area?: string;
+  labelDir?: string;
 }
+
+interface TerritoriesFile {
+  nations: Record<string, { names: StationNames; primaryLang?: NameLocale; fontFamily?: string }>;
+  areas: Record<string, { names: StationNames; nation: string }>;
+}
+
+interface NetworksFileEntry {
+  operator?: string;
+  authority?: string;
+  primaryLang?: NameLocale;
+  fontFamily?: string;
+  voice?: string;
+}
+
+interface OrganizationsFileEntry {
+  names: OrgNames;
+}
+
+interface LinesFileEntry extends LineData {}
 
 interface ConnectionsFile {
   connections: ConnectionEntry[];
 }
 
-function parseStationsJson(data: RegionFile): {
-  stations: StationData[];
-  prefix: string;
-  fontFamily: string;
-  primaryLang: NameLocale;
-  operator?: OrgInfo;
-  authority?: OrgInfo;
-} {
-  const { config, stations: entries } = data;
-  const prefix = config.name;
-  const fontFamily = config.fontFamily || 'sans-serif';
-  const fontFamilyZh = 'Noto Serif SC';
-  const primaryLang: NameLocale = config.primaryLang ?? 'zhCN';
-  const stations = entries.map((e) => {
-    for (const key of ['zhCN', 'zhTW', 'ja', 'en'] as const) {
-      if (!e.names?.[key]) throw new Error(`站点 ${prefix}-${e.id} 缺少 names.${key}`);
-    }
-    return {
-      id: prefix + '-' + e.id,
-      prefix,
-      names: e.names,
-      primaryLang,
-      x: e.x + config.x,
-      y: e.y + config.y,
-      labelDir: e.labelDir,
-      fontFamily,
-      fontFamilyZh: primaryLang === 'zhCN' ? undefined : fontFamilyZh,
-    };
-  });
-  return {
-    stations,
-    prefix,
-    fontFamily,
-    primaryLang,
-    operator: config.operator,
-    authority: config.authority,
-  };
-}
-
-/**
- * Region files reference their own stations by short id (e.g. `LYH` → `Teyvat-LYH`).
- * Ids that already carry a prefix separator (e.g. `Teyvat-STR`) are used as-is, which
- * lets a region file declare links to stations owned by another region.
- */
-function regionStationId(prefix: string, id: string): string {
-  return id.includes('-') ? id : `${prefix}-${id}`;
-}
-
-const parsedR = parseStationsJson(dataR as unknown as RegionFile);
-const parsedI = parseStationsJson(dataI as unknown as RegionFile);
-const parsedL = parseStationsJson(dataL as unknown as RegionFile);
-const parsedS = parseStationsJson(dataS as unknown as RegionFile);
-const parsedStations: StationData[] = [
-  ...parsedR.stations,
-  ...parsedI.stations,
-  ...parsedL.stations,
-  ...parsedS.stations,
-];
-
-/**
- * regions.json —— 站点归属：「国家/地区」（七国 + 至冬国挪德卡莱自治区）必有，
- * 「区域」可选。归属与数据文件无关：teyvat.json 一册里就横跨六个国家/地区。
- */
-interface RegionsFile {
-  nations: Record<string, { names: StationNames }>;
-  areas: Record<string, { names: StationNames; nation: string }>;
-  /** 完整站点 id → 归属 */
-  stations: Record<string, { nation: string; area?: string }>;
-}
-
-const regionsFile = regionsData as unknown as RegionsFile;
+const DEFAULT_NETWORK_FONT = 'Noto Sans SC';
+const DEFAULT_PRIMARY_LANG: NameLocale = 'zhCN';
+const FONT_ZH = 'Noto Serif SC';
 
 function requireNames(what: string, names: StationNames | undefined): StationNames {
   for (const key of ['zhCN', 'zhTW', 'ja', 'en'] as const) {
@@ -284,133 +243,101 @@ function requireNames(what: string, names: StationNames | undefined): StationNam
   return names!;
 }
 
-const nationMap = new Map<string, Territory>();
-for (const [id, entry] of Object.entries(regionsFile.nations)) {
-  nationMap.set(id, { id, names: requireNames(`国家/地区 ${id}`, entry.names) });
+// ================= 1. 归属 =================
+
+const territories = territoriesData as unknown as TerritoriesFile;
+
+interface NationInfo {
+  territory: Territory;
+  primaryLang: NameLocale;
+  fontFamily: string;
 }
 
-const areaMap = new Map<string, Territory>();
-for (const [id, entry] of Object.entries(regionsFile.areas)) {
+const nationMap = new Map<string, NationInfo>();
+for (const [id, entry] of Object.entries(territories.nations)) {
+  nationMap.set(id, {
+    territory: { id, names: requireNames(`国家/地区 ${id}`, entry.names) },
+    primaryLang: entry.primaryLang ?? DEFAULT_PRIMARY_LANG,
+    fontFamily: entry.fontFamily ?? DEFAULT_NETWORK_FONT,
+  });
+}
+
+const areaMap = new Map<string, { territory: Territory; nation: string }>();
+for (const [id, entry] of Object.entries(territories.areas)) {
   if (!nationMap.has(entry.nation))
     throw new Error(`区域 ${id} 的国家/地区 ${entry.nation} 不存在`);
-  areaMap.set(id, { id, names: requireNames(`区域 ${id}`, entry.names) });
+  areaMap.set(id, {
+    territory: { id, names: requireNames(`区域 ${id}`, entry.names) },
+    nation: entry.nation,
+  });
 }
 
-const stationIdSet = new Set(parsedStations.map((s) => s.id));
-const stationTerritory = new Map<string, { nation: Territory; area?: Territory }>();
-for (const [id, entry] of Object.entries(regionsFile.stations)) {
-  if (!stationIdSet.has(id)) throw new Error(`regions.json 引用了不存在的站点：${id}`);
+// ================= 2. 机构 =================
+
+const organizations = organizationsData as unknown as Record<string, OrganizationsFileEntry>;
+const orgMap = new Map<string, OrgInfo>();
+for (const [id, entry] of Object.entries(organizations)) {
+  orgMap.set(id, { names: requireNames(`机构 ${id}`, entry.names) as OrgNames });
+}
+
+function requireOrg(lineId: string, what: string, orgId: string | undefined): OrgInfo | undefined {
+  if (orgId === undefined) return undefined;
+  const org = orgMap.get(orgId);
+  if (!org) throw new Error(`线路 ${lineId} 的${what} ${orgId} 不存在`);
+  return org;
+}
+
+// ================= 3. 体系 =================
+
+const networks = networksData as unknown as Record<string, NetworksFileEntry>;
+
+interface NetworkInfo {
+  id: string;
+  fontFamily: string;
+  primaryLang: NameLocale;
+  operator?: OrgInfo;
+  authority?: OrgInfo;
+  voice: string;
+}
+
+const networkMap = new Map<string, NetworkInfo>();
+for (const [id, entry] of Object.entries(networks)) {
+  networkMap.set(id, {
+    id,
+    fontFamily: entry.fontFamily ?? DEFAULT_NETWORK_FONT,
+    primaryLang: entry.primaryLang ?? DEFAULT_PRIMARY_LANG,
+    operator: requireOrg(id, '运营公司', entry.operator),
+    authority: requireOrg(id, '运营主体', entry.authority),
+    voice: entry.voice ?? DEFAULT_VOICE_TEMPLATE,
+  });
+}
+
+// ================= 4. 站点 =================
+
+const stationsFile = stationsData as unknown as Record<string, StationsFileEntry>;
+
+const parsedStations: StationData[] = [];
+for (const [id, entry] of Object.entries(stationsFile)) {
   const nation = nationMap.get(entry.nation);
   if (!nation) throw new Error(`站点 ${id} 的国家/地区 ${entry.nation} 不存在`);
   if (entry.area) {
     const area = areaMap.get(entry.area);
     if (!area) throw new Error(`站点 ${id} 的区域 ${entry.area} 不存在`);
-    if (regionsFile.areas[entry.area].nation !== entry.nation)
+    if (area.nation !== entry.nation)
       throw new Error(`站点 ${id} 的区域 ${entry.area} 不属于国家/地区 ${entry.nation}`);
   }
-  stationTerritory.set(id, {
-    nation,
-    area: entry.area ? areaMap.get(entry.area) : undefined,
+  const primaryLang = nation.primaryLang;
+  parsedStations.push({
+    id,
+    names: requireNames(`站点 ${id}`, entry.names),
+    primaryLang,
+    x: entry.x,
+    y: entry.y,
+    labelDir: entry.labelDir,
+    fontFamily: nation.fontFamily,
+    fontFamilyZh: primaryLang === 'zhCN' ? undefined : FONT_ZH,
   });
 }
-
-/** 取站点归属；regions.json 必须覆盖每个站点（一个点至少属于某个国家/地区） */
-function territoryOf(stationId: string): { nation: Territory; area?: Territory } {
-  const territory = stationTerritory.get(stationId);
-  if (!territory) throw new Error(`regions.json 缺少站点 ${stationId} 的归属`);
-  return territory;
-}
-
-const parsedLinesR = dataR.lines as unknown as LineData[];
-const parsedLinesI = dataI.lines as unknown as LineData[];
-const parsedLinesL = dataL.lines as unknown as LineData[];
-const parsedLinesS = dataS.lines as unknown as LineData[];
-
-const regionLineSets: {
-  lines: LineData[];
-  prefix: string;
-  fontFamily: string;
-  primaryLang: NameLocale;
-  operator?: OrgInfo;
-  authority?: OrgInfo;
-}[] = [
-  {
-    lines: parsedLinesR,
-    prefix: parsedR.prefix,
-    fontFamily: parsedR.fontFamily,
-    primaryLang: parsedR.primaryLang,
-    operator: parsedR.operator,
-    authority: parsedR.authority,
-  },
-  {
-    lines: parsedLinesI,
-    prefix: parsedI.prefix,
-    fontFamily: parsedI.fontFamily,
-    primaryLang: parsedI.primaryLang,
-    operator: parsedI.operator,
-    authority: parsedI.authority,
-  },
-  {
-    lines: parsedLinesL,
-    prefix: parsedL.prefix,
-    fontFamily: parsedL.fontFamily,
-    primaryLang: parsedL.primaryLang,
-    operator: parsedL.operator,
-    authority: parsedL.authority,
-  },
-  {
-    lines: parsedLinesS,
-    prefix: parsedS.prefix,
-    fontFamily: parsedS.fontFamily,
-    primaryLang: parsedS.primaryLang,
-    operator: parsedS.operator,
-    authority: parsedS.authority,
-  },
-];
-
-/** 线路变体校验：至少一个变体，每个变体至少两个站点 */
-function assertVariants(line: LineData): void {
-  if (!Array.isArray(line.variants) || line.variants.length === 0)
-    throw new Error(`线路 ${line.id} 缺少 variants`);
-  for (const variant of line.variants) {
-    if (!Array.isArray(variant.stations) || variant.stations.length < 2)
-      throw new Error(`线路 ${line.id} 的变体站点数不足 2 个`);
-    if (variant.vehicle && !hasVehicle(variant.vehicle))
-      throw new Error(`线路 ${line.id} 的变体引用了未知车型：${variant.vehicle}`);
-  }
-}
-
-for (const { lines, prefix, fontFamily, primaryLang, operator, authority } of regionLineSets) {
-  for (const line of lines) {
-    assertVariants(line);
-    for (const variant of line.variants) {
-      variant.stations = variant.stations.map((id) => regionStationId(prefix, id));
-    }
-    if (line.lineLabels)
-      line.lineLabels = line.lineLabels.map(([id, dir]) => [regionStationId(prefix, id), dir]);
-    line.fontFamily = fontFamily;
-    if (primaryLang !== 'zhCN') line.fontFamilyZh = 'Noto Serif SC';
-    line.primaryLang = line.primaryLang ?? primaryLang;
-    // 运营公司 / 运营主体：线路对象上的值优先，否则落到本文件的默认值
-    if (!line.operator) line.operator = operator;
-    if (!line.authority) line.authority = authority;
-  }
-}
-
-const parsedFerryLines = (ferryData as any).lines as LineData[];
-const parsedSameLines = (sameData as any).lines as LineData[];
-
-const parsedLines: LineData[] = [
-  ...parsedLinesR,
-  ...parsedLinesI,
-  ...parsedLinesL,
-  ...parsedLinesS,
-  ...parsedFerryLines,
-  ...parsedSameLines,
-];
-
-// 轮渡 / 同站线路不在 regionLineSets 里（不需要加前缀），单独校验变体
-for (const line of [...parsedFerryLines, ...parsedSameLines]) assertVariants(line);
 
 export const minX = Math.min(...parsedStations.map((s) => s.x)) - margin;
 const maxX = Math.max(...parsedStations.map((s) => s.x)) + margin;
@@ -425,23 +352,33 @@ export const svgHeight = height * BLOCK_SIZE;
 const translateX = (maxX + minX) / 2;
 const translateY = (maxY + minY) / 2;
 
+function territoryOf(
+  stationId: string,
+  entry: StationsFileEntry,
+): { nation: Territory; area?: Territory } {
+  const nation = nationMap.get(entry.nation);
+  if (!nation) throw new Error(`站点 ${stationId} 的国家/地区 ${entry.nation} 不存在`);
+  return {
+    nation: nation.territory,
+    area: entry.area ? areaMap.get(entry.area)?.territory : undefined,
+  };
+}
+
 export const stations: Station[] = parsedStations.map((s) => ({
   ...s,
-  ...territoryOf(s.id),
+  ...territoryOf(s.id, stationsFile[s.id]),
   cx: (s.x + width / 2 - translateX) * BLOCK_SIZE,
   cy: (s.y + height / 2 - translateY) * BLOCK_SIZE,
 }));
 
 export const stationMap = new Map(stations.map((s) => [s.id, s]));
 
+// ================= 5. 连接与费用 =================
+
 /** 连接条目缺 distance 时的默认公里数（等价旧的 `?? 10` 行为） */
 export const DEFAULT_CONNECTION_DISTANCE = 10;
 
 const connectionMap = new Map<string, ConnectionEntry>();
-
-function connectionKey(aId: string, bId: string): string {
-  return [aId, bId].sort().join('|');
-}
 
 const connectionsFile = connectionsData as unknown as ConnectionsFile;
 
@@ -450,7 +387,7 @@ for (const entry of connectionsFile.connections) {
     throw new Error(`connections.json 必须使用完整站点 id：${entry.from} ~ ${entry.to}`);
   if (!stationMap.has(entry.from) || !stationMap.has(entry.to))
     throw new Error(`connections.json 引用了不存在的站点：${entry.from} ~ ${entry.to}`);
-  const key = connectionKey(entry.from, entry.to);
+  const key = segmentKey(entry.from, entry.to);
   if (connectionMap.has(key))
     throw new Error(`connections.json 中重复的站点对：${entry.from} ~ ${entry.to}`);
   connectionMap.set(key, entry);
@@ -458,7 +395,7 @@ for (const entry of connectionsFile.connections) {
 
 /** 两站之间的连接定义；无条目时返回 undefined（距离回退默认值、几何回退直线） */
 export function lookupConnection(aId: string, bId: string): ConnectionEntry | undefined {
-  return connectionMap.get(connectionKey(aId, bId));
+  return connectionMap.get(segmentKey(aId, bId));
 }
 
 export function lookupDistance(aId: string, bId: string): number {
@@ -489,6 +426,8 @@ export function pairCost(vehicleId: string, aId: string, bId: string): PairCost 
   };
 }
 
+// ================= 6. 线路 =================
+
 /** 所有变体站点的并集（按首次出现顺序） */
 function unionStations(variants: { stations: string[] }[]): string[] {
   const seen = new Set<string>();
@@ -503,42 +442,24 @@ function unionStations(variants: { stations: string[] }[]): string[] {
   return out;
 }
 
-const stationLineCount = new Map<string, number>();
-for (const line of parsedLines) {
-  // 一条线路的多个变体算同一条线路 → 换乘站判定只看线路，不看变体
-  for (const sid of unionStations(line.variants)) {
-    stationLineCount.set(sid, (stationLineCount.get(sid) || 0) + 1);
-  }
-}
-
-export const transferStationIds = new Set(
-  [...stationLineCount.entries()].filter(([, c]) => c >= 2).map(([id]) => id),
-);
-
-// 每个数据文件内的常规线路单独配色：文件内第 n 条线路取 linePalette[n]
-const fileLineIndex = new Map<LineData, number>();
-for (const { lines: fileLines } of regionLineSets) {
-  let index = 0;
-  for (const line of fileLines) if (!line.lineType) fileLineIndex.set(line, index++);
+function namesOfStation(lineId: string, id: string): StationNames {
+  const st = stationMap.get(id);
+  if (!st) throw new Error(`线路 ${lineId} 引用了不存在的站点：${id}`);
+  return st.names;
 }
 
 /** 轮渡 / 同站换乘线路名：由端点站的四语站名派生（数据里不写 names），同站换乘取首站 */
 function derivedLineNames(line: LineData): StationNames {
-  const namesOf = (id: string): StationNames => {
-    const st = stationMap.get(id);
-    if (!st) throw new Error(`线路 ${line.id} 引用了不存在的站点：${id}`);
-    return st.names;
-  };
   const ids = line.variants[0].stations;
   if (line.lineType === 'ferry') {
     if (ids.length !== 2)
       throw new Error(`轮渡 ${line.id} 应有恰好 2 个端点站，实际 ${ids.length} 个`);
-    return ferryLineNames(namesOf(ids[0]), namesOf(ids[1]));
+    return ferryLineNames(namesOfStation(line.id, ids[0]), namesOfStation(line.id, ids[1]));
   }
-  return sameStationLineNames(namesOf(ids[0]));
+  return sameStationLineNames(namesOfStation(line.id, ids[0]));
 }
 
-/** 线路名：区域线路用数据里的四语名，轮渡 / 同站换乘线路名一律派生，数据里写了就是矛盾 */
+/** 线路名：轨道线路用数据里的四语名，轮渡 / 同站换乘线路名一律派生，数据里写了就是矛盾 */
 function resolveLineNames(line: LineData): StationNames {
   if (!line.lineType) {
     if (!line.names) throw new Error(`线路 ${line.id} 缺少 names`);
@@ -551,28 +472,106 @@ function resolveLineNames(line: LineData): StationNames {
   return derivedLineNames(line);
 }
 
-export const lines: Line[] = parsedLines.map((line) => ({
-  ...line,
-  names: resolveLineNames(line),
-  // 轮渡 / 同站线路不在 regionLineSets 里，主语言取默认值
-  primaryLang: line.primaryLang ?? 'zhCN',
-  variants: line.variants.map((variant) => ({
-    name: variant.name ?? '',
-    nameEn: variant.nameEn ?? '',
-    vehicle: variant.vehicle ?? DEFAULT_VEHICLE_ID,
-    stations: variant.stations,
-  })),
-  stations: unionStations(line.variants),
-  virtual: line.lineType === 'same-station',
-  color:
-    line.lineType === 'ferry'
-      ? FERRY_COLOR
-      : line.lineType === 'same-station'
-        ? SAME_COLOR
-        : linePalette[(fileLineIndex.get(line) ?? 0) % linePalette.length],
-}));
+/** 校验：至少一个变体，每个变体至少两个站点且引用真实站点 */
+function assertVariants(line: LineData): void {
+  if (!Array.isArray(line.variants) || line.variants.length === 0)
+    throw new Error(`线路 ${line.id} 缺少 variants`);
+  for (const variant of line.variants) {
+    if (!Array.isArray(variant.stations) || variant.stations.length < 2)
+      throw new Error(`线路 ${line.id} 的变体站点数不足 2 个`);
+    if (variant.vehicle && !hasVehicle(variant.vehicle))
+      throw new Error(`线路 ${line.id} 的变体引用了未知车型：${variant.vehicle}`);
+    for (const sid of variant.stations) {
+      if (!stationMap.has(sid)) throw new Error(`线路 ${line.id} 引用了不存在的站点：${sid}`);
+    }
+  }
+}
+
+const linesFile = linesData as unknown as Record<string, LinesFileEntry>;
+
+export const lines: Line[] = Object.entries(linesFile).map(([id, entry]) => {
+  const line: LineData = { ...entry, id };
+  assertVariants(line);
+
+  // 体系 / 配色槽位
+  let network: NetworkInfo | undefined;
+  if (line.lineType === 'same-station') {
+    if (line.network) throw new Error(`线路 ${id} 不应有 network`);
+  } else if (line.lineType === 'ferry') {
+    if (line.network) {
+      network = networkMap.get(line.network);
+      if (!network) throw new Error(`线路 ${id} 的 network ${line.network} 不存在`);
+    }
+  } else {
+    if (!line.network) throw new Error(`线路 ${id} 缺少 network`);
+    network = networkMap.get(line.network);
+    if (!network) throw new Error(`线路 ${id} 的 network ${line.network} 不存在`);
+    if (line.colorSlot === undefined) throw new Error(`线路 ${id} 缺少 colorSlot`);
+  }
+  if (line.lineType && line.colorSlot !== undefined) throw new Error(`线路 ${id} 不应有 colorSlot`);
+
+  const primaryLang = network?.primaryLang ?? DEFAULT_PRIMARY_LANG;
+  const fontFamily = network?.fontFamily ?? DEFAULT_NETWORK_FONT;
+
+  return {
+    ...line,
+    names: resolveLineNames(line),
+    network: line.network,
+    primaryLang,
+    fontFamily,
+    fontFamilyZh: primaryLang === 'zhCN' ? undefined : FONT_ZH,
+    operator: requireOrg(id, '运营公司', line.operator) ?? network?.operator,
+    authority: requireOrg(id, '运营主体', line.authority) ?? network?.authority,
+    voice: line.voice ?? network?.voice ?? DEFAULT_VOICE_TEMPLATE,
+    color:
+      line.lineType === 'ferry'
+        ? FERRY_COLOR
+        : line.lineType === 'same-station'
+          ? SAME_COLOR
+          : linePalette[(line.colorSlot ?? 0) % linePalette.length],
+    variants: line.variants.map((variant, variantIndex) => {
+      const vehicle = variant.vehicle ?? DEFAULT_VEHICLE_ID;
+      return {
+        name: variant.name ?? '',
+        nameEn: variant.nameEn ?? '',
+        vehicle,
+        stations: variant.stations,
+        timetable: parseTimetable(variant.timetable, {
+          lineId: id,
+          variantIndex,
+          virtual: line.lineType === 'same-station',
+          oneWay: line.oneWay === true,
+          stations: variant.stations,
+          vehicle,
+        }),
+      };
+    }),
+    stations: unionStations(line.variants),
+    virtual: line.lineType === 'same-station',
+  };
+});
 
 export const lineColorMap = new Map(lines.map((l) => [l.id, l.color]));
+
+/** 每条区间的最小固定间隔（分钟），由各变体的 `timetable.interval` 派生；无消费方，供后续时刻表层使用 */
+export const segmentHeadways: Map<string, number> = buildSegmentHeadways(lines);
+
+/** 某对站点之间的最小固定间隔（分钟）；无条目 = 未定义 */
+export function headwayFor(aId: string, bId: string): number | undefined {
+  return segmentHeadways.get(segmentKey(aId, bId));
+}
+
+// 换乘站判定：一条线路的多个变体算同一条线路 → 只看线路，不看变体
+const stationLineCount = new Map<string, number>();
+for (const line of lines) {
+  for (const sid of line.stations) {
+    stationLineCount.set(sid, (stationLineCount.get(sid) || 0) + 1);
+  }
+}
+
+export const transferStationIds = new Set(
+  [...stationLineCount.entries()].filter(([, c]) => c >= 2).map(([id]) => id),
+);
 
 /** 站点 → 服务它的线路（按 `lines` 顺序；站点信息面板与地图高亮共用一份） */
 export const stationLineMap = new Map<string, Line[]>();
@@ -588,6 +587,8 @@ for (const line of lines) {
 export function sortLinesForDisplay<T extends { virtual: boolean }>(list: T[]): T[] {
   return [...list].sort((a, b) => Number(a.virtual) - Number(b.virtual));
 }
+
+// ================= 7. 标注 =================
 
 function transformPathD(d: string, fn: (x: number, y: number) => [number, number]): string {
   return d.replace(/([MLCQHVAZ])([^MLCQHVAZ]*)/gi, (_, cmd, rest) => {
@@ -701,6 +702,8 @@ export const markerTexts: MarkerTextLine[] = markerTextsData.flatMap((t, i) => {
   return lines;
 });
 
+// ================= 8. 渲染段 =================
+
 function pathId(x1: number, y1: number, x2: number, y2: number): string {
   if (x1 < x2 || (x1 === x2 && y1 < y2)) {
     return `${x1},${y1}|${x2},${y2}`;
@@ -774,7 +777,7 @@ interface RawPolyline {
   parts: RawSegment[];
 }
 
-function lineWidth(line: LineData): number | undefined {
+function lineWidth(line: { lineType?: 'ferry' | 'same-station' }): number | undefined {
   return line.lineType === 'ferry'
     ? FERRY_LINE_WIDTH
     : line.lineType === 'same-station'
@@ -802,7 +805,7 @@ function linePairs(variants: LineVariantData[]): { a: string; b: string; vehicle
   return out;
 }
 
-for (const line of parsedLines) {
+for (const line of lines) {
   const lw = lineWidth(line);
   const dash = line.lineType === 'ferry' ? FERRY_DASH : undefined;
   const pairs = linePairs(line.variants);
@@ -842,6 +845,7 @@ for (const line of parsedLines) {
     pairSegmentIds.set(`${line.id}|${bId}|${aId}`, ids);
   }
 }
+
 const polylineGroups = new Map<string, RawPolyline[]>();
 for (const seg of rawSegments) {
   let group = polylineGroups.get(seg.groupKey);

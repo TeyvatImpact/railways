@@ -1,0 +1,103 @@
+{
+  "atoms": {
+    "welcome": {
+      "zh": "欢迎您乘坐{line}。",
+      "ja": "ご乗車ありがとうございます。{line}をご利用ください。",
+      "en": "Welcome to {line}."
+    },
+    "terminal": {
+      "zh": "本次列车终点站{terminus}。",
+      "ja": "この列車の終点は{terminus}です。",
+      "en": "The terminal station of this train is {terminus}."
+    },
+    "variant": {
+      "zh": "本次列车为{variant}。",
+      "ja": "この列車は{variant}です。",
+      "en": "This train is a {variant} service."
+    },
+    "nextStation": {
+      "zh": "下一站{next}。",
+      "ja": "次は{next}です。",
+      "en": "The next station is {next}."
+    },
+    "arrive": {
+      "zh": "{station}到了。",
+      "ja": "{station}です。",
+      "en": "We are now at {station}."
+    },
+    "arriveTerminal": {
+      "zh": "终点站{station}到了。",
+      "ja": "終点、{station}です。",
+      "en": "We are now at the terminal station, {station}."
+    },
+    "alight": {
+      "zh": "下车，当心脚下空隙。",
+      "ja": "お降りの際は足元にご注意ください。",
+      "en": "Please mind the gap when leaving the train."
+    },
+    "alightTerminal": {
+      "zh": "请您携带好随身物品下车，当心脚下空隙。",
+      "ja": "お荷物をお忘れなく、足元にご注意ください。",
+      "en": "Please take your belongings with you, and mind the gap."
+    },
+    "transfer": {
+      "zh": "可换乘{transfers}。",
+      "ja": "{transfers}にお乗り換えです。",
+      "en": "You can transfer to {transfers} here."
+    },
+    "branchHintOther": {
+      "zh": "前往其他方向的乘客请在本站换乘。",
+      "ja": "別方向へお越しの方は、この駅でお乗り換えください。",
+      "en": "Passengers continuing in other directions, please transfer here."
+    },
+    "branchHintBranch": {
+      "zh": "前往{branch}方向的乘客请在本站换乘。",
+      "ja": "{branch}方面へお越しの方は、この駅でお乗り換えください。",
+      "en": "Passengers for the {branch} branch, please transfer here."
+    },
+    "doors": {
+      "zh": "车门即将打开。",
+      "ja": "ドアが開きます。",
+      "en": "Doors will open."
+    },
+    "platformArriving": {
+      "zh": "开往{terminus}的列车即将进站，请先下后上，排队候车，上车当心脚下空隙。",
+      "ja": "{terminus}行きの列車がまもなく参ります。お降りのお客様が先です。",
+      "en": "The train bound for {terminus} is arriving. Please line up waiting and mind the gap between the train and the platform while boarding."
+    }
+  },
+  "composition": {
+    "on": ["welcome"],
+    "direction": ["terminal"],
+    "variant": ["terminal", "variant"],
+    "station": [
+      { "key": "arriveTerminal", "when": ["atTerminus"] },
+      { "key": "arrive", "when": ["!atTerminus"] },
+      { "key": "transfer", "when": ["hasTransfers"] },
+      { "key": "alightTerminal", "when": ["atTerminus"] },
+      { "key": "alight", "when": ["!atTerminus"] }
+    ],
+    "enter": [
+      "terminal",
+      "nextStation",
+      { "key": "transfer", "when": ["hasTransfers"] },
+      { "key": "branchHintOther", "when": ["nextIsJunction", "branchTrain"] },
+      { "key": "branchHintBranch", "when": ["nextIsJunction", "!branchTrain"] }
+    ],
+    "leave": [
+      { "key": "arriveTerminal", "when": ["atTerminus"] },
+      { "key": "arrive", "when": ["!atTerminus"] },
+      { "key": "transfer", "when": ["hasTransfers"] },
+      { "key": "alightTerminal", "when": ["atTerminus"] },
+      { "key": "alight", "when": ["!atTerminus"] }
+    ]
+  },
+  "settings": {
+    "transferLimit": 2,
+    "transferJoin": { "zh": "、", "ja": "、", "en": ", " },
+    "transferOverflow": { "zh": "等{n}条线路", "ja": "など{n}線", "en": " and {n} more lines" },
+    "fullServiceName": { "zh": "全线", "ja": "全区間", "en": "full service" },
+    "fallbackBranchName": { "zh": "支线", "ja": "支線", "en": "branch" },
+    "variantNames": { "支线": { "ja": "支線" }, "小交路": { "ja": "区間運転" } }
+  }
+}
