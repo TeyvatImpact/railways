@@ -10,8 +10,9 @@ pnpm preview    # 预览构建产物
 ```
 
 - 类型检查：`npx vue-tsc --noEmit`（没有对应的 npm script）。
+- 测试：`pnpm test`（`tsx --test` 跑 `src/**/*.test.ts`，Node 自带的测试运行器）。
 - 格式化：`pnpm format`（oxfmt），提交前必跑。
-- 无 lint / 测试脚本；改动一律手工验证。
+- 无 lint；除 `pnpm test` 覆盖的排班 / 列车模型外，其余改动手工验证。
 
 ## 架构
 
@@ -86,6 +87,7 @@ TitleBar                                 顶栏（关于弹窗 / 主题 / 管理
 | `composables/useSimClock.ts`                          | 模拟时钟模块级单例：`secondsOfDay` / `playing` / `rate` / `minutesOfDay` + 启动 rAF                                            |
 | `composables/trainRuns.ts`                            | 列车运行模型：把班次（`departures` 展开 + `interval` 合成）摊成 `TrainRun`，叠终点折返停留，回答「某时刻这趟车在哪」（纯逻辑） |
 | `composables/trainSchedule.ts`                        | 由 `interval` 合成班次：站级合并间隔、候选走班次、池化覆盖贪心、变体相位错开、兜底（纯逻辑）                                   |
+| `composables/trainSchedule.test.ts`                   | `pnpm test` 的回归：合成班次的硬性验收条件、封段、结构、覆盖、停站与「下一班」（在真实数据上跑）                               |
 | `composables/useCurveGeometry.ts`                     | 向心 Catmull–Rom 曲线控制点                                                                                                    |
 | `composables/useTerritoryBorders.ts`                  | 由站点归属算 Voronoi 边界 SVG path（纯几何）                                                                                   |
 | `composables/useLabelPlacement.ts`                    | 标签盒布局与引线（`@chenglou/pretext`），并提供 `measureText`                                                                  |
@@ -99,7 +101,7 @@ TitleBar                                 顶栏（关于弹窗 / 主题 / 管理
 | `composables/useSpeech.ts`                            | 语音引擎单例（`speechSynthesis`）                                                                                              |
 | `config/render.config.ts`                             | 渲染常量（字体、调色板、间距、描边、网格步长）                                                                                 |
 | `config/vehicles.ts`                                  | 车型：时速、票价系数、加减速、冗余系数、计算公式                                                                               |
-| `config/schedule.config.ts`                           | 排班常量：合成容差（`GAP_FACTOR` / `GAP_SLACK_MINUTES` / 循环上限）与缺省停站 `DEFAULT_DWELL_MINUTES`                          |
+| `config/schedule.config.ts`                           | 排班常量：合成容差（`GAP_FACTOR` / `GAP_SLACK_MINUTES` / 循环上限 / 补车上限）与缺省停站 `DEFAULT_DWELL_MINUTES`               |
 | `config/announce.config.ts`                           | 语音引擎常量                                                                                                                   |
 | `config/unionTeyvat.config.ts`                        | 代码内置机构名与地区 → 运营方表                                                                                                |
 | `scripts/migrate-data-v3.cjs`                         | 一次性数据迁移脚本（已完成，无需再跑）                                                                                         |
@@ -257,7 +259,7 @@ TitleBar                                 顶栏（关于弹窗 / 主题 / 管理
 - `between` 两个站必须在变体站序里且顺序一致。**起点要写在汇入点**：合成班次时，`between` 范围之外（包括汇入点之后的第一段）仍按无范围的基准间隔要求，所以 K2#0 写成 `[帕哈岛, 终夜长茔]` 时，汇入后的支线仍被要求按基准间隔发车（等于支线被过服务）；要让支线按更疏的间隔跑，范围要从汇入点写起（`[空寂走廊, 终夜长茔]`）。
 - 发车：`direction` `up` = 站序方向、`down` = 逆序，单向线路不能有 `down`；`vehicle` 省略 = 该变体车型；`turnback: true` = 折返（到终点停站后原路开回发车站，一趟车既是上行也是下行，单向线路不能折返）；时间窗自 `from` 起每 `every` 分钟一班、`≤ to` 去尾。
 - `expandDepartures` 按**绝对分钟**（可跨天）升序展开，同站 / 同向 / 同刻 / 同车型的重复班次只算一班。
-- `dwell`（可选）：`{ default, stations }`，分钟、非负，逐站覆盖；**没覆盖到的站一律用 `config/schedule.config.ts` 的 `DEFAULT_DWELL_MINUTES`（缺省 1 分钟）**，所以不写 `dwell` 的变体也有停站。**只作数据与派生**（`dwellAt`），不影响区间行程时间（`pairCost` / 路由时间）。
+- `dwell`（可选）：`{ default, stations }`，分钟、非负，逐站覆盖；**变体没写 `dwell` 时用 `config/schedule.config.ts` 的 `DEFAULT_DWELL_MINUTES`（缺省 1 分钟）**，所以不写 `dwell` 的变体也有停站。**只作数据与派生**（`dwellAt`），不影响区间行程时间（`pairCost` / 路由时间）。
 - `parseTimetable(raw, ctx)` 做全部校验（两种形态互斥、键合法、时间 `HH:mm`、站在站序里、方向合法、车型已知、单向线不能 `down`、虚拟线路不应有时刻表等）。
 - 其它导出：`segmentKey`（无向站对键，与 `connections.json` 同口径）、`intervalAt`、`mergeIntervalSources`（多来源按时刻取 `min` 切段）、`minIntervalOfDay`、`buildSegmentHeadways`、`clockOf` / `minuteOf`（分钟 ↔ `HH:mm`，前者向下取整到分）、`bandCovers`（时段是否覆盖某分钟）、`closedAt`（该区间该时刻是否被**显式 `null`** 封掉，区别于「没有任何时段覆盖」）。`useMapData.ts` 再导出 `segmentHeadways` 与 `headwayFor(a, b)`（`Infinity` = 不开行，无条目 = 无数据）。
 
@@ -406,7 +408,7 @@ TitleBar                                 顶栏（关于弹窗 / 主题 / 管理
 ## 提交
 
 - 提交信息遵循 [Conventional Commits](https://www.conventionalcommits.org/)，用**英文**；scope 可选（如 `feat(routing)`、`fix(map)`），纯数据改动用 `data:` 前缀。
-- 提交前：① 跑 `pnpm format`；② 有逻辑改动（新功能、schema 变更、重构）时同步更新本文件。
+- 提交前：① 跑 `pnpm format`；② 跑 `pnpm test`（排班 / 列车模型的回归）；③ 有逻辑改动（新功能、schema 变更、重构）时同步更新本文件。
 
 ## 易错点
 
@@ -416,7 +418,8 @@ TitleBar                                 顶栏（关于弹窗 / 主题 / 管理
 - 路由 history base 是 `/tr`（`router/index.ts`），但 vite 未设 `base`，所以构建产物的资源路径是域名根下的 `/assets/*`。
 - 数据表集合硬编码在三处，加表 / 改表要同步：`useMapData.ts`（import + 解析）、`AdminPanel.vue`（`fileKeys`）、`vite.config.ts`（`ALLOWED_FILES`）。配音模板集合由 `voiceTemplates.ts` 的 `import.meta.glob` 自动发现，无需改。
 - `vue-tsc` 在 devDeps 里但没有 npm script，用 `npx vue-tsc --noEmit`。
-- 无自动测试，只有手工验证：`pnpm dev` 后在浏览器里看。
+- 自动测试只有一处：`pnpm test` 跑 `src/**/*.test.ts`（`tsx --test`，Node 自带运行器）——目前是排班合成 / 列车模型 / 「下一班」的回归（在真实数据上断言硬性验收条件、封段、结构、覆盖）。改合成算法或改 `lines.json` / `connections.json` 后必须跑它；UI 与渲染仍靠 `pnpm dev` 手工看。
+- `tsx` 只是跑测试用的 devDependency（Node 原生的 TS 剥离不支持裸 JSON 导入，所以不能直接 `node --test`）。
 - `intro.md` 由 `InfoDialog.vue` 以 `?raw` 导入并经 `markdown-exit` 渲染；首次访问检测用 localStorage `teyvat-railways-visited`。
 - AdminPanel（🛠 按钮，仅开发模式）经 vite 中间件的 `GET/PUT /__admin/data/<文件名>.json` 读写数据表，只允许 `ALLOWED_FILES` 里列出的文件名；写回后 Vite HMR 自动刷新。
 - `RoutePanel` 通过 `defineExpose` 暴露 `onStationClick(stationId)`，`HomeView` 在地图 emit `station-click` 时调用它；地图只在「选择起点 / 终点」时 emit，其余点击进 `useSelection`。
