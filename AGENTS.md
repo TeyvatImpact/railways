@@ -210,9 +210,9 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 `useTerritoryBorders.ts` 是**纯几何模块**（无 Vue 依赖），导出 `buildBorderPaths(kind, smoothing)`（`{ id, d }[]`）与折线缓存；运行时状态在 `useBorderSmoothing.ts`。`RailwayMap.vue` 在网格之后、线路之前铺这两层（`pointer-events="none"`，不吃点击），描边取自 `render.config.ts` 的 `NATION_BORDER_*` / `AREA_BORDER_*`。要点：
 
 - 只画**相邻归属之间**的边界；站点云最外圈不画「海岸线」，凸包边上的边界正好在凸包上收口。
-- 共圆（1 单位格点布局里很常见）会让相邻三角形外心重合，重合的 Voronoi 边只画一次；`MIN_SEGMENT`（0.01 单位 = 0.5px）丢掉凸包裁剪留下的亚像素碎段 —— 它们短于 path 的 0.1px 输出精度，会退化成零长自环。
+- 共圆（1 单位格点布局里很常见）会让相邻三角形外心重合，重合的 Voronoi 边只画一次；`MIN_SEGMENT`（0.5px 换算成的数据单位 = `0.5 / BLOCK_SIZE`）丢掉凸包裁剪留下的亚像素碎段 —— 它们短于 path 的 0.1px 输出精度，会退化成零长自环。
 - 边界是运行时纯几何推导，**不进任何数据文件**；`mark.json` 仍是最上层的手绘覆盖。
-- 平滑是有代价的，三种方式实测（以「每条渲染线段中点到最近两站的距离差」衡量，等于偏离真实 Voronoi 边界的 2 倍）：
+- 平滑是有代价的，三种方式实测（以「每条渲染线段中点到最近两站的距离差」衡量，等于偏离真实 Voronoi 边界的 2 倍；下表的像素值是在 `BLOCK_SIZE = 50` 时测的，偏离量与 `BLOCK_SIZE` 成正比 —— 现为 64，故实际偏差 ≈ 表中值 × 1.28，角度与覆盖率不变）：
 
   | `BORDER_SMOOTHING` | 偏离 平均 / p90 / p99 / 最大   | 折角 p99 / 最大 | 覆盖率 |
   | ------------------ | ------------------------------ | --------------- | ------ |
@@ -280,7 +280,7 @@ Each variant is its own chain in the graph, so changing from a branch/local (小
 
 ## Conventions
 
-- **Coordinates**: data units × `BLOCK_SIZE` (50px). SVG viewport sized to data bounds with configurable `margin`.
+- **Coordinates**: data units × `BLOCK_SIZE` (64px, `render.config.ts`). SVG viewport sized to data bounds with configurable `margin`. The background grid is the data unit itself — `gridStep` is **derived** from `BLOCK_SIZE` (`gridStep = BLOCK_SIZE`), never set independently, so grid lines, station positions and the mouse-coordinate readout always agree. `BLOCK_SIZE` is the single knob for the map's scale (`useLabelPlacement`'s grid spacing and `useTerritoryBorders`' `MIN_SEGMENT` follow it too).
 - **Label fonts**: Inazuma stations use `"Noto Serif JP", serif` from Google Fonts; others use `"Noto Sans SC"`.
 - **Label sizes**: Fixed small size (`fsCNSmall: 12`, `fsENSmall: 8`). No zoom-dependent switching.
 - **Station / line names**: every station and line carries `names: { zhCN, zhTW, ja, en, pronunciationJa? }` (运营公司 / 主体 likewise, under `{ names }`); the region's `config.primaryLang` (`ja` for Inazuma, `zhCN` elsewhere; a line may override it) picks the primary line. `nameLabelLines(names, primaryLang)` in `composables/stationNames.ts` is the single source for which lines render and in what order (primary → `zhCN` when the primary isn't Chinese → `en`), shared by the map labels, the `/display` strip header and the `/display` station labels. CN text uses `"Noto Serif SC"` at EN font size.

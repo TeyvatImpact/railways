@@ -61,10 +61,10 @@ stations.forEach((station, index) => {
 const nodeKey = (p: Point): string => `${p.x.toFixed(4)},${p.y.toFixed(4)}`;
 
 /**
- * 最短可保留的边界段（数据单位，0.01 单位 = 0.5px）：凸包裁剪会在边上留下亚像素级的碎段，
+ * 最短可保留的边界段（数据单位，0.5px）：凸包裁剪会在边上留下亚像素级的碎段，
  * 它们短于输出精度（path 坐标取到 0.1px），画出来就是零长自环 —— 直接丢掉。
  */
-const MIN_SEGMENT = 0.01;
+const MIN_SEGMENT = 0.5 / BLOCK_SIZE;
 
 // ---- 几何谓词 ----
 

@@ -14,9 +14,6 @@ export interface CurveSegment {
   angle: number;
 }
 
-/** 判定零长度的容差（SVG 用户单位，等于 1/50 数据单位） */
-const EPS = 0.01;
-
 /** 合并重合顶点的容差：相邻区间的并行轨道偏移要么完全相同，要么相差一个线宽 */
 const MERGE = 1e-6;
 

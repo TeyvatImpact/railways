@@ -65,8 +65,8 @@ export const linePalette: string[] = [
 
 // ===== 坐标与缩放配置 =====
 
-/** 数据坐标中每 1 单位对应的像素数 */
-export const BLOCK_SIZE = 50;
+/** 数据坐标中每 1 单位对应的像素数。**改这一个值即改变整张地图的比例**（站点坐标、SVG 尺寸、鼠标坐标读数都跟着走） */
+export const BLOCK_SIZE = 64;
 
 /** 边界留白（数据坐标单位），用于计算 SVG 尺寸时的额外边距 */
 export const margin = 2;
@@ -93,8 +93,11 @@ export const MARKER_FONT_FAMILY = 'sans-serif';
 
 // ===== 网格配置 =====
 
-/** 背景网格线的步长（px） */
-export const gridStep = 50;
+/**
+ * 背景网格线的步长（px）。网格就是数据坐标单位本身，所以**必须**等于 `BLOCK_SIZE`，
+ * 否则网格线与站点 / 线路 / 鼠标坐标读数不再对齐 —— 这里直接派生，不再单独写死一个数。
+ */
+export const gridStep = BLOCK_SIZE;
 
 // ===== 特殊线路配置 =====
 
