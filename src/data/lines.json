@@ -1388,16 +1388,20 @@
           "Snezhnaya-Snezhnaya"
         ],
         "timetable": {
-          "interval": [
+          "departures": [
             {
               "from": "05:30",
               "to": "18:30",
-              "interval": 30
+              "every": 30,
+              "station": "Snezhnaya-Snezhnaya",
+              "direction": "up"
             },
             {
               "from": "18:30",
               "to": "24:00",
-              "interval": 60
+              "every": 60,
+              "station": "Snezhnaya-Snezhnaya",
+              "direction": "up"
             }
           ],
           "dwell": {
@@ -1429,16 +1433,20 @@
           "Snezhnaya-Snezhnaya"
         ],
         "timetable": {
-          "interval": [
+          "departures": [
             {
               "from": "06:00",
               "to": "18:00",
-              "interval": 60
+              "every": 60,
+              "station": "Snezhnaya-Snezhnaya",
+              "direction": "up"
             },
             {
               "from": "18:00",
               "to": "24:00",
-              "interval": 120
+              "every": 120,
+              "station": "Snezhnaya-Snezhnaya",
+              "direction": "up"
             }
           ],
           "dwell": {
@@ -1471,16 +1479,20 @@
           "Snezhnaya-Snezhnaya"
         ],
         "timetable": {
-          "interval": [
+          "departures": [
             {
               "from": "05:30",
               "to": "19:30",
-              "interval": 60
+              "every": 60,
+              "station": "Snezhnaya-Snezhnaya",
+              "direction": "up"
             },
             {
               "from": "19:00",
               "to": "24:00",
-              "interval": 120
+              "every": 120,
+              "station": "Snezhnaya-Snezhnaya",
+              "direction": "up"
             }
           ],
           "dwell": {
@@ -1506,11 +1518,14 @@
       {
         "stations": ["Snezhnaya-Snezhnaya", "Snezhnaya-PaleCrown"],
         "timetable": {
-          "interval": [
+          "departures": [
             {
               "from": "06:00",
               "to": "18:00",
-              "interval": 60
+              "every": 60,
+              "station": "Snezhnaya-Snezhnaya",
+              "direction": "up",
+              "turnback": true
             }
           ],
           "dwell": {

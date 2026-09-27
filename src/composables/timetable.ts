@@ -6,14 +6,18 @@ export type TimetableDirection = 'up' | 'down';
 
 /** 逐个时间点发车 */
 export interface TimetableDeparture {
-  /** `HH:mm`（00:00–23:59） */
+  /** `HH:mm`（数据里的写法；跨天时间窗展开出的时刻会绕回表盘，时刻值以 `minutes` 为准） */
   time: string;
+  /** 当日（可跨天）绝对分钟数：单点 = `time`，时间窗展开后 = 实际时刻 */
+  minutes: number;
   /** 发车站（必须是该变体站序里的完整站点 id） */
   station: string;
   /** `up` = 变体站序方向，`down` = 逆站序 */
   direction: TimetableDirection;
   /** 车型 id；解析后必定有值（缺省填该变体的车型） */
   vehicle: string;
+  /** 折返：开到该方向的终点后，停站（`dwell`）再按反向开回发车站 —— 一趟车同时是上行与下行 */
+  turnback?: boolean;
 }
 
 /** 时间窗发车：自 `from` 起每 `every` 分钟一辆，发车时刻 ≤ `to`（去尾）；`to <= from` 视为跨天（+24h） */
@@ -25,6 +29,8 @@ export interface TimetableWindow {
   station: string;
   direction: TimetableDirection;
   vehicle: string;
+  /** 折返，同 `TimetableDeparture.turnback` */
+  turnback?: boolean;
 }
 
 /** 一个时段内的固定间隔：整段作用于变体的区间，除非用 `between` 限定范围 */
@@ -203,15 +209,22 @@ export function parseTimetable(raw: unknown, ctx: TimetableContext): VariantTime
     const vehicle = (d.vehicle as string | undefined) ?? ctx.vehicle;
     if (!hasVehicle(vehicle)) throw new Error(`${p}引用了未知车型：${vehicle}`);
 
+    const turnback = d.turnback;
+    if (turnback !== undefined && typeof turnback !== 'boolean')
+      throw new Error(`${p}第 ${i} 条发车的 turnback 必须是布尔值`);
+    if (turnback && ctx.oneWay) throw new Error(`${p}第 ${i} 条发车是单向线路，不能折返`);
+
     if (hasTime) {
       const time = d.time as string;
       if (typeof time !== 'string' || !TIME_RE.test(time))
         throw new Error(`${p}发车时间 ${time} 不是 HH:mm`);
       out.departures.push({
         time,
+        minutes: minuteOf(time),
         station,
         direction: direction as TimetableDirection,
         vehicle,
+        ...(turnback ? { turnback } : {}),
       });
       return;
     }
@@ -231,15 +244,19 @@ export function parseTimetable(raw: unknown, ctx: TimetableContext): VariantTime
       station,
       direction: direction as TimetableDirection,
       vehicle,
+      ...(turnback ? { turnback } : {}),
     });
   });
 
   return out;
 }
 
-/** 时间窗展开成逐个时刻，按当日（可跨天）绝对分钟数升序（同刻保持数组顺序） */
+/**
+ * 时间窗展开成逐个时刻，按当日（可跨天）绝对分钟数升序。
+ * 同一站、同一方向、同一时刻、同一车型的重复班次只算一班（两个时间窗首尾相接时不会出现两班同刻车）。
+ */
 export function expandDepartures(t: VariantTimetable): TimetableDeparture[] {
-  const out: { abs: number; dep: TimetableDeparture }[] = [];
+  const out: TimetableDeparture[] = [];
   for (const d of t.departures) {
     if (isWindow(d)) {
       const from = minuteOf(d.from);
@@ -247,15 +264,27 @@ export function expandDepartures(t: VariantTimetable): TimetableDeparture[] {
       if (to <= from) to += 1440;
       for (let x = from; x <= to; x += d.every) {
         out.push({
-          abs: x,
-          dep: { time: clockOf(x), station: d.station, direction: d.direction, vehicle: d.vehicle },
+          time: clockOf(x),
+          minutes: x,
+          station: d.station,
+          direction: d.direction,
+          vehicle: d.vehicle,
+          ...(d.turnback ? { turnback: true } : {}),
         });
       }
     } else {
-      out.push({ abs: minuteOf(d.time), dep: { ...d } });
+      out.push({ ...d });
     }
   }
-  return out.sort((a, b) => a.abs - b.abs).map((x) => x.dep);
+  out.sort((a, b) => a.minutes - b.minutes);
+  return out.filter(
+    (dep, index) =>
+      index === 0 ||
+      dep.minutes !== out[index - 1].minutes ||
+      dep.station !== out[index - 1].station ||
+      dep.direction !== out[index - 1].direction ||
+      dep.vehicle !== out[index - 1].vehicle,
+  );
 }
 
 /** 无向站对键：`[a,b].sort().join('|')`（与 connections 的键同口径） */
@@ -263,12 +292,20 @@ export function segmentKey(a: string, b: string): string {
   return [a, b].sort().join('|');
 }
 
-/** 该时段是否覆盖这一分钟（`to <= from` 的段绕天，如 `22:00 → 01:00` 覆盖 22:00–01:00） */
+/**
+ * 该时段是否覆盖这一分钟：时段是**半开区间 `[from, to)`**（服务时段 `06:00–23:00` = 06:00 起、23:00 前），
+ * `to <= from` 视为跨天（如 `22:00 → 01:00` 覆盖 22:00–01:00 之前），`to = from` = 全天。
+ */
 function bandCovers(band: TimetableIntervalBand, minutes: number): boolean {
   const from = minuteOf(band.from);
-  let to = minuteOf(band.to);
-  if (to <= from) to += 1440;
-  return (minutes >= from && minutes <= to) || (minutes + 1440 >= from && minutes + 1440 <= to);
+  const rawTo = minuteOf(band.to);
+  const to = rawTo <= from ? rawTo + 1440 : rawTo;
+  return (minutes >= from && minutes < to) || (minutes + 1440 >= from && minutes + 1440 < to);
+}
+
+/** 该时段的取值变化点（分钟，0–1440）：起点与终点 */
+function bandCuts(band: TimetableIntervalBand): number[] {
+  return [minuteOf(band.from), minuteOf(band.to) % 1440];
 }
 
 /**
@@ -301,7 +338,7 @@ export function intervalAt(
 
 /**
  * 某区间一天里生效间隔的最小值。生效间隔只在时段边界之间恒定，所以取样 00:00 与所有边界
- * （每个 `from`、每个 `to + 1`，模 1440）就够；全天都不开行的区间得到 `Infinity`。
+ * （每个 `from`、每个 `to`，模 1440）就够；全天都不开行的区间得到 `Infinity`。
  */
 function minIntervalOfDay(
   bands: readonly (TimetableIntervalBand | null)[],
@@ -310,8 +347,7 @@ function minIntervalOfDay(
   const samples = new Set([0]);
   for (const band of bands) {
     if (band === null) continue;
-    samples.add(minuteOf(band.from));
-    samples.add((minuteOf(band.to) + 1) % 1440);
+    for (const cut of bandCuts(band)) samples.add(cut);
   }
   let min = Infinity;
   for (const minutes of samples) min = Math.min(min, intervalAt(bands, clockOf(minutes), segment));
@@ -350,4 +386,51 @@ export function buildSegmentHeadways(
 export function dwellAt(dwell: VariantDwell | undefined, stationId: string): number | undefined {
   if (dwell === undefined) return undefined;
   return dwell.stations?.[stationId] ?? dwell.default;
+}
+
+/** 一组「时段间隔」+ 它作用的区间 */
+export interface IntervalSource {
+  bands: readonly (TimetableIntervalBand | null)[];
+  segment: readonly [string, string];
+}
+
+/** 一段生效间隔：`from`–`to` 之间（`HH:mm`，`to` 为 24:00 表示到日终）间隔恒为 `interval` 分钟 */
+export interface IntervalSegment {
+  from: string;
+  to: string;
+  /** 分钟；`Infinity` = 不开行 */
+  interval: number;
+}
+
+/** `to` 为 24:00 的收尾时刻用 `24:00` 表示（`clockOf(1440)` 会绕回 00:00） */
+function dayClockOf(minutes: number): string {
+  return minutes >= 1440 ? '24:00' : clockOf(minutes);
+}
+
+/**
+ * 把多组「时段间隔」按时刻取 `min`，切成按时间顺序排列的段（00:00–24:00 全覆盖，相邻同值合并）。
+ * 用于「这个站这条线多久一趟」：同一时刻的多个来源（多交路 / 站两侧的区间）取最密的那一班；
+ * 某段被后面的段打断就会被拆成多段分别排出来。
+ */
+export function mergeIntervalSources(sources: readonly IntervalSource[]): IntervalSegment[] {
+  const cuts = new Set([0, 1440]);
+  for (const { bands } of sources) {
+    for (const band of bands) {
+      if (band === null) continue;
+      for (const cut of bandCuts(band)) cuts.add(cut);
+    }
+  }
+  const sorted = [...cuts].sort((a, b) => a - b);
+  const out: IntervalSegment[] = [];
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const start = sorted[i];
+    const end = sorted[i + 1];
+    let interval = Infinity;
+    for (const source of sources)
+      interval = Math.min(interval, intervalAt(source.bands, clockOf(start), source.segment));
+    const last = out[out.length - 1];
+    if (last !== undefined && last.interval === interval) last.to = dayClockOf(end);
+    else out.push({ from: dayClockOf(start), to: dayClockOf(end), interval });
+  }
+  return out;
 }

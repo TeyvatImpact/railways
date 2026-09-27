@@ -62,6 +62,42 @@
         </button>
       </div>
     </section>
+    <section v-if="headways.length">
+      <h3 class="info-title">间隔时间</h3>
+      <div v-for="headway in headways" :key="headway.lineId" class="tt-group">
+        <div class="tt-group-title">
+          <span class="line-chip-dot" :style="{ background: headway.color }" />
+          <span class="truncate">{{ headway.lineName }}</span>
+        </div>
+        <div v-for="(segment, index) in headway.segments" :key="index" class="tt-row">
+          <span class="tt-span">{{ segment.from }} – {{ segment.to }}</span>
+          <span class="tt-value" :class="{ 'is-off': !Number.isFinite(segment.interval) }">
+            {{ headwayText(segment.interval) }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section v-if="departures.length">
+      <h3 class="info-title">时刻表发车</h3>
+      <div v-for="line in departures" :key="line.lineId" class="tt-group">
+        <div class="tt-group-title">
+          <span class="line-chip-dot" :style="{ background: line.color }" />
+          <span class="truncate">{{ line.lineName }}</span>
+          <span class="opacity-60">{{ line.stops.length }} 班</span>
+        </div>
+        <div v-for="(stop, index) in line.stops" :key="index" class="tt-row">
+          <span class="tt-span">
+            <template v-if="stop.arrival">到站 {{ stop.arrival }}</template>
+            <template v-if="stop.arrival && stop.departure"> / </template>
+            <template v-if="stop.departure">开出 {{ stop.departure }}</template>
+          </span>
+          <span class="tt-value">
+            {{ stopLabel(stop) }}<span v-if="stop.turnback" class="opacity-60">（折返）</span>
+          </span>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -75,6 +111,11 @@ import {
 } from '../composables/useMapData';
 import { bilingualLabel, nameRows } from '../composables/stationNames';
 import { selectLine } from '../composables/useSelection';
+import {
+  stationDepartures,
+  stationHeadways,
+  type StationStop,
+} from '../composables/stationTimetable';
 
 const props = defineProps<{ stationId: string }>();
 
@@ -102,6 +143,22 @@ function orgList(kind: 'operator' | 'authority'): string {
 
 const operators = computed(() => orgList('operator'));
 const authorities = computed(() => orgList('authority'));
+
+const headways = computed(() => stationHeadways(props.stationId));
+const departures = computed(() => stationDepartures(props.stationId));
+
+/** 间隔展示：`Infinity` = 不开行 */
+function headwayText(interval: number): string {
+  return Number.isFinite(interval) ? `每 ${interval} 分钟` : '不开行';
+}
+
+/** 一趟车在本站的走向：只有开出 → 「开往 X」；只有到站 → 「来自 X」；成对 → 「X → Y」 */
+function stopLabel(stop: StationStop): string {
+  if (stop.from && stop.to) return `${stop.from} → ${stop.to}`;
+  if (stop.to) return `开往 ${stop.to}`;
+  if (stop.from) return `来自 ${stop.from}`;
+  return '—';
+}
 </script>
 
 <style scoped>
@@ -138,5 +195,36 @@ const authorities = computed(() => orgList('authority'));
   height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+.tt-group + .tt-group {
+  margin-top: 8px;
+}
+.tt-group-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.tt-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 16px;
+}
+.tt-span {
+  width: 132px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.tt-value {
+  min-width: 0;
+  opacity: 0.75;
+}
+.tt-value.is-off {
+  opacity: 0.5;
+  font-style: italic;
 }
 </style>
