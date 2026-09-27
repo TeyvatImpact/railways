@@ -161,6 +161,11 @@ function variantOptions(key: string): VariantOption[] {
   return lineVariants.get(key)?.options ?? [];
 }
 
+/** 换乘徽章跟着本站走：本站已变灰（不在本趟行程上或已经过）时，徽章底色与引线一并变灰 */
+function badgeFill(key: string, col: number, fill: string): string {
+  return dynState[key].on && dyn(key).states[col] === 'dim' ? 'var(--dyn-gray)' : fill;
+}
+
 /** 语音播报引擎（模块级单例）：自动播报关闭时 speak 自己会静默跳过 */
 const speech = useSpeech();
 
@@ -428,7 +433,11 @@ function cell(col: number) {
               v-for="(b, k) in st.badges"
               :key="k"
               class="badge"
-              :style="{ background: b.fill, color: b.textFill, '--badge-color': b.fill }">
+              :style="{
+                background: badgeFill(s.key, st.col, b.fill),
+                color: b.textFill,
+                '--badge-color': badgeFill(s.key, st.col, b.fill),
+              }">
               {{ b.label }}
             </span>
           </div>
