@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue';
-import { stations, stationMap, lines, pairCost } from './useMapData';
+import { stations, stationMap, lines, pairCost, sortLinesForDisplay } from './useMapData';
 import { ferrySegmentNames } from './lineNaming';
 import type { NameLocale } from './stationNames';
 
@@ -74,6 +74,9 @@ interface EdgeMetrics {
   time: number;
   distance: number;
 }
+
+/** 线路 id → 线路（搜索结果显示 / 排序用） */
+const lineById = new Map(lines.map((line) => [line.id, line]));
 
 const graph = new Map<string, Map<string, number>>();
 const edgeMetrics = new Map<string, Map<string, EdgeMetrics>>();
@@ -187,12 +190,17 @@ export function useRouting() {
 
       const lineNodes = stationNodeMap.get(st.id) || [];
       const seenLines = new Set<string>();
-      const lineInfo: { id: string; name: string; nameEn: string }[] = [];
+      const lineInfo: { id: string; name: string; nameEn: string; virtual: boolean }[] = [];
       for (const nodeId of lineNodes) {
         const info = nodeInfoMap.get(nodeId);
         if (info && !seenLines.has(info.lineId)) {
           seenLines.add(info.lineId);
-          lineInfo.push({ id: info.lineId, name: info.lineName, nameEn: info.lineNameEn });
+          lineInfo.push({
+            id: info.lineId,
+            name: info.lineName,
+            nameEn: info.lineNameEn,
+            virtual: lineById.get(info.lineId)?.virtual ?? false,
+          });
         }
       }
 
@@ -200,20 +208,24 @@ export function useRouting() {
         id: st.id,
         name: st.names[st.primaryLang],
         nameEn: st.names.en,
-        lines: lineInfo,
+        // 虚拟线路（同站换乘）排在真实线路之后
+        lines: sortLinesForDisplay(lineInfo)
+          .slice(0, 20)
+          .map(({ id, name, nameEn }) => ({ id, name, nameEn })),
       });
     }
 
     return results.slice(0, 20);
   }
 
-  /** 线路搜索：四语线路名 + 线路 id（轮渡 / 同站换乘的名字是运行时派生的，照样能搜到） */
+  /** 线路搜索：四语线路名 + 线路 id（轮渡的名字也是运行时派生的，照样能搜到；虚拟线路 = 同站换乘不参与搜索） */
   function searchLines(query: string): LineSuggestion[] {
     if (!query || query.trim().length === 0) return [];
     const q = query.toLowerCase().trim();
     const results: LineSuggestion[] = [];
 
     for (const line of lines) {
+      if (line.virtual) continue;
       const nameMatch = [line.names.zhCN, line.names.zhTW, line.names.ja, line.names.en].some((n) =>
         n.toLowerCase().includes(q),
       );

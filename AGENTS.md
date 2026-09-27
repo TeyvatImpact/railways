@@ -277,6 +277,7 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 - **`costPreset`**: Each line selects a fare/speed preset from `config/fare-presets.json`. Determines `farePerKm` and `minutesPerKm` for cost computation.
 - **`operator` / `authority`**: 运营公司 / 运营主体（`{ names }`，四语齐全）shown in `/display`'s strip header as `names.zhCN` + `names.en` (+ `names.ru`) — Chinese primary, smaller English, optional third line (Snezhnaya's `authority` carries the Russian in `names.ru`). Each region file sets file-wide defaults in `config`, a line overrides either one locally (`F1`-`F3` → 枫丹巡轨船, `N4` → 悠悠度假村轨道交通, `WT` → 稲妻国海祇島珊瑚宮自治政府). `useMapData.ts` resolves the override onto each `Line` while prefixing variant stations, so consumers read `line.operator.names` / `line.authority.names` directly.
 - **`oneWay`**: Optional boolean; `true` = 单向线路，所有变体都只按各自 `stations` 的排列顺序开行，反向不可乘坐（环线即按单一方向绕行）。缺省 = 双向。当前仅 `snezhnaya.json` 的三条环线 `Trian-1`/`Trian-2`/`Trian-3` 为单向；`Trian-4`（白冕宫线）与 `Trian-5`（挪德卡莱连接线）为双向。
+- **虚拟线路**: `Line.virtual`（派生自 `lineType === 'same-station'`，即 `same.json` 里那些「X同站换乘」）—— 它们只是换乘关系的载体，不是能乘坐 / 能搜索的真实线路。`useRouting.searchLines()` 直接跳过它们；站点线路列表（`searchStations` 候选、`StationInfo` 可乘坐线路）用 `sortLinesForDisplay()` 把真实线路排前、虚拟线路排最后；`LineInfo` 上给虚拟线路挂一个「虚拟线路」标签。地图渲染、路径图与站点高亮照旧包含它们（同站换乘是图里 0 成本的边）。轮渡**不是**虚拟线路，仍可搜索。
 - **`connections`**: the global station-pair table in `connections.json` (replaces the old per-file `stationDistances` and the per-line waypoint tuples). See [Connections file](#connections-file-connectionsjson) above.
 - **Cost computation**: fare = distance × farePerKm (摩拉), time = distance × minutesPerKm (分钟)，四舍五入到整数；唯一实现是 `useMapData.ts` 的 `pairCost(costPreset, aId, bId)`，渲染段标签、`useRouting.ts` 的路由边权、`LineInfo` 的站间费用都调它。
 
@@ -300,7 +301,7 @@ Each variant is its own chain in the graph, so changing from a branch/local (小
 
 **`searchStations(query)`**: fuzzy match against all four station `names` values (`zhCN` / `zhTW` / `ja` / `en`), `id`, short ID; returns up to 20 `StationSuggestion` entries with line info (`name` = the station's primary-language name, `nameEn` = `names.en`).
 
-**`searchLines(query)`**: 同样的模糊匹配，对象是线路 —— 四语线路名（轮渡 / 同站换乘的名字是运行时派生的，照样搜得到）+ 线路 id；返回最多 20 条 `LineSuggestion`（`name` = 线路名主语言写法、`nameEn`、`color`）。
+**`searchLines(query)`**: 同样的模糊匹配，对象是线路 —— 四语线路名（轮渡的名字是运行时派生的，照样搜得到）+ 线路 id；返回最多 20 条 `LineSuggestion`（`name` = 线路名主语言写法、`nameEn`、`color`）。**虚拟线路（`Line.virtual` = 同站换乘）不参与搜索**，也不出现在按线路排的候选里。
 
 **Result**: JSON blob with `{ segments, pathNodeIds, totalFare, totalTime, totalDistance }`. 轮渡乘车段的 `lineName` / `lineNameEn` 按行程方向用单向箭头模板重算（`ferrySegmentNames`，语言取线路的 `primaryLang` / `en`），线路自身的名字仍是双向箭头；同站换乘段名不随方向变。
 

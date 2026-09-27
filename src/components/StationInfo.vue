@@ -67,7 +67,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { stationMap, stationLineMap, type Line } from '../composables/useMapData';
+import {
+  stationMap,
+  stationLineMap,
+  sortLinesForDisplay,
+  type Line,
+} from '../composables/useMapData';
 import { bilingualLabel, nameRows } from '../composables/stationNames';
 import { selectLine } from '../composables/useSelection';
 
@@ -76,7 +81,9 @@ const props = defineProps<{ stationId: string }>();
 defineEmits<{ (e: 'close'): void }>();
 
 const station = computed(() => stationMap.get(props.stationId) ?? null);
-const servingLines = computed<Line[]>(() => stationLineMap.get(props.stationId) ?? []);
+const servingLines = computed<Line[]>(() =>
+  sortLinesForDisplay(stationLineMap.get(props.stationId) ?? []),
+);
 
 /** 一个站可能由多条线路服务，机构去重后按「中文 · 英文」列出 */
 function orgList(kind: 'operator' | 'authority'): string {

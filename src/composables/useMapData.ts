@@ -144,6 +144,11 @@ export interface Line extends Omit<LineData, 'variants' | 'names'> {
   variants: LineVariant[];
   /** 派生：所有变体站点的并集（按首次出现顺序），用于「站 ↔ 线路」查询 */
   stations: string[];
+  /**
+   * 虚拟线路（同站换乘）：它只是换乘关系的载体，不是能乘坐 / 能搜索的真实线路
+   * —— 搜索、站点可乘坐线路列表等地方要把它们排除或排在最后。
+   */
+  virtual: boolean;
 }
 
 export interface RenderSegment {
@@ -566,6 +571,7 @@ export const lines: Line[] = parsedLines.map((line) => ({
     stations: variant.stations,
   })),
   stations: unionStations(line.variants),
+  virtual: line.lineType === 'same-station',
   color:
     line.lineType === 'ferry'
       ? FERRY_COLOR
@@ -584,6 +590,11 @@ for (const line of lines) {
     if (arr) arr.push(line);
     else stationLineMap.set(sid, [line]);
   }
+}
+
+/** 列线路时的顺序：真实线路在前，虚拟线路（同站换乘）排最后；同档保持原有顺序 */
+export function sortLinesForDisplay<T extends { virtual: boolean }>(list: T[]): T[] {
+  return [...list].sort((a, b) => Number(a.virtual) - Number(b.virtual));
 }
 
 function transformPathD(d: string, fn: (x: number, y: number) => [number, number]): string {

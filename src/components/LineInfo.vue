@@ -16,6 +16,7 @@
       <span v-if="line.lineType" class="tag">{{
         line.lineType === 'ferry' ? '轮渡' : '同站换乘'
       }}</span>
+      <span v-if="line.virtual" class="tag">虚拟线路</span>
       <span v-if="line.variants.length > 1" class="tag">{{ line.variants.length }} 个交路</span>
     </div>
 
