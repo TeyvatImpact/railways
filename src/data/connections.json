@@ -873,7 +873,11 @@
     {
       "from": "Teyvat-KEE",
       "to": "Teyvat-NTP",
-      "distance": 6
+      "distance": 6,
+      "waypoints": [
+        [1, 0],
+        [1, 1]
+      ]
     },
     {
       "from": "Teyvat-LCU",
@@ -921,7 +925,7 @@
       "from": "Teyvat-MAT",
       "to": "Teyvat-RRH",
       "distance": 20,
-      "waypoints": [[-1, 1]]
+      "waypoints": [[0, 2]]
     },
     {
       "from": "Teyvat-MCT",

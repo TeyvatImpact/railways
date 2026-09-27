@@ -701,7 +701,7 @@
     "network": "teyvat",
     "authority": "easybreeze-holiday-resort-management-committee",
     "colorSlot": 14,
-    "lineLabels": [["Teyvat-EBM", "LB"]],
+    "lineLabels": [["Teyvat-CFC", "B"]],
     "variants": [
       {
         "stations": ["Teyvat-EBP", "Teyvat-EBM", "Teyvat-CFC", "Teyvat-WVB", "Teyvat-TLI"],
@@ -760,8 +760,8 @@
     "colorSlot": 16,
     "lineLabels": [
       ["Teyvat-NSP", "LB"],
-      ["Teyvat-FNC", "LT"],
-      ["Teyvat-KEW", "LB"]
+      ["Teyvat-FNC", "L"],
+      ["Teyvat-KEW", "LT"]
     ],
     "variants": [
       {
@@ -853,8 +853,8 @@
     "authority": "nod-krai-bureau",
     "colorSlot": 17,
     "lineLabels": [
-      ["Teyvat-VOP", "LT"],
-      ["Teyvat-STR", "L"],
+      ["Teyvat-VOP", "R"],
+      ["Teyvat-STR", "LT"],
       ["Teyvat-KMC", "L"]
     ],
     "variants": [

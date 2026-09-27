@@ -822,7 +822,7 @@
     "x": -20,
     "y": -15,
     "nation": "fontaine",
-    "labelDir": "L"
+    "labelDir": "RT"
   },
   "Teyvat-FRI": {
     "names": {
@@ -1420,7 +1420,7 @@
     "y": -14,
     "nation": "nodkrai",
     "area": "paha-isle",
-    "labelDir": "B"
+    "labelDir": "T"
   },
   "Teyvat-KEW": {
     "names": {
@@ -1433,7 +1433,7 @@
     "y": -14,
     "nation": "nodkrai",
     "area": "paha-isle",
-    "labelDir": "T"
+    "labelDir": "B"
   },
   "Teyvat-FNC": {
     "names": {
@@ -1458,7 +1458,8 @@
     "x": -34,
     "y": -16,
     "nation": "nodkrai",
-    "area": "north-nodkrai"
+    "area": "north-nodkrai",
+    "labelDir": "L"
   },
   "Teyvat-PRM": {
     "names": {
@@ -1552,7 +1553,7 @@
     "y": -27,
     "nation": "nodkrai",
     "area": "north-nodkrai",
-    "labelDir": "R"
+    "labelDir": "LB"
   },
   "Inazuma-RTP": {
     "names": {
