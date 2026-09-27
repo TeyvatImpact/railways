@@ -975,8 +975,11 @@ function cell(col: number) {
 .strip-dyn .lane-track {
   background: var(--dyn-gray);
 }
-/* 点亮段（还没走到）：按原色盖在灰底上 */
+/* 点亮段（还没走到）：按原色盖在灰底上。
+   必须自己也是定位元素 —— `.track` 为了挂首尾虚线是 position: relative，定位元素会盖在
+   普通流元素之上，否则这些点亮段会被灰底整条压住（动态模式看起来永远是全灰） */
 .dyn-span {
+  position: relative;
   align-self: center;
   height: 5px;
   border-radius: 3px;
