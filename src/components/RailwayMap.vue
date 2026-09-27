@@ -86,6 +86,17 @@
             :stroke-width="TRAIN_DOT_STROKE"
             style="cursor: pointer"
             @click.stop="onTrainClick(dot.trainId)" />
+          <text
+            :x="dot.x + TRAIN_DOT_R + TRAIN_NUMBER_GAP"
+            :y="dot.y - TRAIN_DOT_R - TRAIN_NUMBER_GAP"
+            :font-size="TRAIN_NUMBER_FONT_SIZE"
+            :font-family="FONT_EN"
+            fill="var(--color-text)"
+            dominant-baseline="central"
+            style="cursor: pointer"
+            @click.stop="onTrainClick(dot.trainId)">
+            {{ dot.number }}
+          </text>
         </g>
 
         <g v-for="dot in trainLabelDots" :key="dot.key" :opacity="trainOpacity(dot.lineId)">
@@ -241,6 +252,8 @@ import {
   TRAIN_LABEL_DOT_GAP,
   TRAIN_LABEL_DOT_R,
   TRAIN_LABEL_DOT_SPACING,
+  TRAIN_NUMBER_FONT_SIZE,
+  TRAIN_NUMBER_GAP,
 } from '../config/render.config';
 import { buildBorderPaths } from '../composables/useTerritoryBorders';
 import { useBorderSmoothing } from '../composables/useBorderSmoothing';
@@ -262,7 +275,7 @@ import {
 } from '../composables/useMapData';
 import { useMapInteraction } from '../composables/useMapInteraction';
 import { formatDurationShort } from '../composables/formatTime';
-import { useLabelPlacement } from '../composables/useLabelPlacement';
+import { FONT_EN, useLabelPlacement } from '../composables/useLabelPlacement';
 import { useRenderMode } from '../composables/useRenderMode';
 import { buildCurveSegments, type CurveSegment } from '../composables/useCurveGeometry';
 import MapControls from './MapControls.vue';
@@ -607,6 +620,8 @@ interface TrainDot {
   trainId: string;
   lineId: string;
   color: string;
+  /** 车次号（画在圆点右上角） */
+  number: string;
   x: number;
   y: number;
 }
@@ -635,6 +650,7 @@ const trainDots = computed<TrainDot[]>(() => {
       trainId: train.run.id,
       lineId: train.run.line.id,
       color: train.run.line.color,
+      number: train.run.number,
       ...point,
     });
   }
@@ -665,6 +681,7 @@ const trainLabelDots = computed<TrainDot[]>(() => {
         trainId: train.run.id,
         lineId: train.run.line.id,
         color: train.run.line.color,
+        number: train.run.number,
         x: x0 + i * step,
         y,
       });

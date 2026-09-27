@@ -23,6 +23,8 @@ export interface TrainStop {
 export interface TrainRun {
   /** 稳定 id：`${lineId}#${variantIndex}#${index}`（index = 该变体展开后的第几班，0 起） */
   id: string;
+  /** 车次号：`SN-LLL-01` = 体系前缀 - 线路英文自名首字母缩写 - 当日该线路第几班（2 位补零） */
+  number: string;
   line: Line;
   variant: LineVariant;
   variantIndex: number;
@@ -111,6 +113,8 @@ export function buildTrainRun(
 
   const run: TrainRun = {
     id: `${line.id}#${variantIndex}#${index}`,
+    // 车次号要等全部班次建好后才能按线路排序编号，先留空
+    number: '',
     line,
     variant,
     variantIndex,
@@ -136,6 +140,34 @@ for (const line of lines) {
 
 export function trainById(id: string): TrainRun | undefined {
   return trainRuns.find((run) => run.id === id);
+}
+
+/** 车次号前缀：体系 id 前两位大写（`snezhnaya` → `SN`）；没有体系的线路退化成线路 id 前两位 */
+function networkPrefix(line: Line): string {
+  return (line.network ?? line.id).slice(0, 2).toUpperCase();
+}
+
+/** 线路英文名的首字母缩写：`Large Loop Line` → `LLL`（逐词取第一个字母数字字符） */
+function nameInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .map((word) => word.replace(/[^a-z0-9]/gi, '')[0] ?? '')
+    .join('')
+    .toUpperCase();
+}
+
+// 车次号：当日该线路的**全部**班次（含各变体）按开出时刻排序后编号，同刻按变体序；2 位补零
+const runsByLine = new Map<string, TrainRun[]>();
+for (const run of trainRuns) {
+  const list = runsByLine.get(run.line.id);
+  if (list) list.push(run);
+  else runsByLine.set(run.line.id, [run]);
+}
+for (const list of runsByLine.values()) {
+  list.sort((a, b) => a.start - b.start || a.variantIndex - b.variantIndex);
+  list.forEach((run, i) => {
+    run.number = `${networkPrefix(run.line)}-${nameInitials(run.line.selfNames.en)}-${String(i + 1).padStart(2, '0')}`;
+  });
 }
 
 export interface ActiveTrain {

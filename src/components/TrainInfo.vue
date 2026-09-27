@@ -22,6 +22,8 @@
     <section>
       <h3 class="info-title">列车</h3>
       <div class="info-grid">
+        <div class="opacity-60">车次</div>
+        <div class="train-number">{{ run.number }}</div>
         <div class="opacity-60">发车</div>
         <div>{{ formatClock(run.start) }} 由 {{ stationName(run.stops[0].stationId) }} 开出</div>
         <div class="opacity-60">方向</div>
@@ -184,6 +186,11 @@ function stopTimeText(i: number): string {
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+.train-number {
+  font-family: 'Barlow', sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 .tag {
   padding: 1px 6px;
