@@ -494,20 +494,17 @@ function cell(col: number) {
               }"></div>
           </div>
 
-          <!-- 站点：白底圆圈 + 居中的序号（不在本趟行程上 / 已经过的都是灰的） -->
+          <!-- 站点：白底圆圈 + 居中的序号（不在本趟行程上 / 已经过的都是灰的；当前站不闪，闪烁落在站名上） -->
           <div
             v-for="st in s.stations"
             :key="'node-' + st.col"
             class="node"
-            :class="{
-              'dyn-dim': dyn(s.key).states[st.col] === 'dim',
-              'dyn-cur': dyn(s.key).states[st.col] === 'current',
-            }"
+            :class="{ 'dyn-dim': dyn(s.key).states[st.col] === 'dim' }"
             :style="{ ...cell(st.col), gridRow: 7 + st.lane }">
             {{ st.index }}
           </div>
 
-          <!-- 站名：整块 45° 斜排（绕左上角旋转），越靠右的车站按模型的左移量回缩 -->
+          <!-- 站名：整块 45° 斜排（绕左上角旋转），越靠右的车站按模型的左移量回缩；正在经过的站闪站名 -->
           <div
             v-for="st in s.stations"
             :key="'label-' + st.col"
@@ -515,6 +512,7 @@ function cell(col: number) {
             :class="{
               'st-label-branch': st.lane > 0,
               'dyn-dim': dyn(s.key).states[st.col] === 'dim',
+              'dyn-cur': dyn(s.key).states[st.col] === 'current',
             }"
             :style="{ ...cell(st.col), '--label-shift': st.labelShift + 'px' }">
             <div v-for="l in st.lines" :key="l.locale" :class="'st-' + l.kind">{{ l.text }}</div>
@@ -915,7 +913,8 @@ function cell(col: number) {
   border-color: var(--dyn-gray);
   color: var(--dyn-gray);
 }
-.node.dyn-cur {
+/* 正在经过的站：闪的是站名那一块（圆圈与序号保持原色，不再闪） */
+.st-label.dyn-cur {
   animation: dyn-blink 1.1s ease-in-out infinite;
 }
 .st-label.dyn-dim .st-name,
