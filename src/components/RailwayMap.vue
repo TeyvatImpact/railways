@@ -87,6 +87,7 @@
             style="cursor: pointer"
             @click.stop="onTrainClick(dot.trainId)" />
           <text
+            v-if="dot.number"
             :x="dot.x + TRAIN_DOT_R + TRAIN_NUMBER_GAP"
             :y="dot.y - TRAIN_DOT_R - TRAIN_NUMBER_GAP"
             :font-size="TRAIN_NUMBER_FONT_SIZE"
@@ -634,8 +635,8 @@ interface TrainDot {
   trainId: string;
   lineId: string;
   color: string;
-  /** 车次号（画在圆点右上角） */
-  number: string;
+  /** 圆点右上角的车次文字；停站时为 `null`（停站的列车由站名上方的行列出，不再重复标注） */
+  number: string | null;
   x: number;
   y: number;
 }
@@ -664,7 +665,7 @@ const trainDots = computed<TrainDot[]>(() => {
       trainId: train.run.id,
       lineId: train.run.line.id,
       color: train.run.line.color,
-      number: train.run.number,
+      number: train.phase.kind === 'run' ? train.run.number : null,
       ...point,
     });
   }
