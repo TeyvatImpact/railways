@@ -882,7 +882,8 @@ function cell(col: number) {
   position: relative;
   background: none;
 }
-/* 一份：位置（left）与占比（width）由模型给；同一区间里只有一份是亮的 */
+/* 一份：位置（left）与占比（width）由模型给；同一区间里只有一份是亮的。
+   区间恒为三份，所以动画按 1/3 的窗口走（份数与窗口必须一致） */
 .dyn-chunk {
   position: absolute;
   top: 0;
@@ -890,11 +891,8 @@ function cell(col: number) {
   border-radius: 3px;
   background: var(--line-color);
 }
-.dyn-chunk-2 {
-  animation: dyn-march-2 1.1s linear infinite;
-}
 .dyn-chunk-3 {
-  animation: dyn-march-3 1.1s linear infinite;
+  animation: dyn-march 1.1s linear infinite;
 }
 /* 与 .lane-diag 同形：从分歧站圆圈中心 45° 汇入支线车道（写在 .dyn-span 之后才能覆盖 align-self） */
 .dyn-span-diag {
@@ -926,18 +924,8 @@ function cell(col: number) {
 .lane-tag.dyn-dim {
   background: var(--dyn-gray);
 }
-/* 一份一份点亮：每份一个周期内亮 1 / 份数 的时间，靠 animation-delay 错开相位，所以同时只有一份是亮的 */
-@keyframes dyn-march-2 {
-  0%,
-  49.99% {
-    opacity: 1;
-  }
-  50.01%,
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes dyn-march-3 {
+/* 一份一份点亮：区间三份，每份一个周期内亮 1/3 的时间，靠 animation-delay 错开相位，所以同时只有一份是亮的 */
+@keyframes dyn-march {
   0%,
   33.32% {
     opacity: 1;

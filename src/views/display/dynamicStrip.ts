@@ -100,17 +100,20 @@ function intervalSpans(a: StripStationModel, b: StripStationModel): RouteSpan[] 
 
 /**
  * 把一段区间切成一份一份，用来「一份一份点亮」地指示行进方向。
- * 单独一段直线（主线区间 / 支线车道区间）切三段；分岔区间按几何段算 —— 45° 引线算一段、长直线算一段。
+ * 区间一共三份：单一直线（主线区间 / 支线车道区间）等分三段；
+ * 分岔区间按几何段算 —— 45° 引线自己一份、长直线分两份。
  * 返回顺序 = 行进方向：先亮的那一份在最前（反向行驶时把份序倒过来）。
  */
 function splitSpans(spans: RouteSpan[]): RouteSpanPart[] {
-  const perSpan = spans.length === 1 ? 3 : 1;
+  // 一段就是整个区间 → 等分三段；分岔区间里直线段只分两段（另一段给引线，合起来仍是三段）
+  const straight = spans.length === 1 ? 3 : 2;
   const out: Omit<RouteSpanPart, 'parts'>[] = [];
   for (const sp of spans) {
-    const parts = Array.from({ length: perSpan }, (_, i) => ({
+    const n = sp.kind === 'diag' ? 1 : straight;
+    const parts = Array.from({ length: n }, (_, i) => ({
       ...sp,
-      offset: i / perSpan,
-      ratio: 1 / perSpan,
+      offset: i / n,
+      ratio: 1 / n,
     }));
     const forward = sp.kind === 'diag' || sp.toCol >= sp.fromCol;
     out.push(...(forward ? parts : parts.reverse()));
