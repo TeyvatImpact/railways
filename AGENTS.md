@@ -89,7 +89,7 @@ Panel anatomy: a line-coloured frame, a top-left header (线路名称 badge left
 | Config      | `config/render.config.ts`            | All render constants (fonts, palette, spacing, special line colors, territory border strokes and grid step)                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | Config      | `config/vehicles.ts`                 | 车型（列车 / 船只）配置：`id`、名称、设计时速（km/h）、票价系数（摩拉/千米）、加/减速度（m/s²，给出后时间按含加减速的梯形速度曲线算）、时刻表冗余系数函数（时间算完后再加上/乘）、数据计算公式（距离 × 车型 → 时间 / 票价，可覆写）与预留的可载人数；线路的**每个变体**用 `vehicle` 选一种                                                                                                                                                                                                                                                                 |
 | Config      | `config/announce.config.ts`          | 语音引擎常量：`AnnounceLang` / `AnnounceKind` / `PROGRESS_STATES` / `VOICE_LANGS` / `UTTERANCE_LANGS` / `VOICE_STORAGE_KEY` / `PREVIEW` / `LOG_LIMIT` / `DEFAULT_VOICE_TEMPLATE`；通用文案已移入 `data/voice/*.json`                                                                                                                                                                                                                                                                                                                                       |
-| Timing      | `composables/timetable.ts`           | 时刻表纯模块：类型 + `parseTimetable`（校验）+ `expandDepartures`（时间窗 → 逐个时刻，跨天、去尾）+ `segmentKey` + `buildSegmentHeadways`；无 Vue 依赖                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Timing      | `composables/timetable.ts`           | 时刻表纯模块：类型 + `parseTimetable`（校验）+ `intervalAt`（时段按序覆盖 / `between` 限定区间 / 空档与 `null` = 不开行）+ `minIntervalOfDay` + `dwellAt`（停站时间）+ `expandDepartures`（时间窗 → 逐个时刻，跨天、去尾）+ `segmentKey` + `buildSegmentHeadways`；无 Vue 依赖                                                                                                                                                                                                                                                                             |
 | Voice       | `views/display/announce.ts`          | 配音模板模型与纯逻辑：`createVoiceRegistry`（命名空间 + `extends` 合并 + 构建期校验）、`buildAnnouncement(ctx, templates, opts?)`、`shortLineName`；无 Vue 依赖                                                                                                                                                                                                                                                                                                                                                                                            |
 | Voice       | `views/display/voiceTemplates.ts`    | 装配注册表：`import.meta.glob('../../data/voice/*.json')` → 模板 id = 文件名 stem → 校验线路 / 体系引用的模板 id 存在                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 
@@ -184,7 +184,7 @@ All data is JSON stored in `src/data/`. No CSV files.
     "oneWay": true,                       // 只 Trian-1/2/3 写
     "variants": [
       { "stations": ["Teyvat-SAA", …] },                          // vehicle 省略 = standard
-      { "name": "小交路", "nameEn": "Short Turnback", "stations": […] }
+      { "name": "小交路", "nameEn": "Short Turnback", "stations": […], "timetable": { … } } // timetable 变体级可选，见 Timetable
     ]
   },
   "Trian-1": { "names": Names, "network": "snezhnaya", "colorSlot": 0, "oneWay": true, "variants": [{ "stations": […] }] },
@@ -200,7 +200,7 @@ All data is JSON stored in `src/data/`. No CSV files.
 - `vehicle`：等于 `standard` 时省略（旧数据 24 处冗余显式全删）；其余保持（`ferry` 12、`inazuma` 8、`liyue-metro` 4、`aquabus` 3、`same-station` 3、`natlan-resort` 1）。
 - `network`：轨道线路必有；轮渡可选（`ferry-fnc-vop` → `teyvat`，`ferry-hgv-wte` / `ferry-izc-tmp` → `inazuma`，`ferry.json` 那 9 条不写）；同站换乘禁止写。
 - `lineLabels`：短 id 全部展开成完整 id；`[]` 一律不写。
-- `timetable`（变体级，可选）：见 [Timetable](#timetable-composablestimetablets)；本阶段无真实数据。
+- `timetable`（变体级，可选）：见 [Timetable](#timetable-composablestimetablets)；本阶段已按运营时刻表填好（TR / 巡轨船 / 璃月港地铁 / IR / 至冬）。
 
 ### 线名派生（轮渡 / 同站换乘）
 
@@ -208,16 +208,16 @@ All data is JSON stored in `src/data/`. No CSV files.
 
 ### Timetable (`composables/timetable.ts`)
 
-变体可带一个可选的 `timetable`（本阶段**不写任何真实时刻表数据**，只做数据形态、校验与纯函数派生）。两种形态**互斥**，一个 `timetable` 只能二选一：
+变体可带一个可选的 `timetable`。两种形态**互斥**，一个 `timetable` 只能二选一（`dwell` 与两者都不冲突）：
 
 ```jsonc
-// ① 只写间隔、没有逐条发车信息：按时段给间隔（只能写 from / to / interval；按数组顺序覆盖）
+// ① 只写间隔、没有逐条发车信息：按时段给间隔（只能写 from / to / interval / between；按数组顺序覆盖）
 "timetable": {
   "interval": [
-    { "from": "05:30", "to": "23:00", "interval": 12 },   // 基准
-    { "from": "07:00", "to": "09:30", "interval": 5 },    // 早高峰，盖掉基准
-    { "from": "17:00", "to": "19:00", "interval": 6 },    // 晚高峰
-    { "from": "22:00", "to": "01:00", "interval": 20 }    // 绕天：22:00–01:00
+    { "from": "06:00", "to": "18:00", "interval": 30 },                      // 基准：白日
+    { "from": "18:00", "to": "24:00", "interval": 60 },                      // 夜间
+    { "from": "07:00", "to": "09:00", "interval": 5 },                       // 早高峰，盖掉基准
+    { "between": ["Teyvat-PHI", "Teyvat-FNC"], "from": "06:00", "to": "18:00", "interval": 40 } // 只作用于这段范围
   ]
 }
 
@@ -230,14 +230,20 @@ All data is JSON stored in `src/data/`. No CSV files.
 }
 ```
 
-- **① 时段间隔**：`interval` = **非空数组**，每段 `{ from, to, interval }` —— 段内固定间隔（分钟，正数）作用于整条变体的所有区间；`to <= from` 视为跨天（+24h）。段对象**只能写这三个键**（多写 `station` / `direction` / `vehicle` 之类直接报错）；段内不发车时刻、不区分站与方向，所以 `expandDepartures` 对它输出 `[]`。
-- **① 按序覆盖**：时段**按数组顺序**依次铺下去，**后面的段盖住前面的段**（相同时刻以数组中最后一段为准）——「基准 + 高峰覆盖」要把基准写前面、例外写后面，反序写就变成例外被基准盖掉。`intervalAt(bands, "HH:mm")` 是这套覆盖的唯一实现，返回该时刻的生效间隔（`undefined` = 没有任何段覆盖该时刻，`Infinity` = `null` 段）。
-- **① 的 `null` 元素**：数组元素可以是 `null` —— 含义是「任何时间的间隔都是无限大」（如无服务 / 间隔未知）；它同样按位置参与覆盖，`[null, { from: "07:00", to: "09:00", interval: 5 }]` = 只有 07:00–09:00 是 5、其余无限大，`[{ … }, null]` = 全天无限大。
+- **① 时段间隔**：`interval` = **非空数组**，每段 `{ from, to, interval }` —— 段内固定间隔（分钟，正数）作用于该段覆盖的区间；`to <= from` 视为跨天（+24h），`"24:00"` 是允许的收尾时刻（= 当日 24 时）。段对象**只能写 `from` / `to` / `interval` / `between` 四个键**（多写 `station` / `direction` / `vehicle` 之类直接报错）；段内不发车时刻、不区分站与方向，所以 `expandDepartures` 对它输出 `[]`。
+- **① `interval: null`**：该时段**不开行**（间隔无限大）—— 用于「夜间不开行」这类明确不运营的时段。
+- **① `between`**：可选，`[起站, 末站]` 两个完整站 id，必须在变体站序里且顺序一致 —— 该段只作用于这段范围内的区间（两端站都落在范围内才算，即 `起站 → 末站` 之间的连续区间）。用于共线 + 支线不同密度的线路（如帕哈岛线：共线 20min、支线两段 40min）。
+- **① 按序覆盖**：时段**按数组顺序**依次铺下去，**后面的段盖住前面的段**（相同时刻、同一区间以数组中最后一段为准）——「基准 + 高峰覆盖」要把基准写前面、例外写后面，反序写就变成例外被基准盖掉。`intervalAt(bands, "HH:mm", [a, b])` 是这套覆盖的唯一实现。
+- **① 空档 = 不开行**：**没有任何段覆盖的时刻一律 `Infinity`**（`intervalAt` 永不返回 `undefined`）—— 运营时间窗以外的时段不必写，也不存在「未定义」这一档。
+- **① 的 `null` 元素**：数组元素本身也可以是 `null` —— 含义是「任何时间的间隔都是无限大」；它同样按位置参与覆盖，`[null, { from: "07:00", to: "09:00", interval: 5 }]` = 只有 07:00–09:00 是 5、其余无限大，`[{ … }, null]` = 全天无限大。
 - **② 逐条发车**：`direction`：`up` = 变体站序方向，`down` = 逆站序；`oneWay` 线不能有 `down`。`vehicle` 省略 = 该变体的车型。
 - `time` / `from` / `to`：`"HH:mm"`；时间窗自 `from` 起每 `every` 分钟发一辆、发的时刻 ≤ `to`（**去尾**）；`to <= from` 视为跨天（+24h），如 `18:00 → 02:00` 每 20 分 = 25 班。
 - 判别：有 `time` = 单点，有 `every` = 时间窗；两者在同一条 `departures` 数组里混排。
-- `parseTimetable(raw, ctx)` 校验（信息带 `线路 X 的变体 #i`）：`interval` 非空数组、元素是 `null` 或只含 `from` / `to` / `interval` 的对象、段 `interval` 正数、`departures` 数组、`interval` 与 `departures` 互斥、单点 / 时间窗二选一、时间 `HH:mm`、every 正整数、发车站在该变体站序里、方向合法、单向线不能 `down`、车型已知、虚拟线路不应有时刻表。
-- `expandDepartures(t)` → 逐个时刻（按绝对分钟升序，跨天不折回）；`segmentKey(a, b)` = 无向站对键（与 `connections.json` 同口径）；`intervalAt(bands, time)` → 该时刻的生效间隔；`buildSegmentHeadways(lines)` → 每区间记该变体**一天里的最小生效间隔**（按 `intervalAt` 覆盖后取样所有时段边界；全无覆盖的变体跳过，`[null]` 这类只覆盖无限大的变体为 `Infinity`），跨变体仍取 `min`。`useMapData.ts` 导出 `segmentHeadways` 与 `headwayFor(a, b)`（当前无消费方）。
+- **`dwell`（停站时间，可选）**：`{ "default": 2, "stations": { "Snezhnaya-Snezhnaya": 5 } }` —— 分钟数、非负；`stations` 是逐站覆盖，站必须在变体站序里。**只作数据与派生**（`dwellAt(dwell, stationId)`），**不参与行程时间计算**（`pairCost` / 路由时间不受影响）。
+- `parseTimetable(raw, ctx)` 校验（信息带 `线路 X 的变体 #i`）：`interval` 非空数组、元素是 `null` 或只含 `from` / `to` / `interval` / `between` 的对象、段 `interval` 是正数或 `null`、`between` 两个站按站序给出、`departures` 数组、`interval` 与 `departures` 互斥、单点 / 时间窗二选一、时间 `HH:mm`（含 `24:00`）、every 正整数、发车站在该变体站序里、方向合法、单向线不能 `down`、车型已知、`dwell` 站点与取值合法、虚拟线路不应有时刻表。
+- `expandDepartures(t)` → 逐个时刻（按绝对分钟升序，跨天不折回）；`segmentKey(a, b)` = 无向站对键（与 `connections.json` 同口径）；`intervalAt(bands, time, segment)` → 该区间该时刻的生效间隔（空档 / `null` 段 = `Infinity`）；`buildSegmentHeadways(lines)` → 每区间记该变体**一天里的最小生效间隔**（按 `intervalAt` 覆盖后取样所有时段边界，`min`），跨变体 / 跨线路取 `min`。`useMapData.ts` 导出 `segmentHeadways` 与 `headwayFor(a, b)`（`Infinity` = 不开行，无条目 = 无数据；当前无消费方）。
+
+**已填数据**（`lines.json`）：TR 提瓦特线 白日 06:00–18:00 / 夜间 18:00–24:00（原初线 30/60 + 小交路 10/30、风岩草线 30/60 全线与小交路（归离原–奥摩斯港，为本阶段新补的变体）、自由线 30/夜间不开行 + 小交路 30/60、璃沉线 15/30、沉玉谷线 60/夜间不开行 + 小交路 20/30、须弥南北线 15/30、须弥环线 30/夜间不开行、连接线 30/60、赫布里穆 / 杜麦尼 / 卡皮塔诺线 15/30、希汐岛线 30/夜间不开行、帕哈岛线 共线 20/60 支线 40/120、虚海望线 主线 20/60 支线 60/夜间不开行）；巡轨船 F1–F3 06:00–20:00 每 15min、悠悠度假村线 N4 06:00–23:00 每 15min；璃月港地铁 06:00–23:00（1/2/3 号线 5/7/10min，S1 号线 10min + 夜间 20:00–23:00 20min）；IR 稻妻 06:00–22:00（鸣神岛线 10、鸣神大社线 15、影向山环状线 30、八酝岛线 30、鸣海线 30 核心 15、海祇岛线 20 核心 10、鹤观一/二号线 30 核心 10；核心时段 06:00–07:00 / 11:00–13:00 / 16:00–20:00）；至冬 Trian-1 05:30–18:30 每 30min + 之后每 60min、Trian-2 06:00–18:00 每 60min + 之后每 120min、Trian-3 05:30–19:30 每 60min + 19:00 起每 120min、Trian-4 06:00–18:00 每 60min，Trian-1…5 都带 `dwell`（至冬堡 5min、其他站 2min；Trian-5 只有 `default: 2` 与 `dwell`，无间隔数据）。
 
 ### Connections file (`connections.json`)
 
@@ -432,7 +438,7 @@ Use `data:` prefix for commits that only change JSON data (no code changes).
 - Segment paths are built in `useMapData.ts`: `connectionVertices()` reads the pair from `connections.json` (`lookupConnection()`), expands its chained `waypoints` into polyline vertices, and reverses the whole vertex list when the line traverses the pair against the canonical `from → to` order. Every pair contributes one `RenderSegment` per vertex span (`partIndex` 0..N). `pairSegmentIds` (also exported there) maps `${lineId}|${aId}|${bId}` → the pair's segment ids in both directions; `RailwayMap.vue` uses that map for route highlighting instead of recomputing corner geometry.
 - Parallel-track offsetting groups **whole polylines** by their direction-normalized vertex signature (`polylineKey`) and translates the entire pair by one vector derived from the start→end chord, so corners stay continuous. Straight pairs are unaffected; only corridors additionally shared by another identically-shaped polyline shift (offset ≤ 4px per neighbour).
 - Station-pair connections (distance **and** waypoints) live only in `src/data/connections.json`; (已删除的)地区分册不再携带 `stationDistances`，线路也不再携带逐对途经点。 Adding a connection = adding one fully-prefixed entry there (a missing pair silently means 10 km + straight line).
-- Line variants (支线 / 大小交路) live inside the owning line as `variants[]`, sharing its id, name, colour and track slot — a variant is **not** a separate line, so it never gets its own colour or parallel offset; 车型则按变体各自用 `vehicle` 选（`config/vehicles.ts`）。Today's variants: `M1`/`A`/`L2` each carry a `小交路` (short turnback) beside the full-length one, and the former standalone `K2-B` / `K3-B` lines were folded into `K2` / `K3` as `支线` (their `lineLabels` were merged into the parent, so the map still names the line at the branch termini). 轮渡 / 同站换乘线路单变体。
+- Line variants (支线 / 大小交路) live inside the owning line as `variants[]`, sharing its id, name, colour and track slot — a variant is **not** a separate line, so it never gets its own colour or parallel offset; 车型则按变体各自用 `vehicle` 选（`config/vehicles.ts`）。Today's variants: `M1`/`A`/`L2`/`B` each carry a `小交路` (short turnback) beside the full-length one (`B` 的小交路 = 归离原–奥摩斯港，为填时刻表时新补), and the former standalone `K2-B` / `K3-B` lines were folded into `K2` / `K3` as `支线` (their `lineLabels` were merged into the parent, so the map still names the line at the branch termini). 轮渡 / 同站换乘线路单变体。
 - Because the map graph is built per variant, a route that changes variant (branch → main, 小交路 → 大交路) is reported as a transfer at the shared station; a ride entirely inside one variant stays a single segment. `RouteSegment` / `NodeInfo` carry `variantIndex` / `variantName` / `variantNameEn`, and `segmentLineName()` renders `帕哈岛线（支线）`-style labels.
 - Transfer-station circles count **lines**, not variants: `transferStationIds` uses the per-line station union, so `K2`/`K3` trunk stations stopped being transfer stations when `K2-B`/`K3-B` merged (those also served by `K1` or a ferry kept it).
 - 线路颜色由 `lines.json` 的 `colorSlot` 显式决定，增删线路不再影响别条线路的颜色（旧的「序号即色位」耦合已解除）。

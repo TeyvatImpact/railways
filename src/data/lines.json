@@ -43,7 +43,21 @@
           "Teyvat-WSV",
           "Teyvat-TMM",
           "Teyvat-VKO"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 30
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 60
+            }
+          ]
+        }
       },
       {
         "name": "小交路",
@@ -65,7 +79,21 @@
           "Teyvat-CBC",
           "Teyvat-GHV",
           "Teyvat-SMC"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 10
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 30
+            }
+          ]
+        }
       }
     ]
   },
@@ -101,7 +129,49 @@
           "Teyvat-TGG",
           "Teyvat-DTM",
           "Teyvat-POM"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 30
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 60
+            }
+          ]
+        }
+      },
+      {
+        "name": "小交路",
+        "nameEn": "Short Turnback",
+        "stations": [
+          "Teyvat-GLP",
+          "Teyvat-CJS",
+          "Teyvat-TQV",
+          "Teyvat-LPV",
+          "Teyvat-CHM",
+          "Teyvat-TGG",
+          "Teyvat-DTM",
+          "Teyvat-POM"
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 30
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 60
+            }
+          ]
+        }
       }
     ]
   },
@@ -129,12 +199,40 @@
           "Teyvat-DSC",
           "Teyvat-SCP",
           "Teyvat-WRV"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 30
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": null
+            }
+          ]
+        }
       },
       {
         "name": "小交路",
         "nameEn": "Short Turnback",
-        "stations": ["Teyvat-SFL", "Teyvat-WSW", "Teyvat-MSG", "Teyvat-WDR"]
+        "stations": ["Teyvat-SFL", "Teyvat-WSW", "Teyvat-MSG", "Teyvat-WDR"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 30
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 60
+            }
+          ]
+        }
       }
     ]
   },
@@ -166,7 +264,21 @@
           "Teyvat-CZW",
           "Teyvat-JDM",
           "Teyvat-YLW"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 15
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 30
+            }
+          ]
+        }
       }
     ]
   },
@@ -195,12 +307,40 @@
           "Teyvat-QCV",
           "Teyvat-DHM",
           "Teyvat-WSI"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 60
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": null
+            }
+          ]
+        }
       },
       {
         "name": "小交路",
         "nameEn": "Short Turnback",
-        "stations": ["Teyvat-YLW", "Teyvat-QYV", "Teyvat-QCV", "Teyvat-DHM", "Teyvat-WSI"]
+        "stations": ["Teyvat-YLW", "Teyvat-QYV", "Teyvat-QCV", "Teyvat-DHM", "Teyvat-WSI"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 20
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 30
+            }
+          ]
+        }
       }
     ]
   },
@@ -220,7 +360,21 @@
     ],
     "variants": [
       {
-        "stations": ["Teyvat-BDH", "Teyvat-CTC", "Teyvat-SMC", "Teyvat-VMV", "Teyvat-POM"]
+        "stations": ["Teyvat-BDH", "Teyvat-CTC", "Teyvat-SMC", "Teyvat-VMV", "Teyvat-POM"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 15
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 30
+            }
+          ]
+        }
       }
     ]
   },
@@ -253,7 +407,21 @@
           "Teyvat-FOA",
           "Teyvat-VNA",
           "Teyvat-CTC"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 30
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": null
+            }
+          ]
+        }
       }
     ]
   },
@@ -289,7 +457,16 @@
           "Teyvat-POI",
           "Teyvat-ENS",
           "Teyvat-COF"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "20:00",
+              "interval": 15
+            }
+          ]
+        }
       }
     ]
   },
@@ -310,7 +487,16 @@
     "variants": [
       {
         "vehicle": "aquabus",
-        "stations": ["Teyvat-COF", "Teyvat-MCT", "Teyvat-OPE", "Teyvat-FFP", "Teyvat-LDH"]
+        "stations": ["Teyvat-COF", "Teyvat-MCT", "Teyvat-OPE", "Teyvat-FFP", "Teyvat-LDH"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "20:00",
+              "interval": 15
+            }
+          ]
+        }
       }
     ]
   },
@@ -331,7 +517,16 @@
     "variants": [
       {
         "vehicle": "aquabus",
-        "stations": ["Teyvat-RRH", "Teyvat-MAT", "Teyvat-COF", "Teyvat-PLM", "Teyvat-MES"]
+        "stations": ["Teyvat-RRH", "Teyvat-MAT", "Teyvat-COF", "Teyvat-PLM", "Teyvat-MES"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "20:00",
+              "interval": 15
+            }
+          ]
+        }
       }
     ]
   },
@@ -348,7 +543,21 @@
     "lineLabels": [["Teyvat-COE", "RB"]],
     "variants": [
       {
-        "stations": ["Teyvat-DOM", "Teyvat-COE", "Teyvat-SFV", "Teyvat-CWF", "Teyvat-SSF"]
+        "stations": ["Teyvat-DOM", "Teyvat-COE", "Teyvat-SFV", "Teyvat-CWF", "Teyvat-SSF"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 30
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 60
+            }
+          ]
+        }
       }
     ]
   },
@@ -376,7 +585,21 @@
           "Teyvat-NWW",
           "Teyvat-COP",
           "Teyvat-FSF"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 15
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 30
+            }
+          ]
+        }
       }
     ]
   },
@@ -409,7 +632,21 @@
           "Teyvat-AST",
           "Teyvat-TPR",
           "Teyvat-COE"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 15
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 30
+            }
+          ]
+        }
       }
     ]
   },
@@ -436,7 +673,21 @@
           "Teyvat-NWW",
           "Teyvat-MNW",
           "Teyvat-TPB"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 15
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 30
+            }
+          ]
+        }
       }
     ]
   },
@@ -453,7 +704,16 @@
     "lineLabels": [["Teyvat-EBM", "LB"]],
     "variants": [
       {
-        "stations": ["Teyvat-EBP", "Teyvat-EBM", "Teyvat-CFC", "Teyvat-WVB", "Teyvat-TLI"]
+        "stations": ["Teyvat-EBP", "Teyvat-EBM", "Teyvat-CFC", "Teyvat-WVB", "Teyvat-TLI"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "23:00",
+              "interval": 15
+            }
+          ]
+        }
       }
     ]
   },
@@ -470,7 +730,21 @@
     "lineLabels": [["Teyvat-NST", "LB"]],
     "variants": [
       {
-        "stations": ["Teyvat-NSP", "Teyvat-NST", "Teyvat-CKC", "Teyvat-FME"]
+        "stations": ["Teyvat-NSP", "Teyvat-NST", "Teyvat-CKC", "Teyvat-FME"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 30
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": null
+            }
+          ]
+        }
       }
     ]
   },
@@ -499,7 +773,33 @@
           "Teyvat-NTP",
           "Teyvat-PHI",
           "Teyvat-FNC"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 20
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 60
+            },
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 40,
+              "between": ["Teyvat-PHI", "Teyvat-FNC"]
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 120,
+              "between": ["Teyvat-PHI", "Teyvat-FNC"]
+            }
+          ]
+        }
       },
       {
         "name": "支线",
@@ -512,7 +812,33 @@
           "Teyvat-NTP",
           "Teyvat-KEE",
           "Teyvat-KEW"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 20
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 60
+            },
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 40,
+              "between": ["Teyvat-NTP", "Teyvat-KEW"]
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 120,
+              "between": ["Teyvat-NTP", "Teyvat-KEW"]
+            }
+          ]
+        }
       }
     ]
   },
@@ -540,7 +866,21 @@
           "Teyvat-FNK",
           "Teyvat-AVT",
           "Teyvat-STR"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 20
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 60
+            }
+          ]
+        }
       },
       {
         "name": "支线",
@@ -552,7 +892,33 @@
           "Teyvat-FNK",
           "Teyvat-CWC",
           "Teyvat-KMC"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 20
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 60
+            },
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 60,
+              "between": ["Teyvat-FNK", "Teyvat-KMC"]
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": null,
+              "between": ["Teyvat-FNK", "Teyvat-KMC"]
+            }
+          ]
+        }
       }
     ]
   },
@@ -580,7 +946,16 @@
           "Inazuma-KDV",
           "Inazuma-RTU",
           "Inazuma-RTP"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "22:00",
+              "interval": 10
+            }
+          ]
+        }
       }
     ]
   },
@@ -605,7 +980,16 @@
           "Inazuma-KSE",
           "Inazuma-CJF",
           "Inazuma-BKP"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "22:00",
+              "interval": 30
+            }
+          ]
+        }
       }
     ]
   },
@@ -634,7 +1018,31 @@
           "Inazuma-NCB",
           "Inazuma-MSG",
           "Inazuma-HGV"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "22:00",
+              "interval": 30
+            },
+            {
+              "from": "06:00",
+              "to": "07:00",
+              "interval": 15
+            },
+            {
+              "from": "11:00",
+              "to": "13:00",
+              "interval": 15
+            },
+            {
+              "from": "16:00",
+              "to": "20:00",
+              "interval": 15
+            }
+          ]
+        }
       }
     ]
   },
@@ -651,7 +1059,16 @@
     "variants": [
       {
         "vehicle": "inazuma",
-        "stations": ["Inazuma-NIT", "Inazuma-IZC", "Inazuma-HMZ", "Inazuma-BKP", "Inazuma-GNS"]
+        "stations": ["Inazuma-NIT", "Inazuma-IZC", "Inazuma-HMZ", "Inazuma-BKP", "Inazuma-GNS"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "22:00",
+              "interval": 15
+            }
+          ]
+        }
       }
     ]
   },
@@ -668,7 +1085,16 @@
     "variants": [
       {
         "vehicle": "inazuma",
-        "stations": ["Inazuma-FFT", "Inazuma-HGV", "Inazuma-SPH", "Inazuma-JTM"]
+        "stations": ["Inazuma-FFT", "Inazuma-HGV", "Inazuma-SPH", "Inazuma-JTM"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "22:00",
+              "interval": 30
+            }
+          ]
+        }
       }
     ]
   },
@@ -686,7 +1112,31 @@
     "variants": [
       {
         "vehicle": "inazuma",
-        "stations": ["Inazuma-WTE", "Inazuma-BRV", "Inazuma-SGM", "Inazuma-MUS"]
+        "stations": ["Inazuma-WTE", "Inazuma-BRV", "Inazuma-SGM", "Inazuma-MUS"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "22:00",
+              "interval": 20
+            },
+            {
+              "from": "06:00",
+              "to": "07:00",
+              "interval": 10
+            },
+            {
+              "from": "11:00",
+              "to": "13:00",
+              "interval": 10
+            },
+            {
+              "from": "16:00",
+              "to": "20:00",
+              "interval": 10
+            }
+          ]
+        }
       }
     ]
   },
@@ -703,7 +1153,31 @@
     "variants": [
       {
         "vehicle": "inazuma",
-        "stations": ["Inazuma-TMP", "Inazuma-MCS", "Inazuma-MKN", "Inazuma-ATP"]
+        "stations": ["Inazuma-TMP", "Inazuma-MCS", "Inazuma-MKN", "Inazuma-ATP"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "22:00",
+              "interval": 30
+            },
+            {
+              "from": "06:00",
+              "to": "07:00",
+              "interval": 10
+            },
+            {
+              "from": "11:00",
+              "to": "13:00",
+              "interval": 10
+            },
+            {
+              "from": "16:00",
+              "to": "20:00",
+              "interval": 10
+            }
+          ]
+        }
       }
     ]
   },
@@ -720,7 +1194,31 @@
     "variants": [
       {
         "vehicle": "inazuma",
-        "stations": ["Inazuma-SKP", "Inazuma-ONB", "Inazuma-CRS", "Inazuma-MCS", "Inazuma-WKS"]
+        "stations": ["Inazuma-SKP", "Inazuma-ONB", "Inazuma-CRS", "Inazuma-MCS", "Inazuma-WKS"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "22:00",
+              "interval": 30
+            },
+            {
+              "from": "06:00",
+              "to": "07:00",
+              "interval": 10
+            },
+            {
+              "from": "11:00",
+              "to": "13:00",
+              "interval": 10
+            },
+            {
+              "from": "16:00",
+              "to": "20:00",
+              "interval": 10
+            }
+          ]
+        }
       }
     ]
   },
@@ -748,7 +1246,16 @@
           "Liyue-PSC",
           "Liyue-CHY",
           "Liyue-HYG"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "23:00",
+              "interval": 5
+            }
+          ]
+        }
       }
     ]
   },
@@ -777,7 +1284,16 @@
           "Liyue-BCM",
           "Liyue-YLQ",
           "Liyue-LYB"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "23:00",
+              "interval": 7
+            }
+          ]
+        }
       }
     ]
   },
@@ -805,7 +1321,16 @@
           "Liyue-HET",
           "Liyue-BCM",
           "Liyue-YLY"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "23:00",
+              "interval": 10
+            }
+          ]
+        }
       }
     ]
   },
@@ -825,7 +1350,21 @@
     "variants": [
       {
         "vehicle": "liyue-metro",
-        "stations": ["Liyue-LHC", "Liyue-LYB", "Liyue-YLY", "Liyue-GYX", "Liyue-GYG"]
+        "stations": ["Liyue-LHC", "Liyue-LYB", "Liyue-YLY", "Liyue-GYX", "Liyue-GYG"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "23:00",
+              "interval": 10
+            },
+            {
+              "from": "20:00",
+              "to": "23:00",
+              "interval": 20
+            }
+          ]
+        }
       }
     ]
   },
@@ -847,7 +1386,27 @@
           "Snezhnaya-Sretomorozsk",
           "Snezhnaya-Zorya",
           "Snezhnaya-Snezhnaya"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "05:30",
+              "to": "18:30",
+              "interval": 30
+            },
+            {
+              "from": "18:30",
+              "to": "24:00",
+              "interval": 60
+            }
+          ],
+          "dwell": {
+            "default": 2,
+            "stations": {
+              "Snezhnaya-Snezhnaya": 5
+            }
+          }
+        }
       }
     ]
   },
@@ -868,7 +1427,27 @@
           "Snezhnaya-Morepesok",
           "Snezhnaya-Zorya",
           "Snezhnaya-Snezhnaya"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 60
+            },
+            {
+              "from": "18:00",
+              "to": "24:00",
+              "interval": 120
+            }
+          ],
+          "dwell": {
+            "default": 2,
+            "stations": {
+              "Snezhnaya-Snezhnaya": 5
+            }
+          }
+        }
       }
     ]
   },
@@ -890,7 +1469,27 @@
           "Snezhnaya-Flamefeather",
           "Snezhnaya-Zorya",
           "Snezhnaya-Snezhnaya"
-        ]
+        ],
+        "timetable": {
+          "interval": [
+            {
+              "from": "05:30",
+              "to": "19:30",
+              "interval": 60
+            },
+            {
+              "from": "19:00",
+              "to": "24:00",
+              "interval": 120
+            }
+          ],
+          "dwell": {
+            "default": 2,
+            "stations": {
+              "Snezhnaya-Snezhnaya": 5
+            }
+          }
+        }
       }
     ]
   },
@@ -905,7 +1504,22 @@
     "colorSlot": 3,
     "variants": [
       {
-        "stations": ["Snezhnaya-Snezhnaya", "Snezhnaya-PaleCrown"]
+        "stations": ["Snezhnaya-Snezhnaya", "Snezhnaya-PaleCrown"],
+        "timetable": {
+          "interval": [
+            {
+              "from": "06:00",
+              "to": "18:00",
+              "interval": 60
+            }
+          ],
+          "dwell": {
+            "default": 2,
+            "stations": {
+              "Snezhnaya-Snezhnaya": 5
+            }
+          }
+        }
       }
     ]
   },
@@ -920,7 +1534,12 @@
     "colorSlot": 4,
     "variants": [
       {
-        "stations": ["Snezhnaya-Sretomorozsk", "Teyvat-STR"]
+        "stations": ["Snezhnaya-Sretomorozsk", "Teyvat-STR"],
+        "timetable": {
+          "dwell": {
+            "default": 2
+          }
+        }
       }
     ]
   },

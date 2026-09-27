@@ -27,13 +27,24 @@ export interface TimetableWindow {
   vehicle: string;
 }
 
-/** 一个时段内的固定间隔（分钟）：整段作用于变体的所有区间 */
+/** 一个时段内的固定间隔：整段作用于变体的区间，除非用 `between` 限定范围 */
 export interface TimetableIntervalBand {
   from: string;
-  /** `to <= from` 视为跨天（+24h），同时间窗发车 */
+  /** `to <= from` 视为跨天（+24h），同时间窗发车；`"24:00"` = 当日 24 时（次日 00:00） */
   to: string;
-  /** 分钟，正数 */
-  interval: number;
+  /** 分钟（正数）；`null` = 该时段不开行（间隔无限大） */
+  interval: number | null;
+  /**
+   * 只作用于这段范围内的区间：数据里写 `between: [起站, 末站]`（两端都必须在变体站序里、顺序一致），
+   * 解析后展开成该范围的站序；省略 = 整条变体的所有区间。
+   */
+  stations?: readonly string[];
+}
+
+/** 停站时间（分钟）：`default` + 逐站覆盖；只作数据与派生，不参与行程时间计算 */
+export interface VariantDwell {
+  default: number;
+  stations?: Record<string, number>;
 }
 
 export interface VariantTimetable {
@@ -41,20 +52,25 @@ export interface VariantTimetable {
    * 只写间隔、不含逐条发车信息：按时段给不同间隔。
    * 时段**按数组顺序**依次覆盖，后面的段盖住前面的段（相同时刻以最后一段为准，见 `intervalAt`）；
    * `null` 元素覆盖所有时刻，即「该时刻的间隔无限大」。
+   * 空档（没有任何时段覆盖的时刻）同样是「不开行」= 无限大。
    * 与 `departures` 互斥 —— 写间隔的时刻表只能写时段间隔。
    */
   interval?: (TimetableIntervalBand | null)[];
   departures: (TimetableDeparture | TimetableWindow)[];
+  /** 停站时间（可选） */
+  dwell?: VariantDwell;
 }
 
-const BAND_KEYS = new Set(['from', 'to', 'interval']);
+const BAND_KEYS = new Set(['from', 'to', 'interval', 'between']);
+const DWELL_KEYS = new Set(['default', 'stations']);
 
 /** 判别：有时间窗（`every`）即为时间窗发车，否则是逐个时间点 */
 export function isWindow(d: TimetableDeparture | TimetableWindow): d is TimetableWindow {
   return 'every' in d;
 }
 
-const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+/** `HH:mm`；`24:00` 只作为「当日 24 时」出现（等于次日 00:00，分钟数 1440） */
+const TIME_RE = /^(([01]\d|2[0-3]):[0-5]\d|24:00)$/;
 
 function minuteOf(time: string): number {
   const [h, m] = time.split(':').map(Number);
@@ -74,6 +90,33 @@ export interface TimetableContext {
   /** 该变体已展开完整 id 的站序 */
   stations: string[];
   vehicle: string;
+}
+
+/** 解析并校验停站时间；`raw === undefined` → 无停站数据 */
+function parseDwell(raw: unknown, p: string, ctx: TimetableContext): VariantDwell | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (typeof raw !== 'object' || Array.isArray(raw)) throw new Error(`${p}时刻表 dwell 必须是对象`);
+  const data = raw as Record<string, unknown>;
+  for (const key of Object.keys(data))
+    if (!DWELL_KEYS.has(key))
+      throw new Error(`${p}时刻表 dwell 只能写 default / stations，多写了 ${key}`);
+  const fallback = data.default;
+  if (typeof fallback !== 'number' || !Number.isFinite(fallback) || fallback < 0)
+    throw new Error(`${p}时刻表 dwell.default 必须是非负数字（分钟）`);
+  const out: VariantDwell = { default: fallback };
+  if (data.stations === undefined) return out;
+  if (typeof data.stations !== 'object' || data.stations === null || Array.isArray(data.stations))
+    throw new Error(`${p}时刻表 dwell.stations 必须是「站 id → 分钟」的对象`);
+  const overrides: Record<string, number> = {};
+  for (const [station, value] of Object.entries(data.stations as Record<string, unknown>)) {
+    if (!ctx.stations.includes(station))
+      throw new Error(`${p}时刻表 dwell 的站 ${station} 不在该变体的站序里`);
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0)
+      throw new Error(`${p}时刻表 dwell 的站 ${station} 停站时间必须是非负数字（分钟）`);
+    overrides[station] = value;
+  }
+  if (Object.keys(overrides).length > 0) out.stations = overrides;
+  return out;
 }
 
 /** 解析并校验一个变体的时刻表；`raw === undefined` → 空时刻表 */
@@ -98,18 +141,44 @@ export function parseTimetable(raw: unknown, ctx: TimetableContext): VariantTime
       const b = entry as Record<string, unknown>;
       for (const key of Object.keys(b))
         if (!BAND_KEYS.has(key))
-          throw new Error(`${p}第 ${i} 段间隔只能写 from / to / interval，多写了 ${key}`);
+          throw new Error(`${p}第 ${i} 段间隔只能写 from / to / interval / between，多写了 ${key}`);
       const from = b.from;
       const to = b.to;
       if (typeof from !== 'string' || !TIME_RE.test(from))
         throw new Error(`${p}第 ${i} 段间隔 from ${from} 不是 HH:mm`);
       if (typeof to !== 'string' || !TIME_RE.test(to))
         throw new Error(`${p}第 ${i} 段间隔 to ${to} 不是 HH:mm`);
-      if (typeof b.interval !== 'number' || !(b.interval > 0))
-        throw new Error(`${p}第 ${i} 段间隔 interval 必须是正数`);
-      return { from, to, interval: b.interval };
+      const interval = b.interval;
+      if (interval !== null && (typeof interval !== 'number' || !(interval > 0)))
+        throw new Error(`${p}第 ${i} 段间隔 interval 必须是正数或 null（不开行）`);
+      const band: TimetableIntervalBand = { from, to, interval };
+      const between = b.between;
+      if (between !== undefined) {
+        if (
+          !Array.isArray(between) ||
+          between.length !== 2 ||
+          between.some((s) => typeof s !== 'string')
+        )
+          throw new Error(`${p}第 ${i} 段间隔 between 必须是两个站 id 的数组`);
+        const [start, end] = between as [string, string];
+        const startIndex = ctx.stations.indexOf(start);
+        const endIndex = ctx.stations.indexOf(end);
+        if (startIndex < 0 || endIndex < 0)
+          throw new Error(
+            `${p}第 ${i} 段间隔 between 的站 ${startIndex < 0 ? start : end} 不在该变体的站序里`,
+          );
+        if (startIndex >= endIndex)
+          throw new Error(
+            `${p}第 ${i} 段间隔 between 的起止站必须按变体站序给出（${start} 在 ${end} 之前）`,
+          );
+        band.stations = ctx.stations.slice(startIndex, endIndex + 1);
+      }
+      return band;
     });
   }
+
+  const dwell = parseDwell(data.dwell, p, ctx);
+  if (dwell !== undefined) out.dwell = dwell;
 
   const departures = data.departures;
   if (departures !== undefined && !Array.isArray(departures))
@@ -203,43 +272,57 @@ function bandCovers(band: TimetableIntervalBand, minutes: number): boolean {
 }
 
 /**
- * 某一时刻（`HH:mm`）的生效间隔（分钟）：时段**按数组顺序**依次覆盖，后面的段盖住前面的段。
- * `undefined` = 没有任何段覆盖该时刻，`Infinity` = 该时刻的间隔无限大（`null` 段）。
+ * 某区间（`segment` = 两端站 id，顺序无关）在某时刻（`HH:mm`）的生效间隔（分钟）：
+ * 时段**按数组顺序**依次覆盖，后面的段盖住前面的段；带 `stations` 范围的段只作用于两端站都落在该范围内的区间。
+ * **没有任何段覆盖该时刻 = 不开行 → `Infinity`**（空档就是不开行），段 `interval: null` 同样是无限大。
  */
 export function intervalAt(
   bands: readonly (TimetableIntervalBand | null)[],
   time: string,
-): number | undefined {
+  segment: readonly [string, string],
+): number {
   const minutes = minuteOf(time);
-  let out: number | undefined;
+  let out = Infinity;
   for (const band of bands) {
-    if (band === null) out = Infinity;
-    else if (bandCovers(band, minutes)) out = band.interval;
+    if (band === null) {
+      out = Infinity;
+      continue;
+    }
+    if (!bandCovers(band, minutes)) continue;
+    if (
+      band.stations !== undefined &&
+      !(band.stations.includes(segment[0]) && band.stations.includes(segment[1]))
+    )
+      continue;
+    out = band.interval ?? Infinity;
   }
   return out;
 }
 
 /**
- * 一天里生效间隔的最小值。生效间隔只在时段边界之间恒定，所以取样 00:00 与所有边界
- * （每个 `from`、每个 `to + 1`，模 1440）就够；没有任何段覆盖任何时刻 → `undefined`。
+ * 某区间一天里生效间隔的最小值。生效间隔只在时段边界之间恒定，所以取样 00:00 与所有边界
+ * （每个 `from`、每个 `to + 1`，模 1440）就够；全天都不开行的区间得到 `Infinity`。
  */
-function minIntervalOfDay(bands: readonly (TimetableIntervalBand | null)[]): number | undefined {
+function minIntervalOfDay(
+  bands: readonly (TimetableIntervalBand | null)[],
+  segment: readonly [string, string],
+): number {
   const samples = new Set([0]);
   for (const band of bands) {
     if (band === null) continue;
     samples.add(minuteOf(band.from));
     samples.add((minuteOf(band.to) + 1) % 1440);
   }
-  let min: number | undefined;
-  for (const minutes of samples) {
-    const value = intervalAt(bands, clockOf(minutes));
-    if (value === undefined) continue;
-    min = min === undefined ? value : Math.min(min, value);
-  }
+  let min = Infinity;
+  for (const minutes of samples) min = Math.min(min, intervalAt(bands, clockOf(minutes), segment));
   return min;
 }
 
-/** 每条区间的最小固定间隔（分钟）：凡写了时段间隔的变体，按其站序里每对相邻站记该变体一天里的最小生效间隔（见 `intervalAt` / `minIntervalOfDay`） */
+/**
+ * 每条区间的最小固定间隔（分钟）：凡写了时段间隔的变体，按其站序里每对相邻站记该变体一天里的最小生效间隔
+ * （见 `intervalAt` / `minIntervalOfDay`）；一天里始终不开行的区间是 `Infinity`。
+ * 跨变体取 `min`，所以别的变体的有限间隔不会被某条变体的 `Infinity` 抬高。
+ */
 export function buildSegmentHeadways(
   lines: readonly {
     variants: { stations: string[]; timetable: VariantTimetable }[];
@@ -250,14 +333,21 @@ export function buildSegmentHeadways(
     for (const variant of line.variants) {
       const bands = variant.timetable.interval;
       if (bands === undefined) continue;
-      const headway = minIntervalOfDay(bands);
-      if (headway === undefined) continue;
       for (let i = 0; i < variant.stations.length - 1; i++) {
-        const key = segmentKey(variant.stations[i], variant.stations[i + 1]);
+        const a = variant.stations[i];
+        const b = variant.stations[i + 1];
+        const headway = minIntervalOfDay(bands, [a, b]);
+        const key = segmentKey(a, b);
         const cur = map.get(key);
         map.set(key, cur === undefined ? headway : Math.min(cur, headway));
       }
     }
   }
   return map;
+}
+
+/** 某站的停站时间（分钟）：逐站覆盖 → `default`；没有停站数据 → `undefined` */
+export function dwellAt(dwell: VariantDwell | undefined, stationId: string): number | undefined {
+  if (dwell === undefined) return undefined;
+  return dwell.stations?.[stationId] ?? dwell.default;
 }

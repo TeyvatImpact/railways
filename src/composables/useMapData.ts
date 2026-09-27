@@ -553,10 +553,14 @@ export const lines: Line[] = Object.entries(linesFile).map(([id, entry]) => {
 
 export const lineColorMap = new Map(lines.map((l) => [l.id, l.color]));
 
-/** 每条区间的最小固定间隔（分钟），由各变体的 `timetable.interval` 派生；无消费方，供后续时刻表层使用 */
+/**
+ * 每条区间的最小固定间隔（分钟），由各变体的 `timetable.interval` 派生（一天里各时段的最小值）。
+ * `Infinity` = 该区间一天里始终不开行（空档 / `interval: null`）；无条目 = 该区间没有时刻表数据。
+ * 无消费方，供后续时刻表层使用。
+ */
 export const segmentHeadways: Map<string, number> = buildSegmentHeadways(lines);
 
-/** 某对站点之间的最小固定间隔（分钟）；无条目 = 未定义 */
+/** 某对站点之间的最小固定间隔（分钟）；无条目 = 未定义，`Infinity` = 不开行 */
 export function headwayFor(aId: string, bId: string): number | undefined {
   return segmentHeadways.get(segmentKey(aId, bId));
 }
