@@ -98,7 +98,7 @@ Region files, each with structure `{ config, stations, lines }`:
 | `snezhnaya.json` | `"Snezhnaya"` | `"Noto Sans SC"`                                            |
 
 `connections.json` is the global station-pair connection table (distance + waypoints for every adjacent pair — see below).  
-`mark.json` contains `{ paths, texts }` for annotation overlays.
+`mark.json` contains `{ paths, texts }` — 手绘 SVG 标注路径 + 文字标识系统（国家 / 国家运输机构 / 区域；大、小两类，可重点、可日语字体，四行文字）。详见 [Annotation file](#annotation-file-markjson)。
 
 `regions.json` is the **station-territory table**（归属表）— the one place that says where each station is. Structure `{ nations, areas, stations }`:
 
@@ -229,13 +229,35 @@ Ferry and same-station lines use **already-prefixed** station IDs (e.g. `"Teyvat
 ```jsonc
 {
   "paths": [
-    { "d": string, "stroke"?: string }   // SVG path data (data-space coords)
+    { "d": string, "stroke"?: string, "strokeWidth"?: number, "fill"?: string } // SVG path data（数据坐标）
   ],
+  // 文字标识（现用于三类：国家 / 国家运输机构 / 区域）。四行文字自上而下排列，只有 text 必填。
   "texts": [
-    { "content": string, "x": number, "y": number, "fontSize"?: number, "fontFamily"?: string }
+    {
+      "size"?: "large" | "small", // 大标识 / 小标识（缺省 = 小标识）；只决定四行字号，见下表
+      "text": string,             // 主文字；它的 x/y 就是整条标识的锚点（数据坐标单位，同 station.x/y）
+      "subtext"?: string,         // 副文字（与主文字同一语言，如机构 → 上级机关）
+      "trans"?: string[],         // 主文字的翻译，**每种语言一行**，按数组顺序往下排
+      "subtextTrans"?: string[],  // 副文字的翻译，同样每种语言一行
+      "emphasis"?: boolean,       // 重点标识：文字用 MARKER_EMPHASIS_FILL (#3f3f3f)，否则 MARKER_TEXT_FILL (#777)
+      "ja"?: boolean,             // 用日语字体 MARKER_FONT_FAMILY_JA（"Noto Sans JP", sans-serif），否则 MARKER_FONT_FAMILY
+      "x": number,
+      "y": number
+    }
   ]
 }
 ```
+
+字号由 `size` 唯一决定（`render.config.ts` 的 `MARKER_FONT_SIZES`）：
+
+| `size`         | `text` | `subtext` | `trans`（每行） | `subtextTrans`（每行） |
+| -------------- | ------ | --------- | --------------- | ---------------------- |
+| `large` 大标识 | 32     | 24        | 24              | 16                     |
+| `small` 小标识 | 24     | 16        | 16              | 12                     |
+
+行距是**继承式**的：第 n 行的 y = 第 n-1 行的 y + **第 n 行自己的**字号 / `BLOCK_SIZE` + `MARKER_LINE_GAP`（0.1 数据单位）—— 逐行累加，所以 `text` 之后的每一行都会再额外多 0.1。`useMapData.ts` 把每条标识按 `text → subtext → trans[] → subtextTrans[]` 摊平成 `markerTexts: MarkerTextLine[]`（一行一个实例，带算好的 x/y、字号、颜色、字体），`RailwayMap.vue` 只做 `v-for` 渲染 —— 行距与字体规则全部在纯模块里，可脚本化断言。标识的 `ja` 字体是**无衬线**的 `"Noto Sans JP"`，与地图上稻妻站名标签用的 `"Noto Serif JP"` 无关。
+
+现有内容：8 个国家/地区标签（大）、9 条运输机构标签（大 + 重点，璃月有 `提瓦特铁路·璃月局` 与 `璃月港地铁` 两条）、16 条区域标签（小），坐标是按各自站点云质心算出来的初值，供手工微调。
 
 ### Station/line field details
 

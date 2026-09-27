@@ -82,14 +82,40 @@ export const MARKER_STROKE_WIDTH = 2;
 /** 标注路径填充色 */
 export const MARKER_FILL = 'none';
 
-/** 标注文字字号（px） */
-export const MARKER_FONT_SIZE = 32;
+/**
+ * 标注文字的四行角色（自上而下的排列顺序，也是 `mark.json` 里的字段名）：
+ * `text` 主文字（1 行）/ `subtext` 副文字（1 行）/ `trans` 主文字的翻译（**数组，每种语言一行**）/
+ * `subtextTrans` 副文字的翻译（同样是数组）。
+ */
+export type MarkerTextRole = 'text' | 'subtext' | 'trans' | 'subtextTrans';
 
-/** 标注文字颜色 */
+/** 标注文字的两种类别：大标识 / 小标识 */
+export type MarkerSize = 'large' | 'small';
+
+/** 每类标识的四行字号（px），键为 `MarkerTextRole`（同一角色的多行共用同一字号） */
+export const MARKER_FONT_SIZES: Record<MarkerSize, Record<MarkerTextRole, number>> = {
+  large: { text: 32, subtext: 24, trans: 24, subtextTrans: 16 },
+  small: { text: 24, subtext: 16, trans: 16, subtextTrans: 12 },
+};
+
+/** 标注文字默认颜色 */
 export const MARKER_TEXT_FILL = '#777';
 
-/** 标注文字字体 */
+/** 重点标注（`emphasis: true`）的文字颜色 */
+export const MARKER_EMPHASIS_FILL = '#3f3f3f';
+
+/** 标注文字默认字体 */
 export const MARKER_FONT_FAMILY = 'sans-serif';
+
+/** 标注文字的日语字体（标识上 `ja: true` 时使用）—— 不带衬线，与地图上的稻妻站名标签不同 */
+export const MARKER_FONT_FAMILY_JA = '"Noto Sans JP", sans-serif';
+
+/**
+ * 标注文字每一行之间额外增加的间距（数据单位）。
+ * 第 n 行的 y = 第 n-1 行的 y + **第 n 行自己的**字号 / `BLOCK_SIZE` + 本间距 —— 逐行累加，
+ * 所以 `text` 之后的每一行都会再多 0.1。
+ */
+export const MARKER_LINE_GAP = 0.1;
 
 // ===== 网格配置 =====
 
@@ -122,13 +148,13 @@ export const SAME_LINE_WIDTH = 2;
 // ===== 归属边界配置 =====
 
 /** 国家/地区边界线颜色 */
-export const NATION_BORDER_COLOR = '#6b7280';
+export const NATION_BORDER_COLOR = '#7f7f7f';
 
 /** 国家/地区边界线宽度（px） */
 export const NATION_BORDER_WIDTH = 2.5;
 
 /** 区域边界线颜色 */
-export const AREA_BORDER_COLOR = '#9ca3af';
+export const AREA_BORDER_COLOR = '#7f7f7f';
 
 /** 区域边界线宽度（px） */
 export const AREA_BORDER_WIDTH = 1.25;

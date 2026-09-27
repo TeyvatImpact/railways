@@ -191,7 +191,7 @@
           :font-size="mt.fontSize"
           :fill="mt.fill"
           :font-family="mt.fontFamily">
-          {{ mt.content }}
+          {{ mt.text }}
         </text>
       </g>
     </svg>

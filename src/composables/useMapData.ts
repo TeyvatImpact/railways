@@ -20,9 +20,14 @@ import {
   MARKER_STROKE,
   MARKER_STROKE_WIDTH,
   MARKER_FILL,
-  MARKER_FONT_SIZE,
+  MARKER_FONT_SIZES,
+  MARKER_EMPHASIS_FILL,
+  MARKER_LINE_GAP,
   MARKER_TEXT_FILL,
   MARKER_FONT_FAMILY,
+  MARKER_FONT_FAMILY_JA,
+  type MarkerSize,
+  type MarkerTextRole,
 } from '../config/render.config';
 import farePresets from '../config/fare-presets.json';
 import type { NameLocale, OrgNames, StationNames } from './stationNames';
@@ -169,9 +174,13 @@ export interface MarkerPath {
   fill: string;
 }
 
-export interface MarkerText {
+/**
+ * 标注文字的一行 —— `mark.json` 里一条标识的 `text` / `subtext` / `trans` / `subtextTrans`
+ * 在渲染时会被摊平成若干行，每行一个实例（字号、颜色、字体由标识的类别与开关决定）。
+ */
+export interface MarkerTextLine {
   id: string;
-  content: string;
+  text: string;
   x: number;
   y: number;
   fontSize: number;
@@ -586,16 +595,34 @@ function transformPathD(d: string, fn: (x: number, y: number) => [number, number
   });
 }
 
-const markerPathsData: { d: string; stroke?: string; strokeWidth?: number; fill?: string }[] =
-  (markersData as any).paths ?? [];
-const markerTextsData: {
-  content: string;
+/** `mark.json` 里的一条标识（四行文字都可选，`text` 是主文字、其坐标是整条标识的锚点） */
+interface MarkTextData {
+  /** 标识类别：`large` 大标识 / `small` 小标识（缺省 = 小标识）；JSON 导入时字面量会被拓宽成 string */
+  size?: string;
+  text: string;
+  subtext?: string;
+  /** 主文字的翻译，每种语言一行，按数组顺序自上而下排 */
+  trans?: string[];
+  /** 副文字的翻译，每种语言一行 */
+  subtextTrans?: string[];
+  /** 重点标识：文字用 `MARKER_EMPHASIS_FILL` */
+  emphasis?: boolean;
+  /** 用日语字体（`MARKER_FONT_FAMILY_JA`） */
+  ja?: boolean;
+  /** `text` 一行的坐标（数据坐标单位） */
   x: number;
   y: number;
-  fontSize?: number;
+}
+
+interface MarkPathData {
+  d: string;
+  stroke?: string;
+  strokeWidth?: number;
   fill?: string;
-  fontFamily?: string;
-}[] = (markersData as any).texts ?? [];
+}
+
+const markerPathsData: MarkPathData[] = markersData.paths ?? [];
+const markerTextsData: MarkTextData[] = markersData.texts ?? [];
 
 export const markerPaths: MarkerPath[] = markerPathsData.map((p, i) => ({
   id: `marker-path-${i}`,
@@ -605,15 +632,40 @@ export const markerPaths: MarkerPath[] = markerPathsData.map((p, i) => ({
   fill: p.fill ?? MARKER_FILL,
 }));
 
-export const markerTexts: MarkerText[] = markerTextsData.map((t, i) => ({
-  id: `marker-text-${i}`,
-  content: t.content,
-  x: (t.x - minX) * BLOCK_SIZE,
-  y: (t.y - minY) * BLOCK_SIZE,
-  fontSize: t.fontSize ?? MARKER_FONT_SIZE,
-  fill: t.fill ?? MARKER_TEXT_FILL,
-  fontFamily: t.fontFamily ?? MARKER_FONT_FAMILY,
-}));
+/**
+ * 把每条标识按「text → subtext → trans[] → subtextTrans[]」摊平成逐行文字：
+ * 一行一个实例，从 `text` 的 y 起，每多一行就下移「**这一行自己的**字号 / `BLOCK_SIZE` + `MARKER_LINE_GAP`」
+ * （逐行累加，所以第 3 行比第 2 行又多 0.1）。
+ */
+export const markerTexts: MarkerTextLine[] = markerTextsData.flatMap((t, i) => {
+  const sizes = MARKER_FONT_SIZES[t.size === 'large' ? 'large' : 'small'];
+  const fill = t.emphasis ? MARKER_EMPHASIS_FILL : MARKER_TEXT_FILL;
+  const fontFamily = t.ja ? MARKER_FONT_FAMILY_JA : MARKER_FONT_FAMILY;
+  const x = (t.x - minX) * BLOCK_SIZE;
+
+  const rows: { role: MarkerTextRole; text: string }[] = [];
+  if (t.text) rows.push({ role: 'text', text: t.text });
+  if (t.subtext) rows.push({ role: 'subtext', text: t.subtext });
+  for (const text of t.trans ?? []) rows.push({ role: 'trans', text });
+  for (const text of t.subtextTrans ?? []) rows.push({ role: 'subtextTrans', text });
+
+  const lines: MarkerTextLine[] = [];
+  let y = t.y;
+  rows.forEach((row, k) => {
+    const fontSize = sizes[row.role];
+    if (lines.length) y += fontSize / BLOCK_SIZE + MARKER_LINE_GAP;
+    lines.push({
+      id: `marker-text-${i}-${k}-${row.role}`,
+      text: row.text,
+      x,
+      y: (y - minY) * BLOCK_SIZE,
+      fontSize,
+      fill,
+      fontFamily,
+    });
+  });
+  return lines;
+});
 
 function pathId(x1: number, y1: number, x2: number, y2: number): string {
   if (x1 < x2 || (x1 === x2 && y1 < y2)) {
