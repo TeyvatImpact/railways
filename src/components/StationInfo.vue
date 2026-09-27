@@ -86,7 +86,7 @@
           <span class="truncate">{{ line.lineName }}</span>
           <span class="opacity-60">{{ line.stops.length }} 班</span>
         </div>
-        <div v-for="(stop, index) in line.stops" :key="index" class="tt-row">
+        <div v-for="(stop, index) in visibleStops(line)" :key="index" class="tt-row">
           <span class="tt-span">
             <template v-if="stop.arrival">到站 {{ stop.arrival }}</template>
             <template v-if="stop.arrival && stop.departure"> / </template>
@@ -96,13 +96,25 @@
             {{ stopLabel(stop) }}<span v-if="stop.turnback" class="opacity-60">（折返）</span>
           </span>
         </div>
+        <button
+          v-if="line.stops.length > TIMETABLE_COLLAPSED_ROWS"
+          type="button"
+          class="tt-toggle"
+          @click="toggleExpanded(line.lineId)">
+          {{
+            expanded[line.lineId]
+              ? '收起'
+              : `展开剩余 ${line.stops.length - TIMETABLE_COLLAPSED_ROWS} 班（共 ${line.stops.length} 班）`
+          }}
+        </button>
       </div>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, reactive, watch } from 'vue';
+import { TIMETABLE_COLLAPSED_ROWS } from '../config/render.config';
 import {
   stationMap,
   stationLineMap,
@@ -114,6 +126,7 @@ import { selectLine } from '../composables/useSelection';
 import {
   stationDepartures,
   stationHeadways,
+  type StationDepartures,
   type StationStop,
 } from '../composables/stationTimetable';
 
@@ -146,6 +159,26 @@ const authorities = computed(() => orgList('authority'));
 
 const headways = computed(() => stationHeadways(props.stationId));
 const departures = computed(() => stationDepartures(props.stationId));
+
+/** 「时刻表发车」展开状态（按线路 id），未记录 / false = 折叠到 `TIMETABLE_COLLAPSED_ROWS` 行 */
+const expanded = reactive<Record<string, boolean>>({});
+
+function toggleExpanded(lineId: string): void {
+  expanded[lineId] = !expanded[lineId];
+}
+
+/** 折叠时只给前 `TIMETABLE_COLLAPSED_ROWS` 行 */
+function visibleStops(line: StationDepartures): StationStop[] {
+  return expanded[line.lineId] ? line.stops : line.stops.slice(0, TIMETABLE_COLLAPSED_ROWS);
+}
+
+/** 换站即回到折叠态，避免上一条线路的展开状态带到别的站 */
+watch(
+  () => props.stationId,
+  () => {
+    for (const key of Object.keys(expanded)) delete expanded[key];
+  },
+);
 
 /** 间隔展示：`Infinity` = 不开行 */
 function headwayText(interval: number): string {
@@ -226,5 +259,15 @@ function stopLabel(stop: StationStop): string {
 .tt-value.is-off {
   opacity: 0.5;
   font-style: italic;
+}
+.tt-toggle {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--color-primary);
+  cursor: pointer;
+  text-align: left;
+}
+.tt-toggle:hover {
+  text-decoration: underline;
 }
 </style>

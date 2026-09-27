@@ -175,3 +175,8 @@ export const BORDER_CORNER_RADIUS = 6;
 
 /** 区域边界线虚线样式（空字符串 = 实线） */
 export const AREA_BORDER_DASH = '5,4';
+
+// ===== 信息面板配置 =====
+
+/** 「时刻表发车」每条线路默认显示的车次行数，超过此数即折叠，可展开 */
+export const TIMETABLE_COLLAPSED_ROWS = 5;
