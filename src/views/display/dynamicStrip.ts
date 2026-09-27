@@ -98,6 +98,18 @@ function intervalSpans(a: StripStationModel, b: StripStationModel): RouteSpan[] 
   return [];
 }
 
+/** 一份接一份点亮的周期（秒）；必须与 `index.vue` 里 `@keyframes dyn-march` 的时长一致 */
+export const MARCH_PERIOD = 1.1;
+
+/**
+ * 第 i 份的 `animation-delay`（秒）。负值 = 「动画已经跑了这么多」，于是第 i 份在
+ * `[i·T/n, (i+1)·T/n)` 亮 —— 按份序一路亮下去，方向才读得对。
+ * 注意负号的位置：写成 `-(i/n)·T` 会让相位提前量随份序变大，亮起来变成 1、3、2 的顺序。
+ */
+export function partDelay(i: number, parts: number): number {
+  return (-(parts - i) / parts) * MARCH_PERIOD;
+}
+
 /**
  * 把一段区间切成一份一份，用来「一份一份点亮」地指示行进方向。
  * 区间一共三份：单一直线（主线区间 / 支线车道区间）等分三段；

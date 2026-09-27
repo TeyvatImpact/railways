@@ -14,6 +14,7 @@ import { buildStrip, EDGE, type MeasureFn, type StripInput, type StripModel } fr
 import {
   buildProgress,
   EMPTY_PROGRESS,
+  partDelay,
   type Direction,
   type ProgressModel,
   type ProgressStep,
@@ -305,8 +306,6 @@ const BASE_ROWS = ['52px', '4px', '20px', '6px', '20px', '12px', '18px'];
 /** 一段支线车道的高度（px）：支线的 45° 引线与车道横线落点都由它推出来（见 .lane-diag / .lane-track） */
 const LANE_ROW = 24;
 const PANEL_H = 280;
-/** 动态模式里「一份接一份点亮」的周期（秒）：与 CSS 的 dyn-march-2 / dyn-march-3 一致 */
-const DYN_PERIOD = 1.1;
 
 function stripStyle(s: StripModel) {
   const n = s.stations.length;
@@ -490,7 +489,7 @@ function cell(col: number) {
               :style="{
                 left: sp.offset * 100 + '%',
                 width: sp.ratio * 100 + '%',
-                animationDelay: `${-(i / sp.parts) * DYN_PERIOD}s`,
+                animationDelay: `${partDelay(i, sp.parts)}s`,
               }"></div>
           </div>
 
@@ -883,7 +882,7 @@ function cell(col: number) {
   background: none;
 }
 /* 一份：位置（left）与占比（width）由模型给；同一区间里只有一份是亮的。
-   区间恒为三份，所以动画按 1/3 的窗口走（份数与窗口必须一致） */
+   区间恒为三份，所以动画按 1/3 的窗口走（份数与窗口必须一致）；周期 1.1s = 模型的 MARCH_PERIOD */
 .dyn-chunk {
   position: absolute;
   top: 0;
