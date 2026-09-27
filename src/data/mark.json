@@ -3,111 +3,200 @@
   "texts": [
     {
       "size": "large",
-      "text": "璃月",
-      "trans": ["Liyue"],
+      "region": "liyue",
+      "names": {
+        "zhCN": "璃月",
+        "zhTW": "璃月",
+        "ja": "璃月",
+        "en": "Liyue"
+      },
       "x": 3,
       "y": -3
     },
     {
       "size": "large",
       "emphasis": true,
-      "text": "TR 璃月局",
-      "trans": ["TR Liyue Bureau"],
+      "region": "liyue",
+      "names": {
+        "zhCN": "TR 璃月局",
+        "zhTW": "TR 璃月局",
+        "ja": "TR 璃月局",
+        "en": "TR Liyue Bureau"
+      },
       "x": -4,
       "y": 3
     },
     {
       "size": "large",
       "emphasis": true,
-      "text": "璃月港地铁",
-      "subtext": "璃月总务司",
-      "trans": ["Liyue Harbor Metro"],
-      "subtextTrans": ["Liyue Ministry of Civil Affairs"],
+      "region": "liyue",
+      "names": {
+        "zhCN": "璃月港地铁",
+        "zhTW": "璃月港地鐵",
+        "ja": "璃月港メトロ",
+        "en": "Liyue Harbor Metro"
+      },
+      "subNames": {
+        "zhCN": "璃月总务司",
+        "zhTW": "璃月總務司",
+        "ja": "璃月総務司",
+        "en": "Liyue Ministry of Civil Affairs"
+      },
       "x": 1,
       "y": 8
     },
     {
       "size": "large",
-      "text": "蒙德",
-      "trans": ["Mondstadt"],
+      "region": "mondstadt",
+      "names": {
+        "zhCN": "蒙德",
+        "zhTW": "蒙德",
+        "ja": "モンド",
+        "en": "Mondstadt",
+        "de": "Mondstadt"
+      },
       "x": 12,
       "y": -12
     },
     {
       "size": "large",
       "emphasis": true,
-      "text": "TR 蒙德局",
-      "trans": ["TR Mondstadt Bureau"],
+      "region": "mondstadt",
+      "names": {
+        "zhCN": "TR 蒙德局",
+        "zhTW": "TR 蒙德局",
+        "ja": "TR モンド局",
+        "en": "TR Mondstadt Bureau",
+        "de": "TR Mondstadt-Büro"
+      },
       "x": 12,
       "y": -10
     },
     {
       "size": "large",
-      "text": "须弥",
-      "trans": ["Sumeru"],
+      "region": "sumeru",
+      "names": {
+        "zhCN": "须弥",
+        "zhTW": "須彌",
+        "ja": "スメール",
+        "en": "Sumeru",
+        "sa": "सुमेरु"
+      },
       "x": -18,
       "y": -1.5
     },
     {
       "size": "large",
       "emphasis": true,
-      "text": "TR 须弥局",
-      "trans": ["TR Sumeru Bureau"],
+      "region": "sumeru",
+      "names": {
+        "zhCN": "TR 须弥局",
+        "zhTW": "TR 須彌局",
+        "ja": "TR スメール局",
+        "en": "TR Sumeru Bureau",
+        "sa": "TR सुमेरु विभाग"
+      },
       "x": -18,
       "y": 0
     },
     {
       "size": "large",
-      "text": "枫丹",
-      "trans": ["Fontaine"],
+      "region": "fontaine",
+      "names": {
+        "zhCN": "枫丹",
+        "zhTW": "楓丹",
+        "ja": "フォンテーヌ",
+        "en": "Fontaine",
+        "fr": "Fontaine"
+      },
       "x": -25,
       "y": -16
     },
     {
       "size": "large",
       "emphasis": true,
-      "text": "枫丹巡轨船",
-      "subtext": "沫芒宫",
-      "trans": ["Fontaine Aquabus"],
-      "subtextTrans": ["Palais Mermonia"],
+      "region": "fontaine",
+      "names": {
+        "zhCN": "枫丹巡轨船",
+        "zhTW": "楓丹巡軌船",
+        "ja": "フォンテーヌ巡水船",
+        "en": "Fontaine Aquabus",
+        "fr": "Navette aquatique de Fontaine"
+      },
+      "subNames": {
+        "zhCN": "沫芒宫",
+        "zhTW": "沫芒宮",
+        "ja": "パレ・メルモニア",
+        "en": "Palais Mermonia",
+        "fr": "Palais Mermonia"
+      },
       "x": -25,
       "y": -14
     },
     {
       "size": "large",
-      "text": "纳塔",
-      "trans": ["Natlan"],
+      "region": "natlan",
+      "names": {
+        "zhCN": "纳塔",
+        "zhTW": "納塔",
+        "ja": "ナタ",
+        "en": "Natlan",
+        "sw": "Natlan"
+      },
       "x": -33,
       "y": -1
     },
     {
       "size": "large",
       "emphasis": true,
-      "text": "TR 纳塔局",
-      "trans": ["TR Natlan Bureau"],
+      "region": "natlan",
+      "names": {
+        "zhCN": "TR 纳塔局",
+        "zhTW": "TR 納塔局",
+        "ja": "TR ナタ局",
+        "en": "TR Natlan Bureau",
+        "sw": "Idara ya Natlan"
+      },
       "x": -33,
       "y": 1
     },
     {
       "size": "large",
-      "text": "至冬国挪德卡莱自治区",
-      "trans": ["Nod-Krai Autonomous Region of Snezhnaya"],
+      "region": "nodkrai",
+      "names": {
+        "zhCN": "至冬国挪德卡莱自治区",
+        "zhTW": "至冬國挪德卡萊自治區",
+        "ja": "至冬国ノド＝クライ自治区",
+        "en": "Nod-Krai Autonomous Region of Snezhnaya",
+        "ru": "Нод-Край"
+      },
       "x": -45,
       "y": -17
     },
     {
       "size": "large",
       "emphasis": true,
-      "text": "TR 挪德卡莱局",
-      "trans": ["TR Nod-Krai Bureau"],
+      "region": "nodkrai",
+      "names": {
+        "zhCN": "TR 挪德卡莱局",
+        "zhTW": "TR 挪德卡萊局",
+        "ja": "TR ナド・クライ局",
+        "en": "TR Nod-Krai Bureau",
+        "ru": "TR Бюро Нод-Край"
+      },
       "x": -45,
       "y": -15
     },
     {
       "size": "large",
-      "text": "稲妻",
-      "trans": ["Inazuma"],
       "ja": true,
+      "region": "inazuma",
+      "names": {
+        "zhCN": "稻妻",
+        "zhTW": "稻妻",
+        "ja": "稲妻",
+        "en": "Inazuma"
+      },
       "x": 17,
       "y": 11
     },
@@ -115,152 +204,265 @@
       "size": "large",
       "emphasis": true,
       "ja": true,
-      "text": "稲妻旅客鉄道株式会社",
-      "trans": ["Inazuma Railways"],
+      "region": "inazuma",
+      "names": {
+        "zhCN": "稻妻旅客铁道株式会社",
+        "zhTW": "稻妻旅客鐵道株式會社",
+        "ja": "稲妻旅客鉄道株式会社",
+        "en": "Inazuma Railways"
+      },
       "x": 14,
       "y": 13
     },
     {
       "size": "large",
-      "text": "至冬",
-      "trans": ["Snezhnaya"],
+      "region": "snezhnaya",
+      "names": {
+        "zhCN": "至冬",
+        "zhTW": "至冬",
+        "ja": "スネージナヤ",
+        "en": "Snezhnaya",
+        "ru": "Снежная"
+      },
       "x": -22,
       "y": -34
     },
     {
       "size": "large",
       "emphasis": true,
-      "text": "至冬铁路",
-      "subtext": "至冬皇家轨道运输局",
-      "trans": ["Snezhnaya Railway", "Снежной железная дорога"],
-      "subtextTrans": [
-        "Snezhnaya Royal Railway Transport Bureau",
-        "Королевское управление железнодорожного транспорта Снежной"
-      ],
+      "region": "snezhnaya",
+      "names": {
+        "zhCN": "至冬铁路",
+        "zhTW": "至冬鐵路",
+        "ja": "スネージナヤ皇立鉄道",
+        "en": "Snezhnaya Railway",
+        "ru": "Снежная железная дорога"
+      },
+      "subNames": {
+        "zhCN": "至冬皇家轨道运输局",
+        "zhTW": "至冬皇家軌道運輸局",
+        "ja": "スネージナヤ皇立軌道運輸局",
+        "en": "Snezhnaya Royal Railway Transport Bureau",
+        "ru": "Королевское управление железнодорожного транспорта Снежной"
+      },
       "x": -22,
       "y": -32
     },
     {
       "size": "small",
-      "text": "璃月港城郊",
-      "trans": ["Liyue Harbor Outskirts"],
+      "region": "liyue-harbor-outskirts",
+      "names": {
+        "zhCN": "璃月港城郊",
+        "zhTW": "璃月港城郊",
+        "ja": "璃月港郊外",
+        "en": "Liyue Harbor Outskirts"
+      },
       "x": 12,
       "y": -1
     },
     {
       "size": "small",
-      "text": "璃月港城郊",
-      "trans": ["Liyue Harbor Outskirts"],
+      "region": "liyue-harbor-outskirts",
+      "names": {
+        "zhCN": "璃月港城郊",
+        "zhTW": "璃月港城郊",
+        "ja": "璃月港郊外",
+        "en": "Liyue Harbor Outskirts"
+      },
       "x": 5,
       "y": 9
     },
     {
       "size": "small",
-      "text": "璃月港城区",
-      "trans": ["Liyue Harbor Urban Area"],
+      "region": "liyue-harbor-urban",
+      "names": {
+        "zhCN": "璃月港城区",
+        "zhTW": "璃月港城區",
+        "ja": "璃月港市街地",
+        "en": "Liyue Harbor Urban Area"
+      },
       "x": 10,
       "y": 2
     },
     {
       "size": "small",
-      "text": "沉玉谷",
-      "trans": ["Chenyu Vale"],
+      "region": "chenyu-vale",
+      "names": {
+        "zhCN": "沉玉谷",
+        "zhTW": "沉玉谷",
+        "ja": "沈玉の谷",
+        "en": "Chenyu Vale"
+      },
       "x": -5,
       "y": -9
     },
     {
       "size": "small",
-      "text": "雨林",
-      "trans": ["Rainforest"],
+      "region": "rainforest",
+      "names": {
+        "zhCN": "雨林",
+        "zhTW": "雨林",
+        "ja": "雨林",
+        "en": "Rainforest",
+        "sa": "वर्षावन"
+      },
       "x": -13,
       "y": -1
     },
     {
       "size": "small",
-      "text": "大赤沙海（沙漠）",
-      "trans": ["Great Red Sand (Desert)"],
+      "region": "great-red-sand",
+      "names": {
+        "zhCN": "大赤沙海（沙漠）",
+        "zhTW": "大赤沙海（沙漠）",
+        "ja": "大赤砂海（砂漠）",
+        "en": "Great Red Sand (Desert)",
+        "ar": "الصحراء الحمراء الكبرى",
+        "sa": "महारक्तवालुका"
+      },
       "x": -22,
       "y": 2
     },
     {
       "size": "small",
-      "text": "龙脊雪山",
-      "trans": ["Dragonspine"],
+      "region": "dragonspine",
+      "names": {
+        "zhCN": "龙脊雪山",
+        "zhTW": "龍脊雪山",
+        "ja": "ドラゴンスパイン",
+        "en": "Dragonspine",
+        "de": "Drachenrücken"
+      },
       "x": 9,
       "y": -7
     },
     {
       "size": "small",
-      "text": "悠悠度假村",
-      "trans": ["Easybreeze Resort"],
+      "region": "easybreeze-resort",
+      "names": {
+        "zhCN": "悠悠度假村",
+        "zhTW": "悠悠度假村",
+        "ja": "のびのびリゾート",
+        "en": "Easybreeze Holiday Resort",
+        "sw": "Mapumziko ya Easybreeze"
+      },
       "x": -45,
       "y": -4
     },
     {
       "size": "small",
-      "text": "伦波岛",
-      "trans": ["Lempo Island"],
+      "region": "lempo-island",
+      "names": {
+        "zhCN": "伦波岛",
+        "zhTW": "倫波島",
+        "ja": "レンポ島",
+        "en": "Lempo Island",
+        "ru": "Остров Лемпо"
+      },
       "x": -37,
       "y": -10
     },
     {
       "size": "small",
-      "text": "希汐岛",
-      "trans": ["Hiisi Island"],
+      "region": "hiisi-island",
+      "names": {
+        "zhCN": "希汐岛",
+        "zhTW": "希汐島",
+        "ja": "ヒイシ島",
+        "en": "Hiisi Island",
+        "ru": "Остров Хийси"
+      },
       "x": -40,
       "y": -11
     },
     {
       "size": "small",
-      "text": "帕哈岛",
-      "trans": ["Paha Isle"],
+      "region": "paha-isle",
+      "names": {
+        "zhCN": "帕哈岛",
+        "zhTW": "帕哈島",
+        "ja": "パハ島",
+        "en": "Paha Isle",
+        "ru": "Остров Паха"
+      },
       "x": -38,
       "y": -12
     },
     {
       "size": "small",
-      "text": "挪德卡莱北",
-      "trans": ["North Nod-Krai"],
+      "region": "north-nodkrai",
+      "names": {
+        "zhCN": "挪德卡莱北",
+        "zhTW": "挪德卡萊北",
+        "ja": "ノド＝クライ北部",
+        "en": "North Nod-Krai",
+        "ru": "Северный Нод-Край"
+      },
       "x": -37,
       "y": -19
     },
     {
       "size": "small",
-      "text": "鳴神島",
-      "trans": ["Narukami Island"],
       "ja": true,
+      "region": "narukami-island",
+      "names": {
+        "zhCN": "鸣神岛",
+        "zhTW": "鳴神島",
+        "ja": "鳴神島",
+        "en": "Narukami Island"
+      },
       "x": 32,
       "y": 13.5
     },
     {
       "size": "small",
-      "text": "神無塚",
-      "trans": ["Kannazuka"],
       "ja": true,
+      "region": "kannazuka",
+      "names": {
+        "zhCN": "神无冢",
+        "zhTW": "神無塚",
+        "ja": "神無塚",
+        "en": "Kannazuka"
+      },
       "x": 21.5,
       "y": 14.5
     },
     {
       "size": "small",
-      "text": "八酝島",
-      "trans": ["Yashiori Island"],
       "ja": true,
+      "region": "yashiori-island",
+      "names": {
+        "zhCN": "八酝岛",
+        "zhTW": "八醞島",
+        "ja": "八酝島",
+        "en": "Yashiori Island"
+      },
       "x": 17,
       "y": 14.5
     },
     {
       "size": "small",
-      "text": "海祇島",
-      "trans": ["Watatsumi Island"],
       "ja": true,
+      "region": "watatsumi-island",
+      "names": {
+        "zhCN": "海祇岛",
+        "zhTW": "海祇島",
+        "ja": "海祇島",
+        "en": "Watatsumi Island"
+      },
       "x": 11.5,
       "y": 15
     },
     {
       "size": "small",
-      "text": "鶴観島",
-      "trans": ["Tsurumi Island"],
       "ja": true,
+      "region": "tsurumi-island",
+      "names": {
+        "zhCN": "鹤观岛",
+        "zhTW": "鶴觀島",
+        "ja": "鶴観島",
+        "en": "Tsurumi Island"
+      },
       "x": 23,
       "y": 21.5
     }

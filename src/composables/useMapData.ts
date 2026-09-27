@@ -35,14 +35,16 @@ import {
   segmentKey,
   type VariantTimetable,
 } from './timetable';
-import type { NameLocale, OrgNames, StationNames } from './stationNames';
+import { CORE_LOCALES } from './stationNames';
+import type { CoreLocale, NameLocale, Names, StationNames } from './stationNames';
+import { displayNameLines } from './stationNames';
 import { ferryLineNames, sameStationLineNames } from './lineNaming';
 
 export interface StationData {
   id: string;
   names: StationNames;
   /** 本站名的「主语言」= 所属国家/地区的 `primaryLang`；标签主行、搜索结果、路由站名都用它 */
-  primaryLang: NameLocale;
+  primaryLang: CoreLocale;
   x: number;
   y: number;
   labelDir?: string;
@@ -66,7 +68,9 @@ export type Waypoints = [number, number][];
 
 /** 运营公司 / 运营主体：与线路一样把名称放在 `names` 下（未来可加别的字段） */
 export interface OrgInfo {
-  names: OrgNames;
+  names: Names;
+  /** 该机构的展示语言 = 所属地区的优先语言（跨地区机构 = 空，只展示简中 / 英文） */
+  langs: NameLocale[];
 }
 
 export interface LineVariantData {
@@ -84,7 +88,7 @@ export interface LineVariantData {
 export interface LineData {
   id: string;
   /**
-   * 线路名：与站点同一套四语键（运营公司 / 运营主体见 `OrgNames`）。
+   * 线路名：与站点同一套四语键（运营公司 / 运营主体见 `Names`）。
    * 轮渡 / 同站换乘线路不写死名字 —— 运行时由端点站的四语站名派生（`lineNaming.ts`），故此处缺省。
    */
   names?: StationNames;
@@ -106,10 +110,17 @@ export interface LineData {
   lineType?: 'ferry' | 'same-station';
 }
 
-/** territories.json 的一级划分（「国家/地区」或「区域」）：稳定 id + 四语名称 */
+/** territories.json 的一级划分（「国家/地区」或「区域」）：稳定 id + 名称 + 该单位的优先语言 */
 export interface Territory {
   id: string;
-  names: StationNames;
+  names: Names;
+  /**
+   * 该单位的**优先语言**（区域写了就排在国家前面，见 `displayNameLines`）：标签 / 机构名按它决定
+   * 「第一个是文本、其余是翻译」。
+   */
+  langs: NameLocale[];
+  /** 名称主语言 = 优先语言里第一个核心四语（`ja` 的稻妻 = `ja`，其余 = `zhCN`）；站点标签、搜索、路由用它 */
+  primaryLang: CoreLocale;
 }
 
 export interface Station extends StationData {
@@ -135,7 +146,7 @@ export interface Line extends Omit<LineData, 'variants' | 'names' | 'operator' |
   /** 已解析的线路名：区域线路取数据里的 `names`，轮渡 / 同站换乘由端点站派生 */
   names: StationNames;
   /** 已解析的线路名主语言（体系 `primaryLang`，缺省 `zhCN`） */
-  primaryLang: NameLocale;
+  primaryLang: CoreLocale;
   /** 渲染字体（体系 `fontFamily`，缺省 `Noto Sans SC`） */
   fontFamily: string;
   /** 主语言非 zhCN 时，`names.zhCN` 那一行用的字体 */
@@ -185,8 +196,8 @@ export interface MarkerPath {
 }
 
 /**
- * 标注文字的一行 —— `mark.json` 里一条标识的 `text` / `subtext` / `trans` / `subtextTrans`
- * 在渲染时会被摊平成若干行，每行一个实例（字号、颜色、字体由标识的类别与开关决定）。
+ * 标注文字的一行 —— `mark.json` 里一条标识的 `names` / `subNames` 在渲染时会被摊平成若干行，
+ * 每行一个实例（字号、颜色、字体由标识的类别与开关决定）。
  */
 export interface MarkerTextLine {
   id: string;
@@ -210,20 +221,22 @@ interface StationsFileEntry {
 }
 
 interface TerritoriesFile {
-  nations: Record<string, { names: StationNames; primaryLang?: NameLocale; fontFamily?: string }>;
-  areas: Record<string, { names: StationNames; nation: string }>;
+  nations: Record<string, { names: Names; langs?: NameLocale[]; fontFamily?: string }>;
+  areas: Record<string, { names: Names; nation: string; langs?: NameLocale[] }>;
 }
 
 interface NetworksFileEntry {
   operator?: string;
   authority?: string;
-  primaryLang?: NameLocale;
+  primaryLang?: CoreLocale;
   fontFamily?: string;
   voice?: string;
 }
 
 interface OrganizationsFileEntry {
-  names: OrgNames;
+  names: Names;
+  /** 机构所属地区：只用来取该地区的优先语言（跨地区的机构不写） */
+  nation?: string;
 }
 
 interface LinesFileEntry extends LineData {}
@@ -233,10 +246,18 @@ interface ConnectionsFile {
 }
 
 const DEFAULT_NETWORK_FONT = 'Noto Sans SC';
-const DEFAULT_PRIMARY_LANG: NameLocale = 'zhCN';
+const DEFAULT_PRIMARY_LANG: CoreLocale = 'zhCN';
+
+/** 名称主语言：优先语言里第一个核心四语（须弥的 `sa` / 纳塔的 `sw` 都不是核心四语 → 回落 `zhCN`） */
+function primaryLangOf(langs: NameLocale[]): CoreLocale {
+  return (
+    langs.find((lang): lang is CoreLocale => (CORE_LOCALES as readonly string[]).includes(lang)) ??
+    DEFAULT_PRIMARY_LANG
+  );
+}
 const FONT_ZH = 'Noto Serif SC';
 
-function requireNames(what: string, names: StationNames | undefined): StationNames {
+function requireNames<T extends Names>(what: string, names: T | undefined): T {
   for (const key of ['zhCN', 'zhTW', 'ja', 'en'] as const) {
     if (!names?.[key]) throw new Error(`${what} 缺少 names.${key}`);
   }
@@ -249,25 +270,38 @@ const territories = territoriesData as unknown as TerritoriesFile;
 
 interface NationInfo {
   territory: Territory;
-  primaryLang: NameLocale;
+  primaryLang: CoreLocale;
   fontFamily: string;
 }
 
 const nationMap = new Map<string, NationInfo>();
 for (const [id, entry] of Object.entries(territories.nations)) {
+  const langs = entry.langs ?? [];
   nationMap.set(id, {
-    territory: { id, names: requireNames(`国家/地区 ${id}`, entry.names) },
-    primaryLang: entry.primaryLang ?? DEFAULT_PRIMARY_LANG,
+    territory: {
+      id,
+      names: requireNames(`国家/地区 ${id}`, entry.names),
+      langs,
+      primaryLang: primaryLangOf(langs),
+    },
+    primaryLang: primaryLangOf(langs),
     fontFamily: entry.fontFamily ?? DEFAULT_NETWORK_FONT,
   });
 }
 
 const areaMap = new Map<string, { territory: Territory; nation: string }>();
 for (const [id, entry] of Object.entries(territories.areas)) {
-  if (!nationMap.has(entry.nation))
-    throw new Error(`区域 ${id} 的国家/地区 ${entry.nation} 不存在`);
+  const nation = nationMap.get(entry.nation);
+  if (!nation) throw new Error(`区域 ${id} 的国家/地区 ${entry.nation} 不存在`);
+  // 优先语言：区域自己写的排在国家前面（区域优先语言 → 国家优先语言）
+  const langs = [...(entry.langs ?? []), ...nation.territory.langs];
   areaMap.set(id, {
-    territory: { id, names: requireNames(`区域 ${id}`, entry.names) },
+    territory: {
+      id,
+      names: requireNames(`区域 ${id}`, entry.names),
+      langs,
+      primaryLang: primaryLangOf(langs),
+    },
     nation: entry.nation,
   });
 }
@@ -276,8 +310,17 @@ for (const [id, entry] of Object.entries(territories.areas)) {
 
 const organizations = organizationsData as unknown as Record<string, OrganizationsFileEntry>;
 const orgMap = new Map<string, OrgInfo>();
+function regionLangs(what: string, regionId: string | undefined): NameLocale[] {
+  if (regionId === undefined) return [];
+  const found = areaMap.get(regionId) ?? nationMap.get(regionId);
+  if (!found) throw new Error(`${what} 的地区 ${regionId} 不存在`);
+  return found.territory.langs;
+}
 for (const [id, entry] of Object.entries(organizations)) {
-  orgMap.set(id, { names: requireNames(`机构 ${id}`, entry.names) as OrgNames });
+  orgMap.set(id, {
+    names: requireNames(`机构 ${id}`, entry.names) as Names,
+    langs: regionLangs(`机构 ${id}`, entry.nation),
+  });
 }
 
 function requireOrg(lineId: string, what: string, orgId: string | undefined): OrgInfo | undefined {
@@ -294,7 +337,7 @@ const networks = networksData as unknown as Record<string, NetworksFileEntry>;
 interface NetworkInfo {
   id: string;
   fontFamily: string;
-  primaryLang: NameLocale;
+  primaryLang: CoreLocale;
   operator?: OrgInfo;
   authority?: OrgInfo;
   voice: string;
@@ -634,21 +677,22 @@ function transformPathD(d: string, fn: (x: number, y: number) => [number, number
   });
 }
 
-/** `mark.json` 里的一条标识（四行文字都可选，`text` 是主文字、其坐标是整条标识的锚点） */
+/** `mark.json` 里的一条标识：`names` 是主文字（其坐标是整条标识的锚点）、`subNames` 是副文字，都可选额外语言 */
 interface MarkTextData {
   /** 标识类别：`large` 大标识 / `small` 小标识（缺省 = 小标识）；JSON 导入时字面量会被拓宽成 string */
   size?: string;
-  text: string;
-  subtext?: string;
-  /** 主文字的翻译，每种语言一行，按数组顺序自上而下排 */
-  trans?: string[];
-  /** 副文字的翻译，每种语言一行 */
-  subtextTrans?: string[];
+  names: Names;
+  subNames?: Names;
   /** 重点标识：文字用 `MARKER_EMPHASIS_FILL` */
   emphasis?: boolean;
-  /** 用日语字体（`MARKER_FONT_FAMILY_JA`） */
+  /** 日文标识：用日语字体 `MARKER_FONT_FAMILY_JA`（语言顺序由 `region` 的优先语言决定） */
   ja?: boolean;
-  /** `text` 一行的坐标（数据坐标单位） */
+  /**
+   * 该标识属于哪个地区（`territories.json` 的 nation 或 area id）：展示语言 = 该地区的优先语言 + 简中 + 英文。
+   * 不写 = 只展示简中 + 英文。
+   */
+  region?: string;
+  /** `names` 一行的坐标（数据坐标单位） */
   x: number;
   y: number;
 }
@@ -672,8 +716,10 @@ export const markerPaths: MarkerPath[] = markerPathsData.map((p, i) => ({
 }));
 
 /**
- * 把每条标识按「text → subtext → trans[] → subtextTrans[]」摊平成逐行文字：
- * 一行一个实例，从 `text` 的 y 起，每多一行就下移「**这一行自己的**字号 / `BLOCK_SIZE` + `MARKER_LINE_GAP`」
+ * 把每条标识摊平成逐行文字：`names` 按 `displayNameLines` 决定的语言顺序（主语言 → 简中 → 繁中 → 英文 →
+ * 额外语言，同文的跳过）铺开，第一行用 `text` 字号、其余用 `trans` 字号；`subNames` 同样铺开
+ * （第一行 `subtext`、其余 `subtextTrans`）。
+ * 一行一个实例，从 `names` 的 y 起，每多一行就下移「**这一行自己的**字号 / `BLOCK_SIZE` + `MARKER_LINE_GAP`」
  * （逐行累加，所以第 3 行比第 2 行又多 0.1）。
  */
 export const markerTexts: MarkerTextLine[] = markerTextsData.flatMap((t, i) => {
@@ -681,12 +727,21 @@ export const markerTexts: MarkerTextLine[] = markerTextsData.flatMap((t, i) => {
   const fill = t.emphasis ? MARKER_EMPHASIS_FILL : MARKER_TEXT_FILL;
   const fontFamily = t.ja ? MARKER_FONT_FAMILY_JA : MARKER_FONT_FAMILY;
   const x = (t.x - minX) * BLOCK_SIZE;
+  const langs = regionLangs(`标注 ${i}`, t.region);
 
   const rows: { role: MarkerTextRole; text: string }[] = [];
-  if (t.text) rows.push({ role: 'text', text: t.text });
-  if (t.subtext) rows.push({ role: 'subtext', text: t.subtext });
-  for (const text of t.trans ?? []) rows.push({ role: 'trans', text });
-  for (const text of t.subtextTrans ?? []) rows.push({ role: 'subtextTrans', text });
+  const names = displayNameLines(requireNames(`标注 ${i}`, t.names), langs);
+  rows.push(
+    ...names.map((line, k) => ({ role: k === 0 ? 'text' : 'trans', text: line.text }) as const),
+  );
+  if (t.subNames) {
+    const subs = displayNameLines(requireNames(`标注 ${i} 的副文字`, t.subNames), langs);
+    rows.push(
+      ...subs.map(
+        (line, k) => ({ role: k === 0 ? 'subtext' : 'subtextTrans', text: line.text }) as const,
+      ),
+    );
+  }
 
   const lines: MarkerTextLine[] = [];
   let y = t.y;

@@ -2,7 +2,7 @@ import { ref, type Ref } from 'vue';
 import { formatDuration } from './formatTime';
 import { stations, stationMap, lines, pairCost, sortLinesForDisplay } from './useMapData';
 import { ferrySegmentNames } from './lineNaming';
-import type { NameLocale } from './stationNames';
+import type { CoreLocale, NameLocale } from './stationNames';
 
 export type RouteMetric = 'fare' | 'time' | 'distance';
 
@@ -29,7 +29,7 @@ export interface NodeInfo {
   lineName: string;
   lineNameEn: string;
   /** 线路名的主语言（lineName 就是该语言的名字） */
-  linePrimaryLang: NameLocale;
+  linePrimaryLang: CoreLocale;
 }
 
 export interface RouteSegment {

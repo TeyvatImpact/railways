@@ -1,6 +1,6 @@
 // 轮渡 / 同站换乘这类「虚拟线路」的线路名不写进数据，而是运行时用端点站的四语站名拼出，
 // 这样数据里不会各写一份简繁、也不会随站点改名而漂移。模板只此一处。
-import type { NameLocale, StationNames } from './stationNames';
+import type { CoreLocale, StationNames } from './stationNames';
 
 /**
  * 组合线路名用的「朴素」站名：多写法只取第一种（`曚云神社/曚云港` → `曚云神社`），
@@ -13,8 +13,8 @@ export function plainStationName(name: string): string {
     .replace(/^["'「『]+|["'」』]+$/g, '');
 }
 
-type FerryNameTemplate = Record<NameLocale, (a: string, b: string) => string>;
-type SameStationNameTemplate = Record<NameLocale, (a: string) => string>;
+type FerryNameTemplate = Record<CoreLocale, (a: string, b: string) => string>;
+type SameStationNameTemplate = Record<CoreLocale, (a: string) => string>;
 
 /**
  * 轮渡名有两个模板：

@@ -27,10 +27,10 @@
       <h3 class="info-title">位置</h3>
       <div class="info-grid">
         <div class="opacity-60">国家/地区</div>
-        <div>{{ bilingualLabel(station.nation.names) }}</div>
+        <div>{{ displayLabel(station.nation.names, station.nation.langs) }}</div>
         <template v-if="station.area">
           <div class="opacity-60">区域</div>
-          <div>{{ bilingualLabel(station.area.names) }}</div>
+          <div>{{ displayLabel(station.area.names, station.area.langs) }}</div>
         </template>
       </div>
     </section>
@@ -121,7 +121,7 @@ import {
   sortLinesForDisplay,
   type Line,
 } from '../composables/useMapData';
-import { bilingualLabel, nameRows } from '../composables/stationNames';
+import { displayLabel, nameRows } from '../composables/stationNames';
 import { selectLine } from '../composables/useSelection';
 import {
   stationDepartures,
@@ -139,14 +139,14 @@ const servingLines = computed<Line[]>(() =>
   sortLinesForDisplay(stationLineMap.get(props.stationId) ?? []),
 );
 
-/** 一个站可能由多条线路服务，机构去重后按「中文 · 英文」列出 */
+/** 一个站可能由多条线路服务，机构去重后按「要展示的各语言用 · 连接」列出 */
 function orgList(kind: 'operator' | 'authority'): string {
   const seen = new Set<string>();
   const out: string[] = [];
   for (const line of servingLines.value) {
     const org = line[kind];
     if (!org) continue;
-    const label = bilingualLabel(org.names);
+    const label = displayLabel(org.names, org.langs);
     if (seen.has(label)) continue;
     seen.add(label);
     out.push(label);

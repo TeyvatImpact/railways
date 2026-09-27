@@ -2,7 +2,7 @@
 // 排版本身全部交给 index.vue 的 CSS（grid + flex + rotate），这里不做像素定位；
 // 只有下列常量与 CSS 对应，用来按真实字宽决定徽章换行与站名左移。
 
-import type { NameLabelLine, OrgNames } from '../../composables/stationNames';
+import type { NameLabelLine, NameTextLine } from '../../composables/stationNames';
 
 export type MeasureFn = (text: string, size: number, weight: number, family: string) => number;
 
@@ -103,8 +103,9 @@ export interface StripInput {
   cjkFont: string;
   /** 页头线路名的各行（主语言行 → 中文行 → 英文行） */
   labelLines: NameLabelLine[];
-  operator?: OrgNames;
-  authority?: OrgNames;
+  /** 页头运营公司 / 运营主体的各行（要展示的各语言，顺序与去重见 `displayNameLines`） */
+  operator?: NameTextLine[];
+  authority?: NameTextLine[];
   stations: StripInputStation[];
   /**
    * 每个站圆圈里的编号（与 `stations` 一一对应）；缺省 = 列号 + 1。
@@ -123,8 +124,9 @@ export interface StripModel {
   cjkFont: string;
   /** 页头线路名的各行（主行 / 中文小字 / 英文小字） */
   labelLines: NameLabelLine[];
-  operator?: OrgNames;
-  authority?: OrgNames;
+  /** 页头运营公司 / 运营主体的各行 */
+  operator?: NameTextLine[];
+  authority?: NameTextLine[];
   /** 线路名称色块上的文字色 */
   chipTextFill: string;
   /** 主线最后一个站的列号（主线横线的末端列线 = trunkEndCol + 2） */

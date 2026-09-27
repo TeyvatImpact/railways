@@ -8,7 +8,7 @@ import {
   type Station,
 } from '../../composables/useMapData';
 import { measureText } from '../../composables/useLabelPlacement';
-import { nameLabelLines } from '../../composables/stationNames';
+import { displayNameLines, nameLabelLines } from '../../composables/stationNames';
 import { splitVariants, type DivergentBranch } from './variantStrip';
 import { buildStrip, EDGE, type MeasureFn, type StripInput, type StripModel } from './stripModel';
 import {
@@ -85,8 +85,12 @@ function buildInput(
     color: line.color,
     cjkFont: line.fontFamily || 'sans-serif',
     labelLines: nameLabelLines(line.names, line.primaryLang),
-    operator: line.operator?.names,
-    authority: line.authority?.names,
+    operator: line.operator
+      ? displayNameLines(line.operator.names, line.operator.langs)
+      : undefined,
+    authority: line.authority
+      ? displayNameLines(line.authority.names, line.authority.langs)
+      : undefined,
     stations,
     numbers,
     loop,
@@ -393,6 +397,20 @@ const BASE_ROWS = ['52px', '4px', '20px', '6px', '20px', '12px', '18px'];
 /** 一段支线车道的高度（px）：支线的 45° 引线与车道横线落点都由它推出来（见 .lane-diag / .lane-track） */
 const LANE_ROW = 24;
 const PANEL_H = 280;
+/** 页头运营公司 / 主体的最小高度（= 线路名色块的高度）；行数更多时页头自己长高，面板高度同步加高 */
+const HEAD_MIN_H = 52;
+/** 页头一块机构名的文本高度：第一行 22px、其余 11px（与 .block-name / .block-en 的字号、1.15 行高同步） */
+function headBlockH(lineCount: number): number {
+  return lineCount <= 0 ? 0 : 22 * 1.15 + (lineCount - 1) * 11 * 1.15;
+}
+/** 页头行高：色块高度与机构名块取最大（机构最多四行语言，比色块高） */
+function headRowH(s: StripModel): number {
+  return Math.max(
+    HEAD_MIN_H,
+    headBlockH(s.operator?.length ?? 0),
+    headBlockH(s.authority?.length ?? 0),
+  );
+}
 
 function stripStyle(s: StripModel) {
   const n = s.stations.length;
@@ -404,10 +422,13 @@ function stripStyle(s: StripModel) {
     '--lane-row': `${LANE_ROW}px`,
     // 首末站各留 EDGE，中间等分（与 stripModel 的站距算法一致）
     gridTemplateColumns: `${EDGE}px repeat(${Math.max(1, n - 1)}, 1fr) ${EDGE}px`,
-    gridTemplateRows: [...BASE_ROWS, ...s.lanes.map(() => `${LANE_ROW}px`), 'minmax(0, 1fr)'].join(
-      ' ',
-    ),
-    height: `${PANEL_H + s.lanes.length * LANE_ROW}px`,
+    gridTemplateRows: [
+      `${headRowH(s)}px`,
+      ...BASE_ROWS.slice(1),
+      ...s.lanes.map(() => `${LANE_ROW}px`),
+      'minmax(0, 1fr)',
+    ].join(' '),
+    height: `${PANEL_H + s.lanes.length * LANE_ROW + headRowH(s) - HEAD_MIN_H}px`,
   };
 }
 
@@ -505,13 +526,20 @@ function cell(col: number) {
               }}</span>
             </div>
             <div v-if="s.operator" class="block">
-              <span class="block-name">{{ s.operator.zhCN }}</span>
-              <span class="block-en">{{ s.operator.en }}</span>
+              <span
+                v-for="(row, i) in s.operator"
+                :key="row.locale"
+                :class="i === 0 ? 'block-name' : 'block-en'"
+                >{{ row.text }}</span
+              >
             </div>
             <div v-if="s.authority" class="block">
-              <span class="block-name auth-name">{{ s.authority.zhCN }}</span>
-              <span class="block-en">{{ s.authority.en }}</span>
-              <span v-if="s.authority.ru" class="block-en">{{ s.authority.ru }}</span>
+              <span
+                v-for="(row, i) in s.authority"
+                :key="row.locale"
+                :class="i === 0 ? 'block-name auth-name' : 'block-en'"
+                >{{ row.text }}</span
+              >
             </div>
           </header>
 

@@ -104,7 +104,7 @@
 import { computed, ref, watch } from 'vue';
 import { lines, pairCost, stationLineMap, stationMap } from '../composables/useMapData';
 import { formatDuration } from '../composables/formatTime';
-import { bilingualLabel, nameRows } from '../composables/stationNames';
+import { displayLabel, nameRows } from '../composables/stationNames';
 import { selectStation } from '../composables/useSelection';
 import type { OrgInfo } from '../composables/useMapData';
 import TransitTimeline, { type TimelineItem } from './TransitTimeline.vue';
@@ -188,7 +188,7 @@ function stationOrgs(stationId: string): string {
   for (const l of stationLineMap.get(stationId) ?? []) {
     for (const org of [l.operator, l.authority] as (OrgInfo | undefined)[]) {
       if (!org) continue;
-      const label = bilingualLabel(org.names);
+      const label = displayLabel(org.names, org.langs);
       if (seen.has(label)) continue;
       seen.add(label);
       out.push(label);
@@ -198,7 +198,7 @@ function stationOrgs(stationId: string): string {
 }
 
 function orgLabel(org: OrgInfo | undefined): string {
-  return org ? bilingualLabel(org.names) : '—';
+  return org ? displayLabel(org.names, org.langs) : '—';
 }
 
 function variantLabel(index: number): string {

@@ -5,8 +5,10 @@
         "zhCN": "蒙德",
         "zhTW": "蒙德",
         "ja": "モンド",
-        "en": "Mondstadt"
-      }
+        "en": "Mondstadt",
+        "de": "Mondstadt"
+      },
+      "langs": ["de"]
     },
     "liyue": {
       "names": {
@@ -14,7 +16,8 @@
         "zhTW": "璃月",
         "ja": "璃月",
         "en": "Liyue"
-      }
+      },
+      "langs": []
     },
     "inazuma": {
       "names": {
@@ -23,48 +26,58 @@
         "ja": "稲妻",
         "en": "Inazuma"
       },
-      "primaryLang": "ja",
-      "fontFamily": "Noto Serif JP"
+      "fontFamily": "Noto Serif JP",
+      "langs": ["ja"]
     },
     "sumeru": {
       "names": {
         "zhCN": "须弥",
         "zhTW": "須彌",
         "ja": "スメール",
-        "en": "Sumeru"
-      }
+        "en": "Sumeru",
+        "sa": "सुमेरु"
+      },
+      "langs": ["sa"]
     },
     "fontaine": {
       "names": {
         "zhCN": "枫丹",
         "zhTW": "楓丹",
         "ja": "フォンテーヌ",
-        "en": "Fontaine"
-      }
+        "en": "Fontaine",
+        "fr": "Fontaine"
+      },
+      "langs": ["fr"]
     },
     "natlan": {
       "names": {
         "zhCN": "纳塔",
         "zhTW": "納塔",
         "ja": "ナタ",
-        "en": "Natlan"
-      }
+        "en": "Natlan",
+        "sw": "Natlan"
+      },
+      "langs": ["sw"]
     },
     "snezhnaya": {
       "names": {
         "zhCN": "至冬",
         "zhTW": "至冬",
         "ja": "スネージナヤ",
-        "en": "Snezhnaya"
-      }
+        "en": "Snezhnaya",
+        "ru": "Снежная"
+      },
+      "langs": ["ru"]
     },
     "nodkrai": {
       "names": {
         "zhCN": "至冬国挪德卡莱自治区",
         "zhTW": "至冬國挪德卡萊自治區",
         "ja": "至冬国ノド＝クライ自治区",
-        "en": "Nod-Krai Autonomous Region of Snezhnaya"
-      }
+        "en": "Nod-Krai Autonomous Region of Snezhnaya",
+        "ru": "Нод-Край"
+      },
+      "langs": ["ru"]
     }
   },
   "areas": {
@@ -73,7 +86,8 @@
         "zhCN": "龙脊雪山",
         "zhTW": "龍脊雪山",
         "ja": "ドラゴンスパイン",
-        "en": "Dragonspine"
+        "en": "Dragonspine",
+        "de": "Drachenrücken"
       },
       "nation": "mondstadt"
     },
@@ -154,16 +168,20 @@
         "zhCN": "大赤沙海（沙漠）",
         "zhTW": "大赤沙海（沙漠）",
         "ja": "大赤砂海（砂漠）",
-        "en": "Great Red Sand (Desert)"
+        "en": "Great Red Sand (Desert)",
+        "ar": "الصحراء الحمراء الكبرى",
+        "sa": "महारक्तवालुका"
       },
-      "nation": "sumeru"
+      "nation": "sumeru",
+      "langs": ["ar"]
     },
     "rainforest": {
       "names": {
         "zhCN": "雨林",
         "zhTW": "雨林",
         "ja": "雨林",
-        "en": "Rainforest"
+        "en": "Rainforest",
+        "sa": "वर्षावन"
       },
       "nation": "sumeru"
     },
@@ -172,7 +190,8 @@
         "zhCN": "悠悠度假村",
         "zhTW": "悠悠度假村",
         "ja": "悠悠リゾート",
-        "en": "Easybreeze Resort"
+        "en": "Easybreeze Resort",
+        "sw": "Mapumziko ya Easybreeze"
       },
       "nation": "natlan"
     },
@@ -181,7 +200,8 @@
         "zhCN": "伦波岛",
         "zhTW": "倫波島",
         "ja": "レンポ島",
-        "en": "Lempo Island"
+        "en": "Lempo Island",
+        "ru": "Остров Лемпо"
       },
       "nation": "nodkrai"
     },
@@ -190,7 +210,8 @@
         "zhCN": "希汐岛",
         "zhTW": "希汐島",
         "ja": "ヒイシ島",
-        "en": "Hiisi Island"
+        "en": "Hiisi Island",
+        "ru": "Остров Хийси"
       },
       "nation": "nodkrai"
     },
@@ -199,7 +220,8 @@
         "zhCN": "帕哈岛",
         "zhTW": "帕哈島",
         "ja": "パハ島",
-        "en": "Paha Isle"
+        "en": "Paha Isle",
+        "ru": "Остров Паха"
       },
       "nation": "nodkrai"
     },
@@ -208,7 +230,8 @@
         "zhCN": "挪德卡莱北",
         "zhTW": "挪德卡萊北",
         "ja": "ノド＝クライ北部",
-        "en": "North Nod-Krai"
+        "en": "North Nod-Krai",
+        "ru": "Северный Нод-Край"
       },
       "nation": "nodkrai"
     }

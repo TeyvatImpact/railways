@@ -142,11 +142,11 @@
                         </select>
                       </td>
                       <td>
-                        <select v-model="row.value.primaryLang" class="preset-select">
-                          <option :value="undefined">（默认 zhCN）</option>
-                          <option value="zhCN">zhCN</option>
-                          <option value="ja">ja</option>
-                        </select>
+                        <input
+                          :value="(row.value.langs ?? []).join(',')"
+                          class="edit-input"
+                          placeholder="如 ja / de / sa,ru"
+                          @input="setLangs(row.value, $event)" />
                       </td>
                       <td>
                         <input
@@ -170,7 +170,8 @@
                       <th>zhTW</th>
                       <th>ja</th>
                       <th>en</th>
-                      <th>ru</th>
+                      <th v-for="loc in EXTRA_LOCALES" :key="loc">{{ loc }}</th>
+                      <th>nation</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -180,8 +181,14 @@
                       <td><input v-model="row.value.names.zhTW" class="edit-input" /></td>
                       <td><input v-model="row.value.names.ja" class="edit-input" /></td>
                       <td><input v-model="row.value.names.en" class="edit-input" /></td>
+                      <td v-for="loc in EXTRA_LOCALES" :key="loc">
+                        <input
+                          v-model="row.value.names[loc]"
+                          class="edit-input"
+                          placeholder="可选" />
+                      </td>
                       <td>
-                        <input v-model="row.value.names.ru" class="edit-input" placeholder="可选" />
+                        <input v-model="row.value.nation" class="edit-input" placeholder="可选" />
                       </td>
                     </tr>
                   </tbody>
@@ -199,7 +206,8 @@
                       <th>zhTW</th>
                       <th>ja</th>
                       <th>en</th>
-                      <th>primaryLang</th>
+                      <th v-for="loc in EXTRA_LOCALES" :key="loc">{{ loc }}</th>
+                      <th>langs（优先语言，逗号分隔）</th>
                       <th>fontFamily</th>
                     </tr>
                   </thead>
@@ -210,12 +218,18 @@
                       <td><input v-model="row.value.names.zhTW" class="edit-input" /></td>
                       <td><input v-model="row.value.names.ja" class="edit-input" /></td>
                       <td><input v-model="row.value.names.en" class="edit-input" /></td>
+                      <td v-for="loc in EXTRA_LOCALES" :key="loc">
+                        <input
+                          v-model="row.value.names[loc]"
+                          class="edit-input"
+                          placeholder="可选" />
+                      </td>
                       <td>
-                        <select v-model="row.value.primaryLang" class="preset-select">
-                          <option :value="undefined">（默认 zhCN）</option>
-                          <option value="zhCN">zhCN</option>
-                          <option value="ja">ja</option>
-                        </select>
+                        <input
+                          :value="(row.value.langs ?? []).join(',')"
+                          class="edit-input"
+                          placeholder="如 ja / de / sa,ru"
+                          @input="setLangs(row.value, $event)" />
                       </td>
                       <td>
                         <input
@@ -237,6 +251,8 @@
                       <th>zhTW</th>
                       <th>ja</th>
                       <th>en</th>
+                      <th v-for="loc in EXTRA_LOCALES" :key="loc">{{ loc }}</th>
+                      <th>nation</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -247,6 +263,15 @@
                       <td><input v-model="row.value.names.zhTW" class="edit-input" /></td>
                       <td><input v-model="row.value.names.ja" class="edit-input" /></td>
                       <td><input v-model="row.value.names.en" class="edit-input" /></td>
+                      <td v-for="loc in EXTRA_LOCALES" :key="loc">
+                        <input
+                          v-model="row.value.names[loc]"
+                          class="edit-input"
+                          placeholder="可选" />
+                      </td>
+                      <td>
+                        <input v-model="row.value.nation" class="edit-input" placeholder="可选" />
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -302,6 +327,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
 import { VEHICLES } from '../config/vehicles';
+import { EXTRA_LOCALES } from '../composables/stationNames';
 
 const fileKeys = ['stations', 'lines', 'networks', 'organizations', 'territories', 'connections'];
 
@@ -360,6 +386,15 @@ function distStationName(id: string): string {
   const name = stationNameMap.value.get(id);
   if (name) return `${name} (${id})`;
   return id;
+}
+
+/** 优先语言输入框（逗号分隔）→ 数组；空 = 无额外优先语言 */
+function setLangs(row: any, e: Event) {
+  const value = (e.target as HTMLInputElement).value;
+  row.langs = value
+    .split(',')
+    .map((x) => x.trim())
+    .filter(Boolean);
 }
 
 function fmtWaypoints(w?: [number, number][]) {

@@ -13,23 +13,28 @@
       "zhTW": "璃月港地鐵",
       "ja": "璃月港メトロ",
       "en": "Liyue Harbor Metro"
-    }
+    },
+    "nation": "liyue"
   },
   "fontaine-aquabus": {
     "names": {
       "zhCN": "枫丹巡轨船",
       "zhTW": "楓丹巡軌船",
       "ja": "フォンテーヌ巡水船",
-      "en": "Fontaine Aquabus"
-    }
+      "en": "Fontaine Aquabus",
+      "fr": "Navette aquatique de Fontaine"
+    },
+    "nation": "fontaine"
   },
   "easybreeze-holiday-resort-transit": {
     "names": {
       "zhCN": "悠悠度假村轨道交通",
       "zhTW": "悠悠度假村軌道交通",
       "ja": "のびのびリゾート軌道交通",
-      "en": "Easybreeze Holiday Resort Transit"
-    }
+      "en": "Easybreeze Holiday Resort Transit",
+      "sw": "Usafiri wa Mapumziko ya Easybreeze"
+    },
+    "nation": "natlan"
   },
   "inazuma-railways": {
     "names": {
@@ -37,23 +42,28 @@
       "zhTW": "稻妻旅客鐵道株式會社",
       "ja": "稲妻旅客鉄道株式会社",
       "en": "Inazuma Railways"
-    }
+    },
+    "nation": "inazuma"
   },
   "snezhnaya-royal-railway": {
     "names": {
       "zhCN": "至冬皇家铁路",
       "zhTW": "至冬皇家鐵路",
       "ja": "スネージナヤ皇立鉄道",
-      "en": "Snezhnaya Royal Railway"
-    }
+      "en": "Snezhnaya Royal Railway",
+      "ru": "Снежная железная дорога"
+    },
+    "nation": "snezhnaya"
   },
   "mondstadt-bureau": {
     "names": {
       "zhCN": "蒙德局",
       "zhTW": "蒙德局",
       "ja": "モンド局",
-      "en": "Mondstadt Bureau"
-    }
+      "en": "Mondstadt Bureau",
+      "de": "Mondstadt-Büro"
+    },
+    "nation": "mondstadt"
   },
   "liyue-bureau": {
     "names": {
@@ -61,39 +71,48 @@
       "zhTW": "璃月局",
       "ja": "璃月局",
       "en": "Liyue Bureau"
-    }
+    },
+    "nation": "liyue"
   },
   "sumeru-bureau": {
     "names": {
       "zhCN": "须弥局",
       "zhTW": "須彌局",
       "ja": "スメール局",
-      "en": "Sumeru Bureau"
-    }
+      "en": "Sumeru Bureau",
+      "sa": "सुमेरु विभाग"
+    },
+    "nation": "sumeru"
   },
   "natlan-bureau": {
     "names": {
       "zhCN": "纳塔局",
       "zhTW": "納塔局",
       "ja": "ナタ局",
-      "en": "Natlan Bureau"
-    }
+      "en": "Natlan Bureau",
+      "sw": "Idara ya Natlan"
+    },
+    "nation": "natlan"
   },
   "nod-krai-bureau": {
     "names": {
       "zhCN": "挪德卡莱局",
       "zhTW": "挪德卡萊局",
       "ja": "ナド・クライ局",
-      "en": "Nod-Krai Bureau"
-    }
+      "en": "Nod-Krai Bureau",
+      "ru": "Бюро Нод-Край"
+    },
+    "nation": "nodkrai"
   },
   "court-of-fontaine": {
     "names": {
       "zhCN": "枫丹廷",
       "zhTW": "楓丹廷",
       "ja": "フォンテーヌ廷",
-      "en": "Court of Fontaine"
-    }
+      "en": "Court of Fontaine",
+      "fr": "Cour de Fontaine"
+    },
+    "nation": "fontaine"
   },
   "inazuma-shogunate": {
     "names": {
@@ -101,7 +120,8 @@
       "zhTW": "稻妻幕府",
       "ja": "稲妻幕府",
       "en": "Inazuma Shogunate"
-    }
+    },
+    "nation": "inazuma"
   },
   "watatsumi-sangonomiya-autonomous-government": {
     "names": {
@@ -109,7 +129,8 @@
       "zhTW": "稻妻國海祇島珊瑚宮自治政府",
       "ja": "稲妻国海祇島珊瑚宮自治政府",
       "en": "Watatsumi Sangonomiya Autonomous Government"
-    }
+    },
+    "nation": "inazuma"
   },
   "liyue-ministry-of-civil-affairs": {
     "names": {
@@ -117,7 +138,8 @@
       "zhTW": "璃月總務司",
       "ja": "璃月総務司",
       "en": "Liyue Ministry of Civil Affairs"
-    }
+    },
+    "nation": "liyue"
   },
   "snezhnaya-royal-railway-transport-bureau": {
     "names": {
@@ -126,14 +148,17 @@
       "ja": "スネージナヤ皇立軌道運輸局",
       "en": "Snezhnaya Royal Railway Transport Bureau",
       "ru": "Королевское управление железнодорожного транспорта Снежной"
-    }
+    },
+    "nation": "snezhnaya"
   },
   "easybreeze-holiday-resort-management-committee": {
     "names": {
       "zhCN": "悠悠度假村管理委员会",
       "zhTW": "悠悠度假村管理委員會",
       "ja": "のびのびリゾート管理委員会",
-      "en": "Easybreeze Holiday Resort Management Committee"
-    }
+      "en": "Easybreeze Holiday Resort Management Committee",
+      "sw": "Kamati ya Usimamizi wa Mapumziko ya Easybreeze"
+    },
+    "nation": "natlan"
   }
 }
